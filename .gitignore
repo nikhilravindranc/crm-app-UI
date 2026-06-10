@@ -1,0 +1,7 @@
+node_modules/
+.next/
+.env
+.env.local
+.env*.local
+*.log
+COLOR_IMPLEMENTATION_STATUS.md
