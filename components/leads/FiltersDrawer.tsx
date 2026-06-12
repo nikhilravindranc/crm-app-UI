@@ -25,7 +25,9 @@ export interface FilterRow {
   logic: FilterLogic;
 }
 
-const FILTER_COLUMNS = [
+export type FilterColumn = { value: string; label: string };
+
+const DEFAULT_FILTER_COLUMNS: FilterColumn[] = [
   { value: "name",       label: "CRM Lead · Lead Name"   },
   { value: "company",    label: "CRM Lead · Company"      },
   { value: "email",      label: "CRM Lead · Email"        },
@@ -73,24 +75,30 @@ interface Props {
   onClose: () => void;
   filters: FilterRow[];
   onChange: (filters: FilterRow[]) => void;
+  columns?: FilterColumn[];
+  subtitle?: string;
 }
 
-export default function FiltersDrawer({ open, onClose, filters, onChange }: Props) {
+export default function FiltersDrawer({ open, onClose, filters, onChange, columns, subtitle }: Props) {
+  const FILTER_COLUMNS = columns ?? DEFAULT_FILTER_COLUMNS;
+  const firstCol = FILTER_COLUMNS[0]?.value ?? "name";
+  const defaultRow: Omit<FilterRow, "id"> = { column: firstCol, operator: "contains", value: "", logic: "AND" };
+
   const [local, setLocal] = useState<FilterRow[]>(
-    filters.length ? filters : [{ id: uid(), ...DEFAULT_ROW }]
+    filters.length ? filters : [{ id: uid(), ...defaultRow }]
   );
 
   const update = (id: string, patch: Partial<FilterRow>) =>
     setLocal(prev => prev.map(r => r.id === id ? { ...r, ...patch } : r));
 
   const addRow = () =>
-    setLocal(prev => [...prev, { id: uid(), ...DEFAULT_ROW, logic: "AND" }]);
+    setLocal(prev => [...prev, { id: uid(), ...defaultRow, logic: "AND" }]);
 
   const removeRow = (id: string) =>
     setLocal(prev => prev.length === 1 ? prev : prev.filter(r => r.id !== id));
 
   const handleApply = () => { onChange(local.filter(r => r.value || OPERATORS.find(o => o.value === r.operator)?.noValue)); onClose(); };
-  const handleClear = () => { setLocal([{ id: uid(), ...DEFAULT_ROW }]); onChange([]); };
+  const handleClear = () => { setLocal([{ id: uid(), ...defaultRow }]); onChange([]); };
 
   const activeCount = filters.filter(r => r.value || OPERATORS.find(o => o.value === r.operator)?.noValue).length;
 
@@ -106,7 +114,7 @@ export default function FiltersDrawer({ open, onClose, filters, onChange }: Prop
           </div>
           <div>
             <h2 className="font-heading text-[15px] font-bold text-slate-900 tracking-tight">Filters</h2>
-            <p className="text-[11px] text-slate-400">Narrow down leads by conditions</p>
+            <p className="text-[11px] text-slate-400">{subtitle ?? "Narrow down leads by conditions"}</p>
           </div>
         </div>
         <Tooltip title="Close">
