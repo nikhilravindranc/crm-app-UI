@@ -314,6 +314,18 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
     lastName: "",
     email: "",
     role: "Support Executive",
+    gender: "",
+    dateOfBirth: "",
+    dateOfJoining: "",
+    address: "",
+    country: "",
+    flatHouseNo: "",
+    streetAddress: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    latitude: "",
+    longitude: "",
   });
 
   const handleChange = (field: string, value: string) => {
@@ -323,14 +335,48 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
   const handleSubmit = () => {
     if (formData.firstName.trim() && formData.lastName.trim() && formData.email.trim()) {
       onSubmit(formData);
-      setFormData({ firstName: "", lastName: "", email: "", role: "Support Executive" });
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        role: "Support Executive",
+        gender: "",
+        dateOfBirth: "",
+        dateOfJoining: "",
+        address: "",
+        country: "",
+        flatHouseNo: "",
+        streetAddress: "",
+        city: "",
+        state: "",
+        zipCode: "",
+        latitude: "",
+        longitude: "",
+      });
       onClose();
     }
   };
 
   const handleClose = () => {
     onClose();
-    setFormData({ firstName: "", lastName: "", email: "", role: "Support Executive" });
+    setFormData({
+      firstName: "",
+      lastName: "",
+      email: "",
+      role: "Support Executive",
+      gender: "",
+      dateOfBirth: "",
+      dateOfJoining: "",
+      address: "",
+      country: "",
+      flatHouseNo: "",
+      streetAddress: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      latitude: "",
+      longitude: "",
+    });
   };
 
   const FX = {
@@ -381,7 +427,8 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
       </div>
 
       {/* Body */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
+      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+        {/* User Information */}
         <div>
           <h3 className="font-heading text-[13px] font-bold text-slate-800 mb-4 tracking-tight">User Information</h3>
           <div className="space-y-3">
@@ -415,6 +462,104 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
                 <MenuItem value="Super Admin" sx={{ fontSize: "0.82rem" }}>Super Admin</MenuItem>
               </Select>
             </FormControl>
+          </div>
+        </div>
+
+        {/* More Information */}
+        <div>
+          <h3 className="font-heading text-[13px] font-bold text-slate-800 mb-4 tracking-tight">More Information</h3>
+          <div className="space-y-3">
+            <FormControl size="small" fullWidth sx={FX}>
+              <InputLabel>Gender</InputLabel>
+              <Select label="Gender" value={formData.gender} onChange={e => handleChange("gender", e.target.value)} displayEmpty>
+                <MenuItem value="" sx={{ fontSize: "0.82rem", color: "#94A3B8" }}><em>Select gender</em></MenuItem>
+                <MenuItem value="Male" sx={{ fontSize: "0.82rem" }}>Male</MenuItem>
+                <MenuItem value="Female" sx={{ fontSize: "0.82rem" }}>Female</MenuItem>
+                <MenuItem value="Other" sx={{ fontSize: "0.82rem" }}>Other</MenuItem>
+                <MenuItem value="Prefer not to say" sx={{ fontSize: "0.82rem" }}>Prefer not to say</MenuItem>
+              </Select>
+            </FormControl>
+            <TextField
+              label="Date Of Birth"
+              type="date"
+              value={formData.dateOfBirth}
+              onChange={e => handleChange("dateOfBirth", e.target.value)}
+              size="small" fullWidth
+              InputLabelProps={{ shrink: true }}
+              sx={FX}
+            />
+            <TextField
+              label="Date Of Joining"
+              type="date"
+              value={formData.dateOfJoining}
+              onChange={e => handleChange("dateOfJoining", e.target.value)}
+              size="small" fullWidth
+              InputLabelProps={{ shrink: true }}
+              sx={FX}
+            />
+          </div>
+        </div>
+
+        {/* Address Details */}
+        <div>
+          <h3 className="font-heading text-[13px] font-bold text-slate-800 mb-4 tracking-tight">Address Details</h3>
+          <div className="space-y-3">
+            <TextField
+              label="Address"
+              value={formData.address}
+              onChange={e => handleChange("address", e.target.value)}
+              size="small" fullWidth sx={FX}
+            />
+            <TextField
+              label="Country / Region"
+              value={formData.country}
+              onChange={e => handleChange("country", e.target.value)}
+              size="small" fullWidth sx={FX}
+            />
+            <TextField
+              label="Flat / House No. / Building / Apartment Name"
+              value={formData.flatHouseNo}
+              onChange={e => handleChange("flatHouseNo", e.target.value)}
+              size="small" fullWidth sx={FX}
+            />
+            <TextField
+              label="Street Address"
+              value={formData.streetAddress}
+              onChange={e => handleChange("streetAddress", e.target.value)}
+              size="small" fullWidth sx={FX}
+            />
+            <TextField
+              label="City"
+              value={formData.city}
+              onChange={e => handleChange("city", e.target.value)}
+              size="small" fullWidth sx={FX}
+            />
+            <TextField
+              label="State / Province"
+              value={formData.state}
+              onChange={e => handleChange("state", e.target.value)}
+              size="small" fullWidth sx={FX}
+            />
+            <TextField
+              label="Zip / Postal Code"
+              value={formData.zipCode}
+              onChange={e => handleChange("zipCode", e.target.value)}
+              size="small" fullWidth sx={FX}
+            />
+            <div className="grid grid-cols-2 gap-3">
+              <TextField
+                label="Latitude"
+                value={formData.latitude}
+                onChange={e => handleChange("latitude", e.target.value)}
+                size="small" fullWidth sx={FX}
+              />
+              <TextField
+                label="Longitude"
+                value={formData.longitude}
+                onChange={e => handleChange("longitude", e.target.value)}
+                size="small" fullWidth sx={FX}
+              />
+            </div>
           </div>
         </div>
       </div>
