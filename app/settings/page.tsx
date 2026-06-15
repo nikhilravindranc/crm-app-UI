@@ -1110,26 +1110,48 @@ function RolesPanel() {
         )}
 
         {activeTab === "timeline" && (
-          roleActivities.length > 0 ? (
-            <div className="space-y-3">
-              {roleActivities.map(activity => (
-                <div key={activity.id} className="flex gap-3 items-start">
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#1D4ED8] mt-1.5 flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-[13px] font-medium text-slate-700">{activity.action}</span>
-                      <span className="text-[11px] text-slate-400 flex-shrink-0">{activity.timestamp}</span>
+          <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[#EFF6FF]">
+              <p className="font-heading text-[13px] font-bold text-slate-900">Activity Timeline</p>
+              <span className="text-[10.5px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">{roleActivities.length} events</span>
+            </div>
+            {roleActivities.length > 0 ? (
+              <div className="px-5 py-4 space-y-0">
+                {roleActivities.map((activity, i) => {
+                  const getIconAndColor = (action: string) => {
+                    if (action.includes("created")) return { icon: Plus, color: "#10B981", bg: "#D1FAE5" };
+                    if (action.includes("updated")) return { icon: PencilSimple, color: "#F59E0B", bg: "#FEF3C7" };
+                    if (action.includes("modified")) return { icon: CheckSquare, color: "#8B5CF6", bg: "#EDE9FE" };
+                    if (action.includes("changed")) return { icon: ArrowLeft, color: "#06B6D4", bg: "#CFFAFE" };
+                    return { icon: Info, color: "#64748B", bg: "#F1F5F9" };
+                  };
+                  const { icon: Icon, color, bg } = getIconAndColor(activity.action);
+                  return (
+                    <div key={activity.id} className="flex gap-4 group">
+                      {/* Timeline line + dot */}
+                      <div className="flex flex-col items-center flex-shrink-0">
+                        <div className="w-8 h-8 rounded-xl flex items-center justify-center z-10" style={{ backgroundColor: bg }}>
+                          <Icon size={15} color={color} weight="duotone" />
+                        </div>
+                        {i < roleActivities.length - 1 && <div className="w-px flex-1 bg-[#E3ECFC] my-1 min-h-[20px]" />}
+                      </div>
+                      {/* Content */}
+                      <div className="flex-1 pb-4">
+                        <p className="text-[12.5px] font-medium text-slate-700 group-hover:text-slate-900 transition-colors mt-1">{activity.action}</p>
+                        <p className="text-[10.5px] text-slate-400 mt-0.5 flex items-center gap-1">
+                          <User size={11} weight="duotone" />{activity.user} · {activity.timestamp}
+                        </p>
+                      </div>
                     </div>
-                    <div className="text-[11.5px] text-slate-500 mt-0.5">by {activity.user}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm px-5 py-8 text-center text-slate-300 text-[12.5px]">
-              No activity recorded for this role.
-            </div>
-          )
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="px-5 py-8 text-center text-slate-400 text-[12.5px]">
+                No activity recorded for this role.
+              </div>
+            )}
+          </div>
         )}
       </div>
 
