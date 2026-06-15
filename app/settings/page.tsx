@@ -95,19 +95,34 @@ const ROLE_BADGE: Record<string, { bg: string; text: string; border: string }> =
   "Team Leader":        { bg:"#FEF2F2", text:"#DC2626", border:"#FECACA" },
 };
 
-interface RoleNode { id: string; name: string; description: string; children?: RoleNode[]; }
+interface RoleNode {
+  id: string; name: string; description: string; reportsTo?: string; department?: string; createdDate?: string; children?: RoleNode[];
+}
+interface RoleActivity {
+  id: string; roleId: string; action: string; user: string; timestamp: string;
+}
+
 const ROLE_TREE: RoleNode[] = [{
-  id:"admin", name:"Administrator", description:"Full access administrator",
+  id:"admin", name:"Administrator", description:"Full access administrator", reportsTo:"—", department:"Management",
   children:[
-    { id:"vp", name:"VP of Operations", description:"VP-level operations access",
-      children:[{ id:"ops", name:"Operations Manager", description:"Manages operations team",
-        children:[{ id:"se", name:"Support Executive", description:"Customer support role", children:[] }]
+    { id:"vp", name:"VP of Operations", description:"VP-level operations access", reportsTo:"Administrator", department:"Operations", createdDate:"2025-10-15",
+      children:[{ id:"ops", name:"Operations Manager", description:"Manages operations team", reportsTo:"VP of Operations", department:"Operations", createdDate:"2025-11-20",
+        children:[{ id:"se", name:"Support Executive", description:"Customer support role", reportsTo:"Operations Manager", department:"Support", createdDate:"2025-12-01", children:[] }]
       }]
     },
-    { id:"tl", name:"Team Leader", description:"Team leadership role", children:[] },
-    { id:"sa", name:"Super Admin", description:"Super administrator with all permissions", children:[] },
+    { id:"tl", name:"Team Leader", description:"Team leadership role", reportsTo:"Administrator", department:"Management", createdDate:"2026-01-10", children:[] },
+    { id:"sa", name:"Super Admin", description:"Super administrator with all permissions", reportsTo:"Administrator", department:"Management", createdDate:"2025-09-05", children:[] },
   ],
 }];
+
+const ROLE_ACTIVITIES: RoleActivity[] = [
+  { id:"1", roleId:"admin", action:"Role updated", user:"PM SDL", timestamp:"2026-06-15 14:30" },
+  { id:"2", roleId:"admin", action:"Permissions modified", user:"PM SDL", timestamp:"2026-06-14 10:15" },
+  { id:"3", roleId:"vp", action:"Department changed to Operations", user:"Admin", timestamp:"2026-06-13 16:45" },
+  { id:"4", roleId:"ops", action:"Role created", user:"PM SDL", timestamp:"2026-06-12 09:20" },
+  { id:"5", roleId:"se", action:"Reporting structure updated", user:"Admin", timestamp:"2026-06-11 13:00" },
+  { id:"6", roleId:"tl", action:"Description updated", user:"PM SDL", timestamp:"2026-06-10 15:30" },
+];
 
 // ─────────────────────────────────────────────
 //  Shared UI primitives — NO <p> tags
@@ -821,6 +836,124 @@ function OrganizationPanel() {
 }
 
 // ─────────────────────────────────────────────
+//  New Role Drawer
+// ─────────────────────────────────────────────
+function NewRoleDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [formData, setFormData] = useState({
+    roleName: "",
+    roleDescription: "",
+    reportsTo: "",
+    department: "",
+    status: "Active",
+  });
+
+  const handleChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = () => {
+    if (formData.roleName.trim()) {
+      console.log("New role:", formData);
+      onClose();
+      setFormData({ roleName: "", roleDescription: "", reportsTo: "", department: "", status: "Active" });
+    }
+  };
+
+  const handleClose = () => {
+    onClose();
+    setFormData({ roleName: "", roleDescription: "", reportsTo: "", department: "", status: "Active" });
+  };
+
+  const FX = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "10px",
+      backgroundColor: "#EFF6FF",
+      fontSize: "0.82rem",
+      "& fieldset":             { borderColor: "#E3ECFC", borderWidth: 1.5 },
+      "&:hover fieldset":       { borderColor: "#60A5FA" },
+      "&.Mui-focused fieldset": { borderColor: "#1D4ED8", borderWidth: 2 },
+      "&.Mui-focused":          { boxShadow: "0 0 0 2px #93C5FD" },
+      "& input":                { padding: "10px 14px" },
+    },
+    "& .MuiInputLabel-root":             { fontSize: "0.79rem", color: "#6B7280" },
+    "& .MuiInputLabel-root.Mui-focused": { color: "#1D4ED8" },
+    "& .MuiSelect-select":               { fontSize: "0.82rem", padding: "10px 14px", backgroundColor: "#EFF6FF" },
+  };
+
+  return (
+    <Drawer anchor="right" open={open} onClose={handleClose}
+      PaperProps={{ sx: { width: { xs: "100%", sm: 520 }, display: "flex", flexDirection: "column", bgcolor: "#F8FAFF", boxShadow: "-12px 0 48px rgba(12,36,114,0.12)" } }}>
+      {/* Header */}
+      <div className="flex items-center justify-between px-6 py-4 bg-[#f9fbff] border-b border-[#E3ECFC] flex-shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-[#8B5CF6] flex items-center justify-center shadow-sm">
+            <ShieldCheck size={18} color="#fff" weight="duotone" />
+          </div>
+          <h2 className="font-heading text-[16px] font-bold text-slate-900 tracking-tight">New Role</h2>
+        </div>
+        <Tooltip title="Close">
+          <IconButton size="small" onClick={handleClose}
+            sx={{ borderRadius: "9px", border: "1.5px solid #E3ECFC", "&:hover": { bgcolor: "#EFF6FF" } }}>
+            <X size={17} color="#64748B" weight="duotone" />
+          </IconButton>
+        </Tooltip>
+      </div>
+
+      {/* Body */}
+      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+        {/* Role Details */}
+        <div>
+          <h3 className="font-heading text-[13px] font-bold text-slate-800 mb-4 tracking-tight">Role Details</h3>
+          <div className="space-y-3">
+            <TextField label="Role Name" value={formData.roleName} onChange={e => handleChange("roleName", e.target.value)}
+              size="small" fullWidth sx={FX} />
+            <TextField label="Role Description" value={formData.roleDescription} onChange={e => handleChange("roleDescription", e.target.value)}
+              multiline minRows={3} size="small" fullWidth sx={FX} />
+            <FormControl size="small" fullWidth sx={FX}>
+              <InputLabel>Reports To</InputLabel>
+              <Select label="Reports To" value={formData.reportsTo} onChange={e => handleChange("reportsTo", e.target.value)} displayEmpty>
+                <MenuItem value="" sx={{ fontSize: "0.82rem", color: "#94A3B8" }}><em>Select a role</em></MenuItem>
+                <MenuItem value="Administrator" sx={{ fontSize: "0.82rem" }}>Administrator</MenuItem>
+                <MenuItem value="VP of Operations" sx={{ fontSize: "0.82rem" }}>VP of Operations</MenuItem>
+                <MenuItem value="Operations Manager" sx={{ fontSize: "0.82rem" }}>Operations Manager</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+        </div>
+
+        {/* Additional Information */}
+        <div>
+          <h3 className="font-heading text-[13px] font-bold text-slate-800 mb-4 tracking-tight">Additional Information</h3>
+          <div className="space-y-3">
+            <TextField label="Department" value={formData.department} onChange={e => handleChange("department", e.target.value)}
+              size="small" fullWidth sx={FX} />
+            <FormControl size="small" fullWidth sx={FX}>
+              <InputLabel>Status</InputLabel>
+              <Select label="Status" value={formData.status} onChange={e => handleChange("status", e.target.value)}>
+                <MenuItem value="Active" sx={{ fontSize: "0.82rem" }}>Active</MenuItem>
+                <MenuItem value="Inactive" sx={{ fontSize: "0.82rem" }}>Inactive</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="flex items-center justify-end gap-3 px-6 py-4 bg-[#f9fbff] border-t border-[#E3ECFC] flex-shrink-0">
+        <Button variant="text" onClick={handleClose}
+          sx={{ color: "#64748B", textTransform: "none", fontWeight: 600, fontSize: "0.82rem", borderRadius: "9px", px: 2.5, "&:hover": { bgcolor: "#EFF6FF" } }}>
+          Cancel
+        </Button>
+        <Button variant="contained" onClick={handleSubmit}
+          sx={{ bgcolor: "#1D4ED8", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: "0 1px 8px #1D4ED833", "&:hover": { bgcolor: "#60A5FA" }, "&:active": { bgcolor: "#0C2472" } }}>
+          Create Role
+        </Button>
+      </div>
+    </Drawer>
+  );
+}
+
+// ─────────────────────────────────────────────
 //  Roles panel
 // ─────────────────────────────────────────────
 function RoleTreeNode({ node, depth, selectedId, expandedIds, onSelect, onToggle }: {
@@ -866,38 +999,87 @@ function RoleTreeNode({ node, depth, selectedId, expandedIds, onSelect, onToggle
 function RolesPanel() {
   const [selectedRole, setSelectedRole] = useState<RoleNode>(ROLE_TREE[0]);
   const [activeTab, setActiveTab]       = useState<"overview"|"timeline">("overview");
+  const [viewMode, setViewMode]         = useState<"tree"|"list">("tree");
   const [expandedIds, setExpandedIds]   = useState<Set<string>>(
     new Set(["admin", "vp", "ops"])
   );
+  const [newRoleOpen, setNewRoleOpen] = useState(false);
 
   const toggleExpand = (id: string) =>
     setExpandedIds(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
 
+  const allRoles = (() => {
+    const roles: RoleNode[] = [];
+    const collect = (node: RoleNode) => {
+      roles.push(node);
+      node.children?.forEach(collect);
+    };
+    ROLE_TREE.forEach(collect);
+    return roles;
+  })();
+
+  const roleActivities = ROLE_ACTIVITIES.filter(a => a.roleId === selectedRole.id).sort((a, b) =>
+    new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  );
+
+  const RoleListView = () => (
+    <div className="flex-1 overflow-y-auto space-y-2">
+      {allRoles.map(role => (
+        <button key={role.id} onClick={() => setSelectedRole(role)}
+          className={`w-full text-left px-3 py-2.5 rounded-lg border transition-all ${
+            selectedRole.id === role.id
+              ? "bg-[#EFF6FF] border-[#1D4ED8] shadow-sm"
+              : "border-[#E3ECFC] hover:bg-[#f9fbff]"
+          }`}>
+          <div className={`text-[13px] font-semibold ${selectedRole.id === role.id ? "text-[#1D4ED8]" : "text-slate-700"}`}>
+            {role.name}
+          </div>
+          <div className="text-[11px] text-slate-500 mt-0.5">{role.description}</div>
+        </button>
+      ))}
+    </div>
+  );
+
   return (
     <div className="flex-1 flex overflow-hidden">
-      {/* Role tree */}
+      {/* Role sidebar */}
       <div className="w-[340px] flex-shrink-0 flex flex-col border-r border-[#E3ECFC] bg-[#f9fbff]">
         {/* Toolbar */}
         <div className="px-4 py-3 border-b border-[#E3ECFC] flex items-center gap-2">
-          <button className="flex items-center gap-1.5 bg-white border border-[#E3ECFC] rounded-xl px-3 py-1.5 text-[12px] font-semibold text-slate-600 hover:border-[#1D4ED8] hover:text-[#1D4ED8] transition-colors">
-            <Tree size={13} weight="duotone" />
-            Tree
-            <CaretDown size={10} weight="bold" />
-          </button>
+          <div className="flex items-center bg-white border border-[#E3ECFC] rounded-xl p-1 gap-1">
+            <button onClick={() => setViewMode("tree")}
+              className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
+                viewMode === "tree" ? "bg-[#EFF6FF] text-[#1D4ED8]" : "text-slate-600 hover:text-[#1D4ED8]"
+              }`}>
+              <Tree size={12} weight="duotone" />
+              Tree
+            </button>
+            <button onClick={() => setViewMode("list")}
+              className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
+                viewMode === "list" ? "bg-[#EFF6FF] text-[#1D4ED8]" : "text-slate-600 hover:text-[#1D4ED8]"
+              }`}>
+              <ListBullets size={12} weight="duotone" />
+              List
+            </button>
+          </div>
           <div className="flex-1" />
-          <Button variant="contained" size="small"
+          <Button variant="contained" size="small" onClick={() => setNewRoleOpen(true)}
             sx={{ bgcolor:"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", px:1.5, py:0.7, boxShadow:"0 1px 6px #1D4ED833", "&:hover":{bgcolor:"#60A5FA"} }}>
             New Role
           </Button>
         </div>
 
-        {/* Tree */}
-        <div className="flex-1 overflow-y-auto">
-          {ROLE_TREE.map(node => (
-            <RoleTreeNode key={node.id} node={node} depth={0}
-              selectedId={selectedRole.id} expandedIds={expandedIds}
-              onSelect={setSelectedRole} onToggle={toggleExpand} />
-          ))}
+        {/* Tree or List view */}
+        <div className="flex-1 overflow-y-auto p-2">
+          {viewMode === "tree" ? (
+            ROLE_TREE.map(node => (
+              <RoleTreeNode key={node.id} node={node} depth={0}
+                selectedId={selectedRole.id} expandedIds={expandedIds}
+                onSelect={setSelectedRole} onToggle={toggleExpand} />
+            ))
+          ) : (
+            <RoleListView />
+          )}
         </div>
       </div>
 
@@ -919,17 +1101,40 @@ function RolesPanel() {
 
         {activeTab === "overview" && (
           <SettingCard icon={ShieldCheck} title="Role Information" color="#8B5CF6">
-            <KV label="Role Name"        value={selectedRole.name}        />
-            <KV label="Role Description" value={selectedRole.description} />
+            <KV label="Role Name"        value={selectedRole.name}        editable onSave={() => {}} />
+            <KV label="Role Description" value={selectedRole.description} editable onSave={() => {}} />
+            <KV label="Reports To"       value={selectedRole.reportsTo ?? "—"} editable onSave={() => {}} />
+            <KV label="Department"       value={selectedRole.department ?? "—"} editable onSave={() => {}} />
+            <KV label="Created Date"     value={selectedRole.createdDate ?? "—"} />
           </SettingCard>
         )}
 
         {activeTab === "timeline" && (
-          <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm px-5 py-8 text-center text-slate-300 text-[12.5px]">
-            No activity recorded for this role.
-          </div>
+          roleActivities.length > 0 ? (
+            <div className="space-y-3">
+              {roleActivities.map(activity => (
+                <div key={activity.id} className="flex gap-3 items-start">
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#1D4ED8] mt-1.5 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[13px] font-medium text-slate-700">{activity.action}</span>
+                      <span className="text-[11px] text-slate-400 flex-shrink-0">{activity.timestamp}</span>
+                    </div>
+                    <div className="text-[11.5px] text-slate-500 mt-0.5">by {activity.user}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm px-5 py-8 text-center text-slate-300 text-[12.5px]">
+              No activity recorded for this role.
+            </div>
+          )
         )}
       </div>
+
+      {/* New Role Drawer */}
+      {newRoleOpen && <NewRoleDrawer open={newRoleOpen} onClose={() => setNewRoleOpen(false)} />}
     </div>
   );
 }
