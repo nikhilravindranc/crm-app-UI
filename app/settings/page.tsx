@@ -124,21 +124,61 @@ function SettingCard({ icon: Icon, title, color = "#1D4ED8", children, action }:
   );
 }
 
-function KV({ label, value, link, editable }: {
-  label: string; value: string; link?: boolean; editable?: boolean;
+function KV({ label, value, link, editable, onSave }: {
+  label: string; value: string; link?: boolean; editable?: boolean; onSave?: (newValue: string) => void;
 }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState(value);
   const empty = !value || value === "—" || value === "-";
+
+  const handleSave = () => {
+    if (editValue.trim()) {
+      onSave?.(editValue);
+      setIsEditing(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setEditValue(value);
+    setIsEditing(false);
+  };
+
   return (
     <div className="py-2.5 border-b border-[#EFF6FF] last:border-0 flex items-start justify-between group">
       <div className="flex-1 min-w-0">
         <div className="text-[10.5px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">{label}</div>
-        <div className={`text-[13px] font-medium leading-snug ${link?"text-[#1D4ED8]":empty?"text-slate-300":"text-slate-700"}`}>
-          {empty ? "—" : value}
-        </div>
+        {isEditing ? (
+          <div className="flex items-center gap-1.5 -mx-2">
+            <input
+              type="text"
+              value={editValue}
+              onChange={e => setEditValue(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === "Enter") handleSave();
+                if (e.key === "Escape") handleCancel();
+              }}
+              autoFocus
+              className="flex-1 px-2 py-1 text-[13px] font-medium border border-[#93C5FD] rounded-lg bg-white focus:outline-none focus:border-[#1D4ED8] focus:ring-1 focus:ring-[#93C5FD] text-slate-700"
+            />
+            <button onClick={handleSave} className="px-2 py-1 text-[11px] font-bold text-white bg-[#1D4ED8] rounded hover:bg-[#60A5FA] transition-colors whitespace-nowrap">
+              Save
+            </button>
+            <button onClick={handleCancel} className="px-2 py-1 text-[11px] font-semibold text-slate-500 border border-[#E3ECFC] rounded hover:bg-slate-50 transition-colors whitespace-nowrap">
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <div className={`text-[13px] font-medium leading-snug ${link?"text-[#1D4ED8]":empty?"text-slate-300":"text-slate-700"}`}>
+            {empty ? "—" : editValue}
+          </div>
+        )}
       </div>
-      {editable && (
+      {editable && !isEditing && (
         <Tooltip title="Edit">
-          <IconButton size="small" sx={{ p:0.4, mt:0.5, color:"#CBD5E1", opacity:0, transition:"opacity 0.15s", ".group:hover &":{opacity:1}, "&:hover":{color:"#1D4ED8",bgcolor:"#EFF6FF"}, borderRadius:"6px" }}>
+          <IconButton
+            onClick={() => setIsEditing(true)}
+            size="small"
+            sx={{ p:0.4, mt:0.5, color:"#CBD5E1", opacity:0, transition:"opacity 0.15s", ".group:hover &":{opacity:1}, "&:hover":{color:"#1D4ED8",bgcolor:"#EFF6FF"}, borderRadius:"6px", cursor:"pointer" }}>
             <PencilSimple size={13} weight="duotone" />
           </IconButton>
         </Tooltip>
@@ -205,22 +245,37 @@ function ProfileHero({ initials, name, role, subtitle, contacts, avatarBg, avata
 //  Personal Settings panel
 // ─────────────────────────────────────────────
 function PersonalSettingsPanel() {
+  const [data, setData] = useState({
+    firstName: "PM",
+    lastName: "SDL",
+    email: "pm@socialdnalabs.com",
+    mobileNo: "7788778855",
+    gender: "Prefer not to say",
+    dateOfBirth: "—",
+    dateOfJoining: "11/01/2025",
+    address: "—",
+  });
+
+  const updateField = (field: keyof typeof data, value: string) => {
+    setData(prev => ({ ...prev, [field]: value }));
+  };
+
   return (
     <div className="flex-1 overflow-y-auto bg-[#EFF6FF] px-6 py-6 space-y-4">
       <ProfileHero
         initials="PM" name="PM SDL" role="Super Admin"
         avatarBg="#FEF3C7" avatarText="#B45309"
         contacts={[
-          { icon:Envelope, value:"pm@socialdnalabs.com", link:true },
-          { icon:Phone,    value:"7788778855" },
+          { icon:Envelope, value:data.email, link:true },
+          { icon:Phone,    value:data.mobileNo },
         ]}
       />
       <SettingCard icon={User} title="User Information">
         <KVGrid>
-          <KV label="First Name" value="PM"  />
-          <KV label="Last Name"  value="SDL" />
-          <KV label="Email"      value="pm@socialdnalabs.com" link />
-          <KV label="Mobile No"  value="7788778855" />
+          <KV label="First Name" value={data.firstName} editable onSave={v => updateField("firstName", v)} />
+          <KV label="Last Name"  value={data.lastName} editable onSave={v => updateField("lastName", v)} />
+          <KV label="Email"      value={data.email} link editable onSave={v => updateField("email", v)} />
+          <KV label="Mobile No"  value={data.mobileNo} editable onSave={v => updateField("mobileNo", v)} />
         </KVGrid>
       </SettingCard>
       <SettingCard icon={ShieldCheck} title="Role Information" color="#8B5CF6">
@@ -228,13 +283,13 @@ function PersonalSettingsPanel() {
       </SettingCard>
       <SettingCard icon={IdentificationCard} title="More Information" color="#F59E0B">
         <KVGrid>
-          <KV label="Gender"          value="Prefer not to say" />
-          <KV label="Date Of Birth"   value="—" />
-          <KV label="Date Of Joining" value="11/01/2025" editable />
+          <KV label="Gender"          value={data.gender} editable onSave={v => updateField("gender", v)} />
+          <KV label="Date Of Birth"   value={data.dateOfBirth} editable onSave={v => updateField("dateOfBirth", v)} />
+          <KV label="Date Of Joining" value={data.dateOfJoining} editable onSave={v => updateField("dateOfJoining", v)} />
         </KVGrid>
       </SettingCard>
       <SettingCard icon={MapPin} title="Address" color="#10B981">
-        <KV label="Address" value="—" />
+        <KV label="Address" value={data.address} editable onSave={v => updateField("address", v)} />
       </SettingCard>
     </div>
   );
