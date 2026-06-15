@@ -1375,8 +1375,76 @@ function PermissionPanel() {
       )}
 
       {tab === "summary" && (
-        <div className="flex-1 flex items-center justify-center text-slate-300 text-[13px]">
-          Summary view coming soon.
+        <div className="flex-1 overflow-auto px-6 py-5 space-y-5">
+          {/* Role cards grid */}
+          <div className="grid grid-cols-3 gap-4">
+            {PERM_ROLES.map(role => {
+              const rolePerms = perms;
+              return (
+                <div key={role.key} className="bg-white rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
+                  {/* Role header badge */}
+                  <div className="px-4 py-3 border-b border-[#EFF6FF]">
+                    <span className="inline-block px-3 py-1 rounded-full text-[11px] font-bold text-white" style={{ backgroundColor: role.color }}>
+                      {role.label}
+                    </span>
+                  </div>
+                  {/* Module rows */}
+                  <div className="divide-y divide-[#F8FAFF]">
+                    {PERM_MODULES.map(mod => {
+                      const state = rolePerms[mod]?.[role.key];
+                      const activePerms = state
+                        ? (Object.entries(state) as [PermKey, boolean][]).filter(([, v]) => v).map(([k]) => k)
+                        : [];
+                      const hasAny = activePerms.length > 0;
+                      return (
+                        <div key={mod} className="flex items-center justify-between px-4 py-2 hover:bg-[#fafcff] transition-colors">
+                          <span className="text-[12.5px] text-slate-600 font-medium">{mod}</span>
+                          {hasAny ? (
+                            <div className="flex items-center gap-0.5">
+                              {activePerms.map(perm => {
+                                const meta = PERM_META[perm];
+                                if (!meta) return null;
+                                const Icon = meta.icon;
+                                return (
+                                  <Tooltip key={perm} title={meta.label}>
+                                    <span className="flex items-center justify-center w-5 h-5">
+                                      <Icon size={12} color={meta.color} weight={perm === "fullAccess" || perm === "delete" ? "fill" : "duotone"} />
+                                    </span>
+                                  </Tooltip>
+                                );
+                              })}
+                            </div>
+                          ) : (
+                            <Lock size={12} color="#CBD5E1" weight="duotone" />
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Legend */}
+          <div className="bg-white rounded-2xl border border-[#E3ECFC] px-5 py-4">
+            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3">Permission Legend</div>
+            <div className="grid grid-cols-4 gap-x-8 gap-y-2">
+              {(Object.entries(PERM_META) as [PermKey, typeof PERM_META[PermKey]][]).map(([key, meta]) => {
+                const Icon = meta.icon;
+                return (
+                  <div key={key} className="flex items-center gap-2">
+                    <Icon size={13} color={meta.color} weight={key === "fullAccess" || key === "delete" ? "fill" : "duotone"} />
+                    <span className="text-[12px] text-slate-600">{meta.label}</span>
+                  </div>
+                );
+              })}
+              <div className="flex items-center gap-2">
+                <Lock size={13} color="#CBD5E1" weight="duotone" />
+                <span className="text-[12px] text-slate-600">Data Sharing (Private)</span>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
