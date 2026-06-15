@@ -755,6 +755,29 @@ function UsersPanel() {
 //  Organization panel
 // ─────────────────────────────────────────────
 function OrganizationPanel() {
+  const [orgData, setOrgData] = useState({
+    companyName: "Social DNA Labs",
+    abbreviation: "SDL",
+    defaultCurrency: "INR",
+    country: "India",
+    taxId: "—",
+    domain: "—",
+    dateOfEstablishment: "—",
+    dateOfIncorporation: "—",
+    dateOfCommencement: "—",
+    timeZone: "Asia/Calcutta",
+    phoneNo: "9988775566",
+    email: "pm@socialdnalabs.com",
+    fax: "—",
+    website: "www.socialdnalabs.com",
+    companyDescription: "—",
+    registrationDetails: "—",
+  });
+
+  const handleSave = (field: string, value: string) => {
+    setOrgData(prev => ({ ...prev, [field]: value }));
+  };
+
   return (
     <div className="flex-1 overflow-y-auto bg-[#EFF6FF] px-6 py-6 space-y-4">
       <ProfileHero
@@ -769,29 +792,29 @@ function OrganizationPanel() {
       />
       <SettingCard icon={Buildings} title="General Information">
         <KVGrid>
-          <KV label="Company Name"            value="Social DNA Labs"  />
-          <KV label="Abbreviation"            value="SDL"              />
-          <KV label="Default Currency"        value="INR"              />
-          <KV label="Country"                 value="India"            />
-          <KV label="Tax ID"                  value="—"                />
-          <KV label="Domain"                  value="—"                />
-          <KV label="Date Of Establishment"   value="—"                />
-          <KV label="Date Of Incorporation"   value="—"                />
-          <KV label="Date Of Commencement"    value="—"                />
-          <KV label="Time Zone"               value="Asia/Calcutta"    />
+          <KV label="Company Name"            value={orgData.companyName}          editable onSave={(v) => handleSave("companyName", v)} />
+          <KV label="Abbreviation"            value={orgData.abbreviation}         editable onSave={(v) => handleSave("abbreviation", v)} />
+          <KV label="Default Currency"        value={orgData.defaultCurrency}      editable onSave={(v) => handleSave("defaultCurrency", v)} />
+          <KV label="Country"                 value={orgData.country}              editable onSave={(v) => handleSave("country", v)} />
+          <KV label="Tax ID"                  value={orgData.taxId}                editable onSave={(v) => handleSave("taxId", v)} />
+          <KV label="Domain"                  value={orgData.domain}               editable onSave={(v) => handleSave("domain", v)} />
+          <KV label="Date Of Establishment"   value={orgData.dateOfEstablishment}  editable onSave={(v) => handleSave("dateOfEstablishment", v)} />
+          <KV label="Date Of Incorporation"   value={orgData.dateOfIncorporation}  editable onSave={(v) => handleSave("dateOfIncorporation", v)} />
+          <KV label="Date Of Commencement"    value={orgData.dateOfCommencement}   editable onSave={(v) => handleSave("dateOfCommencement", v)} />
+          <KV label="Time Zone"               value={orgData.timeZone}             editable onSave={(v) => handleSave("timeZone", v)} />
         </KVGrid>
       </SettingCard>
       <SettingCard icon={Phone} title="Contact Information" color="#10B981">
         <KVGrid>
-          <KV label="Phone No" value="9988775566"             />
-          <KV label="Email"    value="pm@socialdnalabs.com" link />
-          <KV label="Fax"      value="—"                       />
-          <KV label="Website"  value="www.socialdnalabs.com" link />
+          <KV label="Phone No" value={orgData.phoneNo}    editable onSave={(v) => handleSave("phoneNo", v)} />
+          <KV label="Email"    value={orgData.email}      editable onSave={(v) => handleSave("email", v)} link />
+          <KV label="Fax"      value={orgData.fax}        editable onSave={(v) => handleSave("fax", v)} />
+          <KV label="Website"  value={orgData.website}    editable onSave={(v) => handleSave("website", v)} link />
         </KVGrid>
       </SettingCard>
       <SettingCard icon={IdentificationCard} title="Other Information" color="#F59E0B">
-        <KV label="Company Description" value="—" />
-        <KV label="Registration Details" value="—" />
+        <KV label="Company Description" value={orgData.companyDescription}   editable onSave={(v) => handleSave("companyDescription", v)} />
+        <KV label="Registration Details" value={orgData.registrationDetails} editable onSave={(v) => handleSave("registrationDetails", v)} />
       </SettingCard>
     </div>
   );
