@@ -6,6 +6,12 @@ import Tooltip from "@mui/material/Tooltip";
 import InputBase from "@mui/material/InputBase";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
+import Drawer from "@mui/material/Drawer";
+import TextField from "@mui/material/TextField";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
 import {
   Gear, User, UsersThree, Buildings, ShieldCheck, Lock,
   Envelope, Cube, House, UploadSimple, DownloadSimple,
@@ -296,9 +302,10 @@ function PersonalSettingsPanel() {
 }
 
 // ─────────────────────────────────────────────
-//  New User Modal
+//  New User Drawer
 // ─────────────────────────────────────────────
-function NewUserModal({ onClose, onSubmit }: {
+function NewUserDrawer({ open, onClose, onSubmit }: {
+  open: boolean;
   onClose: () => void;
   onSubmit: (data: { firstName: string; lastName: string; email: string; role: string }) => void;
 }) {
@@ -321,90 +328,110 @@ function NewUserModal({ onClose, onSubmit }: {
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center">
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-[500px] mx-4">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E3ECFC]">
-          <span className="text-[16px] font-extrabold text-slate-900">Create New User</span>
-          <button onClick={onClose} className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-[#EFF6FF] transition-colors">
-            <X size={18} color="#64748B" weight="bold" />
-          </button>
-        </div>
+  const handleClose = () => {
+    onClose();
+    setFormData({ firstName: "", lastName: "", email: "", role: "Support Executive" });
+  };
 
-        {/* Form */}
-        <div className="px-6 py-5 space-y-4">
-          <div>
-            <label className="block text-[11.5px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">First Name *</label>
-            <input
-              type="text"
-              placeholder="Enter first name"
+  const FX = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "10px",
+      backgroundColor: "#EFF6FF",
+      fontSize: "0.82rem",
+      "& fieldset":             { borderColor: "#E3ECFC", borderWidth: 1.5 },
+      "&:hover fieldset":       { borderColor: "#60A5FA" },
+      "&.Mui-focused fieldset": { borderColor: "#1D4ED8", borderWidth: 2 },
+      "&.Mui-focused":          { boxShadow: "0 0 0 2px #93C5FD" },
+      "& input":                { padding: "10px 14px" },
+    },
+    "& .MuiInputLabel-root":             { fontSize: "0.79rem", color: "#6B7280" },
+    "& .MuiInputLabel-root.Mui-focused": { color: "#1D4ED8" },
+    "& .MuiSelect-select":               { fontSize: "0.82rem", padding: "10px 14px", backgroundColor: "#EFF6FF" },
+  };
+
+  return (
+    <Drawer
+      anchor="right"
+      open={open}
+      onClose={handleClose}
+      PaperProps={{
+        sx: {
+          width: { xs: "100%", sm: 520 },
+          display: "flex",
+          flexDirection: "column",
+          bgcolor: "#F8FAFF",
+          boxShadow: "-12px 0 48px rgba(12,36,114,0.12)",
+        },
+      }}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between px-6 py-4 bg-[#f9fbff] border-b border-[#E3ECFC] flex-shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-[#1D4ED8] flex items-center justify-center shadow-sm">
+            <UsersThree size={18} color="#fff" weight="duotone" />
+          </div>
+          <h2 className="font-heading text-[16px] font-bold text-slate-900 tracking-tight">New User</h2>
+        </div>
+        <Tooltip title="Close">
+          <IconButton size="small" onClick={handleClose}
+            sx={{ borderRadius: "9px", border: "1.5px solid #E3ECFC", "&:hover": { bgcolor: "#EFF6FF" } }}>
+            <X size={17} color="#64748B" weight="duotone" />
+          </IconButton>
+        </Tooltip>
+      </div>
+
+      {/* Body */}
+      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
+        <div>
+          <h3 className="font-heading text-[13px] font-bold text-slate-800 mb-4 tracking-tight">User Information</h3>
+          <div className="space-y-3">
+            <TextField
+              label="First Name"
               value={formData.firstName}
               onChange={e => handleChange("firstName", e.target.value)}
-              onKeyDown={e => e.key === "Enter" && handleSubmit()}
-              className="w-full px-3 py-2 text-[13px] border border-[#E3ECFC] rounded-lg focus:outline-none focus:border-[#1D4ED8] focus:ring-1 focus:ring-[#93C5FD] bg-[#f9fbff]"
+              size="small" fullWidth sx={FX}
             />
-          </div>
-
-          <div>
-            <label className="block text-[11.5px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Last Name *</label>
-            <input
-              type="text"
-              placeholder="Enter last name"
+            <TextField
+              label="Last Name"
               value={formData.lastName}
               onChange={e => handleChange("lastName", e.target.value)}
-              onKeyDown={e => e.key === "Enter" && handleSubmit()}
-              className="w-full px-3 py-2 text-[13px] border border-[#E3ECFC] rounded-lg focus:outline-none focus:border-[#1D4ED8] focus:ring-1 focus:ring-[#93C5FD] bg-[#f9fbff]"
+              size="small" fullWidth sx={FX}
             />
-          </div>
-
-          <div>
-            <label className="block text-[11.5px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Email *</label>
-            <input
+            <TextField
+              label="Email"
               type="email"
-              placeholder="Enter email address"
               value={formData.email}
               onChange={e => handleChange("email", e.target.value)}
-              onKeyDown={e => e.key === "Enter" && handleSubmit()}
-              className="w-full px-3 py-2 text-[13px] border border-[#E3ECFC] rounded-lg focus:outline-none focus:border-[#1D4ED8] focus:ring-1 focus:ring-[#93C5FD] bg-[#f9fbff]"
+              size="small" fullWidth sx={FX}
             />
+            <FormControl size="small" fullWidth sx={FX}>
+              <InputLabel>Role</InputLabel>
+              <Select label="Role" value={formData.role} onChange={e => handleChange("role", e.target.value)}>
+                <MenuItem value="Administrator" sx={{ fontSize: "0.82rem" }}>Administrator</MenuItem>
+                <MenuItem value="VP of Operations" sx={{ fontSize: "0.82rem" }}>VP of Operations</MenuItem>
+                <MenuItem value="Operations Manager" sx={{ fontSize: "0.82rem" }}>Operations Manager</MenuItem>
+                <MenuItem value="Support Executive" sx={{ fontSize: "0.82rem" }}>Support Executive</MenuItem>
+                <MenuItem value="Team Leader" sx={{ fontSize: "0.82rem" }}>Team Leader</MenuItem>
+                <MenuItem value="Super Admin" sx={{ fontSize: "0.82rem" }}>Super Admin</MenuItem>
+              </Select>
+            </FormControl>
           </div>
-
-          <div>
-            <label className="block text-[11.5px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Role</label>
-            <select
-              value={formData.role}
-              onChange={e => handleChange("role", e.target.value)}
-              className="w-full px-3 py-2 text-[13px] border border-[#E3ECFC] rounded-lg focus:outline-none focus:border-[#1D4ED8] focus:ring-1 focus:ring-[#93C5FD] bg-[#f9fbff] text-slate-700"
-            >
-              <option>Administrator</option>
-              <option>VP of Operations</option>
-              <option>Operations Manager</option>
-              <option>Support Executive</option>
-              <option>Team Leader</option>
-              <option>Super Admin</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-[#E3ECFC] bg-[#f9fbff]">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-[12.5px] font-semibold text-slate-600 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={!formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim()}
-            className="px-4 py-2 text-[12.5px] font-semibold text-white bg-[#1D4ED8] rounded-lg hover:bg-[#60A5FA] disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors"
-          >
-            Create User
-          </button>
         </div>
       </div>
-    </div>
+
+      {/* Footer */}
+      <div className="flex items-center justify-end gap-3 px-6 py-4 bg-[#f9fbff] border-t border-[#E3ECFC] flex-shrink-0">
+        <Button variant="text" onClick={handleClose}
+          sx={{ color: "#64748B", textTransform: "none", fontWeight: 600, fontSize: "0.82rem", borderRadius: "9px", px: 2.5, "&:hover": { bgcolor: "#EFF6FF" } }}>
+          Cancel
+        </Button>
+        <Button variant="contained" onClick={handleSubmit}
+          disabled={!formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim()}
+          sx={{ bgcolor: "#1D4ED8", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: "0 1px 8px #1D4ED833", "&:hover": { bgcolor: "#60A5FA" }, "&:active": { bgcolor: "#0C2472" }, "&:disabled": { bgcolor: "#CBD5E1", color: "#F1F5F9" } }}>
+          Create User
+        </Button>
+      </div>
+    </Drawer>
   );
 }
 
@@ -569,13 +596,12 @@ function UsersPanel() {
       {/* Detail */}
       <UserDetailPanel user={selected} onUpdate={updateSelectedUser} />
 
-      {/* New User Modal */}
-      {showNewUserModal && (
-        <NewUserModal
-          onClose={() => setShowNewUserModal(false)}
-          onSubmit={handleCreateUser}
-        />
-      )}
+      {/* New User Drawer */}
+      <NewUserDrawer
+        open={showNewUserModal}
+        onClose={() => setShowNewUserModal(false)}
+        onSubmit={handleCreateUser}
+      />
     </div>
   );
 }
