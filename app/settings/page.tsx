@@ -22,6 +22,7 @@ import {
   Lightning, AddressBook, SquaresFour, UserPlus, ArrowLeft, Info,
   DotsSixVertical, TextT, TextAlignLeft, ListBullets, CalendarBlank,
   Hash, CurrencyDollar, CheckSquare, LinkSimple, ChartBar, X,
+  ClockCounterClockwise,
 } from "@phosphor-icons/react";
 
 // ─────────────────────────────────────────────
@@ -99,7 +100,7 @@ interface RoleNode {
   id: string; name: string; description: string; reportsTo?: string; department?: string; createdDate?: string; children?: RoleNode[];
 }
 interface RoleActivity {
-  id: string; roleId: string; action: string; user: string; timestamp: string;
+  id: string; roleId: string; action: string; user: string; userEmail: string; timestamp: string;
 }
 
 const ROLE_TREE: RoleNode[] = [{
@@ -116,12 +117,17 @@ const ROLE_TREE: RoleNode[] = [{
 }];
 
 const ROLE_ACTIVITIES: RoleActivity[] = [
-  { id:"1", roleId:"admin", action:"Role updated", user:"PM SDL", timestamp:"2026-06-15 14:30" },
-  { id:"2", roleId:"admin", action:"Permissions modified", user:"PM SDL", timestamp:"2026-06-14 10:15" },
-  { id:"3", roleId:"vp", action:"Department changed to Operations", user:"Admin", timestamp:"2026-06-13 16:45" },
-  { id:"4", roleId:"ops", action:"Role created", user:"PM SDL", timestamp:"2026-06-12 09:20" },
-  { id:"5", roleId:"se", action:"Reporting structure updated", user:"Admin", timestamp:"2026-06-11 13:00" },
-  { id:"6", roleId:"tl", action:"Description updated", user:"PM SDL", timestamp:"2026-06-10 15:30" },
+  { id:"1", roleId:"admin", action:"Role updated",                    user:"PM SDL", userEmail:"pm@socialdnalabs.com",    timestamp:"2026-06-15 14:30" },
+  { id:"2", roleId:"admin", action:"Permissions modified",            user:"PM SDL", userEmail:"pm@socialdnalabs.com",    timestamp:"2026-06-14 10:15" },
+  { id:"3", roleId:"admin", action:"Role created",                    user:"PM SDL", userEmail:"pm@socialdnalabs.com",    timestamp:"2026-06-12 09:20" },
+  { id:"4", roleId:"vp",    action:"Department changed to Operations", user:"Admin",  userEmail:"admin@mailinator.com",    timestamp:"2026-06-13 16:45" },
+  { id:"5", roleId:"vp",    action:"Role created",                    user:"PM SDL", userEmail:"pm@socialdnalabs.com",    timestamp:"2026-05-27 14:30" },
+  { id:"6", roleId:"ops",   action:"Role created",                    user:"PM SDL", userEmail:"pm@socialdnalabs.com",    timestamp:"2026-06-12 09:20" },
+  { id:"7", roleId:"se",    action:"Reporting structure updated",     user:"Admin",  userEmail:"admin@mailinator.com",    timestamp:"2026-06-11 13:00" },
+  { id:"8", roleId:"se",    action:"Role created",                    user:"PM SDL", userEmail:"pm@socialdnalabs.com",    timestamp:"2026-05-27 14:38" },
+  { id:"9", roleId:"tl",    action:"Description updated",             user:"PM SDL", userEmail:"pm@socialdnalabs.com",    timestamp:"2026-06-10 15:30" },
+  { id:"10",roleId:"tl",    action:"Role created",                    user:"PM SDL", userEmail:"pm@socialdnalabs.com",    timestamp:"2026-05-27 14:38" },
+  { id:"11",roleId:"sa",    action:"Role created",                    user:"PM SDL", userEmail:"pm@socialdnalabs.com",    timestamp:"2026-05-27 14:38" },
 ];
 
 // ─────────────────────────────────────────────
@@ -1109,50 +1115,86 @@ function RolesPanel() {
           </SettingCard>
         )}
 
-        {activeTab === "timeline" && (
-          <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-[#EFF6FF]">
-              <p className="font-heading text-[13px] font-bold text-slate-900">Activity Timeline</p>
-              <span className="text-[10.5px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">{roleActivities.length} events</span>
-            </div>
-            {roleActivities.length > 0 ? (
-              <div className="px-5 py-4 space-y-0">
-                {roleActivities.map((activity, i) => {
-                  const getIconAndColor = (action: string) => {
-                    if (action.includes("created")) return { icon: Plus, color: "#10B981", bg: "#D1FAE5" };
-                    if (action.includes("updated")) return { icon: PencilSimple, color: "#F59E0B", bg: "#FEF3C7" };
-                    if (action.includes("modified")) return { icon: CheckSquare, color: "#8B5CF6", bg: "#EDE9FE" };
-                    if (action.includes("changed")) return { icon: ArrowLeft, color: "#06B6D4", bg: "#CFFAFE" };
-                    return { icon: Info, color: "#64748B", bg: "#F1F5F9" };
-                  };
-                  const { icon: Icon, color, bg } = getIconAndColor(activity.action);
-                  return (
-                    <div key={activity.id} className="flex gap-4 group">
-                      {/* Timeline line + dot */}
-                      <div className="flex flex-col items-center flex-shrink-0">
-                        <div className="w-8 h-8 rounded-xl flex items-center justify-center z-10" style={{ backgroundColor: bg }}>
-                          <Icon size={15} color={color} weight="duotone" />
-                        </div>
-                        {i < roleActivities.length - 1 && <div className="w-px flex-1 bg-[#E3ECFC] my-1 min-h-[20px]" />}
+        {activeTab === "timeline" && (() => {
+          const fmt = (ts: string) => {
+            const d = new Date(ts);
+            return {
+              date: d.toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" }),
+              time: d.toLocaleTimeString("en-US", { hour:"2-digit", minute:"2-digit", hour12:true }).toLowerCase(),
+            };
+          };
+          const getIcon = (action: string) => {
+            if (action.toLowerCase().includes("created")) return { icon: Plus,          color:"#1D4ED8", bg:"#EFF6FF" };
+            if (action.toLowerCase().includes("updated")) return { icon: PencilSimple,  color:"#1D4ED8", bg:"#EFF6FF" };
+            if (action.toLowerCase().includes("modified"))return { icon: PencilSimple,  color:"#1D4ED8", bg:"#EFF6FF" };
+            if (action.toLowerCase().includes("changed")) return { icon: PencilSimple,  color:"#1D4ED8", bg:"#EFF6FF" };
+            return                                               { icon: PencilSimple,  color:"#1D4ED8", bg:"#EFF6FF" };
+          };
+          // group by date
+          const grouped: { date: string; items: typeof roleActivities }[] = [];
+          roleActivities.forEach(a => {
+            const { date } = fmt(a.timestamp);
+            const grp = grouped.find(g => g.date === date);
+            if (grp) grp.items.push(a);
+            else grouped.push({ date, items: [a] });
+          });
+
+          return (
+            <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center gap-2 px-5 py-3.5 border-b border-[#EFF6FF]">
+                <div className="w-6 h-6 rounded-lg bg-[#EFF6FF] flex items-center justify-center">
+                  <ClockCounterClockwise size={13} color="#1D4ED8" weight="duotone" />
+                </div>
+                <span className="font-heading text-[11px] font-bold uppercase tracking-[0.12em] text-[#1D4ED8]">History</span>
+              </div>
+
+              {roleActivities.length > 0 ? (
+                <div className="px-5 py-4 space-y-5">
+                  {grouped.map(({ date, items }) => (
+                    <div key={date}>
+                      {/* Date divider */}
+                      <div className="flex items-center gap-3 mb-4">
+                        <span className="text-[11px] font-semibold text-slate-400 whitespace-nowrap">{date}</span>
+                        <div className="flex-1 h-px bg-[#E3ECFC]" />
                       </div>
-                      {/* Content */}
-                      <div className="flex-1 pb-4">
-                        <p className="text-[12.5px] font-medium text-slate-700 group-hover:text-slate-900 transition-colors mt-1">{activity.action}</p>
-                        <p className="text-[10.5px] text-slate-400 mt-0.5 flex items-center gap-1">
-                          <User size={11} weight="duotone" />{activity.user} · {activity.timestamp}
-                        </p>
+                      {/* Items for this date */}
+                      <div className="space-y-4">
+                        {items.map(activity => {
+                          const { time } = fmt(activity.timestamp);
+                          const { icon: Icon, color, bg } = getIcon(activity.action);
+                          const [verb, ...rest] = activity.action.split(" ");
+                          return (
+                            <div key={activity.id} className="flex items-start gap-4">
+                              {/* Time */}
+                              <span className="text-[11px] text-slate-400 font-medium w-[60px] flex-shrink-0 pt-0.5">{time}</span>
+                              {/* Icon */}
+                              <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: bg }}>
+                                <Icon size={13} color={color} weight="duotone" />
+                              </div>
+                              {/* Text */}
+                              <div className="flex-1 min-w-0">
+                                <div className="text-[13px] text-slate-700 leading-snug">
+                                  <span className="font-bold">{verb}:</span>{" "}
+                                  <span className="font-medium">{rest.join(" ")}</span>
+                                </div>
+                                <div className="text-[11.5px] text-[#1D4ED8] mt-0.5">by {activity.userEmail}</div>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="px-5 py-8 text-center text-slate-400 text-[12.5px]">
-                No activity recorded for this role.
-              </div>
-            )}
-          </div>
-        )}
+                  ))}
+                </div>
+              ) : (
+                <div className="px-5 py-8 text-center text-slate-400 text-[12.5px]">
+                  No activity recorded for this role.
+                </div>
+              )}
+            </div>
+          );
+        })()}
       </div>
 
       {/* New Role Drawer */}
