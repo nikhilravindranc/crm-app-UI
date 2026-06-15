@@ -298,27 +298,55 @@ function PersonalSettingsPanel() {
 // ─────────────────────────────────────────────
 //  Users panel
 // ─────────────────────────────────────────────
-function UserDetailPanel({ user }: { user: UserRecord }) {
+function UserDetailPanel({ user, onUpdate }: { user: UserRecord; onUpdate: (updates: Partial<UserRecord>) => void }) {
+  const [data, setData] = useState<Record<string, string>>({
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    phone: user.phone || "—",
+    gender: "Prefer not to say",
+    dateOfBirth: "—",
+    dateOfJoining: "11/01/2025",
+    address: "—",
+  });
+
+  const updateField = (field: string, value: string) => {
+    setData(prev => ({ ...prev, [field]: value }));
+    if (field === "firstName" || field === "lastName" || field === "email" || field === "phone") {
+      onUpdate({ [field]: value });
+    }
+  };
+
   return (
     <div className="overflow-y-auto bg-[#EFF6FF] px-5 py-5 space-y-4 h-full">
       <ProfileHero
         initials={user.initials} name={user.name} role={user.role}
         avatarBg={user.avatarColor} avatarText={user.textColor}
         contacts={[
-          { icon:Envelope, value:user.email, link:true },
-          ...(user.phone ? [{ icon:Phone, value:user.phone }] : []),
+          { icon:Envelope, value:data.email, link:true },
+          ...(data.phone && data.phone !== "—" ? [{ icon:Phone, value:data.phone }] : []),
         ]}
       />
       <SettingCard icon={User} title="User Information">
         <KVGrid>
-          <KV label="First Name" value={user.firstName} />
-          <KV label="Last Name"  value={user.lastName}  />
-          <KV label="Email"      value={user.email} link />
-          <KV label="Mobile No"  value={user.phone || "—"} />
+          <KV label="First Name" value={data.firstName} editable onSave={v => updateField("firstName", v)} />
+          <KV label="Last Name"  value={data.lastName} editable onSave={v => updateField("lastName", v)} />
+          <KV label="Email"      value={data.email} link editable onSave={v => updateField("email", v)} />
+          <KV label="Mobile No"  value={data.phone} editable onSave={v => updateField("phone", v)} />
         </KVGrid>
       </SettingCard>
       <SettingCard icon={ShieldCheck} title="Role Information" color="#8B5CF6">
         <KV label="Role" value={user.role} />
+      </SettingCard>
+      <SettingCard icon={IdentificationCard} title="More Information" color="#F59E0B">
+        <KVGrid>
+          <KV label="Gender"          value={data.gender} editable onSave={v => updateField("gender", v)} />
+          <KV label="Date Of Birth"   value={data.dateOfBirth} editable onSave={v => updateField("dateOfBirth", v)} />
+          <KV label="Date Of Joining" value={data.dateOfJoining} editable onSave={v => updateField("dateOfJoining", v)} />
+        </KVGrid>
+      </SettingCard>
+      <SettingCard icon={MapPin} title="Address" color="#10B981">
+        <KV label="Address" value={data.address} editable onSave={v => updateField("address", v)} />
       </SettingCard>
     </div>
   );
@@ -336,6 +364,10 @@ function UsersPanel() {
   const toggleCheck = (id: number, e: React.MouseEvent) => {
     e.stopPropagation();
     setChecked(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+
+  const updateSelectedUser = (updates: Partial<UserRecord>) => {
+    setSelected(prev => ({ ...prev, ...updates }));
   };
 
   return (
@@ -397,7 +429,7 @@ function UsersPanel() {
       </div>
 
       {/* Detail */}
-      <UserDetailPanel user={selected} />
+      <UserDetailPanel user={selected} onUpdate={updateSelectedUser} />
     </div>
   );
 }
