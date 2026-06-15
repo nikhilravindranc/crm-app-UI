@@ -107,7 +107,7 @@ export default function TasksPage() {
     const matchSearch = !q || t.subject.toLowerCase().includes(q) || t.contact.toLowerCase().includes(q) || t.relatedTo.toLowerCase().includes(q);
 
     const matchFilters = activeFilters.every(f => {
-      const raw = (t as Record<string, string>)[f.column] ?? "";
+      const raw = (t as unknown as Record<string, string>)[f.column] ?? "";
       const val = raw.toLowerCase();
       const fv  = f.value.toLowerCase();
       switch (f.operator) {
