@@ -458,7 +458,7 @@ function UserDetailPanel({ user, onUpdate }: { user: UserRecord; onUpdate: (upda
   };
 
   return (
-    <div className="overflow-y-auto bg-[#EFF6FF] px-5 py-5 space-y-4 h-full">
+    <div className="flex-1 overflow-y-auto bg-[#EFF6FF] px-5 py-5 space-y-4">
       <ProfileHero
         initials={user.initials} name={user.name} role={user.role}
         avatarBg={user.avatarColor} avatarText={user.textColor}
