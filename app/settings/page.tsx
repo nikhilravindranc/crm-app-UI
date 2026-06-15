@@ -296,6 +296,119 @@ function PersonalSettingsPanel() {
 }
 
 // ─────────────────────────────────────────────
+//  New User Modal
+// ─────────────────────────────────────────────
+function NewUserModal({ onClose, onSubmit }: {
+  onClose: () => void;
+  onSubmit: (data: { firstName: string; lastName: string; email: string; role: string }) => void;
+}) {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    role: "Support Executive",
+  });
+
+  const handleChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = () => {
+    if (formData.firstName.trim() && formData.lastName.trim() && formData.email.trim()) {
+      onSubmit(formData);
+      setFormData({ firstName: "", lastName: "", email: "", role: "Support Executive" });
+      onClose();
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center">
+      <div className="bg-white rounded-2xl shadow-lg w-full max-w-[500px] mx-4">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E3ECFC]">
+          <span className="text-[16px] font-extrabold text-slate-900">Create New User</span>
+          <button onClick={onClose} className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-[#EFF6FF] transition-colors">
+            <X size={18} color="#64748B" weight="bold" />
+          </button>
+        </div>
+
+        {/* Form */}
+        <div className="px-6 py-5 space-y-4">
+          <div>
+            <label className="block text-[11.5px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">First Name *</label>
+            <input
+              type="text"
+              placeholder="Enter first name"
+              value={formData.firstName}
+              onChange={e => handleChange("firstName", e.target.value)}
+              onKeyDown={e => e.key === "Enter" && handleSubmit()}
+              className="w-full px-3 py-2 text-[13px] border border-[#E3ECFC] rounded-lg focus:outline-none focus:border-[#1D4ED8] focus:ring-1 focus:ring-[#93C5FD] bg-[#f9fbff]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[11.5px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Last Name *</label>
+            <input
+              type="text"
+              placeholder="Enter last name"
+              value={formData.lastName}
+              onChange={e => handleChange("lastName", e.target.value)}
+              onKeyDown={e => e.key === "Enter" && handleSubmit()}
+              className="w-full px-3 py-2 text-[13px] border border-[#E3ECFC] rounded-lg focus:outline-none focus:border-[#1D4ED8] focus:ring-1 focus:ring-[#93C5FD] bg-[#f9fbff]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[11.5px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Email *</label>
+            <input
+              type="email"
+              placeholder="Enter email address"
+              value={formData.email}
+              onChange={e => handleChange("email", e.target.value)}
+              onKeyDown={e => e.key === "Enter" && handleSubmit()}
+              className="w-full px-3 py-2 text-[13px] border border-[#E3ECFC] rounded-lg focus:outline-none focus:border-[#1D4ED8] focus:ring-1 focus:ring-[#93C5FD] bg-[#f9fbff]"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[11.5px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Role</label>
+            <select
+              value={formData.role}
+              onChange={e => handleChange("role", e.target.value)}
+              className="w-full px-3 py-2 text-[13px] border border-[#E3ECFC] rounded-lg focus:outline-none focus:border-[#1D4ED8] focus:ring-1 focus:ring-[#93C5FD] bg-[#f9fbff] text-slate-700"
+            >
+              <option>Administrator</option>
+              <option>VP of Operations</option>
+              <option>Operations Manager</option>
+              <option>Support Executive</option>
+              <option>Team Leader</option>
+              <option>Super Admin</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-[#E3ECFC] bg-[#f9fbff]">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-[12.5px] font-semibold text-slate-600 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={!formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim()}
+            className="px-4 py-2 text-[12.5px] font-semibold text-white bg-[#1D4ED8] rounded-lg hover:bg-[#60A5FA] disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors"
+          >
+            Create User
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
 //  Users panel
 // ─────────────────────────────────────────────
 function UserDetailPanel({ user, onUpdate }: { user: UserRecord; onUpdate: (updates: Partial<UserRecord>) => void }) {
@@ -356,8 +469,10 @@ function UsersPanel() {
   const [selected, setSelected]   = useState<UserRecord>(USERS[0]);
   const [search, setSearch]       = useState("");
   const [checked, setChecked]     = useState<number[]>([]);
+  const [showNewUserModal, setShowNewUserModal] = useState(false);
+  const [users, setUsers] = useState<UserRecord[]>(USERS);
 
-  const filtered = USERS.filter(u =>
+  const filtered = users.filter(u =>
     !search || u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -368,6 +483,28 @@ function UsersPanel() {
 
   const updateSelectedUser = (updates: Partial<UserRecord>) => {
     setSelected(prev => ({ ...prev, ...updates }));
+  };
+
+  const handleCreateUser = (formData: { firstName: string; lastName: string; email: string; role: string }) => {
+    const initials = (formData.firstName[0] + formData.lastName[0]).toUpperCase();
+    const colors = ["#DBEAFE", "#DCE7F1", "#E0E7FF", "#F0FDF4"];
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+    const newUser: UserRecord = {
+      id: Math.max(...users.map(u => u.id)) + 1,
+      initials,
+      name: `${formData.firstName} ${formData.lastName}`,
+      email: formData.email,
+      role: formData.role,
+      phone: "",
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      avatarColor: randomColor,
+      textColor: "#1F2937",
+    };
+
+    setUsers(prev => [newUser, ...prev]);
+    setSelected(newUser);
   };
 
   return (
@@ -382,6 +519,7 @@ function UsersPanel() {
               sx={{ flex:1, fontSize:"0.75rem", color:"#334155", "& input::placeholder":{color:"#94A3B8",opacity:1} }} />
           </div>
           <Button variant="contained" size="small" startIcon={<Plus size={12} weight="duotone" />}
+            onClick={() => setShowNewUserModal(true)}
             sx={{ bgcolor:"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", px:1.5, py:0.7, whiteSpace:"nowrap", boxShadow:"0 1px 6px #1D4ED833", "&:hover":{bgcolor:"#60A5FA"} }}>
             New User
           </Button>
@@ -430,6 +568,14 @@ function UsersPanel() {
 
       {/* Detail */}
       <UserDetailPanel user={selected} onUpdate={updateSelectedUser} />
+
+      {/* New User Modal */}
+      {showNewUserModal && (
+        <NewUserModal
+          onClose={() => setShowNewUserModal(false)}
+          onSubmit={handleCreateUser}
+        />
+      )}
     </div>
   );
 }
