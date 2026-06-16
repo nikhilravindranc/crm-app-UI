@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import {
   AreaChart,
   Area,
@@ -38,56 +38,62 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   );
 };
 
-export default function RevenueChart() {
+export default function RevenueChart({ isDark = false }: { isDark?: boolean }) {
   const avg = data.reduce((s, d) => s + d.revenue, 0) / data.length;
+  const chartStroke = isDark ? "#60A5FA" : "#3B82F6";
 
   return (
-    <div className="rounded-2xl p-6 border border-white/30 h-full backdrop-blur-xl"
-      style={{ backgroundColor: "rgba(255, 255, 255, 0.6)", boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08)" }}>
+    <div className="rounded-2xl p-6 border h-full backdrop-blur-xl transition-colors duration-300"
+      style={{
+        backgroundColor: isDark ? "#0A0A0A" : "rgba(255, 255, 255, 0.6)",
+        borderColor: isDark ? "#27272A" : "rgba(255,255,255,0.3)",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08)",
+      }}>
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h3 className="text-[14px] font-bold text-[#0C2472]">Revenue Trend</h3>
+          <h3 className={`text-[14px] font-bold ${isDark ? "text-white" : "text-[#0C2472]"}`}>Revenue Trend</h3>
           <p className="text-[11px] text-slate-400 mt-0.5">Booked revenue · last 6 months</p>
         </div>
-        <span className="inline-flex items-center gap-1 text-[11px] font-bold bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-full">
+        <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full ${isDark ? "bg-emerald-900/40 text-emerald-400" : "bg-emerald-50 text-emerald-600"}`}>
           ↑ 30.4% growth
         </span>
       </div>
 
       <ResponsiveContainer width="100%" height={210}>
         <AreaChart data={data} margin={{ top: 10, right: 8, left: -8, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#F0F2F5" vertical={false} />
-          <ReferenceLine y={avg} stroke="#E3ECFC" strokeDasharray="4 3" label={{ value: "avg", fontSize: 9, fill: "#94A3B8" }} />
+          <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "#27272A" : "#F0F2F5"} vertical={false} />
+          <ReferenceLine y={avg} stroke={isDark ? "#27272A" : "#E3ECFC"} strokeDasharray="4 3" label={{ value: "avg", fontSize: 9, fill: isDark ? "#737373" : "#94A3B8" }} />
           <XAxis
             dataKey="month"
-            tick={{ fontSize: 11, fill: "#9CA3AF", fontWeight: 500 }}
+            tick={{ fontSize: 11, fill: isDark ? "#737373" : "#9CA3AF", fontWeight: 500 }}
             axisLine={false}
             tickLine={false}
           />
           <YAxis
             tickFormatter={fmt}
-            tick={{ fontSize: 11, fill: "#9CA3AF" }}
+            tick={{ fontSize: 11, fill: isDark ? "#737373" : "#9CA3AF" }}
             axisLine={false}
             tickLine={false}
             width={46}
           />
           <Tooltip
             content={<CustomTooltip />}
-            cursor={{ stroke: "#3B82F6", strokeWidth: 1, strokeDasharray: "4 3" }}
+            cursor={{ stroke: chartStroke, strokeWidth: 1, strokeDasharray: "4 3" }}
           />
           <Area
             type="monotone"
             dataKey="revenue"
-            stroke="#3B82F6"
+            stroke={chartStroke}
             strokeWidth={2.5}
-            fill="#3B82F6"
-            fillOpacity={0.06}
+            fill={chartStroke}
+            fillOpacity={isDark ? 0.15 : 0.06}
             dot={false}
-            activeDot={{ r: 5, fill: "#3B82F6", stroke: "#fff", strokeWidth: 2 }}
+            activeDot={{ r: 5, fill: chartStroke, stroke: isDark ? "#0A0A0A" : "#fff", strokeWidth: 2 }}
           />
         </AreaChart>
       </ResponsiveContainer>
     </div>
   );
 }
+

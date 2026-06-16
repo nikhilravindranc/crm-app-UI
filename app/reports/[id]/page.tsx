@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, use } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/components/layout/Sidebar";
@@ -70,7 +70,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
               </Tooltip>
               <h1 className="font-heading text-[16px] font-bold text-slate-900">{report.name}</h1>
               <Tooltip title="Report information">
-                <Info size={15} color="#94A3B8" weight="duotone" className="cursor-pointer hover:text-[#1D4ED8]" />
+                <Info size={15} color="#94A3B8" weight="duotone" className={`cursor-pointer transition-colors ${isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#1D4ED8]"}`} />
               </Tooltip>
             </div>
 
@@ -115,7 +115,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
             </div>
             <button
               onClick={() => setShowDetails(v => !v)}
-              className="flex items-center gap-1 text-[12px] font-semibold text-slate-500 hover:text-[#1D4ED8] transition-colors">
+              className={`flex items-center gap-1 text-[12px] font-semibold transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#D4D4D8]" : "text-slate-500 hover:text-[#1D4ED8]"}`}>
               Show Details
               <CaretDown size={12} weight="duotone" className={`transition-transform ${showDetails ? "rotate-180" : ""}`} />
             </button>
@@ -125,7 +125,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
           <div className="flex-1 bg-[#f9fbff] mx-6 my-4 rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
             {report.rows.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-64 text-slate-400">
-                <ChartBar size={32} color="#93C5FD" weight="duotone" className="mb-3" />
+                <ChartBar size={32} color="#4A7AE8" weight="duotone" className="mb-3" />
                 <p className="font-heading text-sm font-semibold text-slate-500">No data to display</p>
                 <p className="text-xs mt-1 text-slate-300">Run the report to see results</p>
               </div>

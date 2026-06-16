@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import Drawer from "@mui/material/Drawer";
 import TextField from "@mui/material/TextField";
@@ -61,7 +61,7 @@ const FX = {
     "& fieldset":           { borderColor: "#E3ECFC", borderWidth: 1.5 },
     "&:hover fieldset":     { borderColor: "#60A5FA" },
     "&.Mui-focused fieldset":{ borderColor: "#1D4ED8", borderWidth: 2 },
-    "&.Mui-focused":        { boxShadow: "0 0 0 2px #93C5FD" },
+    "&.Mui-focused":        { boxShadow: "0 0 0 2px #4A7AE8" },
     "& input":              { padding: "10px 14px" },
   },
   "& .MuiInputLabel-root":            { fontSize: "0.79rem", color: "#6B7280" },

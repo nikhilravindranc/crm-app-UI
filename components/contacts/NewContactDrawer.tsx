@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import Drawer from "@mui/material/Drawer";
 import TextField from "@mui/material/TextField";
@@ -36,7 +36,7 @@ const FX = {
     "& fieldset":             { borderColor: "#E3ECFC", borderWidth: 1.5 },
     "&:hover fieldset":       { borderColor: "#60A5FA" },
     "&.Mui-focused fieldset": { borderColor: "#1D4ED8", borderWidth: 2 },
-    "&.Mui-focused":          { boxShadow: "0 0 0 2px #93C5FD" },
+    "&.Mui-focused":          { boxShadow: "0 0 0 2px #4A7AE8" },
     "& input":                { padding: "9px 12px" },
   },
   "& .MuiInputLabel-root":             { fontSize: "0.78rem", color: "#6B7280" },
@@ -306,7 +306,7 @@ export default function NewContactDrawer({ open, onClose, mode = "create", initi
               <FormControlLabel
                 control={
                   <Checkbox checked={form.emailOptOut} onChange={e => set("emailOptOut", e.target.checked)} size="small"
-                    sx={{ color: "#CBD5E1", "&.Mui-checked": { color: "#1D4ED8" }, p: 0.75 }} />
+                    sx={{ color: "#E2E8F0", "&.Mui-checked": { color: "#1D4ED8" }, p: 0.75 }} />
                 }
                 label={<span className="text-[13px] text-slate-700 font-medium">Email Opt Out</span>}
                 sx={{ m: 0 }}

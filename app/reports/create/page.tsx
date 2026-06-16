@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/components/layout/Sidebar";
@@ -200,7 +200,7 @@ export default function CreateReportPage() {
                 <Tooltip title={primaryModule ? "Add related module" : "Select a primary module first"}>
                   <span>
                     <IconButton size="small" disabled={!primaryModule}
-                      sx={{ border:"1.5px solid #E3ECFC", borderRadius:"7px", p:0.4, color:"#1D4ED8", "&:hover":{ bgcolor:"#EFF6FF" }, "&.Mui-disabled":{ color:"#CBD5E1", borderColor:"#E3ECFC" } }}>
+                      sx={{ border:"1.5px solid #E3ECFC", borderRadius:"7px", p:0.4, color:"#1D4ED8", "&:hover":{ bgcolor:"#EFF6FF" }, "&.Mui-disabled":{ color:"#E2E8F0", borderColor:"#E3ECFC" } }}>
                       <Plus size={13} weight="duotone" />
                     </IconButton>
                   </span>
@@ -263,7 +263,7 @@ export default function CreateReportPage() {
                             <label key={field} className="flex items-center gap-2 px-1 py-1 rounded-lg hover:bg-[#f9fbff] cursor-pointer transition-colors">
                               <Checkbox size="small" checked={selectedColumns.includes(field)}
                                 onChange={() => toggleColumn(field)}
-                                sx={{ p:0.25, color:"#CBD5E1", "&.Mui-checked":{ color:"#1D4ED8" } }} />
+                                sx={{ p:0.25, color:"#E2E8F0", "&.Mui-checked":{ color:"#1D4ED8" } }} />
                               <span className="text-[12px] text-slate-700">{field}</span>
                             </label>
                           ))}
@@ -310,12 +310,12 @@ export default function CreateReportPage() {
 
               {filterTab === "Filters" && (
                 <div className="py-4 text-center text-slate-400">
-                  <FunnelSimple size={24} color="#93C5FD" weight="duotone" className="mx-auto mb-2" />
+                  <FunnelSimple size={24} color="#4A7AE8" weight="duotone" className="mx-auto mb-2" />
                   <p className="text-[12px] font-medium text-slate-500">No filters added</p>
                   <p className="text-[11px] text-slate-300 mt-0.5">Click + to add filter conditions</p>
                   <Button size="small" startIcon={<Plus size={12} weight="duotone" />}
                     disabled={!primaryModule}
-                    sx={{ mt:2, textTransform:"none", fontSize:"0.75rem", color:"#1D4ED8", fontWeight:600, borderRadius:"8px", "&:hover":{ bgcolor:"#EFF6FF" }, "&.Mui-disabled":{ color:"#CBD5E1" } }}>
+                    sx={{ mt:2, textTransform:"none", fontSize:"0.75rem", color:"#1D4ED8", fontWeight:600, borderRadius:"8px", "&:hover":{ bgcolor:"#EFF6FF" }, "&.Mui-disabled":{ color:"#E2E8F0" } }}>
                     Add Filter
                   </Button>
                 </div>

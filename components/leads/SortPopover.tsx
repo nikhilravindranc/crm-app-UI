@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import Popover from "@mui/material/Popover";
 import Select from "@mui/material/Select";
@@ -33,7 +33,7 @@ const SELECT_SX = {
   "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E3ECFC", borderWidth: 1.5 },
   "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#60A5FA" },
   "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#1D4ED8", borderWidth: 2 },
-  "&.Mui-focused": { boxShadow: "0 0 0 2px #93C5FD" },
+  "&.Mui-focused": { boxShadow: "0 0 0 2px #4A7AE8" },
   "& .MuiSelect-select": { py: "6px", px: "10px" },
 };
 

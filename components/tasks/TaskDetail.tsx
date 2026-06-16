@@ -1,8 +1,9 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Sidebar from "@/components/layout/Sidebar";
+import { useTheme } from "@/components/ThemeContext";
 import TopBar from "@/components/layout/TopBar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
@@ -123,11 +124,22 @@ const STATUS_CFG: Record<string, { bg: string; text: string; dot: string }> = {
   "Backlog":     { bg: "#F1F5F9",  text: "#475569", dot: "#94A3B8" },
   "Completed":   { bg: "#DCFCE7",  text: "#166534", dot: "#10B981" },
 };
+const STATUS_CFG_DARK: Record<string, { bg: string; text: string; dot: string }> = {
+  "Todo":        { bg: "#18181B", text: "#D4D4D8", dot: "#3B82F6" },
+  "In Progress": { bg: "#451A00", text: "#FCD34D", dot: "#F59E0B" },
+  "Backlog":     { bg: "#27272A", text: "#737373", dot: "#52525B" },
+  "Completed":   { bg: "#064E3B", text: "#34D399", dot: "#10B981" },
+};
 
 const PRIORITY_CFG: Record<string, { bg: string; text: string }> = {
   "High":   { bg: "#FEF2F2", text: "#DC2626" },
   "Medium": { bg: "#FEF3C7", text: "#D97706" },
   "Low":    { bg: "#F0FDF4", text: "#16A34A" },
+};
+const PRIORITY_CFG_DARK: Record<string, { bg: string; text: string }> = {
+  "High":   { bg: "#450A0A", text: "#FCA5A5" },
+  "Medium": { bg: "#451A00", text: "#FCD34D" },
+  "Low":    { bg: "#052E16", text: "#86EFAC" },
 };
 
 // ─────────────────────────────────────────────
@@ -164,7 +176,7 @@ function KV({ label, value, editable }: { label: string; value?: string | number
       </div>
       {editable && (
         <IconButton size="small"
-          sx={{ p: 0.5, color: "#CBD5E1", opacity: 0, transition: "opacity 0.15s", ".group:hover &": { opacity: 1 }, "&:hover": { color: "#1D4ED8", bgcolor: "#EFF6FF" }, borderRadius: "6px" }}>
+          sx={{ p: 0.5, color: "#E2E8F0", opacity: 0, transition: "opacity 0.15s", ".group:hover &": { opacity: 1 }, "&:hover": { color: "#1D4ED8", bgcolor: "#EFF6FF" }, borderRadius: "6px" }}>
           <PencilSimple size={13} weight="duotone" />
         </IconButton>
       )}
@@ -177,6 +189,8 @@ function KV({ label, value, editable }: { label: string; value?: string | number
 // ─────────────────────────────────────────────
 export default function TaskDetail({ taskId }: { taskId: number }) {
   const router = useRouter();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const task = TASKS_DETAIL[taskId];
 
   const [activeTab, setActiveTab] = useState<"overview" | "timeline">("overview");
@@ -208,8 +222,8 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
     setNote("");
   };
 
-  const statusCfg = STATUS_CFG[task.status];
-  const priorityCfg = PRIORITY_CFG[task.priority];
+  const statusCfg = (isDark ? STATUS_CFG_DARK : STATUS_CFG)[task.status];
+  const priorityCfg = (isDark ? PRIORITY_CFG_DARK : PRIORITY_CFG)[task.priority];
 
   const relatedItems = [
     { label: "Notes",       icon: Note,      count: notes.length, color: "#8B5CF6" },
@@ -233,7 +247,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
               {count > 0 && (
                 <span className="text-[10px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>
               )}
-              <CaretRight size={14} color="#CBD5E1" weight="duotone" />
+              <CaretRight size={14} color="#E2E8F0" weight="duotone" />
             </button>
           ))}
         </div>
@@ -253,9 +267,9 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
           <Link href="/" className="text-slate-400 hover:text-[#1D4ED8] transition-colors">
             <House size={13} weight="duotone" />
           </Link>
-          <CaretRight size={11} color="#CBD5E1" />
+          <CaretRight size={11} color="#E2E8F0" />
           <Link href="/tasks" className="text-slate-400 hover:text-[#1D4ED8] font-medium transition-colors">Tasks</Link>
-          <CaretRight size={11} color="#CBD5E1" />
+          <CaretRight size={11} color="#E2E8F0" />
           <span className="text-[#0C2472] font-semibold">{task.refId}</span>
         </div>
 
@@ -340,7 +354,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
                 <SectionCard icon={ClipboardText} title="Task Information"
                   action={
                     <IconButton size="small" onClick={e => setMoreAnchor(e.currentTarget)}
-                      sx={{ p: 0.5, color: "#CBD5E1", "&:hover": { color: "#1D4ED8", bgcolor: "#EFF6FF" }, borderRadius: "6px" }}>
+                      sx={{ p: 0.5, color: "#E2E8F0", "&:hover": { color: "#1D4ED8", bgcolor: "#EFF6FF" }, borderRadius: "6px" }}>
                       <DotsThreeVertical size={16} weight="bold" />
                     </IconButton>
                   }>
@@ -368,13 +382,13 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
                 <div id="section-notes">
                   <SectionCard icon={Note} title="Notes">
                     <div className="space-y-3">
-                      <div className="border border-[#E3ECFC] rounded-xl overflow-hidden focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#93C5FD] transition-all">
+                      <div className="border border-[#E3ECFC] rounded-xl overflow-hidden focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all">
                         <InputBase
                           fullWidth multiline minRows={2}
                           placeholder="Add a note…"
                           value={note}
                           onChange={e => setNote(e.target.value)}
-                          sx={{ px: 2, py: 1.5, fontSize: "0.8rem", color: "#334155", "& textarea::placeholder": { color: "#CBD5E1", opacity: 1 } }}
+                          sx={{ px: 2, py: 1.5, fontSize: "0.8rem", color: "#334155", "& textarea::placeholder": { color: "#E2E8F0", opacity: 1 } }}
                         />
                         {note.trim() && (
                           <div className="flex justify-end px-3 pb-2">
@@ -496,3 +510,4 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
     </div>
   );
 }
+

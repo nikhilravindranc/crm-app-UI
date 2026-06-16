@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import Sidebar from "@/components/layout/Sidebar";
 import TopBar from "@/components/layout/TopBar";
@@ -25,6 +25,7 @@ import {
   Hash, CurrencyDollar, CheckSquare, LinkSimple, ChartBar, X,
   ClockCounterClockwise,
 } from "@phosphor-icons/react";
+import { useTheme } from "@/components/ThemeContext";
 
 // ─────────────────────────────────────────────
 //  Nav structure
@@ -186,7 +187,7 @@ function KV({ label, value, link, editable, onSave }: {
                 if (e.key === "Escape") handleCancel();
               }}
               autoFocus
-              className="flex-1 px-2 py-1 text-[13px] font-medium border border-[#93C5FD] rounded-lg bg-white focus:outline-none focus:border-[#1D4ED8] focus:ring-1 focus:ring-[#93C5FD] text-slate-700"
+              className="flex-1 px-2 py-1 text-[13px] font-medium border border-[#4A7AE8] rounded-lg bg-white focus:outline-none focus:border-[#1D4ED8] focus:ring-1 focus:ring-[#4A7AE8] text-slate-700"
             />
             <button onClick={handleSave} className="px-2 py-1 text-[11px] font-bold text-white bg-[#1D4ED8] rounded hover:bg-[#60A5FA] transition-colors whitespace-nowrap">
               Save
@@ -206,7 +207,7 @@ function KV({ label, value, link, editable, onSave }: {
           <IconButton
             onClick={() => setIsEditing(true)}
             size="small"
-            sx={{ p:0.4, mt:0.5, color:"#CBD5E1", opacity:0, transition:"opacity 0.15s", ".group:hover &":{opacity:1}, "&:hover":{color:"#1D4ED8",bgcolor:"#EFF6FF"}, borderRadius:"6px", cursor:"pointer" }}>
+            sx={{ p:0.4, mt:0.5, color:"#E2E8F0", opacity:0, transition:"opacity 0.15s", ".group:hover &":{opacity:1}, "&:hover":{color:"#1D4ED8",bgcolor:"#EFF6FF"}, borderRadius:"6px", cursor:"pointer" }}>
             <PencilSimple size={13} weight="duotone" />
           </IconButton>
         </Tooltip>
@@ -220,7 +221,7 @@ function KVGrid({ children }: { children: React.ReactNode }) {
 }
 
 function RoleBadge({ role }: { role: string }) {
-  const cfg = ROLE_BADGE[role] ?? { bg:"#F1F5F9", text:"#475569", border:"#CBD5E1" };
+  const cfg = ROLE_BADGE[role] ?? { bg:"#F1F5F9", text:"#475569", border:"#E2E8F0" };
   return (
     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border" style={{ backgroundColor:cfg.bg, color:cfg.text, borderColor:cfg.border }}>
       {role}
@@ -409,7 +410,7 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
       "& fieldset":             { borderColor: "#E3ECFC", borderWidth: 1.5 },
       "&:hover fieldset":       { borderColor: "#60A5FA" },
       "&.Mui-focused fieldset": { borderColor: "#1D4ED8", borderWidth: 2 },
-      "&.Mui-focused":          { boxShadow: "0 0 0 2px #93C5FD" },
+      "&.Mui-focused":          { boxShadow: "0 0 0 2px #4A7AE8" },
       "& input":                { padding: "10px 14px" },
     },
     "& .MuiInputLabel-root":             { fontSize: "0.79rem", color: "#6B7280" },
@@ -594,7 +595,7 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
         </Button>
         <Button variant="contained" onClick={handleSubmit}
           disabled={!formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim()}
-          sx={{ bgcolor: "#1D4ED8", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: "0 1px 8px #1D4ED833", "&:hover": { bgcolor: "#60A5FA" }, "&:active": { bgcolor: "#0C2472" }, "&:disabled": { bgcolor: "#CBD5E1", color: "#F1F5F9" } }}>
+          sx={{ bgcolor: "#1D4ED8", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: "0 1px 8px #1D4ED833", "&:hover": { bgcolor: "#60A5FA" }, "&:active": { bgcolor: "#0C2472" }, "&:disabled": { bgcolor: "#E2E8F0", color: "#F1F5F9" } }}>
           Create User
         </Button>
       </div>
@@ -707,7 +708,7 @@ function UsersPanel() {
       <div className="w-[340px] flex-shrink-0 flex flex-col border-r border-[#E3ECFC] bg-[#f9fbff]">
         {/* Toolbar */}
         <div className="px-4 py-3 border-b border-[#E3ECFC] flex items-center gap-2">
-          <div className="flex-1 flex items-center gap-1.5 bg-white border border-[#E3ECFC] rounded-xl px-3 py-1.5 focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#93C5FD] transition-all">
+          <div className="flex-1 flex items-center gap-1.5 bg-white border border-[#E3ECFC] rounded-xl px-3 py-1.5 focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all">
             <MagnifyingGlass size={13} color="#94A3B8" weight="duotone" />
             <InputBase placeholder="Search" value={search} onChange={e => setSearch(e.target.value)}
               sx={{ flex:1, fontSize:"0.75rem", color:"#334155", "& input::placeholder":{color:"#94A3B8",opacity:1} }} />
@@ -731,7 +732,7 @@ function UsersPanel() {
                 }`}>
                 <div onClick={e => toggleCheck(user.id, e)}>
                   <Checkbox size="small" checked={isChecked}
-                    sx={{ p:0.3, color:"#CBD5E1", "&.Mui-checked":{color:"#1D4ED8"} }} />
+                    sx={{ p:0.3, color:"#E2E8F0", "&.Mui-checked":{color:"#1D4ED8"} }} />
                 </div>
                 <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-[13px] font-bold"
                   style={{ backgroundColor: user.avatarColor, color: user.textColor }}>
@@ -879,7 +880,7 @@ function NewRoleDrawer({ open, onClose }: { open: boolean; onClose: () => void }
       "& fieldset":             { borderColor: "#E3ECFC", borderWidth: 1.5 },
       "&:hover fieldset":       { borderColor: "#60A5FA" },
       "&.Mui-focused fieldset": { borderColor: "#1D4ED8", borderWidth: 2 },
-      "&.Mui-focused":          { boxShadow: "0 0 0 2px #93C5FD" },
+      "&.Mui-focused":          { boxShadow: "0 0 0 2px #4A7AE8" },
       "& input":                { padding: "10px 14px" },
     },
     "& .MuiInputLabel-root":             { fontSize: "0.79rem", color: "#6B7280" },
@@ -1284,13 +1285,13 @@ function PermCell({ module, role, state, onToggle }: {
             <Tooltip title={M1.label}>
               <div className="flex items-center gap-0.5">
                 <MiniToggle checked={state[p1]} onChange={() => onToggle(module, role, p1)} />
-                <M1.icon size={10} color={state[p1] ? M1.color : "#CBD5E1"} weight={p1==="fullAccess"||p1==="delete"?"fill":"duotone"} />
+                <M1.icon size={10} color={state[p1] ? M1.color : "#E2E8F0"} weight={p1==="fullAccess"||p1==="delete"?"fill":"duotone"} />
               </div>
             </Tooltip>
             <Tooltip title={M2.label}>
               <div className="flex items-center gap-0.5">
                 <MiniToggle checked={state[p2]} onChange={() => onToggle(module, role, p2)} />
-                <M2.icon size={10} color={state[p2] ? M2.color : "#CBD5E1"} weight={p2==="fullAccess"||p2==="delete"?"fill":"duotone"} />
+                <M2.icon size={10} color={state[p2] ? M2.color : "#E2E8F0"} weight={p2==="fullAccess"||p2==="delete"?"fill":"duotone"} />
               </div>
             </Tooltip>
           </div>
@@ -1416,7 +1417,7 @@ function PermissionPanel() {
                               })}
                             </div>
                           ) : (
-                            <Lock size={12} color="#CBD5E1" weight="duotone" />
+                            <Lock size={12} color="#E2E8F0" weight="duotone" />
                           )}
                         </div>
                       );
@@ -1441,7 +1442,7 @@ function PermissionPanel() {
                 );
               })}
               <div className="flex items-center gap-2">
-                <Lock size={13} color="#CBD5E1" weight="duotone" />
+                <Lock size={13} color="#E2E8F0" weight="duotone" />
                 <span className="text-[12px] text-slate-600">Data Sharing (Private)</span>
               </div>
             </div>
@@ -1561,14 +1562,14 @@ const DV_BC_FIELDS = [
 
 function FieldCell({ field }: { field: LField }) {
   return (
-    <div className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-white hover:border-[#93C5FD] transition-colors cursor-pointer group">
+    <div className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-white hover:border-[#4A7AE8] transition-colors cursor-pointer group">
       <div className="flex items-center gap-0.5 min-w-0">
         <span className="text-[12px] font-medium text-slate-700 truncate">{field.label}</span>
         {field.required && <span className="text-red-500 text-[10px] ml-0.5">*</span>}
       </div>
       <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
         {field.prefix && <span className="text-[11px] text-slate-400">{field.prefix} ·</span>}
-        {field.type && <span className="text-[11px] text-[#93C5FD]">{field.type}</span>}
+        {field.type && <span className="text-[11px] text-[#4A7AE8]">{field.type}</span>}
         <span className="text-slate-300 group-hover:text-slate-500 text-[11px] font-bold">···</span>
       </div>
     </div>
@@ -1629,7 +1630,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
               </div>
             )}
             <div className="px-3 pb-3">
-              <button className="flex items-center gap-1.5 w-full px-3 py-2 border border-dashed border-[#93C5FD] rounded-lg text-[11.5px] font-bold text-[#1D4ED8] hover:bg-[#EFF6FF] transition-colors justify-center">
+              <button className="flex items-center gap-1.5 w-full px-3 py-2 border border-dashed border-[#4A7AE8] rounded-lg text-[11.5px] font-bold text-[#1D4ED8] hover:bg-[#EFF6FF] transition-colors justify-center">
                 <Plus size={11} weight="bold"/> NEW SECTION
               </button>
             </div>
@@ -1654,7 +1655,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                   <div className="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 px-1">{sec}</div>
                   {flds.map(f => (
                     <div key={f} className="flex items-center gap-2 px-2 py-1.5 mb-0.5 border border-[#E3ECFC] rounded-lg bg-white text-[12px] text-slate-600 cursor-grab hover:border-[#1D4ED8] hover:bg-[#EFF6FF] transition-colors">
-                      <DotsSixVertical size={11} color="#CBD5E1"/>
+                      <DotsSixVertical size={11} color="#E2E8F0"/>
                       {f}
                     </div>
                   ))}
@@ -1701,7 +1702,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
               {LEADS_CREATE_SECTIONS.map(section => (
                 <div key={section.title} className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
                   <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#E3ECFC] bg-[#fafcff]">
-                    <DotsSixVertical size={14} color="#CBD5E1"/>
+                    <DotsSixVertical size={14} color="#E2E8F0"/>
                     <span className="text-[13px] font-bold text-slate-700 flex-1">{section.title}</span>
                     <IconButton size="small" sx={{ p:0.3, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
                       <Gear size={13} weight="duotone"/>
@@ -1710,17 +1711,17 @@ function LayoutEditor({ module, layoutName, onClose }: {
                   {section.addressLayout ? (
                     <div className="p-3 space-y-1.5">
                       {section.fields.slice(0,-2).map((f,i) => (
-                        <div key={i} className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-[#fafcff] hover:border-[#93C5FD] transition-colors cursor-pointer group">
+                        <div key={i} className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-[#fafcff] hover:border-[#4A7AE8] transition-colors cursor-pointer group">
                           <span className="text-[12px] font-medium text-slate-700">{f.label}</span>
                           <div className="flex items-center gap-1.5">
-                            {f.type && <span className="text-[11px] text-[#93C5FD]">{f.type}</span>}
+                            {f.type && <span className="text-[11px] text-[#4A7AE8]">{f.type}</span>}
                             <span className="text-slate-300 group-hover:text-slate-500 text-[11px] font-bold">···</span>
                           </div>
                         </div>
                       ))}
                       <div className="grid grid-cols-2 gap-1.5">
                         {section.fields.slice(-2).map((f,i) => (
-                          <div key={i} className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-[#fafcff] hover:border-[#93C5FD] transition-colors cursor-pointer group">
+                          <div key={i} className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-[#fafcff] hover:border-[#4A7AE8] transition-colors cursor-pointer group">
                             <span className="text-[12px] font-medium text-slate-700">{f.label}</span>
                             <span className="text-slate-300 group-hover:text-slate-500 text-[11px] font-bold">···</span>
                           </div>
@@ -1748,7 +1749,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                 {QC_ACTIVE.map((f,i) => (
                   <div key={i} className="flex items-center px-4 py-2.5 border-b border-[#EFF6FF] last:border-0 group">
                     <span className="text-[13px] text-slate-700 w-36 flex-shrink-0">{f.label}</span>
-                    <span className="flex-1 text-[13px] text-[#93C5FD]">{f.type}</span>
+                    <span className="flex-1 text-[13px] text-[#4A7AE8]">{f.type}</span>
                     {f.removable && (
                       <button className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors opacity-60 hover:opacity-100">
                         <X size={11} color="#94A3B8" weight="bold"/>
@@ -1775,9 +1776,9 @@ function LayoutEditor({ module, layoutName, onClose }: {
                 <div className="divide-y divide-[#EFF6FF]">
                   {DV_BC_FIELDS.map((f,i) => (
                     <div key={i} className="flex items-center gap-3 px-4 py-2.5">
-                      <DotsSixVertical size={13} color="#CBD5E1"/>
+                      <DotsSixVertical size={13} color="#E2E8F0"/>
                       <span className="text-[13px] text-slate-700 flex-1">{f.label}</span>
-                      <span className="text-[12px] text-[#93C5FD]">{f.type}</span>
+                      <span className="text-[12px] text-[#4A7AE8]">{f.type}</span>
                     </div>
                   ))}
                 </div>
@@ -2027,7 +2028,7 @@ function ModulesAndFieldsPanel() {
     <div className="flex-1 overflow-y-auto bg-white">
       {/* Toolbar */}
       <div className="flex items-center gap-3 px-6 py-4 border-b border-[#E3ECFC]">
-        <div className="flex items-center gap-1.5 bg-[#f9fbff] border border-[#E3ECFC] rounded-xl px-3 py-1.5 w-56 focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#93C5FD] transition-all">
+        <div className="flex items-center gap-1.5 bg-[#f9fbff] border border-[#E3ECFC] rounded-xl px-3 py-1.5 w-56 focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all">
           <MagnifyingGlass size={13} color="#94A3B8" weight="duotone" />
           <InputBase placeholder="Search" value={search} onChange={e => setSearch(e.target.value)}
             sx={{ flex:1, fontSize:"0.75rem", color:"#334155", "& input::placeholder":{color:"#94A3B8",opacity:1} }} />
@@ -2082,7 +2083,7 @@ function ModulesAndFieldsPanel() {
                   <div className="flex items-center justify-center gap-2">
                     <GreenSwitch checked={isOn} onChange={() => setModStatuses(p => ({ ...p, [mod.key]: !p[mod.key] }))} />
                     <Tooltip title="Module info">
-                      <IconButton size="small" sx={{ p:0.3, color:"#CBD5E1", "&:hover":{color:"#1D4ED8",bgcolor:"#EFF6FF"}, borderRadius:"6px" }}>
+                      <IconButton size="small" sx={{ p:0.3, color:"#E2E8F0", "&:hover":{color:"#1D4ED8",bgcolor:"#EFF6FF"}, borderRadius:"6px" }}>
                         <Info size={13} weight="duotone" />
                       </IconButton>
                     </Tooltip>
@@ -2117,21 +2118,21 @@ function PlaceholderPanel({ label }: { label: string }) {
 // ─────────────────────────────────────────────
 //  Settings sub-sidebar
 // ─────────────────────────────────────────────
-function SettingsSidebar({ activeItem, setActiveItem }: {
-  activeItem: string; setActiveItem: (k: string) => void;
+function SettingsSidebar({ activeItem, setActiveItem, isDark = false }: {
+  activeItem: string; setActiveItem: (k: string) => void; isDark?: boolean;
 }) {
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const toggle = (key: string) => setCollapsed(p => ({ ...p, [key]: !p[key] }));
 
   return (
-    <div className="w-[220px] flex-shrink-0 bg-[#f9fbff] border-r border-[#E3ECFC] flex flex-col overflow-y-auto">
-      <div className="px-4 pt-5 pb-4 border-b border-[#E3ECFC]">
+    <div className={`w-full md:w-[220px] flex-shrink-0 border-b md:border-b-0 md:border-r flex flex-col overflow-y-auto max-h-[260px] md:max-h-none transition-colors duration-300 ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+      <div className={`px-4 pt-5 pb-4 border-b transition-colors duration-300 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-xl bg-[#1D4ED8] flex items-center justify-center shadow-sm flex-shrink-0">
             <Gear size={15} color="#fff" weight="duotone" />
           </div>
           <div>
-            <div className="font-heading text-[14px] font-bold text-slate-900 leading-tight">Settings</div>
+            <div className={`font-heading text-[14px] font-bold leading-tight ${isDark ? "text-[#FFFFFF]" : "text-slate-900"}`}>Settings</div>
             <div className="text-[10.5px] text-slate-400 leading-tight">Manage workspace</div>
           </div>
         </div>
@@ -2143,11 +2144,11 @@ function SettingsSidebar({ activeItem, setActiveItem }: {
           return (
             <div key={section.key}>
               <button onClick={() => toggle(section.key)}
-                className="flex items-center justify-between w-full px-2 py-1.5 rounded-lg hover:bg-[#EFF6FF] transition-colors group">
-                <span className="font-heading text-[10px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-slate-500 transition-colors">
+                className={`flex items-center justify-between w-full px-2 py-1.5 rounded-lg transition-colors group ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}>
+                <span className={`font-heading text-[10px] font-bold uppercase tracking-widest transition-colors ${isDark ? "text-[#475569] group-hover:text-[#64748B]" : "text-slate-400 group-hover:text-slate-500"}`}>
                   {section.label}
                 </span>
-                {isOpen ? <CaretUp size={10} color="#CBD5E1" weight="bold" /> : <CaretDown size={10} color="#CBD5E1" weight="bold" />}
+                {isOpen ? <CaretUp size={10} color={isDark ? "#475569" : "#E2E8F0"} weight="bold" /> : <CaretDown size={10} color={isDark ? "#475569" : "#E2E8F0"} weight="bold" />}
               </button>
 
               {isOpen && (
@@ -2158,10 +2159,12 @@ function SettingsSidebar({ activeItem, setActiveItem }: {
                     return (
                       <button key={item.key} onClick={() => setActiveItem(item.key)}
                         className={`relative flex items-center gap-2 w-full px-3 py-2 rounded-xl text-[12px] font-medium transition-all ${
-                          isActive ? "bg-[#EFF6FF] text-[#1D4ED8] font-semibold" : "text-slate-500 hover:bg-[#EFF6FF]/60 hover:text-slate-700"
+                          isActive
+                            ? isDark ? "bg-[#27272A] text-[#D4D4D8] font-semibold" : "bg-[#EFF6FF] text-[#1D4ED8] font-semibold"
+                            : isDark ? "text-[#737373] hover:bg-[#27272A] hover:text-[#FFFFFF]" : "text-slate-500 hover:bg-[#EFF6FF]/60 hover:text-slate-700"
                         }`}>
-                        {isActive && <span className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full bg-[#1D4ED8]" />}
-                        <IIcon size={13} color={isActive ? "#1D4ED8" : "#94A3B8"} weight="duotone" />
+                        {isActive && <span className={`absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full ${isDark ? "bg-[#4A7AE8]" : "bg-[#1D4ED8]"}`} />}
+                        <IIcon size={13} color={isActive ? (isDark ? "#6B8BA3" : "#1D4ED8") : "#94A3B8"} weight="duotone" />
                         {item.label}
                       </button>
                     );
@@ -2180,6 +2183,9 @@ function SettingsSidebar({ activeItem, setActiveItem }: {
 //  Page
 // ─────────────────────────────────────────────
 export default function SettingsPage() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
   const [activeItem, setActiveItem] = useState("personal");
   const activeLabel = SECTIONS.flatMap(s => s.items).find(i => i.key === activeItem)?.label ?? "";
 
@@ -2196,15 +2202,18 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="flex h-screen bg-[#EFF6FF] font-sans">
+    <div className={`flex min-h-screen font-sans transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-[#EFF6FF]"}`}>
       <Sidebar />
-      <div className="sidebar-content flex-1 flex flex-col overflow-hidden">
+      <div className={`sidebar-content flex-1 flex flex-col overflow-hidden transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
         <TopBar />
-        <div className="flex flex-1 overflow-hidden">
-          <SettingsSidebar activeItem={activeItem} setActiveItem={setActiveItem} />
-          {content()}
+        <div className="flex flex-col md:flex-row flex-1 overflow-auto md:overflow-hidden">
+          <SettingsSidebar activeItem={activeItem} setActiveItem={setActiveItem} isDark={isDark} />
+          <div className={`flex-1 overflow-auto ${isDark ? "bg-[#000000]" : "bg-[#EFF6FF]"}`}>
+            {content()}
+          </div>
         </div>
       </div>
     </div>
   );
 }
+

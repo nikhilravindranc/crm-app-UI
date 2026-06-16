@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import Link from "next/link";
 import Sidebar from "@/components/layout/Sidebar";
@@ -20,6 +20,7 @@ import {
 } from "@phosphor-icons/react";
 import NewTaskDrawer from "@/components/tasks/NewTaskDrawer";
 import FiltersDrawer, { type FilterRow } from "@/components/leads/FiltersDrawer";
+import { useTheme } from "@/components/ThemeContext";
 
 // ─────────────────────────────────────────────
 //  Types & Data
@@ -67,11 +68,11 @@ const PRIORITY_CFG: Record<string, { bg: string; text: string }> = {
 // ─────────────────────────────────────────────
 //  Helpers
 // ─────────────────────────────────────────────
-function ColHeader({ label }: { label: string }) {
+function ColHeader({ label, isDark = false }: { label: string; isDark?: boolean }) {
   return (
-    <div className="font-heading flex items-center gap-0.5 text-[10.5px] font-bold text-[#0C2472] uppercase tracking-wider cursor-pointer hover:text-[#1D4ED8] transition-colors group select-none">
+    <div className={`font-heading flex items-center gap-0.5 text-[10.5px] font-bold uppercase tracking-wider cursor-pointer transition-colors group select-none ${isDark ? "text-[#737373] hover:text-[#D4D4D8]" : "text-[#0C2472] hover:text-[#1D4ED8]"}`}>
       {label}
-      <ArrowsDownUp size={12} weight="duotone" className="opacity-30 group-hover:opacity-100 text-[#60A5FA] transition-opacity" />
+      <ArrowsDownUp size={12} weight="duotone" className={`opacity-30 group-hover:opacity-100 transition-opacity ${isDark ? "text-[#52525B]" : "text-[#60A5FA]"}`} />
     </div>
   );
 }
@@ -80,6 +81,9 @@ function ColHeader({ label }: { label: string }) {
 //  Page
 // ─────────────────────────────────────────────
 export default function TasksPage() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
   const [selected, setSelected]         = useState<number[]>([]);
   const [search, setSearch]             = useState("");
   const [drawerOpen, setDrawerOpen]     = useState(false);
@@ -141,10 +145,10 @@ export default function TasksPage() {
     <div className="flex h-screen bg-transparent font-sans">
       <Sidebar />
 
-      <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
+      <div className={`sidebar-content flex-1 flex flex-col min-h-screen overflow-auto transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
         <TopBar />
 
-        <main className="flex-1 px-8 py-6 space-y-5 animate-fade-in">
+        <main className="flex-1 px-4 md:px-8 py-4 md:py-6 space-y-5 animate-fade-in">
 
           {/* ══ Breadcrumb + Header ══ */}
           <div className="flex items-start justify-between">
@@ -152,7 +156,7 @@ export default function TasksPage() {
               <div className="flex items-center gap-1 text-[11px] text-slate-400 mb-2">
                 <House size={12} weight="duotone" />
                 <CaretRight size={11} weight="duotone" />
-                <Link href="/tasks" className="hover:text-[#1D4ED8] transition-colors font-medium">Tasks</Link>
+                <Link href="/tasks" className={`transition-colors font-medium ${isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#1D4ED8]"}`}>Tasks</Link>
               </div>
               <div className="flex items-center gap-2.5">
                 <h1 className="font-heading text-[20px] font-extrabold text-slate-900 tracking-tight">Tasks</h1>
@@ -174,8 +178,8 @@ export default function TasksPage() {
               </Button>
               <Tooltip title="More options">
                 <IconButton size="small" onClick={e => setMoreAnchor(e.currentTarget)}
-                  sx={{ borderRadius: "8px", p: 0.8, bgcolor: "#f9fbff", border: "1px solid #E3ECFC", "&:hover": { bgcolor: "#E3ECFC" } }}>
-                  <DotsThreeVertical size={16} color="#334155" weight="bold" />
+                  sx={{ borderRadius: "8px", p: 0.8, bgcolor: isDark ? "#0A0A0A" : "#f9fbff", border: isDark ? "1px solid #27272A" : "1px solid #E3ECFC", "&:hover": { bgcolor: isDark ? "#27272A" : "#E3ECFC" } }}>
+                  <DotsThreeVertical size={16} color={isDark ? "#5A7089" : "#334155"} weight="bold" />
                 </IconButton>
               </Tooltip>
             </div>
@@ -206,11 +210,11 @@ export default function TasksPage() {
 
           {/* ══ Toolbar ══ */}
           <div className="flex items-center gap-2.5">
-            <div className="flex items-center gap-2 bg-[#f9fbff] border border-[#E3ECFC] rounded-xl px-3 py-2 w-72 focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#93C5FD] transition-all">
+            <div className={`flex items-center gap-2 border rounded-xl px-3 py-2 w-72 focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
               <MagnifyingGlass size={15} color="#94A3B8" weight="duotone" />
               <InputBase placeholder="Search tasks…" value={search}
                 onChange={e => setSearch(e.target.value)}
-                sx={{ flex: 1, fontSize: "0.76rem", color: "#334155", "& input::placeholder": { color: "#94A3B8", opacity: 1 } }}
+                sx={{ flex: 1, fontSize: "0.76rem", color: isDark ? "#8A9FB5" : "#334155", "& input::placeholder": { color: "#94A3B8", opacity: 1 } }}
               />
               {search && <button onClick={() => setSearch("")} className="text-slate-300 hover:text-slate-500 text-sm">✕</button>}
             </div>
@@ -221,7 +225,13 @@ export default function TasksPage() {
                 : <FunnelSimple size={14} weight="duotone" />
               }
               onClick={() => setFiltersOpen(true)}
-              sx={{ borderColor: activeFilters.length > 0 ? "#1D4ED8" : "#E3ECFC", color: activeFilters.length > 0 ? "#1D4ED8" : "#0C2472", bgcolor: activeFilters.length > 0 ? "#f9fbff" : "#E3ECFC", borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem", "&:hover": { borderColor: "#1D4ED8", color: "#1D4ED8", bgcolor: "#f9fbff" } }}>
+              sx={{
+                borderColor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#27272A" : "#E3ECFC",
+                color: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#5A7089" : "#0C2472",
+                bgcolor: isDark ? "#0F0F0F" : activeFilters.length > 0 ? "#f9fbff" : "#E3ECFC",
+                borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem",
+                "&:hover": { borderColor: "#1D4ED8", color: "#4A7AE8", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
+              }}>
               Filters{activeFilters.length > 0 ? ` (${activeFilters.length})` : ""}
             </Button>
 
@@ -238,8 +248,8 @@ export default function TasksPage() {
                 <span className="text-[12px] font-semibold">selected</span>
               </div>
               <div className="w-px h-4 bg-white/15" />
-              <button className="text-[11.5px] font-semibold text-[#93C5FD] hover:text-white transition-colors">Update Status</button>
-              <button className="text-[11.5px] font-semibold text-[#93C5FD] hover:text-white transition-colors">Assign Owner</button>
+              <button className="text-[11.5px] font-semibold text-[#4A7AE8] hover:text-white transition-colors">Update Status</button>
+              <button className="text-[11.5px] font-semibold text-[#4A7AE8] hover:text-white transition-colors">Assign Owner</button>
               <button onClick={() => setSelected([])} className="ml-auto text-[11.5px] font-semibold text-white/50 hover:text-white transition-colors">Clear</button>
               <button className="flex items-center gap-1.5 text-[11.5px] font-semibold text-red-300 hover:text-red-200 transition-colors">
                 <Trash size={14} weight="duotone" /> Delete
@@ -255,15 +265,15 @@ export default function TasksPage() {
               <div className="grid items-center px-4 py-2.5 bg-[#E3ECFC] border-b border-[#E3ECFC]"
                 style={{ gridTemplateColumns: gridTemplate, minWidth: minTableWidth }}>
                 <Checkbox size="small" checked={allChecked} indeterminate={someChecked} onChange={toggleAll}
-                  sx={{ p: 0.5, color: "#CBD5E1", "&.Mui-checked, &.MuiCheckbox-indeterminate": { color: "#1D4ED8" } }} />
-                <ColHeader label="Type" />
-                <ColHeader label="Subject" />
-                <ColHeader label="Due Date" />
-                <ColHeader label="Status" />
-                <ColHeader label="Priority" />
-                <ColHeader label="Contact" />
-                <ColHeader label="Related To" />
-                <ColHeader label="Task Owner" />
+                  sx={{ p: 0.5, color: "#E2E8F0", "&.Mui-checked, &.MuiCheckbox-indeterminate": { color: "#1D4ED8" } }} />
+                <ColHeader label="Type" isDark={isDark} />
+                <ColHeader label="Subject" isDark={isDark} />
+                <ColHeader label="Due Date" isDark={isDark} />
+                <ColHeader label="Status" isDark={isDark} />
+                <ColHeader label="Priority" isDark={isDark} />
+                <ColHeader label="Contact" isDark={isDark} />
+                <ColHeader label="Related To" isDark={isDark} />
+                <ColHeader label="Task Owner" isDark={isDark} />
                 <div />
               </div>
 
@@ -282,7 +292,7 @@ export default function TasksPage() {
                       style={{ gridTemplateColumns: gridTemplate, minWidth: minTableWidth }}>
 
                       <Checkbox size="small" checked={isSel} onChange={() => toggleOne(task.id)} onClick={e => e.stopPropagation()}
-                        sx={{ p: 0.5, color: "#CBD5E1", "&.Mui-checked": { color: "#1D4ED8" } }} />
+                        sx={{ p: 0.5, color: "#E2E8F0", "&.Mui-checked": { color: "#1D4ED8" } }} />
 
                       {/* Type */}
                       <p className="text-[12px] font-semibold text-slate-600 truncate pr-2 mb-0">
@@ -351,7 +361,7 @@ export default function TasksPage() {
               {filtered.length === 0 && (
                 <div className="py-16 text-center">
                   <div className="w-12 h-12 rounded-2xl bg-[#f9fbff] flex items-center justify-center mx-auto mb-3">
-                    <CheckCircle size={22} color="#93C5FD" weight="duotone" />
+                    <CheckCircle size={22} color="#4A7AE8" weight="duotone" />
                   </div>
                   <p className="font-heading text-slate-500 text-sm font-semibold">No tasks found</p>
                   <p className="text-slate-300 text-xs mt-1">Try adjusting your search or filter</p>
@@ -416,3 +426,4 @@ export default function TasksPage() {
     </div>
   );
 }
+

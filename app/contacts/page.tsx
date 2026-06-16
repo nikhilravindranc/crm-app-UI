@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -22,6 +22,7 @@ import {
   DotsThreeVertical, Phone, DeviceMobile, Envelope, FunnelSimple, CaretDown,
 } from "@phosphor-icons/react";
 import { OWNER_AVATARS } from "@/lib/avatars";
+import { useTheme } from "@/components/ThemeContext";
 
 // ─────────────────────────────────────────────
 //  Data — exact from screenshot (13 visible of 25)
@@ -77,11 +78,11 @@ const DEFAULT_VISIBLE = new Set(["firstName", "lastName", "contactOwner", "email
 const AVATAR_PAL = ["#0C2472", "#1D4ED8", "#3B82F6", "#60A5FA"];
 const avatarColor = (n: string) => AVATAR_PAL[n.split("").reduce((a, c) => a + c.charCodeAt(0), 0) % AVATAR_PAL.length];
 
-function ColHeader({ label }: { label: string }) {
+function ColHeader({ label, isDark = false }: { label: string; isDark?: boolean }) {
   return (
-    <div className="font-heading flex items-center gap-0.5 text-[10.5px] font-bold text-[#0C2472] uppercase tracking-wider cursor-pointer hover:text-[#1D4ED8] transition-colors group select-none">
+    <div className={`font-heading flex items-center gap-0.5 text-[10.5px] font-bold uppercase tracking-wider cursor-pointer transition-colors group select-none ${isDark ? "text-[#737373] hover:text-[#D4D4D8]" : "text-[#0C2472] hover:text-[#1D4ED8]"}`}>
       {label}
-      <ArrowsDownUp size={12} weight="duotone" className="opacity-30 group-hover:opacity-100 text-[#60A5FA] transition-opacity" />
+      <ArrowsDownUp size={12} weight="duotone" className={`opacity-30 group-hover:opacity-100 transition-opacity ${isDark ? "text-[#52525B]" : "text-[#60A5FA]"}`} />
     </div>
   );
 }
@@ -91,6 +92,8 @@ function ColHeader({ label }: { label: string }) {
 // ─────────────────────────────────────────────
 export default function ContactsPage() {
   const router = useRouter();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   const [selected, setSelected]     = useState<number[]>([]);
   const [search, setSearch]         = useState("");
@@ -124,10 +127,10 @@ export default function ContactsPage() {
     <div className="flex h-screen bg-transparent font-sans">
       <Sidebar />
 
-      <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
+      <div className={`sidebar-content flex-1 flex flex-col min-h-screen overflow-auto transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
         <TopBar />
 
-        <main className="flex-1 px-8 py-6 space-y-5 animate-fade-in">
+        <main className="flex-1 px-4 md:px-8 py-4 md:py-6 space-y-5 animate-fade-in">
 
           {/* ══ Breadcrumb + Header ══ */}
           <div className="flex items-start justify-between">
@@ -135,7 +138,7 @@ export default function ContactsPage() {
               <div className="flex items-center gap-1 text-[11px] text-slate-400 mb-2">
                 <House size={12} weight="duotone" />
                 <CaretRight size={11} weight="duotone" />
-                <Link href="/contacts" className="hover:text-[#1D4ED8] transition-colors font-medium">Contacts</Link>
+                <Link href="/contacts" className={`transition-colors font-medium ${isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#1D4ED8]"}`}>Contacts</Link>
               </div>
               <div className="flex items-center gap-2.5">
                 <h1 className="font-heading text-[20px] font-extrabold text-slate-900 tracking-tight">Contacts</h1>
@@ -147,14 +150,16 @@ export default function ContactsPage() {
 
             <div className="flex items-center gap-2 mt-1">
               {/* View toggle */}
-              <div className="flex items-center bg-[#f9fbff] border border-[#E3ECFC] rounded-xl p-0.5 gap-0.5 shadow-sm">
+              <div className={`flex items-center border rounded-xl p-0.5 gap-0.5 shadow-sm ${isDark ? "bg-[#000000] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
                 {[
                   { k: "list", Icon: List,     label: "List" },
                   { k: "grid", Icon: GridFour, label: "Grid" },
                 ].map(({ k, Icon, label }) => (
                   <button key={k} onClick={() => setView(k as typeof view)}
                     className={`flex items-center gap-1.5 px-2.5 py-[7px] rounded-lg text-[11.5px] font-semibold transition-all ${
-                      view === k ? "bg-[#f9fbff] text-[#1D4ED8]" : "text-slate-400 hover:text-slate-600"
+                      view === k
+                        ? isDark ? "bg-[#18181B] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]"
+                        : isDark ? "text-[#737373] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "text-slate-400 hover:text-slate-600"
                     }`}>
                     <Icon size={14} weight="duotone" />{label}
                   </button>
@@ -172,11 +177,11 @@ export default function ContactsPage() {
 
           {/* ══ Toolbar ══ */}
           <div className="flex items-center gap-2.5">
-            <div className="flex items-center gap-2 bg-[#f9fbff] border border-[#E3ECFC] rounded-xl px-3 py-2 w-72 focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#93C5FD] transition-all">
+            <div className={`flex items-center gap-2 border rounded-xl px-3 py-2 w-72 focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
               <MagnifyingGlass size={15} color="#94A3B8" weight="duotone" />
               <InputBase placeholder="Search by name, email, owner…" value={search}
                 onChange={e => setSearch(e.target.value)}
-                sx={{ flex: 1, fontSize: "0.76rem", color: "#334155", "& input::placeholder": { color: "#94A3B8", opacity: 1 } }}
+                sx={{ flex: 1, fontSize: "0.76rem", color: isDark ? "#D4D4D8" : "#334155", "& input::placeholder": { color: "#94A3B8", opacity: 1 } }}
               />
               {search && <button onClick={() => setSearch("")} className="text-slate-300 hover:text-slate-500 text-sm">✕</button>}
             </div>
@@ -189,14 +194,26 @@ export default function ContactsPage() {
                 : <FunnelSimple size={14} weight="duotone" />
               }
               onClick={() => setFiltersOpen(true)}
-              sx={{ borderColor: activeFilters.length > 0 ? "#1D4ED8" : "#E3ECFC", color: activeFilters.length > 0 ? "#1D4ED8" : "#0C2472", bgcolor: activeFilters.length > 0 ? "#f9fbff" : "#E3ECFC", borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem", "&:hover": { borderColor: "#1D4ED8", color: "#1D4ED8", bgcolor: "#f9fbff" } }}>
+              sx={{
+                borderColor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#27272A" : "#E3ECFC",
+                color: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#737373" : "#0C2472",
+                bgcolor: isDark ? "#0F0F0F" : activeFilters.length > 0 ? "#f9fbff" : "#E3ECFC",
+                borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem",
+                "&:hover": { borderColor: "#1D4ED8", color: "#4A7AE8", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
+              }}>
               Filters{activeFilters.length > 0 ? ` (${activeFilters.length})` : ""}
             </Button>
 
             <Button variant="outlined" size="small"
               startIcon={<Columns size={14} weight="duotone" />}
               onClick={() => setColumnsOpen(true)}
-              sx={{ borderColor: "#E3ECFC", color: "#0C2472", bgcolor: "#E3ECFC", borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem", "&:hover": { borderColor: "#1D4ED8", color: "#1D4ED8", bgcolor: "#f9fbff" } }}>
+              sx={{
+                borderColor: isDark ? "#27272A" : "#E3ECFC",
+                color: isDark ? "#737373" : "#0C2472",
+                bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
+                borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem",
+                "&:hover": { borderColor: "#1D4ED8", color: "#4A7AE8", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
+              }}>
               Columns
             </Button>
 
@@ -204,7 +221,13 @@ export default function ContactsPage() {
               startIcon={<SortAscending size={14} weight="duotone" />}
               endIcon={<CaretDown size={11} weight="duotone" />}
               onClick={e => setSortAnchor(e.currentTarget)}
-              sx={{ borderColor: activeSorts.length > 0 ? "#1D4ED8" : "#E3ECFC", color: activeSorts.length > 0 ? "#1D4ED8" : "#0C2472", bgcolor: activeSorts.length > 0 ? "#f9fbff" : "#E3ECFC", borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem", "&:hover": { borderColor: "#1D4ED8", color: "#1D4ED8", bgcolor: "#f9fbff" } }}>
+              sx={{
+                borderColor: isDark ? "#27272A" : "#E3ECFC",
+                color: isDark ? "#737373" : "#0C2472",
+                bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
+                borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem",
+                "&:hover": { borderColor: "#1D4ED8", color: "#4A7AE8", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
+              }}>
               Sort{activeSorts.length > 0 ? ` (${activeSorts.length})` : ""}
             </Button>
 
@@ -221,8 +244,8 @@ export default function ContactsPage() {
                 <span className="text-[12px] font-semibold">selected</span>
               </div>
               <div className="w-px h-4 bg-[#f9fbff]/15" />
-              <button className="text-[11.5px] font-semibold text-[#93C5FD] hover:text-white transition-colors">Send Email</button>
-              <button className="text-[11.5px] font-semibold text-[#93C5FD] hover:text-white transition-colors">Assign Owner</button>
+              <button className="text-[11.5px] font-semibold text-[#4A7AE8] hover:text-white transition-colors">Send Email</button>
+              <button className="text-[11.5px] font-semibold text-[#4A7AE8] hover:text-white transition-colors">Assign Owner</button>
               <button onClick={() => setSelected([])} className="ml-auto text-[11.5px] font-semibold text-white/50 hover:text-white transition-colors">Clear</button>
               <button className="flex items-center gap-1.5 text-[11.5px] font-semibold text-red-300 hover:text-red-200 transition-colors">
                 <Trash size={14} weight="duotone" /> Delete
@@ -249,8 +272,8 @@ export default function ContactsPage() {
               <div className="grid items-center px-4 py-2.5 bg-[#E3ECFC] border-b border-[#E3ECFC]"
                 style={{ gridTemplateColumns: gridTemplate }}>
                 <Checkbox size="small" checked={allChecked} indeterminate={someChecked} onChange={toggleAll}
-                  sx={{ p: 0.5, color: "#CBD5E1", "&.Mui-checked, &.MuiCheckbox-indeterminate": { color: "#1D4ED8" } }} />
-                {visibleColDefs.map(c => <ColHeader key={c.key} label={c.label} />)}
+                  sx={{ p: 0.5, color: "#E2E8F0", "&.Mui-checked, &.MuiCheckbox-indeterminate": { color: "#1D4ED8" } }} />
+                {visibleColDefs.map(c => <ColHeader key={c.key} label={c.label} isDark={isDark} />)}
                 <div />
               </div>
 
@@ -269,7 +292,7 @@ export default function ContactsPage() {
                       onClick={() => router.push(`/contacts/${contact.id}`)}>
 
                       <Checkbox size="small" checked={isSel} onChange={() => toggleOne(contact.id)} onClick={e => e.stopPropagation()}
-                        sx={{ p: 0.5, color: "#CBD5E1", "&.Mui-checked": { color: "#1D4ED8" } }} />
+                        sx={{ p: 0.5, color: "#E2E8F0", "&.Mui-checked": { color: "#1D4ED8" } }} />
 
                       {/* First Name */}
                       {visibleCols.has("firstName") && (
@@ -300,7 +323,7 @@ export default function ContactsPage() {
                         <Tooltip title={contact.email} placement="top">
                           <div className="text-[12px] truncate pr-2">
                             {contact.email
-                              ? <span className="text-[#3B82F6] flex items-center gap-1"><Envelope size={11} color="#93C5FD" weight="duotone" className="flex-shrink-0" />{contact.email}</span>
+                              ? <span className="text-[#3B82F6] flex items-center gap-1"><Envelope size={11} color="#4A7AE8" weight="duotone" className="flex-shrink-0" />{contact.email}</span>
                               : <span className="text-slate-200">—</span>}
                           </div>
                         </Tooltip>
@@ -310,7 +333,7 @@ export default function ContactsPage() {
                       {visibleCols.has("phone") && (
                         <div className="text-[12px] text-slate-500 font-mono truncate pr-2">
                           {contact.phone
-                            ? <span className="flex items-center gap-1"><Phone size={11} color="#93C5FD" weight="duotone" />{contact.phone}</span>
+                            ? <span className="flex items-center gap-1"><Phone size={11} color="#4A7AE8" weight="duotone" />{contact.phone}</span>
                             : <span className="text-slate-200">—</span>}
                         </div>
                       )}
@@ -319,7 +342,7 @@ export default function ContactsPage() {
                       {visibleCols.has("mobile") && (
                         <div className="text-[12px] text-slate-500 font-mono truncate pr-2">
                           {contact.mobile
-                            ? <span className="flex items-center gap-1"><DeviceMobile size={11} color="#93C5FD" weight="duotone" />{contact.mobile}</span>
+                            ? <span className="flex items-center gap-1"><DeviceMobile size={11} color="#4A7AE8" weight="duotone" />{contact.mobile}</span>
                             : <span className="text-slate-200">—</span>}
                         </div>
                       )}
@@ -352,7 +375,7 @@ export default function ContactsPage() {
               {filtered.length === 0 && (
                 <div className="py-16 text-center">
                   <div className="w-12 h-12 rounded-2xl bg-[#f9fbff] flex items-center justify-center mx-auto mb-3">
-                    <MagnifyingGlass size={22} color="#93C5FD" weight="duotone" />
+                    <MagnifyingGlass size={22} color="#4A7AE8" weight="duotone" />
                   </div>
                   <p className="font-heading text-slate-500 text-sm font-semibold">No contacts found</p>
                   <p className="text-slate-300 text-xs mt-1">Try adjusting your search or filters</p>
@@ -407,3 +430,4 @@ export default function ContactsPage() {
     </div>
   );
 }
+

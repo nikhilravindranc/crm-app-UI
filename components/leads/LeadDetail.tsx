@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -25,6 +25,7 @@ import {
   Trash, Users, Plus, PaperPlaneTilt, CheckCircle,
 } from "@phosphor-icons/react";
 import { LEAD_AVATARS, OWNER_AVATARS } from "@/lib/avatars";
+import { useTheme } from "@/components/ThemeContext";
 
 // ─────────────────────────────────────────────
 //  Types & data
@@ -63,6 +64,15 @@ const STATUS_CFG: Record<LeadStatus, { bg: string; text: string; dot: string }> 
   "Qualified":   { bg:"#DCFCE7", text:"#166534", dot:"#16A34A" },
   "Lost":        { bg:"#FEF2F2", text:"#991B1B", dot:"#EF4444" },
   "Unqualified": { bg:"#EFF6FF", text:"#475569", dot:"#94A3B8" },
+};
+
+const STATUS_CFG_DARK: Record<LeadStatus, { bg: string; text: string; dot: string }> = {
+  "New":         { bg:"#18181B", text:"#D4D4D8", dot:"#D4D4D8" },
+  "Contacted":   { bg:"#27272A", text:"#D4D4D8", dot:"#D4D4D8" },
+  "In Progress": { bg:"#27272A", text:"#D4D4D8", dot:"#38BDF8" },
+  "Qualified":   { bg:"#064E3B", text:"#34D399", dot:"#10B981" },
+  "Lost":        { bg:"#450A0A", text:"#FCA5A5", dot:"#EF4444" },
+  "Unqualified": { bg:"#0F0F0F", text:"#737373", dot:"#52525B" },
 };
 
 const PIPELINE: LeadStatus[] = ["New", "Contacted", "In Progress", "Qualified"];
@@ -104,6 +114,8 @@ function KV({ label, value, blue }: { label: string; value?: string; blue?: bool
 // ─────────────────────────────────────────────
 export default function LeadDetail({ leadId }: { leadId: number }) {
   const router = useRouter();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const lead = LEADS[leadId];
 
   // ── UI state ──
@@ -135,7 +147,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
   const avColor   = avatarColor(fullName);
   const avInit    = initials(fullName || "?");
   const pipelineIdx = PIPELINE.indexOf(currentStatus);
-  const cfg       = STATUS_CFG[currentStatus];
+  const cfg       = isDark ? STATUS_CFG_DARK[currentStatus] : STATUS_CFG[currentStatus];
 
   const addNote = () => {
     if (!newNoteText.trim()) return;
@@ -148,12 +160,13 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
   };
 
   // Activity timeline items
+  const actBg = isDark ? "#27272A" : "#EFF6FF";
   const activityFeed = [
-    { icon: UserPlus,            color:"#1D4ED8", bg:"#EFF6FF", text:`Lead created by ${lead.owner}`,          time:lead.created  },
-    { icon: TrendUp,             color:"#3B82F6", bg:"#EFF6FF", text:`Status set to "${lead.status}"`,         time:lead.created  },
-    { icon: Note,                color:"#60A5FA", bg:"#EFF6FF", text:"Note added: Initial contact made…",      time:lead.modified },
-    { icon: Envelope,            color:"#0C2472", bg:"#E3ECFC", text:"Email sent to lead",                     time:lead.modified },
-    { icon: Phone,               color:"#93C5FD", bg:"#EFF6FF", text:"Call logged — 5 min, no answer",         time:lead.modified },
+    { icon: UserPlus,            color:"#1D4ED8", bg:actBg, text:`Lead created by ${lead.owner}`,          time:lead.created  },
+    { icon: TrendUp,             color:"#3B82F6", bg:actBg, text:`Status set to "${lead.status}"`,         time:lead.created  },
+    { icon: Note,                color:"#60A5FA", bg:actBg, text:"Note added: Initial contact made…",      time:lead.modified },
+    { icon: Envelope,            color:"#4A7AE8", bg:actBg, text:"Email sent to lead",                     time:lead.modified },
+    { icon: Phone,               color:"#4A7AE8", bg:actBg, text:"Call logged — 5 min, no answer",         time:lead.modified },
   ];
 
   // More menu options
@@ -171,7 +184,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
     { icon: Note,                label:"Notes",         count:notes.length, color:"#1D4ED8", tab:"notes"    as const },
     { icon: ClipboardText,       label:"Tasks",         count:2,            color:"#3B82F6", tab:"activity" as const },
     { icon: Phone,               label:"Calls",         count:1,            color:"#60A5FA", tab:"activity" as const },
-    { icon: Envelope,            label:"Emails",        count:0,            color:"#93C5FD", tab:"activity" as const },
+    { icon: Envelope,            label:"Emails",        count:0,            color:"#4A7AE8", tab:"activity" as const },
     { icon: Paperclip,           label:"Attachments",   count:0,            color:"#94A3B8", tab:"activity" as const },
     { icon: ClockCounterClockwise,label:"Stage History", count:1,           color:"#0C2472", tab:"activity" as const },
   ];
@@ -180,7 +193,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
     <div className="flex h-screen bg-transparent font-sans">
       <Sidebar />
 
-      <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
+      <div className={`sidebar-content flex-1 flex flex-col min-h-screen overflow-auto transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
         <TopBar />
 
         <main className="flex-1 px-6 py-5 space-y-4 animate-fade-in">
@@ -217,7 +230,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                 </div>
                 {lead.company && (
                   <p className="text-[13px] text-slate-500 font-medium flex items-center gap-1.5">
-                    <Buildings size={13} color="#93C5FD" weight="duotone" />
+                    <Buildings size={13} color="#4A7AE8" weight="duotone" />
                     {lead.company}
                     {lead.industry && <><span className="text-slate-300">·</span><span className="text-slate-400">{lead.industry}</span></>}
                   </p>
@@ -231,13 +244,13 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
               <div className="flex items-center gap-2 flex-shrink-0">
                 {(lead.phone || lead.mobile) && (
                   <Button variant="outlined" size="small" startIcon={<Phone size={14} weight="duotone" />}
-                    sx={{ borderColor:"#E3ECFC", color:"#475569", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.74rem", "&:hover":{ borderColor:"#60A5FA", color:"#1D4ED8", bgcolor:"#EFF6FF" } }}>
+                    sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#737373":"#475569", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.74rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#60A5FA", color:"#4A7AE8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
                     Call
                   </Button>
                 )}
                 {lead.email && (
                   <Button variant="outlined" size="small" startIcon={<Envelope size={14} weight="duotone" />}
-                    sx={{ borderColor:"#E3ECFC", color:"#475569", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.74rem", "&:hover":{ borderColor:"#60A5FA", color:"#1D4ED8", bgcolor:"#EFF6FF" } }}>
+                    sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#737373":"#475569", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.74rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#60A5FA", color:"#4A7AE8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
                     Email
                   </Button>
                 )}
@@ -245,7 +258,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                 {/* Convert to Deal */}
                 <Button variant="outlined" size="small" startIcon={<ArrowsLeftRight size={14} weight="duotone" />}
                   onClick={() => setConvertOpen(true)}
-                  sx={{ borderColor:"#E3ECFC", color:"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.74rem", "&:hover":{ borderColor:"#1D4ED8", bgcolor:"#EFF6FF" } }}>
+                  sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#4A7AE8":"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.74rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#1D4ED8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
                   Convert
                 </Button>
 
@@ -259,7 +272,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                 {/* Three-dot menu */}
                 <IconButton size="small"
                   onClick={e => setMoreAnchor(e.currentTarget)}
-                  sx={{ borderRadius:"8px", border:"1.5px solid #E3ECFC", bgcolor: moreAnchor ? "#EFF6FF" : "transparent", "&:hover":{ bgcolor:"#EFF6FF" } }}>
+                  sx={{ borderRadius:"8px", border: isDark?"1.5px solid #27272A":"1.5px solid #E3ECFC", bgcolor: moreAnchor ? (isDark?"#27272A":"#EFF6FF") : (isDark?"#0A0A0A":"transparent"), "&:hover":{ bgcolor: isDark?"#27272A":"#EFF6FF" } }}>
                   <DotsThreeVertical size={17} color="#94A3B8" weight="duotone" />
                 </IconButton>
 
@@ -270,18 +283,18 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                   onClose={() => setMoreAnchor(null)}
                   transformOrigin={{ horizontal:"right", vertical:"top" }}
                   anchorOrigin={{ horizontal:"right", vertical:"bottom" }}
-                  PaperProps={{ sx: { borderRadius:"14px", border:"1.5px solid #E3ECFC", boxShadow:"0 8px 32px 0 rgba(12,36,114,0.12)", minWidth:200, mt:0.5 } }}
+                  PaperProps={{ sx: { borderRadius:"14px", border: isDark?"1.5px solid #27272A":"1.5px solid #E3ECFC", bgcolor: isDark?"#0A0A0A":"#fff", boxShadow: isDark?"0 8px 32px rgba(0,0,0,0.4)":"0 8px 32px rgba(12,36,114,0.12)", minWidth:200, mt:0.5 } }}
                 >
                   {moreOptions.map((opt, i) =>
                     opt.type === "divider"
-                      ? <Divider key={i} sx={{ my:0.5, borderColor:"#EFF6FF" }} />
+                      ? <Divider key={i} sx={{ my:0.5, borderColor: isDark?"#27272A":"#EFF6FF" }} />
                       : (
                         <MenuItem key={opt.label} onClick={() => setMoreAnchor(null)}
-                          sx={{ mx:0.5, borderRadius:"8px", py:1, "&:hover":{ bgcolor:"#EFF6FF" } }}>
+                          sx={{ mx:0.5, borderRadius:"8px", py:1, "&:hover":{ bgcolor: isDark?"#27272A":"#EFF6FF" } }}>
                           <ListItemIcon sx={{ minWidth:30 }}>
                             <opt.icon size={16} color={opt.color} weight="duotone" />
                           </ListItemIcon>
-                          <ListItemText primaryTypographyProps={{ fontSize:"0.8rem", fontWeight:600, color: opt.color==="#EF4444"?"#EF4444":"#334155" }}>
+                          <ListItemText primaryTypographyProps={{ fontSize:"0.8rem", fontWeight:600, color: opt.color==="#EF4444"?"#EF4444": isDark?"#E2E8F0":"#334155" }}>
                             {opt.label}
                           </ListItemText>
                         </MenuItem>
@@ -293,15 +306,17 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
           </div>
 
           {/* ══ Tab Bar ══ */}
-          <div className="flex items-center gap-1 bg-[#f9fbff] border border-[#E3ECFC] rounded-xl p-1 w-fit shadow-sm">
+          <div className={`flex items-center gap-1 border rounded-xl p-1 w-fit shadow-sm ${isDark ? "bg-[#000000] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
             {(["overview","activity","notes"] as const).map(t => (
               <button key={t} onClick={() => setActiveTab(t)}
                 className={`px-4 py-1.5 rounded-lg text-[12.5px] font-semibold capitalize transition-all ${
-                  activeTab===t ? "bg-[#1D4ED8] text-white shadow-sm" : "text-[#0C2472] bg-[#E3ECFC] hover:bg-[#1D4ED8]/10 hover:text-[#1D4ED8]"
+                  activeTab===t ? "bg-[#334155] text-white shadow-sm"
+                    : isDark ? "text-[#737373] bg-[#0A0A0A] hover:bg-[#27272A] hover:text-[#D4D4D8]"
+                    : "text-[#0C2472] bg-[#E3ECFC] hover:bg-[#1D4ED8]/10 hover:text-[#1D4ED8]"
                 }`}>
                 {t}
                 {t==="notes" && notes.length > 0 && (
-                  <span className={`ml-1.5 text-[9px] px-1 py-0.5 rounded-full font-bold ${activeTab===t ? "bg-[#f9fbff]/20 text-white" : "bg-[#E3ECFC] text-[#1D4ED8]"}`}>
+                  <span className={`ml-1.5 text-[9px] px-1 py-0.5 rounded-full font-bold ${activeTab===t ? "bg-white/20 text-white" : isDark ? "bg-[#27272A] text-[#D4D4D8]" : "bg-[#E3ECFC] text-[#1D4ED8]"}`}>
                     {notes.length}
                   </span>
                 )}
@@ -340,9 +355,9 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                             <button
                               onClick={() => setCurrentStatus(stage)}
                               className={`flex items-center justify-center gap-1.5 flex-1 py-2 px-2 rounded-xl text-[11.5px] font-bold transition-all
-                                ${isActive  ? "bg-[#0C2472] text-white shadow-md shadow-[#0C2472]/25 scale-[1.02]" : ""}
-                                ${isDone    ? "bg-[#E3ECFC] text-[#1D4ED8] hover:bg-[#DBEAFE]" : ""}
-                                ${isPending ? "bg-slate-50 text-slate-400 hover:bg-[#EFF6FF] hover:text-[#1D4ED8]" : ""}
+                                ${isActive  ? "bg-[#1D4ED8] text-white shadow-md shadow-[#1D4ED8]/25 scale-[1.02]" : ""}
+                                ${isDone    ? isDark ? "bg-[#27272A] text-[#D4D4D8] hover:bg-[#3F3F46]" : "bg-[#E3ECFC] text-[#1D4ED8] hover:bg-[#DBEAFE]" : ""}
+                                ${isPending ? isDark ? "bg-[#0A0A0A] text-[#737373] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "bg-slate-50 text-slate-400 hover:bg-[#EFF6FF] hover:text-[#1D4ED8]" : ""}
                               `}
                             >
                               {isDone && <Check size={12} weight="duotone" />}
@@ -350,7 +365,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                             </button>
                           </Tooltip>
                           {i < PIPELINE.length - 1 && (
-                            <CaretRight size={16} color={isDone||isActive?"#93C5FD":"#E2E8F0"} weight="duotone" style={{ flexShrink:0 }} />
+                            <CaretRight size={16} color={isDone||isActive?"#4A7AE8":"#FFFFFF"} weight="duotone" style={{ flexShrink:0 }} />
                           )}
                         </div>
                       );
@@ -388,18 +403,18 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                 {/* Quick Stats */}
                 <div className="grid grid-cols-4 gap-3">
                   {[
-                    { label:"Lead Source", value:lead.leadSource||"—",    icon:TrendUp,   fill:"#D6E4F9", deep:"#2F6FED" },
-                    { label:"Rating",      value:lead.rating||"—",        icon:Star,      fill:"#D0E5E0", deep:"#2E9E7B" },
-                    { label:"Industry",    value:lead.industry||"—",      icon:Buildings, fill:"#FAE3D0", deep:"#E0883F" },
-                    { label:"Employees",   value:lead.noOfEmployees||"—", icon:User,      fill:"#F5D9E1", deep:"#DB5E8C" },
+                    { label:"Lead Source", value:lead.leadSource||"—",    icon:TrendUp,   fill: isDark?"#1A2D4A":"#D6E4F9", deep: isDark?"#60A5FA":"#2F6FED" },
+                    { label:"Rating",      value:lead.rating||"—",        icon:Star,      fill: isDark?"#1A2D3A":"#D0E5E0", deep: isDark?"#34D399":"#2E9E7B" },
+                    { label:"Industry",    value:lead.industry||"—",      icon:Buildings, fill: isDark?"#2A1E10":"#FAE3D0", deep: isDark?"#FB923C":"#E0883F" },
+                    { label:"Employees",   value:lead.noOfEmployees||"—", icon:User,      fill: isDark?"#2A1828":"#F5D9E1", deep: isDark?"#F472B6":"#DB5E8C" },
                   ].map(({ label, value, icon: Icon, fill, deep }) => (
                     <div key={label} className="rounded-xl border border-white/50 p-3.5"
                       style={{ backgroundColor:fill, boxShadow:"0 6px 24px rgba(15,23,42,0.06)" }}>
-                      <div className="w-7 h-7 rounded-lg flex items-center justify-center mb-2 bg-[#f9fbff]/70">
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center mb-2" style={{ backgroundColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(249,251,255,0.7)" }}>
                         <Icon size={15} color={deep} weight="duotone" />
                       </div>
-                      <p className="font-heading text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-0.5">{label}</p>
-                      <p className="text-[12.5px] font-bold text-[#0C2472] truncate">{value}</p>
+                      <p className="font-heading text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: isDark ? "#94A3B8" : "#475569" }}>{label}</p>
+                      <p className="text-[12.5px] font-bold truncate" style={{ color: isDark ? "#FFFFFF" : "#0C2472" }}>{value}</p>
                     </div>
                   ))}
                 </div>
@@ -462,7 +477,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                         {count > 0 && (
                           <span className="text-[10px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>
                         )}
-                        <CaretRight size={14} color="#CBD5E1" weight="duotone" className="group-hover:text-[#60A5FA] transition-colors" />
+                        <CaretRight size={14} color="#E2E8F0" weight="duotone" className="group-hover:text-[#60A5FA] transition-colors" />
                       </button>
                     ))}
                   </div>
@@ -544,7 +559,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                         </div>
                         <span className="flex-1 text-left text-[12.5px] font-medium text-slate-700 group-hover:text-[#1D4ED8]">{label}</span>
                         {count>0 && <span className="text-[10px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>}
-                        <CaretRight size={14} color="#CBD5E1" weight="duotone" />
+                        <CaretRight size={14} color="#E2E8F0" weight="duotone" />
                       </button>
                     ))}
                   </div>
@@ -573,7 +588,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                       placeholder="Write a note about this lead…"
                       value={newNoteText}
                       onChange={e => setNewNoteText(e.target.value)}
-                      sx={{ fontSize:"0.82rem", color:"#334155", lineHeight:1.6, "& textarea::placeholder":{ color:"#CBD5E1" } }}
+                      sx={{ fontSize:"0.82rem", color:"#334155", lineHeight:1.6, "& textarea::placeholder":{ color:"#E2E8F0" } }}
                     />
                     <div className="flex items-center gap-2 justify-end pt-1 border-t border-[#EFF6FF]">
                       <button onClick={() => { setAddingNote(false); setNewNoteText(""); }}
@@ -592,7 +607,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                     className="w-full flex items-center gap-3 bg-[#f9fbff] border border-[#E3ECFC] hover:border-[#1D4ED8] rounded-2xl px-4 py-3.5 text-left shadow-sm group transition-all">
                     <Avatar sx={{ width:28, height:28, bgcolor:"#1D4ED8", fontSize:"0.58rem", fontWeight:800 }}>PM</Avatar>
                     <span className="text-[12.5px] text-slate-400 group-hover:text-slate-600 transition-colors">Write a note about this lead…</span>
-                    <Plus size={16} color="#CBD5E1" weight="duotone" style={{ marginLeft:"auto" }} className="group-hover:text-[#1D4ED8]" />
+                    <Plus size={16} color="#E2E8F0" weight="duotone" style={{ marginLeft:"auto" }} className="group-hover:text-[#1D4ED8]" />
                   </button>
                 )}
 
@@ -630,7 +645,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
 
                 {notes.length === 0 && !addingNote && (
                   <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] p-10 text-center shadow-sm">
-                    <Note size={28} color="#93C5FD" weight="duotone" style={{ marginBottom:4 }} />
+                    <Note size={28} color="#4A7AE8" weight="duotone" style={{ marginBottom:4 }} />
                     <p className="text-slate-400 text-sm font-medium">No notes yet. Add one above.</p>
                   </div>
                 )}
@@ -651,7 +666,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                         </div>
                         <span className="flex-1 text-left text-[12.5px] font-medium text-slate-700 group-hover:text-[#1D4ED8]">{label}</span>
                         {count>0 && <span className="text-[10px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>}
-                        <CaretRight size={14} color="#CBD5E1" weight="duotone" />
+                        <CaretRight size={14} color="#E2E8F0" weight="duotone" />
                       </button>
                     ))}
                   </div>
@@ -694,3 +709,4 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
     </div>
   );
 }
+

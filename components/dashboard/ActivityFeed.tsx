@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import Avatar from "@mui/material/Avatar";
 import { TrendUp, UserPlus, PencilSimple, CheckCircle, CurrencyDollar } from "@phosphor-icons/react";
 import { OWNER_AVATARS } from "@/lib/avatars";
@@ -24,12 +24,16 @@ const feed: FeedItem[] = [
   { id:5, Icon:CurrencyDollar,iconColor:"#1D4ED8", iconBg:"#EFF6FF", title:"New deal created: Pixel Studios",     user:"Ria M",   initials:"RM", avatarBg:"#0C2472", ownerKey:"Ria M",   time:"3h ago"  },
 ];
 
-export default function ActivityFeed() {
+export default function ActivityFeed({ isDark = false }: { isDark?: boolean }) {
   return (
-    <div className="rounded-2xl p-6 border border-white/30 h-full flex flex-col backdrop-blur-xl"
-      style={{ backgroundColor: "rgba(255, 255, 255, 0.6)", boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08)" }}>
+    <div className="rounded-2xl p-6 border h-full flex flex-col backdrop-blur-xl transition-colors duration-300"
+      style={{
+        backgroundColor: isDark ? "#18181B" : "rgba(255, 255, 255, 0.6)",
+        borderColor: isDark ? "#27272A" : "rgba(255,255,255,0.3)",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08)",
+      }}>
       <div className="mb-5">
-        <h3 className="text-[14px] font-bold text-[#0C2472]">Recent Activity</h3>
+        <h3 className={`text-[14px] font-bold ${isDark ? "text-[#FFFFFF]" : "text-[#0C2472]"}`}>Recent Activity</h3>
         <p className="text-[11px] text-slate-400 mt-0.5">Live team updates</p>
       </div>
 
@@ -39,16 +43,16 @@ export default function ActivityFeed() {
           return (
             <div key={item.id} className="flex items-start gap-3 group">
               <div className="relative flex flex-col items-center flex-shrink-0">
-                <div className="w-7 h-7 rounded-[9px] flex items-center justify-center" style={{ backgroundColor: item.iconBg }}>
-                  <Icon size={14} color={item.iconColor} weight="duotone" />
+                <div className="w-7 h-7 rounded-[9px] flex items-center justify-center" style={{ backgroundColor: isDark ? "#0A0A0A" : item.iconBg }}>
+                  <Icon size={14} color={isDark ? "#737373" : item.iconColor} weight="duotone" />
                 </div>
                 {idx < feed.length - 1 && (
-                  <div className="w-px flex-1 bg-[#E3ECFC] mt-1 mb-0 h-[14px]" />
+                  <div className={`w-px flex-1 mt-1 mb-0 h-[14px] ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
                 )}
               </div>
 
               <div className="flex-1 min-w-0 pb-1">
-                <p className="text-[12px] font-medium text-slate-700 leading-snug group-hover:text-slate-900 transition-colors">
+                <p className={`text-[12px] font-medium leading-snug transition-colors ${isDark ? "text-[#E2E8F0] group-hover:text-[#FFFFFF]" : "text-slate-700 group-hover:text-slate-900"}`}>
                   {item.title}
                 </p>
                 <div className="flex items-center gap-1.5 mt-1">
@@ -59,7 +63,7 @@ export default function ActivityFeed() {
                     {item.initials}
                   </Avatar>
                   <span className="text-[10px] text-slate-400 font-medium">{item.user}</span>
-                  <span className="text-[10px] text-slate-300">·</span>
+                  <span className={`text-[10px] ${isDark ? "text-slate-600" : "text-slate-300"}`}>·</span>
                   <span className="text-[10px] text-slate-400">{item.time}</span>
                 </div>
               </div>
@@ -68,9 +72,10 @@ export default function ActivityFeed() {
         })}
       </div>
 
-      <button className="mt-4 w-full text-center text-[11.5px] text-[#1D4ED8] font-bold hover:text-[#0C2472] py-2 rounded-xl hover:bg-[rgba(96,165,250,0.1)] transition-all duration-150">
+      <button className={`mt-4 w-full text-center text-[11.5px] font-bold py-2 rounded-xl transition-all duration-150 ${isDark ? "text-[#737373] hover:text-[#FAFAFA] hover:bg-[#27272A]" : "text-[#1D4ED8] hover:text-[#0C2472] hover:bg-[rgba(96,165,250,0.1)]"}`}>
         View all activity →
       </button>
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -22,6 +22,7 @@ import {
   ArrowsDownUp, List, GridFour, Kanban, CaretDown, House, CaretRight,
   Trash, DotsThreeVertical, FunnelSimple, TrendUp,
 } from "@phosphor-icons/react";
+import { useTheme } from "@/components/ThemeContext";
 
 // ─────────────────────────────────────────────
 //  Types
@@ -58,14 +59,14 @@ const ALL_DEALS: Deal[] = [
 // ─────────────────────────────────────────────
 //  Stage config
 // ─────────────────────────────────────────────
-const STAGE_CFG: Record<DealStage, { bg: string; text: string; dot: string }> = {
-  "Qualification":            { bg: "#EFF6FF", text: "#0C2472", dot: "#1D4ED8" },
-  "Needs Analysis":           { bg: "#E3ECFC", text: "#1D4ED8", dot: "#3B82F6" },
-  "Value Proposition":        { bg: "#E3ECFC", text: "#0C2472", dot: "#60A5FA" },
-  "Identify Decision Makers": { bg: "#E3ECFC", text: "#1D4ED8", dot: "#0C2472" },
-  "Proposal/Price Quote":     { bg: "#EFF6FF", text: "#0C2472", dot: "#0C2472" },
-  "Negotiation/Review":       { bg: "#FEF3C7", text: "#92400E", dot: "#F59E0B" },
-  "Closed Won":               { bg: "#DCFCE7", text: "#166534", dot: "#10B981" },
+const STAGE_CFG: Record<DealStage, { bg: string; text: string; dot: string; bgDark: string; textDark: string }> = {
+  "Qualification":            { bg: "#EFF6FF", text: "#0C2472", dot: "#1D4ED8", bgDark: "rgba(96, 165, 250, 0.15)", textDark: "#60A5FA" },
+  "Needs Analysis":           { bg: "#E3ECFC", text: "#1D4ED8", dot: "#3B82F6", bgDark: "rgba(52, 211, 153, 0.15)", textDark: "#34D399" },
+  "Value Proposition":        { bg: "#E3ECFC", text: "#0C2472", dot: "#60A5FA", bgDark: "rgba(251, 191, 36, 0.15)", textDark: "#FBBF24" },
+  "Identify Decision Makers": { bg: "#E3ECFC", text: "#1D4ED8", dot: "#0C2472", bgDark: "rgba(244, 114, 182, 0.15)", textDark: "#F472B6" },
+  "Proposal/Price Quote":     { bg: "#EFF6FF", text: "#0C2472", dot: "#0C2472", bgDark: "rgba(167, 139, 250, 0.15)", textDark: "#A78BFA" },
+  "Negotiation/Review":       { bg: "#FEF3C7", text: "#92400E", dot: "#F59E0B", bgDark: "rgba(56, 189, 248, 0.15)", textDark: "#38BDF8" },
+  "Closed Won":               { bg: "#DCFCE7", text: "#166534", dot: "#10B981", bgDark: "rgba(16, 185, 129, 0.15)", textDark: "#10B981" },
 };
 
 // ─────────────────────────────────────────────
@@ -102,11 +103,11 @@ const DEFAULT_VISIBLE_COLS = new Set([
 // ─────────────────────────────────────────────
 const fmt = (n: number) => n === 0 ? "₹0" : `₹${n.toLocaleString("en-IN")}`;
 
-function ColHeader({ label }: { label: string }) {
+function ColHeader({ label, isDark = false }: { label: string; isDark?: boolean }) {
   return (
-    <div className="font-heading flex items-center gap-0.5 text-[10.5px] font-bold text-[#0C2472] uppercase tracking-wider cursor-pointer hover:text-[#1D4ED8] transition-colors group select-none">
+    <div className={`font-heading flex items-center gap-0.5 text-[10.5px] font-bold uppercase tracking-wider cursor-pointer transition-colors group select-none ${isDark ? "text-[#737373] hover:text-[#D4D4D8]" : "text-[#0C2472] hover:text-[#1D4ED8]"}`}>
       {label}
-      <ArrowsDownUp size={12} weight="duotone" className="opacity-30 group-hover:opacity-100 text-[#60A5FA] transition-opacity" />
+      <ArrowsDownUp size={12} weight="duotone" className={`opacity-30 group-hover:opacity-100 transition-opacity ${isDark ? "text-[#52525B]" : "text-[#60A5FA]"}`} />
     </div>
   );
 }
@@ -116,6 +117,8 @@ function ColHeader({ label }: { label: string }) {
 // ─────────────────────────────────────────────
 export default function DealsPage() {
   const router = useRouter();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   const [selected, setSelected]       = useState<number[]>([]);
   const [activeStage, setActiveStage] = useState("All");
@@ -155,10 +158,10 @@ export default function DealsPage() {
     <div className="flex h-screen bg-transparent font-sans">
       <Sidebar />
 
-      <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
+      <div className={`sidebar-content flex-1 flex flex-col min-h-screen overflow-auto transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
         <TopBar />
 
-        <main className="flex-1 px-8 py-6 space-y-5 animate-fade-in">
+        <main className="flex-1 px-4 md:px-8 py-4 md:py-6 space-y-5 animate-fade-in">
 
           {/* ══ Breadcrumb + Header ══ */}
           <div className="flex items-start justify-between">
@@ -166,7 +169,7 @@ export default function DealsPage() {
               <div className="flex items-center gap-1 text-[11px] text-slate-400 mb-2">
                 <House size={12} weight="duotone" />
                 <CaretRight size={11} weight="duotone" />
-                <Link href="/deals" className="hover:text-[#1D4ED8] transition-colors font-medium">Deals</Link>
+                <Link href="/deals" className={`transition-colors font-medium ${isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#1D4ED8]"}`}>Deals</Link>
               </div>
               <div className="flex items-center gap-2.5">
                 <h1 className="font-heading text-[20px] font-extrabold text-slate-900 tracking-tight">Deals</h1>
@@ -183,7 +186,7 @@ export default function DealsPage() {
 
             <div className="flex items-center gap-2 mt-1">
               {/* View toggle */}
-              <div className="flex items-center bg-[#f9fbff] border border-[#E3ECFC] rounded-xl p-0.5 gap-0.5 shadow-sm">
+              <div className={`flex items-center border rounded-xl p-0.5 gap-0.5 shadow-sm ${isDark ? "bg-[#000000] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
                 {[
                   { k: "list",   Icon: List,     label: "List"   },
                   { k: "grid",   Icon: GridFour, label: "Grid"   },
@@ -191,7 +194,9 @@ export default function DealsPage() {
                 ].map(({ k, Icon, label }) => (
                   <button key={k} onClick={() => setView(k as typeof view)}
                     className={`flex items-center gap-1.5 px-2.5 py-[7px] rounded-lg text-[11.5px] font-semibold transition-all ${
-                      view === k ? "bg-[#f9fbff] text-[#1D4ED8]" : "text-slate-400 hover:text-slate-600"
+                      view === k
+                        ? isDark ? "bg-[#18181B] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]"
+                        : isDark ? "text-[#737373] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "text-slate-400 hover:text-slate-600"
                     }`}>
                     <Icon size={14} weight="duotone" />{label}
                   </button>
@@ -216,8 +221,8 @@ export default function DealsPage() {
               return (
                 <button key={stage} onClick={() => setActiveStage(stage)}
                   className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[12px] font-semibold whitespace-nowrap transition-all flex-shrink-0 border ${
-                    active ? "bg-[#1D4ED8] text-white border-[#1D4ED8] shadow-sm shadow-[#1D4ED8]/20"
-                           : "bg-[#f9fbff] text-slate-600 border-[#E3ECFC] hover:bg-[#E3ECFC] hover:text-[#1D4ED8]"
+                    active ? isDark ? "bg-[#18181B] text-white border-[#27272A] shadow-sm shadow-[#27272A]/10" : "bg-[#1D4ED8] text-white border-[#1D4ED8] shadow-sm shadow-[#1D4ED8]/20"
+                           : isDark ? "bg-[#0A0A0A] text-[#A1A1AA] border-[#27272A] hover:bg-[#27272A] hover:text-[#FFFFFF]" : "bg-[#f9fbff] text-slate-600 border-[#E3ECFC] hover:bg-[#E3ECFC] hover:text-[#1D4ED8]"
                   }`}>
                   {stage}
                   {cnt > 0 && <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold leading-none ${
@@ -231,11 +236,11 @@ export default function DealsPage() {
           {/* ══ Toolbar ══ */}
           <div className="flex items-center gap-2.5">
             {/* Search */}
-            <div className="flex items-center gap-2 bg-[#f9fbff] border border-[#E3ECFC] rounded-xl px-3 py-2 w-72 focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#93C5FD] transition-all">
+            <div className={`flex items-center gap-2 border rounded-xl px-3 py-2 w-72 focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
               <MagnifyingGlass size={15} color="#94A3B8" weight="duotone" />
               <InputBase placeholder="Search by deal name, account…" value={search}
                 onChange={e => setSearch(e.target.value)}
-                sx={{ flex: 1, fontSize: "0.76rem", color: "#334155", "& input::placeholder": { color: "#94A3B8", opacity: 1 } }}
+                sx={{ flex: 1, fontSize: "0.76rem", color: isDark ? "#D4D4D8" : "#334155", "& input::placeholder": { color: "#94A3B8", opacity: 1 } }}
               />
               {search && <button onClick={() => setSearch("")} className="text-slate-300 hover:text-slate-500 text-sm">✕</button>}
             </div>
@@ -249,7 +254,13 @@ export default function DealsPage() {
                 : <FunnelSimple size={14} weight="duotone" />
               }
               onClick={() => setFiltersOpen(true)}
-              sx={{ borderColor: activeFilters.length > 0 ? "#1D4ED8" : "#E3ECFC", color: activeFilters.length > 0 ? "#1D4ED8" : "#0C2472", bgcolor: activeFilters.length > 0 ? "#f9fbff" : "#E3ECFC", borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem", "&:hover": { borderColor: "#1D4ED8", color: "#1D4ED8", bgcolor: "#f9fbff" } }}>
+              sx={{
+                borderColor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#27272A" : "#E3ECFC",
+                color: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#737373" : "#0C2472",
+                bgcolor: isDark ? "#0F0F0F" : activeFilters.length > 0 ? "#f9fbff" : "#E3ECFC",
+                borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem",
+                "&:hover": { borderColor: "#1D4ED8", color: "#4A7AE8", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
+              }}>
               Filters{activeFilters.length > 0 ? ` (${activeFilters.length})` : ""}
             </Button>
 
@@ -257,7 +268,13 @@ export default function DealsPage() {
             <Button variant="outlined" size="small"
               startIcon={<Columns size={14} weight="duotone" />}
               onClick={() => setColumnsOpen(true)}
-              sx={{ borderColor: "#E3ECFC", color: "#0C2472", bgcolor: "#E3ECFC", borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem", "&:hover": { borderColor: "#1D4ED8", color: "#1D4ED8", bgcolor: "#f9fbff" } }}>
+              sx={{
+                borderColor: isDark ? "#27272A" : "#E3ECFC",
+                color: isDark ? "#737373" : "#0C2472",
+                bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
+                borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem",
+                "&:hover": { borderColor: "#1D4ED8", color: "#4A7AE8", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
+              }}>
               Columns
             </Button>
 
@@ -266,7 +283,13 @@ export default function DealsPage() {
               startIcon={<SortAscending size={14} weight="duotone" />}
               endIcon={<CaretDown size={11} weight="duotone" />}
               onClick={e => setSortAnchor(e.currentTarget)}
-              sx={{ borderColor: activeSorts.length > 0 ? "#1D4ED8" : "#E3ECFC", color: activeSorts.length > 0 ? "#1D4ED8" : "#0C2472", bgcolor: activeSorts.length > 0 ? "#f9fbff" : "#E3ECFC", borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem", "&:hover": { borderColor: "#1D4ED8", color: "#1D4ED8", bgcolor: "#f9fbff" } }}>
+              sx={{
+                borderColor: isDark ? "#27272A" : "#E3ECFC",
+                color: isDark ? "#737373" : "#0C2472",
+                bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
+                borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem",
+                "&:hover": { borderColor: "#1D4ED8", color: "#4A7AE8", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
+              }}>
               Sort{activeSorts.length > 0 ? ` (${activeSorts.length})` : ""}
             </Button>
 
@@ -291,8 +314,8 @@ export default function DealsPage() {
                 <span className="text-[12px] font-semibold">selected</span>
               </div>
               <div className="w-px h-4 bg-[#f9fbff]/15" />
-              <button className="text-[11.5px] font-semibold text-[#93C5FD] hover:text-white transition-colors">Update Stage</button>
-              <button className="text-[11.5px] font-semibold text-[#93C5FD] hover:text-white transition-colors">Assign Owner</button>
+              <button className="text-[11.5px] font-semibold text-[#4A7AE8] hover:text-white transition-colors">Update Stage</button>
+              <button className="text-[11.5px] font-semibold text-[#4A7AE8] hover:text-white transition-colors">Assign Owner</button>
               <button onClick={() => setSelected([])} className="ml-auto text-[11.5px] font-semibold text-white/50 hover:text-white transition-colors">Clear</button>
               <button className="flex items-center gap-1.5 text-[11.5px] font-semibold text-red-300 hover:text-red-200 transition-colors">
                 <Trash size={14} weight="duotone" /> Delete
@@ -309,12 +332,14 @@ export default function DealsPage() {
           {/* ══ LIST ══ */}
           {view === "list" && (
             <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
+              <div className="overflow-x-auto" style={{ scrollbarWidth: "thin" }}>
+              <div style={{ minWidth: "700px" }}>
               {/* Table header */}
               <div className="grid items-center px-4 py-2.5 bg-[#E3ECFC] border-b border-[#E3ECFC]"
                 style={{ gridTemplateColumns: gridTemplate }}>
                 <Checkbox size="small" checked={allChecked} indeterminate={someChecked} onChange={toggleAll}
-                  sx={{ p: 0.5, color: "#CBD5E1", "&.Mui-checked, &.MuiCheckbox-indeterminate": { color: "#1D4ED8" } }} />
-                {visibleColDefs.map(c => <ColHeader key={c.key} label={c.label} />)}
+                  sx={{ p: 0.5, color: "#E2E8F0", "&.Mui-checked, &.MuiCheckbox-indeterminate": { color: "#1D4ED8" } }} />
+                {visibleColDefs.map(c => <ColHeader key={c.key} label={c.label} isDark={isDark} />)}
                 <div />
               </div>
 
@@ -327,30 +352,30 @@ export default function DealsPage() {
                   return (
                     <div key={deal.id}
                       className={`grid items-center px-4 py-3 transition-all duration-100 cursor-pointer group ${
-                        isSel ? "bg-[#f9fbff]" : "hover:bg-[#60A5FA]/[0.04]"
+                        isSel ? isDark ? "bg-[#18181B]" : "bg-[#f9fbff]" : isDark ? "hover:bg-[#0F0F0F]" : "hover:bg-[#60A5FA]/[0.04]"
                       }`}
                       style={{ gridTemplateColumns: gridTemplate }}
                       onClick={() => router.push(`/deals/${deal.id}`)}>
 
                       <Checkbox size="small" checked={isSel} onChange={() => toggleOne(deal.id)} onClick={e => e.stopPropagation()}
-                        sx={{ p: 0.5, color: "#CBD5E1", "&.Mui-checked": { color: "#1D4ED8" } }} />
+                        sx={{ p: 0.5, color: "#E2E8F0", "&.Mui-checked": { color: "#1D4ED8" } }} />
 
                       {/* Deal Name */}
                       {visibleCols.has("dealName") && (
-                        <p className="font-heading text-[12.5px] font-semibold text-slate-800 truncate pr-2 group-hover:text-[#1D4ED8] transition-colors">
+                        <p className={`font-heading text-[12.5px] font-semibold truncate pr-2 transition-colors ${isDark ? "text-[#FFFFFF] group-hover:text-[#60A5FA]" : "text-slate-800 group-hover:text-[#1D4ED8]"}`}>
                           {deal.name}
                         </p>
                       )}
 
                       {/* Amount */}
                       {visibleCols.has("amount") && (
-                        <p className="text-[12px] font-bold text-slate-800 truncate pr-2">{fmt(deal.amount)}</p>
+                        <p className={`text-[12px] font-bold truncate pr-2 ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}>{fmt(deal.amount)}</p>
                       )}
 
                       {/* Account Name */}
                       {visibleCols.has("accountName") && (
-                        <p className="text-[12px] text-slate-500 truncate pr-2">
-                          {deal.account || <span className="text-slate-200">—</span>}
+                        <p className={`text-[12px] truncate pr-2 ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
+                          {deal.account || <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>}
                         </p>
                       )}
 
@@ -358,8 +383,8 @@ export default function DealsPage() {
                       {visibleCols.has("stage") && (
                         <div className="pr-2">
                           <span className="inline-flex items-center gap-1.5 text-[10.5px] font-bold px-2 py-[3px] rounded-full"
-                            style={{ backgroundColor: cfg.bg, color: cfg.text }}>
-                            <span className="w-[5px] h-[5px] rounded-full flex-shrink-0" style={{ backgroundColor: cfg.dot }} />
+                            style={{ backgroundColor: isDark ? cfg.bgDark : cfg.bg, color: isDark ? cfg.textDark : cfg.text }}>
+                            <span className="w-[5px] h-[5px] rounded-full flex-shrink-0" style={{ backgroundColor: isDark ? cfg.textDark : cfg.dot }} />
                             {deal.stage}
                           </span>
                         </div>
@@ -368,38 +393,38 @@ export default function DealsPage() {
                       {/* Probability */}
                       {visibleCols.has("probability") && (
                         <div className="flex items-center gap-1.5 pr-2">
-                          <div className="w-14 h-1 bg-[#E3ECFC] rounded-full overflow-hidden flex-shrink-0">
-                            <div className="h-full rounded-full" style={{ width: `${deal.probability}%`, backgroundColor: cfg.dot }} />
+                          <div className={`w-14 h-1 rounded-full overflow-hidden flex-shrink-0 ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`}>
+                            <div className="h-full rounded-full" style={{ width: `${deal.probability}%`, backgroundColor: isDark ? cfg.textDark : cfg.dot }} />
                           </div>
-                          <span className="text-[11.5px] text-slate-500 font-medium">{deal.probability}%</span>
+                          <span className={`text-[11.5px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>{deal.probability}%</span>
                         </div>
                       )}
 
                       {/* Contact Name */}
                       {visibleCols.has("contactName") && (
-                        <p className="text-[12px] text-slate-500 truncate pr-2">
-                          {deal.contactName || <span className="text-slate-200">—</span>}
+                        <p className={`text-[12px] truncate pr-2 ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
+                          {deal.contactName || <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>}
                         </p>
                       )}
 
                       {/* Created By */}
                       {visibleCols.has("createdBy") && (
-                        <p className="text-[11.5px] text-slate-400 truncate pr-2">{deal.createdBy}</p>
+                        <p className={`text-[11.5px] truncate pr-2 ${isDark ? "text-[#737373]" : "text-slate-400"}`}>{deal.createdBy}</p>
                       )}
 
                       {/* Modified By */}
                       {visibleCols.has("modifiedBy") && (
-                        <p className="text-[11.5px] text-slate-400 truncate pr-2">{deal.modifiedBy}</p>
+                        <p className={`text-[11.5px] truncate pr-2 ${isDark ? "text-[#737373]" : "text-slate-400"}`}>{deal.modifiedBy}</p>
                       )}
 
                       {/* Creation */}
                       {visibleCols.has("creation") && (
-                        <p className="text-[11px] text-slate-400 truncate pr-2">{deal.creation}</p>
+                        <p className={`text-[11px] truncate pr-2 ${isDark ? "text-[#737373]" : "text-slate-400"}`}>{deal.creation}</p>
                       )}
 
                       {/* Modified */}
                       {visibleCols.has("modified") && (
-                        <p className="text-[11px] text-slate-400 truncate">{deal.modified}</p>
+                        <p className={`text-[11px] truncate ${isDark ? "text-[#737373]" : "text-slate-400"}`}>{deal.modified}</p>
                       )}
 
                       {/* Row action */}
@@ -414,12 +439,13 @@ export default function DealsPage() {
                   );
                 })}
               </div>
+              </div></div>
 
               {/* Empty state */}
               {filtered.length === 0 && (
                 <div className="py-16 text-center">
                   <div className="w-12 h-12 rounded-2xl bg-[#f9fbff] flex items-center justify-center mx-auto mb-3">
-                    <MagnifyingGlass size={22} color="#93C5FD" weight="duotone" />
+                    <MagnifyingGlass size={22} color="#4A7AE8" weight="duotone" />
                   </div>
                   <p className="font-heading text-slate-500 text-sm font-semibold">No deals found</p>
                   <p className="text-slate-300 text-xs mt-1">Try adjusting your search or stage filter</p>
@@ -471,3 +497,4 @@ export default function DealsPage() {
     </div>
   );
 }
+

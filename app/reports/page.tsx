@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -16,6 +16,7 @@ import {
   House, CaretRight, MagnifyingGlass, Star, DotsThree,
   ChartBar, CaretDown, Plus,
 } from "@phosphor-icons/react";
+import { useTheme } from "@/components/ThemeContext";
 
 // ─────────────────────────────────────────────
 //  Data — exact from screenshot
@@ -48,6 +49,9 @@ const COLLECTIONS = ["All Reports", "Deal Reports", "Lead Reports", "Contact Rep
 // ─────────────────────────────────────────────
 export default function ReportsPage() {
   const router = useRouter();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
   const [reports, setReports]     = useState<Report[]>(ALL_REPORTS);
   const [selected, setSelected]   = useState<number[]>([]);
   const [collection, setCollection] = useState("All Reports");
@@ -74,10 +78,10 @@ export default function ReportsPage() {
     <div className="flex h-screen bg-transparent font-sans">
       <Sidebar />
 
-      <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
+      <div className={`sidebar-content flex-1 flex flex-col min-h-screen overflow-auto transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
         <TopBar />
 
-        <main className="flex-1 px-8 py-6 space-y-5 animate-fade-in">
+        <main className="flex-1 px-4 md:px-8 py-4 md:py-6 space-y-5 animate-fade-in">
 
           {/* ══ Breadcrumb + Header ══ */}
           <div className="flex items-start justify-between">
@@ -108,17 +112,17 @@ export default function ReportsPage() {
             {/* Collection filter dropdown */}
             <FormControl size="small" sx={{ minWidth: 180 }}>
               <Select value={collection} onChange={e => setCollection(e.target.value)}
-                sx={{ borderRadius:"10px", bgcolor:"#f9fbff", fontSize:"0.82rem", border:"1.5px solid #E3ECFC", "&:hover": { borderColor:"#60A5FA", bgcolor:"#f9fbff" }, "& .MuiOutlinedInput-notchedOutline":{ border:"none" }, "& .MuiSelect-select":{ py:"7px", px:"12px" } }}>
+                sx={{ borderRadius:"10px", bgcolor: isDark ? "#0A0A0A" : "#f9fbff", fontSize:"0.82rem", border: isDark ? "1.5px solid #27272A" : "1.5px solid #E3ECFC", color: isDark ? "#D4D4D8" : "#334155", "&:hover": { borderColor:"#60A5FA" }, "& .MuiOutlinedInput-notchedOutline":{ border:"none" }, "& .MuiSelect-select":{ py:"7px", px:"12px" }, "& .MuiSvgIcon-root": { color: isDark ? "#737373" : undefined } }}>
                 {COLLECTIONS.map(c => <MenuItem key={c} value={c} sx={{ fontSize:"0.82rem" }}>{c}</MenuItem>)}
               </Select>
             </FormControl>
 
             {/* Search */}
-            <div className="flex items-center gap-2 bg-[#f9fbff] border border-[#E3ECFC] rounded-xl px-3 py-2 w-64 focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#93C5FD] transition-all">
+            <div className={`flex items-center gap-2 border rounded-xl px-3 py-2 w-64 focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
               <MagnifyingGlass size={14} color="#94A3B8" weight="duotone" />
               <InputBase placeholder="Search All Reports" value={search}
                 onChange={e => setSearch(e.target.value)}
-                sx={{ flex:1, fontSize:"0.76rem", color:"#334155", "& input::placeholder":{ color:"#94A3B8", opacity:1 } }}
+                sx={{ flex:1, fontSize:"0.76rem", color: isDark ? "#8A9FB5" : "#334155", "& input::placeholder":{ color:"#94A3B8", opacity:1 } }}
               />
               {search && <button onClick={() => setSearch("")} className="text-slate-300 hover:text-slate-500 text-sm">✕</button>}
             </div>
@@ -128,11 +132,13 @@ export default function ReportsPage() {
 
           {/* ══ Table ══ */}
           <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
+            <div className="overflow-x-auto" style={{ scrollbarWidth: "thin" }}>
+            <div style={{ minWidth: "780px" }}>
             {/* Header */}
             <div className="grid items-center px-4 py-2.5 bg-[#E3ECFC] border-b border-[#E3ECFC]"
               style={{ gridTemplateColumns: "36px 36px 1fr 220px 160px 170px 180px 40px" }}>
               <Checkbox size="small" checked={allChecked} indeterminate={someChecked} onChange={toggleAll}
-                sx={{ p:0.5, color:"#CBD5E1", "&.Mui-checked, &.MuiCheckbox-indeterminate":{ color:"#1D4ED8" } }} />
+                sx={{ p:0.5, color:"#E2E8F0", "&.Mui-checked, &.MuiCheckbox-indeterminate":{ color:"#1D4ED8" } }} />
               <div className="font-heading text-[10.5px] font-bold text-[#0C2472] uppercase tracking-wider">Fav.</div>
               <div className="font-heading text-[10.5px] font-bold text-[#0C2472] uppercase tracking-wider">Report Name</div>
               <div className="font-heading text-[10.5px] font-bold text-[#0C2472] uppercase tracking-wider">Description</div>
@@ -153,7 +159,7 @@ export default function ReportsPage() {
                     onClick={() => router.push(`/reports/${report.id}`)}>
 
                     <Checkbox size="small" checked={isSel} onChange={() => toggleOne(report.id)} onClick={e => e.stopPropagation()}
-                      sx={{ p:0.5, color:"#CBD5E1", "&.Mui-checked":{ color:"#1D4ED8" } }} />
+                      sx={{ p:0.5, color:"#E2E8F0", "&.Mui-checked":{ color:"#1D4ED8" } }} />
 
                     {/* Favorite star */}
                     <Tooltip title={report.isFavorite ? "Remove from favourites" : "Add to favourites"}>
@@ -162,7 +168,7 @@ export default function ReportsPage() {
                         <Star
                           size={15}
                           weight={report.isFavorite ? "fill" : "regular"}
-                          color={report.isFavorite ? "#F59E0B" : "#CBD5E1"}
+                          color={report.isFavorite ? "#F59E0B" : "#E2E8F0"}
                         />
                       </IconButton>
                     </Tooltip>
@@ -213,12 +219,13 @@ export default function ReportsPage() {
                 );
               })}
             </div>
+            </div></div>
 
             {/* Empty */}
             {filtered.length === 0 && (
               <div className="py-16 text-center">
                 <div className="w-12 h-12 rounded-2xl bg-[#f9fbff] flex items-center justify-center mx-auto mb-3">
-                  <ChartBar size={22} color="#93C5FD" weight="duotone" />
+                  <ChartBar size={22} color="#4A7AE8" weight="duotone" />
                 </div>
                 <p className="font-heading text-slate-500 text-sm font-semibold">No reports found</p>
                 <p className="text-slate-300 text-xs mt-1">Try adjusting your search or collection filter</p>
@@ -245,3 +252,4 @@ export default function ReportsPage() {
     </div>
   );
 }
+

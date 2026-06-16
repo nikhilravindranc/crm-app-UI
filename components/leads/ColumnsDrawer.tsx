@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useMemo } from "react";
 import Drawer from "@mui/material/Drawer";
 import Button from "@mui/material/Button";
@@ -200,7 +200,7 @@ export default function ColumnsDrawer({ open, onClose, selected, onChange }: Pro
                   indeterminate={!allOn && someOn}
                   size="small"
                   onClick={e => { e.stopPropagation(); toggleGroup(keys); }}
-                  sx={{ p: 0.25, color: "#CBD5E1", "&.Mui-checked, &.MuiCheckbox-indeterminate": { color: "#1D4ED8" } }}
+                  sx={{ p: 0.25, color: "#E2E8F0", "&.Mui-checked, &.MuiCheckbox-indeterminate": { color: "#1D4ED8" } }}
                 />
                 <span className="font-heading text-[11px] font-bold text-[#1D4ED8] uppercase tracking-wider">{group}</span>
                 <span className="ml-auto text-[10px] text-slate-400 font-medium">
@@ -225,7 +225,7 @@ export default function ColumnsDrawer({ open, onClose, selected, onChange }: Pro
                         disabled={locked}
                         size="small"
                         onChange={() => toggle(col.key as string, locked)}
-                        sx={{ p: 0.25, color: "#CBD5E1", "&.Mui-checked": { color: "#1D4ED8" }, "&.Mui-disabled": { color: "#CBD5E1" } }}
+                        sx={{ p: 0.25, color: "#E2E8F0", "&.Mui-checked": { color: "#1D4ED8" }, "&.Mui-disabled": { color: "#E2E8F0" } }}
                       />
                       <span className={`text-[12.5px] flex-1 truncate ${locked ? "text-slate-400" : "text-slate-700"}`}>
                         {col.label}

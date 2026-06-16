@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -467,11 +467,11 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
           <Link href="/" className="text-slate-400 hover:text-[#1D4ED8] transition-colors">
             <House size={13} weight="duotone" />
           </Link>
-          <CaretRight size={11} color="#CBD5E1" />
+          <CaretRight size={11} color="#E2E8F0" />
           <Link href="/accounts" className="text-slate-400 hover:text-[#1D4ED8] font-medium transition-colors">
             Accounts
           </Link>
-          <CaretRight size={11} color="#CBD5E1" />
+          <CaretRight size={11} color="#E2E8F0" />
           <span className="text-[#0C2472] font-semibold">{account.name}</span>
         </div>
 
@@ -517,7 +517,7 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
                 <SectionCard icon={Buildings} title="Account Information"
                   action={
                     <IconButton size="small"
-                      sx={{ p: 0.5, color: "#CBD5E1", "&:hover": { color: "#1D4ED8", bgcolor: "#EFF6FF" }, borderRadius: "6px" }}>
+                      sx={{ p: 0.5, color: "#E2E8F0", "&:hover": { color: "#1D4ED8", bgcolor: "#EFF6FF" }, borderRadius: "6px" }}>
                       <DotsThreeVertical size={16} weight="bold" />
                     </IconButton>
                   }>
@@ -565,7 +565,7 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
                           New Task
                         </Button>
                         <IconButton size="small"
-                          sx={{ p: 0.5, color: "#CBD5E1", "&:hover": { color: "#1D4ED8" }, borderRadius: "6px" }}>
+                          sx={{ p: 0.5, color: "#E2E8F0", "&:hover": { color: "#1D4ED8" }, borderRadius: "6px" }}>
                           <DotsThreeVertical size={16} weight="bold" />
                         </IconButton>
                       </div>
@@ -592,13 +592,13 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
                 <div id="section-notes">
                   <SectionCard icon={Note} title="Notes">
                     <div className="space-y-3">
-                      <div className="border border-[#E3ECFC] rounded-xl overflow-hidden focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#93C5FD] transition-all">
+                      <div className="border border-[#E3ECFC] rounded-xl overflow-hidden focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all">
                         <InputBase
                           fullWidth multiline minRows={2}
                           placeholder="Add a note…"
                           value={note}
                           onChange={e => setNote(e.target.value)}
-                          sx={{ px: 2, py: 1.5, fontSize: "0.8rem", color: "#334155", "& textarea::placeholder": { color: "#CBD5E1", opacity: 1 } }}
+                          sx={{ px: 2, py: 1.5, fontSize: "0.8rem", color: "#334155", "& textarea::placeholder": { color: "#E2E8F0", opacity: 1 } }}
                         />
                         {note.trim() && (
                           <div className="flex justify-end px-3 pb-2">
@@ -655,7 +655,7 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
                           New Deal
                         </Button>
                         <IconButton size="small"
-                          sx={{ p: 0.5, color: "#CBD5E1", "&:hover": { color: "#1D4ED8" }, borderRadius: "6px" }}>
+                          sx={{ p: 0.5, color: "#E2E8F0", "&:hover": { color: "#1D4ED8" }, borderRadius: "6px" }}>
                           <DotsThreeVertical size={16} weight="bold" />
                         </IconButton>
                       </div>
@@ -700,7 +700,7 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
                           New Contact
                         </Button>
                         <IconButton size="small"
-                          sx={{ p: 0.5, color: "#CBD5E1", "&:hover": { color: "#1D4ED8" }, borderRadius: "6px" }}>
+                          sx={{ p: 0.5, color: "#E2E8F0", "&:hover": { color: "#1D4ED8" }, borderRadius: "6px" }}>
                           <DotsThreeVertical size={16} weight="bold" />
                         </IconButton>
                       </div>
@@ -745,7 +745,7 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
                           New Account
                         </Button>
                         <IconButton size="small"
-                          sx={{ p: 0.5, color: "#CBD5E1", "&:hover": { color: "#1D4ED8" }, borderRadius: "6px" }}>
+                          sx={{ p: 0.5, color: "#E2E8F0", "&:hover": { color: "#1D4ED8" }, borderRadius: "6px" }}>
                           <DotsThreeVertical size={16} weight="bold" />
                         </IconButton>
                       </div>
@@ -798,7 +798,7 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
                       {count > 0 && (
                         <span className="text-[10px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>
                       )}
-                      <CaretRight size={14} color="#CBD5E1" weight="duotone" />
+                      <CaretRight size={14} color="#E2E8F0" weight="duotone" />
                     </button>
                   ))}
                 </div>
@@ -821,7 +821,7 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
 
                 {account.timeline.length === 0 ? (
                   <div className="py-12 flex flex-col items-center justify-center gap-2">
-                    <ClockCounterClockwise size={28} color="#CBD5E1" weight="duotone" />
+                    <ClockCounterClockwise size={28} color="#E2E8F0" weight="duotone" />
                     <p className="text-[12.5px] text-slate-400">No history yet</p>
                   </div>
                 ) : (() => {
@@ -898,7 +898,7 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
                       {count > 0 && (
                         <span className="text-[10px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>
                       )}
-                      <CaretRight size={14} color="#CBD5E1" weight="duotone" />
+                      <CaretRight size={14} color="#E2E8F0" weight="duotone" />
                     </button>
                   ))}
                 </div>

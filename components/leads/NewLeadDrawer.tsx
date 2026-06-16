@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import Drawer from "@mui/material/Drawer";
 import TextField from "@mui/material/TextField";
@@ -24,7 +24,7 @@ const FX = {
     "& fieldset": { borderColor: "#E3ECFC", borderWidth: 1.5 }, /* Tint border */
     "&:hover fieldset": { borderColor: "#60A5FA" },             /* Hover color on hover */
     "&.Mui-focused fieldset": { borderColor: "#1D4ED8", borderWidth: 2 }, /* Primary thick on focus */
-    "&.Mui-focused": { boxShadow: "0 0 0 2px #93C5FD" },       /* Soft ring on focus */
+    "&.Mui-focused": { boxShadow: "0 0 0 2px #4A7AE8" },       /* Soft ring on focus */
     "& input": { padding: "10px 14px" },
   },
   "& .MuiInputLabel-root": { fontSize: "0.79rem", color: "#94A3B8" },
@@ -384,7 +384,7 @@ export default function NewLeadDrawer({
                 onChange={(e) => set("emailOptOut", e.target.checked)}
                 size="small"
                 sx={{
-                  color: "#CBD5E1",
+                  color: "#E2E8F0",
                   "&.Mui-checked": { color: "#1D4ED8" },
                   p: 0.75,
                 }}

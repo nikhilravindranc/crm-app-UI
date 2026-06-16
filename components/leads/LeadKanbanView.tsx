@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useRouter } from "next/navigation";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
@@ -94,7 +94,7 @@ export default function LeadKanbanView({ leads }: Props) {
                         </p>
                         {lead.company && (
                           <p className="text-[10.5px] text-slate-400 truncate flex items-center gap-0.5 mt-0.5">
-                            <Buildings size={10} color="#CBD5E1" weight="duotone" />
+                            <Buildings size={10} color="#E2E8F0" weight="duotone" />
                             {lead.company}
                           </p>
                         )}
@@ -111,13 +111,13 @@ export default function LeadKanbanView({ leads }: Props) {
                     <div className="space-y-1 mb-2.5">
                       {lead.email && (
                         <div className="flex items-center gap-1.5 text-[10.5px] text-[#3B82F6] truncate">
-                          <Envelope size={10} color="#93C5FD" weight="duotone" className="flex-shrink-0" />
+                          <Envelope size={10} color="#4A7AE8" weight="duotone" className="flex-shrink-0" />
                           <span className="truncate">{lead.email}</span>
                         </div>
                       )}
                       {lead.mobile && (
                         <div className="flex items-center gap-1.5 text-[10.5px] text-slate-500 font-mono">
-                          <Phone size={10} color="#93C5FD" weight="duotone" className="flex-shrink-0" />
+                          <Phone size={10} color="#4A7AE8" weight="duotone" className="flex-shrink-0" />
                           <span>{lead.mobile}</span>
                         </div>
                       )}

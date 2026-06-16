@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { ReactNode } from "react";
 
 interface KPICardProps {
@@ -9,6 +9,7 @@ interface KPICardProps {
   fill: string;          // soft pastel card background
   spark: string;         // deeper coordinating shade for the sparkline
   sparkData: number[];
+  isDark?: boolean;
 }
 
 export default function KPICard({
@@ -19,6 +20,7 @@ export default function KPICard({
   fill,
   spark,
   sparkData,
+  isDark = false,
 }: KPICardProps) {
   const isPositive = trend >= 0;
 
@@ -42,20 +44,24 @@ export default function KPICard({
 
   return (
     <div
-      className="rounded-2xl p-6 relative overflow-hidden border border-white/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-default"
-      style={{ backgroundColor: fill, boxShadow: "0 6px 24px rgba(15,23,42,0.06)" }}
+      className="rounded-2xl p-6 relative overflow-hidden border hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-default"
+      style={{
+        backgroundColor: isDark ? "#18181B" : fill,
+        borderColor: isDark ? "#27272A" : "rgba(255,255,255,0.5)",
+        boxShadow: "0 6px 24px rgba(15,23,42,0.06)",
+      }}
     >
       <div className="flex items-start justify-between gap-3">
         {/* ── Left: label + value + badge ── */}
         <div className="flex-1 min-w-0">
-          <p className="font-heading text-[11px] font-semibold uppercase tracking-[0.1em] mb-2 truncate text-[#4A5675]">
+          <p className={`font-heading text-[11px] font-semibold uppercase tracking-[0.1em] mb-2 truncate ${isDark ? "text-[#94A3B8]" : "text-[#4A5675]"}`}>
             {title}
           </p>
-          <p className="text-[28px] font-extrabold tracking-tight leading-none mb-3 text-[#0C2472]">
+          <p className={`text-[28px] font-extrabold tracking-tight leading-none mb-3 ${isDark ? "text-[#FFFFFF]" : "text-[#0C2472]"}`}>
             {value}
           </p>
-          <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full bg-[#f9fbff]/70 ${
-            isPositive ? "text-emerald-700" : "text-red-600"
+          <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full ${isDark ? "bg-black/40" : "bg-[#f9fbff]/70"} ${
+            isPositive ? "text-emerald-400" : "text-red-400"
           }`}>
             {isPositive ? "↑" : "↓"} {Math.abs(trend)}% vs last month
           </span>
@@ -63,7 +69,7 @@ export default function KPICard({
 
         {/* ── Right: icon + sparkline ── */}
         <div className="flex flex-col items-end gap-3 flex-shrink-0">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-[#f9fbff]/70 text-[#0C2472]">
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isDark ? "bg-black/30 text-[#A1A1AA]" : "bg-[#f9fbff]/70 text-[#0C2472]"}`}>
             {icon}
           </div>
 
@@ -89,3 +95,4 @@ export default function KPICard({
     </div>
   );
 }
+

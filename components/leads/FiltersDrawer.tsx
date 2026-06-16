@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import Drawer from "@mui/material/Drawer";
 import Button from "@mui/material/Button";
@@ -60,7 +60,7 @@ const SELECT_SX = {
   "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E3ECFC", borderWidth: 1.5 },
   "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#60A5FA" },
   "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#1D4ED8", borderWidth: 2 },
-  "&.Mui-focused": { boxShadow: "0 0 0 2px #93C5FD" },
+  "&.Mui-focused": { boxShadow: "0 0 0 2px #4A7AE8" },
   "& .MuiSelect-select": { py: "7px", px: "10px" },
 };
 
@@ -175,7 +175,7 @@ export default function FiltersDrawer({ open, onClose, filters, onChange, column
 
                     {/* Value */}
                     {!noValue && (
-                      <div className="col-span-2 flex items-center gap-2 bg-[#EFF6FF] border border-[#E3ECFC] rounded-xl px-3 py-1.5 focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#93C5FD] transition-all">
+                      <div className="col-span-2 flex items-center gap-2 bg-[#EFF6FF] border border-[#E3ECFC] rounded-xl px-3 py-1.5 focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all">
                         <InputBase
                           fullWidth
                           placeholder="Enter value…"
@@ -215,7 +215,7 @@ export default function FiltersDrawer({ open, onClose, filters, onChange, column
         {/* Empty / tip */}
         <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] p-4 shadow-sm">
           <div className="flex items-start gap-2.5">
-            <SlidersHorizontal size={16} color="#93C5FD" weight="duotone" className="mt-0.5 flex-shrink-0" />
+            <SlidersHorizontal size={16} color="#4A7AE8" weight="duotone" className="mt-0.5 flex-shrink-0" />
             <div>
               <p className="text-[12px] font-semibold text-slate-700 mb-0.5">How filters work</p>
               <p className="text-[11px] text-slate-400 leading-relaxed">

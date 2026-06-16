@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useRouter } from "next/navigation";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
@@ -17,7 +17,7 @@ const STAGES: { key: DealStage; label: string; headerBg: string; dot: string }[]
   { key: "Qualification",            label: "Qualification",            headerBg: "#0C2472", dot: "#1D4ED8" },
   { key: "Needs Analysis",           label: "Needs Analysis",           headerBg: "#1D4ED8", dot: "#3B82F6" },
   { key: "Value Proposition",        label: "Value Proposition",        headerBg: "#3B82F6", dot: "#60A5FA" },
-  { key: "Identify Decision Makers", label: "Identify Decision Makers", headerBg: "#60A5FA", dot: "#93C5FD" },
+  { key: "Identify Decision Makers", label: "Identify Decision Makers", headerBg: "#60A5FA", dot: "#4A7AE8" },
   { key: "Proposal/Price Quote",     label: "Proposal / Price Quote",   headerBg: "#0C2472", dot: "#1D4ED8" },
   { key: "Negotiation/Review",       label: "Negotiation / Review",     headerBg: "#B45309", dot: "#F59E0B" },
   { key: "Closed Won",               label: "Closed Won",               headerBg: "#059669", dot: "#10B981" },
@@ -63,7 +63,7 @@ export default function DealKanbanView({ deals }: Props) {
               {/* Total amount */}
               <div className="px-3 py-1.5 bg-[#f9fbff] border-x border-b rounded-b-none border-[#E3ECFC]" style={{ borderTop: `2px solid ${col.dot}` }}>
                 <p className="text-[10px] text-slate-400 font-medium flex items-center gap-1">
-                  <CurrencyDollar size={10} color="#93C5FD" weight="duotone" />
+                  <CurrencyDollar size={10} color="#4A7AE8" weight="duotone" />
                   Total: <span className="font-bold text-slate-600 ml-0.5">{fmtTotal(total)}</span>
                 </p>
               </div>
@@ -105,13 +105,13 @@ export default function DealKanbanView({ deals }: Props) {
                     <div className="space-y-1 mb-2.5">
                       {deal.account && (
                         <div className="flex items-center gap-1 text-[10.5px] text-slate-400 truncate">
-                          <Buildings size={10} color="#CBD5E1" weight="duotone" className="flex-shrink-0" />
+                          <Buildings size={10} color="#E2E8F0" weight="duotone" className="flex-shrink-0" />
                           <span className="truncate">{deal.account}</span>
                         </div>
                       )}
                       {deal.contactName && (
                         <div className="flex items-center gap-1 text-[10.5px] text-slate-400 truncate">
-                          <User size={10} color="#CBD5E1" weight="duotone" className="flex-shrink-0" />
+                          <User size={10} color="#E2E8F0" weight="duotone" className="flex-shrink-0" />
                           <span className="truncate">{deal.contactName}</span>
                         </div>
                       )}
