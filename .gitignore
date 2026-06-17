@@ -5,3 +5,4 @@ node_modules/
 .env*.local
 *.log
 COLOR_IMPLEMENTATION_STATUS.md
+.vercel

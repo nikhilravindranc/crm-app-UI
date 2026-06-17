@@ -73,7 +73,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
               </Tooltip>
               <h1 className="font-heading text-[16px] font-bold text-slate-900">{report.name}</h1>
               <Tooltip title="Report information">
-                <Info size={15} color="#94A3B8" weight="duotone" className={`cursor-pointer transition-colors ${isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#1D4ED8]"}`} />
+                <Info size={15} color="#94A3B8" weight="duotone" className="cursor-pointer transition-colors hover:text-[#1D4ED8]" />
               </Tooltip>
             </div>
 
@@ -118,7 +118,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
             </div>
             <button
               onClick={() => setShowDetails(v => !v)}
-              className={`flex items-center gap-1 text-[12px] font-semibold transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#D4D4D8]" : "text-slate-500 hover:text-[#1D4ED8]"}`}>
+              className="flex items-center gap-1 text-[12px] font-semibold transition-colors text-slate-500 hover:text-[#1D4ED8]">
               Show Details
               <CaretDown size={12} weight="duotone" className={`transition-transform ${showDetails ? "rotate-180" : ""}`} />
             </button>
