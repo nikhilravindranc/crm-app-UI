@@ -10,6 +10,7 @@ import {
   ArrowLeft, FunnelSimple, PencilSimple, CaretDown,
   ChartBar, ArrowsClockwise, Info, CaretRight,
 } from "@phosphor-icons/react";
+import { useTheme } from "@/components/ThemeContext";
 
 // ─────────────────────────────────────────────
 //  Sample report data
@@ -45,6 +46,8 @@ const DEFAULT_REPORT = { name: "Report", updatedAt: "Updated recently", columns:
 export default function ReportDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router  = useRouter();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const reportId = parseInt(id);
   const report  = REPORT_DATA[reportId] ?? { ...DEFAULT_REPORT, name: `Report ${reportId}` };
 
