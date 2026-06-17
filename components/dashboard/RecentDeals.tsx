@@ -20,10 +20,10 @@ type Deal = {
 };
 
 const deals: Deal[] = [
-  { id:"CRM-2026-0013", name:"Sweany Inc",     amount:29999,  stage:"Qualification",  stageBg:"#EFF6FF", stageFg:"#0C2472", owner:"PM SDL",   initials:"PM", avatarBg:"#1D4ED8", closeDate:"15 May", change:"same" },
-  { id:"CRM-2026-0012", name:"TechFlow Ltd",   amount:85000,  stage:"Proposal",       stageBg:"#E3ECFC", stageFg:"#1D4ED8", owner:"Sarah K",  initials:"SK", avatarBg:"#3B82F6", closeDate:"12 May", change:"up"   },
-  { id:"CRM-2026-0011", name:"Apex Solutions", amount:42500,  stage:"Needs Analysis", stageBg:"#EFF6FF", stageFg:"#1D4ED8", owner:"John D",   initials:"JD", avatarBg:"#60A5FA", closeDate:"10 May", change:"up"   },
-  { id:"CRM-2026-0010", name:"Matrix Corp",    amount:120000, stage:"Negotiation",    stageBg:"#E3ECFC", stageFg:"#0C2472", owner:"PM SDL",   initials:"PM", avatarBg:"#1D4ED8", closeDate:"08 May", change:"up"   },
+  { id:"CRM-2026-0013", name:"Sweany Inc",     amount:29999,  stage:"Qualification",  stageBg:"#EFF6FF", stageFg:"#0C2472", owner:"PM SDL",   initials:"PM", avatarBg:"#E3ECFC", closeDate:"15 May", change:"same" },
+  { id:"CRM-2026-0012", name:"TechFlow Ltd",   amount:85000,  stage:"Proposal",       stageBg:"#E3ECFC", stageFg:"#E3ECFC", owner:"Sarah K",  initials:"SK", avatarBg:"#3B82F6", closeDate:"12 May", change:"up"   },
+  { id:"CRM-2026-0011", name:"Apex Solutions", amount:42500,  stage:"Needs Analysis", stageBg:"#EFF6FF", stageFg:"#E3ECFC", owner:"John D",   initials:"JD", avatarBg:"#E3ECFC", closeDate:"10 May", change:"up"   },
+  { id:"CRM-2026-0010", name:"Matrix Corp",    amount:120000, stage:"Negotiation",    stageBg:"#E3ECFC", stageFg:"#0C2472", owner:"PM SDL",   initials:"PM", avatarBg:"#E3ECFC", closeDate:"08 May", change:"up"   },
   { id:"CRM-2026-0009", name:"Pixel Studios",  amount:18750,  stage:"Qualification",  stageBg:"#EFF6FF", stageFg:"#0C2472", owner:"Ria M",    initials:"RM", avatarBg:"#0C2472", closeDate:"05 May", change:"down" },
 ];
 
@@ -52,7 +52,7 @@ export default function RecentDeals({ isDark = false }: { isDark?: boolean }) {
         <Button
           size="small"
           endIcon={<ArrowSquareOut size={12} weight="duotone" />}
-          sx={{ textTransform:"none", fontSize:"0.72rem", color: isDark ? "#737373" : "#1D4ED8", fontWeight:700, borderRadius:"8px", "&:hover":{ bgcolor: isDark ? "rgba(255,255,255,0.05)" : "rgba(96, 165, 250, 0.1)" } }}
+          sx={{ textTransform:"none", fontSize:"0.72rem", color: isDark ? "#737373" : "#E3ECFC", fontWeight:700, borderRadius:"8px", "&:hover":{ bgcolor: isDark ? "rgba(255,255,255,0.05)" : "rgba(96, 165, 250, 0.1)" } }}
         >
           View All
         </Button>

@@ -25,7 +25,7 @@ import { useTheme } from "@/components/ThemeContext";
 // ─────────────────────────────────────────────
 //  Types & Data
 // ─────────────────────────────────────────────
-type TaskStatus   = "Todo" | "In Progress" | "Backlog" | "Completed" | "";
+type TaskStatus   = "To-Do" | "In Progress" | "Backlog" | "Completed" | "";
 type TaskPriority = "High" | "Medium" | "Low" | "";
 type TaskType     = "Task" | "Quote" | "Call" | "Email" | "";
 
@@ -43,7 +43,7 @@ interface TaskRecord {
 
 const ALL_TASKS: TaskRecord[] = [
   { id: 1, type: "Task",  subject: "New",                        dueDate: "",           status: "",           priority: "",       contact: "",                   relatedTo: "",            taskOwner: "pm@socialdnalabs.com" },
-  { id: 2, type: "Task",  subject: "New",                        dueDate: "07/05/2026", status: "Todo",       priority: "",       contact: "",                   relatedTo: "",            taskOwner: "pm@socialdnalabs.com" },
+  { id: 2, type: "Task",  subject: "New",                        dueDate: "07/05/2026", status: "To-Do",      priority: "",       contact: "",                   relatedTo: "",            taskOwner: "pm@socialdnalabs.com" },
   { id: 3, type: "Task",  subject: "Schedule Demo",              dueDate: "17/04/2026", status: "Backlog",    priority: "High",   contact: "SDL Test Test-SDL",  relatedTo: "SDL - Account", taskOwner: "pm@socialdnalabs.com" },
   { id: 4, type: "Task",  subject: "Prepare quote sent to email",dueDate: "16/04/2026", status: "Backlog",    priority: "Medium", contact: "SDL Test Test-SDL",  relatedTo: "SDL - Account", taskOwner: "pm@socialdnalabs.com" },
   { id: 5, type: "Quote", subject: "Quote",                      dueDate: "24/03/2026", status: "In Progress",priority: "Low",    contact: "",                   relatedTo: "",            taskOwner: "pm@socialdnalabs.com" },
@@ -53,10 +53,17 @@ const ALL_TASKS: TaskRecord[] = [
 //  Config
 // ─────────────────────────────────────────────
 const STATUS_CFG: Record<string, { bg: string; text: string; dot: string }> = {
-  "Todo":        { bg: "#EFF6FF",  text: "#1D4ED8", dot: "#3B82F6" },
+  "To-Do":       { bg: "#EFF6FF",  text: "#0C2472", dot: "#3B82F6" },
   "In Progress": { bg: "#FEF3C7",  text: "#92400E", dot: "#F59E0B" },
   "Backlog":     { bg: "#F1F5F9",  text: "#475569", dot: "#94A3B8" },
   "Completed":   { bg: "#DCFCE7",  text: "#166534", dot: "#10B981" },
+};
+
+const STATUS_CFG_DARK: Record<string, { bg: string; text: string; dot: string }> = {
+  "To-Do":       { bg: "rgba(113,113,122,0.15)", text: "#A1A1AA", dot: "#71717A" },
+  "In Progress": { bg: "rgba(245,158,11,0.15)",  text: "#FCD34D", dot: "#F59E0B" },
+  "Backlog":     { bg: "rgba(148,163,184,0.15)", text: "#94A3B8", dot: "#64748B" },
+  "Completed":   { bg: "rgba(16,185,129,0.15)",  text: "#34D399", dot: "#10B981" },
 };
 
 const PRIORITY_CFG: Record<string, { bg: string; text: string }> = {
@@ -70,7 +77,7 @@ const PRIORITY_CFG: Record<string, { bg: string; text: string }> = {
 // ─────────────────────────────────────────────
 function ColHeader({ label, isDark = false }: { label: string; isDark?: boolean }) {
   return (
-    <div className={`font-heading flex items-center gap-0.5 text-[10.5px] font-bold uppercase tracking-wider cursor-pointer transition-colors group select-none ${isDark ? "text-[#737373] hover:text-[#D4D4D8]" : "text-[#0C2472] hover:text-[#1D4ED8]"}`}>
+    <div className={`font-heading flex items-center gap-0.5 text-[10.5px] font-bold uppercase tracking-wider cursor-pointer transition-colors group select-none ${isDark ? "text-[#737373] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
       {label}
       <ArrowsDownUp size={12} weight="duotone" className={`opacity-30 group-hover:opacity-100 transition-opacity ${isDark ? "text-[#52525B]" : "text-[#60A5FA]"}`} />
     </div>
@@ -103,7 +110,7 @@ export default function TasksPage() {
     { value: "taskOwner", label: "Task · Task Owner" },
   ];
 
-  const STATUS_TABS: (TaskStatus | "All")[] = ["All", "Todo", "In Progress", "Backlog", "Completed"];
+  const STATUS_TABS: (TaskStatus | "All")[] = ["All", "To-Do", "In Progress", "Backlog", "Completed"];
 
   const filtered = ALL_TASKS.filter(t => {
     const matchStatus = activeFilter === "All" || t.status === activeFilter;
@@ -171,9 +178,9 @@ export default function TasksPage() {
 
             <div className="flex items-center gap-2 mt-1">
               <Button variant="contained"
-                startIcon={<Plus size={16} weight="duotone" />}
+                startIcon={<Plus size={16} weight="bold" />}
                 onClick={() => setDrawerOpen(true)}
-                sx={{ bgcolor: "#1D4ED8", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.78rem", px: 2, py: 0.85, boxShadow: "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: "#60A5FA", boxShadow: "0 2px 14px #60A5FA55" }, "&:active": { bgcolor: "#0C2472" } }}>
+                sx={{ bgcolor: "inherit", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.78rem", px: 2, py: 0.85, boxShadow: "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: "inherit", boxShadow: "0 2px 14px #60A5FA55" }, "&:active": { bgcolor: "#0C2472" } }}>
                 New Task
               </Button>
               <Tooltip title="More options">
@@ -194,13 +201,16 @@ export default function TasksPage() {
               return (
                 <button key={tab} onClick={() => setActiveFilter(tab)}
                   className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[12px] font-semibold whitespace-nowrap transition-all flex-shrink-0 border ${
-                    active ? "bg-[#1D4ED8] text-white border-[#1D4ED8] shadow-sm shadow-[#1D4ED8]/20"
-                           : "bg-[#f9fbff] text-slate-600 border-[#E3ECFC] hover:bg-[#E3ECFC] hover:text-[#1D4ED8]"
+                    active
+                      ? isDark ? "bg-[#27272A] text-[#D4D4D8] border-[#3F3F46] shadow-sm" : "bg-[#0C2472] text-white border-[#0C2472] shadow-sm shadow-[#0C2472]/20"
+                      : isDark ? "bg-[#111113] text-[#71717A] border-[#27272A] hover:bg-[#27272A] hover:text-[#A1A1AA] hover:border-[#3F3F46]" : "bg-[#f9fbff] text-slate-600 border-[#E3ECFC] hover:bg-[#EFF6FF]"
                   }`}>
                   {tab}
                   {tab !== "All" && cnt > 0 && (
                     <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold leading-none ${
-                      active ? "bg-white/20 text-white" : "bg-slate-100 text-slate-600"
+                      active
+                        ? isDark ? "bg-white/10 text-[#A1A1AA]" : "bg-white/20 text-white"
+                        : isDark ? "bg-[#27272A] text-[#52525B]" : "bg-slate-100 text-slate-600"
                     }`}>{cnt}</span>
                   )}
                 </button>
@@ -226,11 +236,11 @@ export default function TasksPage() {
               }
               onClick={() => setFiltersOpen(true)}
               sx={{
-                borderColor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#27272A" : "#E3ECFC",
-                color: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#5A7089" : "#0C2472",
+                borderColor: activeFilters.length > 0 ? "#E3ECFC" : isDark ? "#27272A" : "#E3ECFC",
+                color: activeFilters.length > 0 ? "#E3ECFC" : isDark ? "#5A7089" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : activeFilters.length > 0 ? "#f9fbff" : "#E3ECFC",
                 borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem",
-                "&:hover": { borderColor: "#1D4ED8", color: "#4A7AE8", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
+                "&:hover": { borderColor: "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
               }}>
               Filters{activeFilters.length > 0 ? ` (${activeFilters.length})` : ""}
             </Button>
@@ -248,8 +258,8 @@ export default function TasksPage() {
                 <span className="text-[12px] font-semibold">selected</span>
               </div>
               <div className="w-px h-4 bg-white/15" />
-              <button className="text-[11.5px] font-semibold text-[#4A7AE8] hover:text-white transition-colors">Update Status</button>
-              <button className="text-[11.5px] font-semibold text-[#4A7AE8] hover:text-white transition-colors">Assign Owner</button>
+              <button className="text-[11.5px] font-semibold text-inherit hover:text-white transition-colors">Update Status</button>
+              <button className="text-[11.5px] font-semibold text-inherit hover:text-white transition-colors">Assign Owner</button>
               <button onClick={() => setSelected([])} className="ml-auto text-[11.5px] font-semibold text-white/50 hover:text-white transition-colors">Clear</button>
               <button className="flex items-center gap-1.5 text-[11.5px] font-semibold text-red-300 hover:text-red-200 transition-colors">
                 <Trash size={14} weight="duotone" /> Delete
@@ -258,14 +268,14 @@ export default function TasksPage() {
           )}
 
           {/* ══ Table ══ */}
-          <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
+          <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
             <div className="overflow-x-auto" style={{ scrollbarWidth: "thin" }}>
 
               {/* Header */}
-              <div className="grid items-center px-4 py-2.5 bg-[#E3ECFC] border-b border-[#E3ECFC]"
+              <div className={`grid items-center px-4 py-2.5 border-b ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#E3ECFC] border-[#E3ECFC]"}`}
                 style={{ gridTemplateColumns: gridTemplate, minWidth: minTableWidth }}>
                 <Checkbox size="small" checked={allChecked} indeterminate={someChecked} onChange={toggleAll}
-                  sx={{ p: 0.5, color: "#E2E8F0", "&.Mui-checked, &.MuiCheckbox-indeterminate": { color: "#1D4ED8" } }} />
+                  sx={{ p: 0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked, &.MuiCheckbox-indeterminate": { color: isDark ? "#52525B" : "inherit" } }} />
                 <ColHeader label="Type" isDark={isDark} />
                 <ColHeader label="Subject" isDark={isDark} />
                 <ColHeader label="Due Date" isDark={isDark} />
@@ -278,35 +288,38 @@ export default function TasksPage() {
               </div>
 
               {/* Rows */}
-              <div className="divide-y divide-[#EFF6FF]">
+              <div className={`divide-y ${isDark ? "divide-[#27272A]" : "divide-[#EFF6FF]"}`}>
                 {filtered.map(task => {
                   const isSel     = selected.includes(task.id);
-                  const statusCfg = task.status ? STATUS_CFG[task.status] : null;
+                  const rawCfg    = task.status ? STATUS_CFG[task.status] : null;
+                  const statusCfg = isDark && task.status ? STATUS_CFG_DARK[task.status] : rawCfg;
                   const priCfg    = task.priority ? PRIORITY_CFG[task.priority] : null;
 
                   return (
                     <div key={task.id}
                       className={`grid items-center px-4 py-3 transition-all duration-100 cursor-pointer group ${
-                        isSel ? "bg-[#EFF6FF]" : "hover:bg-[#60A5FA]/[0.04]"
+                        isSel
+                          ? isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"
+                          : isDark ? "hover:bg-[#27272A]" : "hover:bg-[#60A5FA]/[0.04]"
                       }`}
                       style={{ gridTemplateColumns: gridTemplate, minWidth: minTableWidth }}>
 
                       <Checkbox size="small" checked={isSel} onChange={() => toggleOne(task.id)} onClick={e => e.stopPropagation()}
-                        sx={{ p: 0.5, color: "#E2E8F0", "&.Mui-checked": { color: "#1D4ED8" } }} />
+                        sx={{ p: 0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked": { color: isDark ? "#52525B" : "inherit" } }} />
 
                       {/* Type */}
-                      <p className="text-[12px] font-semibold text-slate-600 truncate pr-2 mb-0">
-                        {task.type || <span className="text-slate-200">—</span>}
+                      <p className={`text-[12px] font-semibold truncate pr-2 mb-0 ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>
+                        {task.type || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
                       </p>
 
                       {/* Subject */}
-                      <Link href={`/tasks/${task.id}`} className="font-heading text-[12.5px] font-semibold text-[#1D4ED8] truncate pr-2 hover:underline" onClick={e => e.stopPropagation()}>
+                      <Link href={`/tasks/${task.id}`} className={`font-heading text-[12.5px] font-semibold truncate pr-2 hover:underline ${isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]"}`} onClick={e => e.stopPropagation()}>
                         {task.subject}
                       </Link>
 
                       {/* Due Date */}
-                      <p className="text-[12px] text-slate-500 truncate pr-2 mb-0">
-                        {task.dueDate || <span className="text-slate-200">—</span>}
+                      <p className={`text-[12px] truncate pr-2 mb-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
+                        {task.dueDate || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
                       </p>
 
                       {/* Status */}
@@ -317,7 +330,7 @@ export default function TasksPage() {
                             <span className="w-[5px] h-[5px] rounded-full flex-shrink-0" style={{ backgroundColor: statusCfg.dot }} />
                             {task.status}
                           </span>
-                        ) : <span className="text-slate-200 text-[12px]">—</span>}
+                        ) : <span className={`text-[12px] ${isDark ? "text-[#3F3F46]" : "text-slate-200"}`}>—</span>}
                       </div>
 
                       {/* Priority */}
@@ -327,28 +340,28 @@ export default function TasksPage() {
                             style={{ backgroundColor: priCfg.bg, color: priCfg.text }}>
                             {task.priority}
                           </span>
-                        ) : <span className="text-slate-200 text-[12px]">—</span>}
+                        ) : <span className={`text-[12px] ${isDark ? "text-[#3F3F46]" : "text-slate-200"}`}>—</span>}
                       </div>
 
                       {/* Contact */}
-                      <p className="text-[12px] text-slate-500 truncate pr-2 mb-0">
-                        {task.contact || <span className="text-slate-200">—</span>}
+                      <p className={`text-[12px] truncate pr-2 mb-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
+                        {task.contact || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
                       </p>
 
                       {/* Related To */}
-                      <p className="text-[12px] text-slate-500 truncate pr-2 mb-0">
-                        {task.relatedTo || <span className="text-slate-200">—</span>}
+                      <p className={`text-[12px] truncate pr-2 mb-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
+                        {task.relatedTo || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
                       </p>
 
                       {/* Task Owner */}
-                      <p className="text-[11px] text-[#3B82F6] truncate pr-2 mb-0">{task.taskOwner}</p>
+                      <p className={`text-[11px] truncate pr-2 mb-0 ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>{task.taskOwner}</p>
 
                       {/* Row action */}
                       <div className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
                         <Tooltip title="Actions">
                           <IconButton size="small" onClick={e => e.stopPropagation()}
-                            sx={{ borderRadius: "6px", p: 0.5, "&:hover": { bgcolor: "#E3ECFC" } }}>
-                            <DotsThreeVertical size={15} color="#94A3B8" weight="duotone" />
+                            sx={{ borderRadius: "6px", p: 0.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#E3ECFC" } }}>
+                            <DotsThreeVertical size={15} color={isDark ? "#52525B" : "#94A3B8"} weight="duotone" />
                           </IconButton>
                         </Tooltip>
                       </div>
@@ -360,33 +373,33 @@ export default function TasksPage() {
               {/* Empty */}
               {filtered.length === 0 && (
                 <div className="py-16 text-center">
-                  <div className="w-12 h-12 rounded-2xl bg-[#f9fbff] flex items-center justify-center mx-auto mb-3">
-                    <CheckCircle size={22} color="#4A7AE8" weight="duotone" />
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 ${isDark ? "bg-[#27272A]" : "bg-[#f9fbff]"}`}>
+                    <CheckCircle size={22} color={isDark ? "#3F3F46" : "#E3ECFC"} weight="duotone" />
                   </div>
-                  <p className="font-heading text-slate-500 text-sm font-semibold">No tasks found</p>
-                  <p className="text-slate-300 text-xs mt-1">Try adjusting your search or filter</p>
+                  <p className={`font-heading text-sm font-semibold ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>No tasks found</p>
+                  <p className={`text-xs mt-1 ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>Try adjusting your search or filter</p>
                 </div>
               )}
 
             </div>
 
             {/* Pagination */}
-            <div className="flex items-center justify-between px-4 py-3 border-t border-[#EFF6FF]">
-              <p className="text-[11px] text-slate-400 font-medium">
-                Showing <span className="text-slate-700 font-bold">1–{filtered.length}</span> of{" "}
-                <span className="text-slate-700 font-bold">{ALL_TASKS.length}</span> records
+            <div className={`flex items-center justify-between px-4 py-3 border-t ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
+              <p className={`text-[11px] font-medium ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+                Showing <span className={`font-bold ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>1–{filtered.length}</span> of{" "}
+                <span className={`font-bold ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>{ALL_TASKS.length}</span> records
               </p>
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
+                <div className={`flex items-center gap-1.5 text-[11px] ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
                   <span>Rows per page:</span>
-                  <button className="flex items-center gap-0.5 bg-[#f9fbff] text-[#1D4ED8] font-bold px-2 py-1 rounded-lg hover:bg-[#E3ECFC] transition-colors text-[11px]">
+                  <button className={`flex items-center gap-0.5 font-bold px-2 py-1 rounded-lg text-[11px] ${isDark ? "bg-[#27272A] text-[#A1A1AA] hover:bg-[#3F3F46]" : "bg-[#f9fbff] text-[#1D4ED8] hover:bg-[#E3ECFC]"}`}>
                     20 <CaretDown size={12} weight="duotone" />
                   </button>
                 </div>
                 <div className="flex items-center gap-1">
-                  <button className="w-7 h-7 flex items-center justify-center rounded-lg bg-[#f9fbff] text-slate-300 font-bold text-sm" disabled>‹</button>
-                  <button className="w-7 h-7 flex items-center justify-center rounded-lg bg-[#1D4ED8] text-white text-[11px] font-bold shadow-sm">1</button>
-                  <button className="w-7 h-7 flex items-center justify-center rounded-lg bg-[#f9fbff] text-slate-300 font-bold text-sm" disabled>›</button>
+                  <button className={`w-7 h-7 flex items-center justify-center rounded-lg font-bold text-sm disabled:opacity-30 ${isDark ? "bg-[#27272A] text-[#52525B]" : "bg-[#f9fbff] text-slate-300"}`} disabled>‹</button>
+                  <button className={`w-7 h-7 flex items-center justify-center rounded-lg text-[11px] font-bold shadow-sm ${isDark ? "bg-[#3F3F46] text-[#D4D4D8]" : "bg-[#0C2472] text-white"}`}>1</button>
+                  <button className={`w-7 h-7 flex items-center justify-center rounded-lg font-bold text-sm disabled:opacity-30 ${isDark ? "bg-[#27272A] text-[#52525B]" : "bg-[#f9fbff] text-slate-300"}`} disabled>›</button>
                 </div>
               </div>
             </div>

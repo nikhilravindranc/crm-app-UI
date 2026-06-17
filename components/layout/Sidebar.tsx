@@ -75,7 +75,7 @@ export default function Sidebar() {
           {/* Desktop collapse toggle */}
           <button
             onClick={toggle}
-            className={`hidden lg:flex flex-shrink-0 w-8 h-8 items-center justify-center rounded-lg transition-all duration-150 ${isDark ? "text-[#737373] hover:text-[#FAFAFA] hover:bg-[#262626]" : "text-slate-500 hover:text-[#1D4ED8] hover:bg-[#EFF6FF]"}`}
+            className={`hidden lg:flex flex-shrink-0 w-8 h-8 items-center justify-center rounded-lg transition-all duration-150 ${isDark ? "text-[#737373] hover:text-[#FAFAFA] hover:bg-[#262626]" : "text-slate-500 hover:bg-[#EFF6FF]"}`}
             title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             <List size={18} weight="bold" />
@@ -84,7 +84,7 @@ export default function Sidebar() {
           {/* Mobile close button */}
           <button
             onClick={closeMobile}
-            className={`flex lg:hidden flex-shrink-0 w-8 h-8 items-center justify-center rounded-lg transition-all duration-150 ${isDark ? "text-[#737373] hover:text-[#FAFAFA] hover:bg-[#262626]" : "text-slate-500 hover:text-[#1D4ED8] hover:bg-[#EFF6FF]"}`}
+            className={`flex lg:hidden flex-shrink-0 w-8 h-8 items-center justify-center rounded-lg transition-all duration-150 ${isDark ? "text-[#737373] hover:text-[#FAFAFA] hover:bg-[#262626]" : "text-slate-500 hover:bg-[#EFF6FF]"}`}
           >
             <X size={18} weight="bold" />
           </button>
@@ -113,14 +113,14 @@ export default function Sidebar() {
                   ${collapsed ? "justify-center w-12 h-12 mx-auto" : "gap-3 px-3 py-2.5 w-full"}
                   ${active
                     ? isDark ? "bg-[#18181B] text-[#FAFAFA]" : "bg-[#EFF6FF] text-[#1D4ED8]"
-                    : isDark ? "text-[#737373] hover:bg-[#262626] hover:text-[#FAFAFA]" : "text-slate-600 hover:bg-[#EFF6FF] hover:text-[#1D4ED8]"
+                    : isDark ? "text-[#737373] hover:bg-[#262626] hover:text-[#FAFAFA]" : "text-slate-600 hover:bg-[#EFF6FF]"
                   }
                 `}
               >
                 <Icon
                   size={18}
                   weight="duotone"
-                  className={`flex-shrink-0 transition-colors ${active ? isDark ? "text-[#FAFAFA]" : "text-[#1D4ED8]" : isDark ? "text-[#52525B] group-hover:text-[#FAFAFA]" : "text-slate-400 group-hover:text-[#1D4ED8]"}`}
+                  className={`flex-shrink-0 transition-colors ${active ? isDark ? "text-[#FAFAFA]" : "text-[#1D4ED8]" : isDark ? "text-[#52525B] group-hover:text-[#FAFAFA]" : "text-slate-400"}`}
                 />
 
                 {!collapsed && (
@@ -163,7 +163,7 @@ export default function Sidebar() {
               <span className="flex justify-center">
                 <Link
                   href="/settings"
-                  className={`flex items-center justify-center w-12 h-12 mx-auto rounded-lg transition-all duration-150 ${isDark ? "text-[#737373] hover:text-[#FAFAFA] hover:bg-[#262626]" : "text-slate-400 hover:text-[#1D4ED8] hover:bg-[#EFF6FF]"}`}
+                  className={`flex items-center justify-center w-12 h-12 mx-auto rounded-lg transition-all duration-150 ${isDark ? "text-[#737373] hover:text-[#FAFAFA] hover:bg-[#262626]" : "text-slate-400 hover:bg-[#EFF6FF]"}`}
                 >
                   <Gear size={18} weight="duotone" />
                 </Link>
@@ -172,7 +172,7 @@ export default function Sidebar() {
           ) : (
             <Link
               href="/settings"
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-150 ${isDark ? "text-[#737373] hover:bg-[#262626] hover:text-[#FAFAFA]" : "text-slate-600 hover:bg-[#EFF6FF] hover:text-[#1D4ED8]"}`}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-150 ${isDark ? "text-[#737373] hover:bg-[#262626] hover:text-[#FAFAFA]" : "text-slate-600 hover:bg-[#EFF6FF]"}`}
             >
               <Gear size={18} weight="duotone" className={`flex-shrink-0 ${isDark ? "text-[#52525B]" : "text-slate-400"}`} />
               Settings
@@ -186,7 +186,7 @@ export default function Sidebar() {
                 <div className="relative">
                   <Avatar
                     src={OWNER_AVATARS["PM SDL"]}
-                    sx={{ width: 34, height: 34, bgcolor: isDark ? "#27272A" : "#1D4ED8", fontSize: "0.6rem", fontWeight: 800, cursor: "pointer" }}
+                    sx={{ width: 34, height: 34, bgcolor: isDark ? "#27272A" : "#E3ECFC", fontSize: "0.6rem", fontWeight: 800, cursor: "pointer" }}
                   >PM</Avatar>
                   <span className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 ${isDark ? "border-[#000000]" : "border-white"}`} />
                 </div>
@@ -197,7 +197,7 @@ export default function Sidebar() {
               <div className="relative flex-shrink-0">
                 <Avatar
                   src={OWNER_AVATARS["PM SDL"]}
-                  sx={{ width: 30, height: 30, bgcolor: isDark ? "#27272A" : "#1D4ED8", fontSize: "0.6rem", fontWeight: 800 }}
+                  sx={{ width: 30, height: 30, bgcolor: isDark ? "#27272A" : "#E3ECFC", fontSize: "0.6rem", fontWeight: 800 }}
                 >PM</Avatar>
                 <span className={`absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-400 border-2 ${isDark ? "border-[#18181B]" : "border-white"}`} />
               </div>

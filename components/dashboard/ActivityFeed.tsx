@@ -17,11 +17,11 @@ type FeedItem = {
 };
 
 const feed: FeedItem[] = [
-  { id:1, Icon:TrendUp,       iconColor:"#0C2472", iconBg:"#E3ECFC", title:"Matrix Corp moved to Negotiation",   user:"PM SDL",  initials:"PM", avatarBg:"#1D4ED8", ownerKey:"PM SDL",  time:"5m ago"  },
-  { id:2, Icon:UserPlus,      iconColor:"#1D4ED8", iconBg:"#EFF6FF", title:"New lead added: James Wilson",        user:"Sarah K", initials:"SK", avatarBg:"#3B82F6", ownerKey:"Sarah K", time:"23m ago" },
-  { id:3, Icon:PencilSimple,  iconColor:"#3B82F6", iconBg:"#EFF6FF", title:"Sweany Inc contact updated",          user:"PM SDL",  initials:"PM", avatarBg:"#1D4ED8", ownerKey:"PM SDL",  time:"1h ago"  },
-  { id:4, Icon:CheckCircle,   iconColor:"#60A5FA", iconBg:"#E3ECFC", title:"Task: Follow up with Apex done",      user:"John D",  initials:"JD", avatarBg:"#60A5FA", ownerKey:"John D",  time:"2h ago"  },
-  { id:5, Icon:CurrencyDollar,iconColor:"#1D4ED8", iconBg:"#EFF6FF", title:"New deal created: Pixel Studios",     user:"Ria M",   initials:"RM", avatarBg:"#0C2472", ownerKey:"Ria M",   time:"3h ago"  },
+  { id:1, Icon:TrendUp,       iconColor:"#0C2472", iconBg:"#E3ECFC", title:"Matrix Corp moved to Negotiation",   user:"PM SDL",  initials:"PM", avatarBg:"#E3ECFC", ownerKey:"PM SDL",  time:"5m ago"  },
+  { id:2, Icon:UserPlus,      iconColor:"#E3ECFC", iconBg:"#EFF6FF", title:"New lead added: James Wilson",        user:"Sarah K", initials:"SK", avatarBg:"#3B82F6", ownerKey:"Sarah K", time:"23m ago" },
+  { id:3, Icon:PencilSimple,  iconColor:"#3B82F6", iconBg:"#EFF6FF", title:"Sweany Inc contact updated",          user:"PM SDL",  initials:"PM", avatarBg:"#E3ECFC", ownerKey:"PM SDL",  time:"1h ago"  },
+  { id:4, Icon:CheckCircle,   iconColor:"#E3ECFC", iconBg:"#E3ECFC", title:"Task: Follow up with Apex done",      user:"John D",  initials:"JD", avatarBg:"#E3ECFC", ownerKey:"John D",  time:"2h ago"  },
+  { id:5, Icon:CurrencyDollar,iconColor:"#E3ECFC", iconBg:"#EFF6FF", title:"New deal created: Pixel Studios",     user:"Ria M",   initials:"RM", avatarBg:"#0C2472", ownerKey:"Ria M",   time:"3h ago"  },
 ];
 
 export default function ActivityFeed({ isDark = false }: { isDark?: boolean }) {

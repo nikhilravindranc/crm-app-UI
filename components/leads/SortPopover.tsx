@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 import Popover from "@mui/material/Popover";
 import Select from "@mui/material/Select";
@@ -7,6 +7,7 @@ import FormControl from "@mui/material/FormControl";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import { ArrowUp, ArrowDown, Plus, Trash, SortAscending } from "@phosphor-icons/react";
+import { useTheme } from "@/components/ThemeContext";
 
 export interface SortRow {
   id: string;
@@ -28,15 +29,6 @@ const SORT_COLUMNS = [
   { value: "annualRevenue", label: "Annual Revenue"  },
 ];
 
-const SELECT_SX = {
-  fontSize: "0.78rem", bgcolor: "#EFF6FF", borderRadius: "8px",
-  "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E3ECFC", borderWidth: 1.5 },
-  "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#60A5FA" },
-  "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#1D4ED8", borderWidth: 2 },
-  "&.Mui-focused": { boxShadow: "0 0 0 2px #4A7AE8" },
-  "& .MuiSelect-select": { py: "6px", px: "10px" },
-};
-
 const uid = () => Math.random().toString(36).slice(2, 8);
 
 interface Props {
@@ -47,6 +39,20 @@ interface Props {
 }
 
 export default function SortPopover({ anchor, onClose, sorts, onChange }: Props) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
+  const SELECT_SX = {
+    fontSize: "0.78rem",
+    ...(isDark ? {} : { bgcolor: "#EFF6FF" }),
+    borderRadius: "8px",
+    "& .MuiOutlinedInput-notchedOutline": { borderColor: isDark ? "#3F3F46" : "#E3ECFC", borderWidth: 1.5 },
+    "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: isDark ? "#52525B" : "#E3ECFC" },
+    "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: isDark ? "#71717A" : "#E3ECFC", borderWidth: 2 },
+    "&.Mui-focused": { boxShadow: "none" },
+    "& .MuiSelect-select": { py: "6px", px: "10px" },
+  };
+
   const [local, setLocal] = useState<SortRow[]>(
     sorts.length ? sorts : [{ id: uid(), column: "name", dir: "asc" }]
   );
@@ -65,14 +71,23 @@ export default function SortPopover({ anchor, onClose, sorts, onChange }: Props)
       open={Boolean(anchor)} anchorEl={anchor} onClose={onClose}
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       transformOrigin={{ vertical: "top", horizontal: "right" }}
-      PaperProps={{ sx: { borderRadius: "14px", border: "1.5px solid #E3ECFC", boxShadow: "0 8px 32px rgba(12,36,114,0.14)", mt: 0.5, overflow: "hidden" } }}
+      PaperProps={{
+        sx: {
+          borderRadius: "14px",
+          border: `1.5px solid ${isDark ? "#27272A" : "#E3ECFC"}`,
+          boxShadow: isDark ? "0 8px 32px rgba(0,0,0,0.5)" : "0 8px 32px rgba(12,36,114,0.14)",
+          mt: 0.5,
+          overflow: "hidden",
+          bgcolor: isDark ? "#18181B" : "#fff",
+        },
+      }}
     >
       <div className="w-[380px]">
         {/* Popover header */}
-        <div className="flex items-center gap-2.5 px-4 py-3 bg-[#EFF6FF] border-b border-[#E3ECFC]">
-          <SortAscending size={16} color="#1D4ED8" weight="duotone" />
-          <p className="font-heading text-[12.5px] font-bold text-slate-800">Sort Records</p>
-          <span className="ml-auto text-[11px] text-slate-400">{local.length} sort{local.length !== 1 ? "s" : ""}</span>
+        <div className={`flex items-center gap-2.5 px-4 py-3 border-b ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
+          <SortAscending size={16} color={isDark ? "#52525B" : "#E3ECFC"} weight="duotone" />
+          <p className={`font-heading text-[12.5px] font-bold ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Sort Records</p>
+          <span className={`ml-auto text-[11px] ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{local.length} sort{local.length !== 1 ? "s" : ""}</span>
         </div>
 
         {/* Sort rows */}
@@ -80,7 +95,7 @@ export default function SortPopover({ anchor, onClose, sorts, onChange }: Props)
           {local.map((row, idx) => (
             <div key={row.id} className="flex items-center gap-2">
               {/* Priority label */}
-              <span className="font-heading text-[10px] font-bold text-slate-400 uppercase tracking-wider w-10 flex-shrink-0">
+              <span className={`font-heading text-[10px] font-bold uppercase tracking-wider w-10 flex-shrink-0 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
                 {idx === 0 ? "By" : "Then"}
               </span>
 
@@ -94,13 +109,15 @@ export default function SortPopover({ anchor, onClose, sorts, onChange }: Props)
               </FormControl>
 
               {/* Direction toggle */}
-              <div className="flex items-center bg-[#EFF6FF] rounded-lg border border-[#E3ECFC] p-0.5 gap-0.5">
+              <div className={`flex items-center rounded-lg border p-0.5 gap-0.5 ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
                 {(["asc", "desc"] as const).map(dir => (
                   <Tooltip key={dir} title={dir === "asc" ? "Ascending A→Z / 0→9" : "Descending Z→A / 9→0"}>
                     <button
                       onClick={() => update(row.id, { dir })}
                       className={`flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-semibold transition-all ${
-                        row.dir === dir ? "bg-[#1D4ED8] text-white shadow-sm" : "text-slate-400 hover:text-slate-600"
+                        row.dir === dir
+                          ? isDark ? "bg-[#3F3F46] text-[#F4F4F5] shadow-sm" : "bg-[#1D4ED8] text-white shadow-sm"
+                          : isDark ? "text-[#71717A] hover:text-[#A1A1AA]" : "text-slate-400 hover:text-slate-600"
                       }`}>
                       {dir === "asc"
                         ? <ArrowUp size={12} weight="duotone" />
@@ -115,7 +132,7 @@ export default function SortPopover({ anchor, onClose, sorts, onChange }: Props)
               {/* Remove */}
               {local.length > 1 && (
                 <IconButton size="small" onClick={() => remove(row.id)}
-                  sx={{ borderRadius: "6px", p: 0.5, "&:hover": { bgcolor: "#FEF2F2" } }}>
+                  sx={{ borderRadius: "6px", p: 0.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#FEF2F2" } }}>
                   <Trash size={13} color="#EF4444" weight="duotone" />
                 </IconButton>
               )}
@@ -125,21 +142,32 @@ export default function SortPopover({ anchor, onClose, sorts, onChange }: Props)
           {/* Add sort */}
           {local.length < 3 && (
             <button onClick={add}
-              className="flex items-center gap-1.5 text-[12px] font-semibold text-[#1D4ED8] hover:text-[#0C2472] py-1.5 px-2 rounded-lg hover:bg-[#EFF6FF] transition-colors w-full">
-              <Plus size={12} weight="duotone" />
+              className={`flex items-center gap-1.5 text-[12px] font-semibold py-1.5 px-2 rounded-lg transition-colors w-full ${
+                isDark
+                  ? "text-[#A1A1AA] hover:text-[#F4F4F5] hover:bg-[#27272A]"
+                  : "text-[#1D4ED8] hover:text-[#0C2472] hover:bg-[#EFF6FF]"
+              }`}>
+              <Plus size={12} weight="bold" />
               Add sort
             </button>
           )}
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-4 py-3 border-t border-[#EFF6FF] bg-[#f9fbff]">
+        <div className={`flex items-center justify-between px-4 py-3 border-t ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#EFF6FF]"}`}>
           <button onClick={handleClear}
-            className="text-[12px] font-semibold text-slate-400 hover:text-slate-600 px-2 py-1 rounded-lg hover:bg-slate-50 transition-colors">
+            className={`text-[12px] font-semibold px-2 py-1 rounded-lg transition-colors ${isDark ? "text-[#71717A] hover:text-[#A1A1AA] hover:bg-[#27272A]" : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"}`}>
             Clear
           </button>
           <Button variant="contained" size="small" onClick={handleApply}
-            sx={{ bgcolor: "#1D4ED8", borderRadius: "8px", textTransform: "none", fontWeight: 700, fontSize: "0.75rem", px: 2, "&:hover": { bgcolor: "#60A5FA" }, "&:active": { bgcolor: "#0C2472" } }}>
+            sx={{
+              bgcolor: isDark ? "#27272A" : "inherit",
+              color: isDark ? "#F4F4F5" : undefined,
+              borderRadius: "8px", textTransform: "none", fontWeight: 700, fontSize: "0.75rem", px: 2,
+              boxShadow: isDark ? "none" : undefined,
+              "&:hover": { bgcolor: isDark ? "#3F3F46" : "inherit", boxShadow: isDark ? "none" : undefined },
+              "&:active": { bgcolor: isDark ? "#18181B" : "#0C2472" },
+            }}>
             Apply Sort
           </Button>
         </div>

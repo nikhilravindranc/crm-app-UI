@@ -40,7 +40,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export default function RevenueChart({ isDark = false }: { isDark?: boolean }) {
   const avg = data.reduce((s, d) => s + d.revenue, 0) / data.length;
-  const chartStroke = isDark ? "#60A5FA" : "#3B82F6";
+  const chartStroke = isDark ? "#E3ECFC" : "#3B82F6";
 
   return (
     <div className="rounded-2xl p-6 border h-full backdrop-blur-xl transition-colors duration-300"

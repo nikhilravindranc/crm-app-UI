@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 import Drawer from "@mui/material/Drawer";
 import Button from "@mui/material/Button";
@@ -9,6 +9,7 @@ import FormControl from "@mui/material/FormControl";
 import InputBase from "@mui/material/InputBase";
 import Tooltip from "@mui/material/Tooltip";
 import { X, Plus, Trash, SlidersHorizontal, FunnelSimple } from "@phosphor-icons/react";
+import { useTheme } from "@/components/ThemeContext";
 
 // ── Types ─────────────────────────────────────────
 export type FilterOperator =
@@ -53,22 +54,7 @@ const OPERATORS: { value: FilterOperator; label: string; noValue?: boolean }[] =
   { value: "is_not_empty",      label: "is not empty",    noValue: true },
 ];
 
-const SELECT_SX = {
-  fontSize: "0.78rem",
-  bgcolor: "#EFF6FF",                   /* Surface bg */
-  borderRadius: "8px",
-  "& .MuiOutlinedInput-notchedOutline": { borderColor: "#E3ECFC", borderWidth: 1.5 },
-  "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#60A5FA" },
-  "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#1D4ED8", borderWidth: 2 },
-  "&.Mui-focused": { boxShadow: "0 0 0 2px #4A7AE8" },
-  "& .MuiSelect-select": { py: "7px", px: "10px" },
-};
-
 const uid = () => Math.random().toString(36).slice(2, 8);
-
-const DEFAULT_ROW: Omit<FilterRow, "id"> = {
-  column: "name", operator: "contains", value: "", logic: "AND",
-};
 
 interface Props {
   open: boolean;
@@ -80,6 +66,20 @@ interface Props {
 }
 
 export default function FiltersDrawer({ open, onClose, filters, onChange, columns, subtitle }: Props) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
+  const SELECT_SX = {
+    fontSize: "0.78rem",
+    ...(isDark ? {} : { bgcolor: "#EFF6FF" }),
+    borderRadius: "8px",
+    "& .MuiOutlinedInput-notchedOutline": { borderColor: isDark ? "#3F3F46" : "#E3ECFC", borderWidth: 1.5 },
+    "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: isDark ? "#52525B" : "#E3ECFC" },
+    "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: isDark ? "#71717A" : "#E3ECFC", borderWidth: 2 },
+    "&.Mui-focused": { boxShadow: "none" },
+    "& .MuiSelect-select": { py: "7px", px: "10px" },
+  };
+
   const FILTER_COLUMNS = columns ?? DEFAULT_FILTER_COLUMNS;
   const firstCol = FILTER_COLUMNS[0]?.value ?? "name";
   const defaultRow: Omit<FilterRow, "id"> = { column: firstCol, operator: "contains", value: "", logic: "AND" };
@@ -104,23 +104,23 @@ export default function FiltersDrawer({ open, onClose, filters, onChange, column
 
   return (
     <Drawer anchor="right" open={open} onClose={onClose}
-      PaperProps={{ sx: { width: 560, display: "flex", flexDirection: "column", bgcolor: "#F8FAFF", boxShadow: "-12px 0 48px rgba(12,36,114,0.12)" } }}>
+      PaperProps={{ sx: { width: 560, display: "flex", flexDirection: "column", bgcolor: isDark ? "#18181B" : "#F8FAFF", boxShadow: isDark ? "-12px 0 48px rgba(0,0,0,0.5)" : "-12px 0 48px rgba(12,36,114,0.12)" } }}>
 
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 bg-[#f9fbff] border-b border-[#E3ECFC] flex-shrink-0">
+      <div className={`flex items-center justify-between px-6 py-4 border-b flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#EFF6FF] flex items-center justify-center">
-            <FunnelSimple size={18} color="#1D4ED8" weight="duotone" />
+          <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
+            <FunnelSimple size={18} color={isDark ? "#71717A" : "#E3ECFC"} weight="duotone" />
           </div>
           <div>
-            <h2 className="font-heading text-[15px] font-bold text-slate-900 tracking-tight">Filters</h2>
-            <p className="text-[11px] text-slate-400">{subtitle ?? "Narrow down leads by conditions"}</p>
+            <h2 className={`font-heading text-[15px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Filters</h2>
+            <p className={`text-[11px] ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>{subtitle ?? "Narrow down leads by conditions"}</p>
           </div>
         </div>
         <Tooltip title="Close">
           <IconButton size="small" onClick={onClose}
-            sx={{ borderRadius: "9px", border: "1.5px solid #E3ECFC", "&:hover": { bgcolor: "#EFF6FF" } }}>
-            <X size={17} color="#64748B" weight="duotone" />
+            sx={{ borderRadius: "9px", border: `1.5px solid ${isDark ? "#3F3F46" : "#E3ECFC"}`, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+            <X size={17} color={isDark ? "#71717A" : "#64748B"} weight="duotone" />
           </IconButton>
         </Tooltip>
       </div>
@@ -138,8 +138,12 @@ export default function FiltersDrawer({ open, onClose, filters, onChange, column
                     <button key={l} onClick={() => update(row.id, { logic: l })}
                       className={`text-[11px] font-bold px-3 py-1 rounded-full border transition-all ${
                         row.logic === l
-                          ? "bg-[#1D4ED8] text-white border-[#1D4ED8]"
-                          : "bg-[#E3ECFC] text-[#0C2472] border-[#E3ECFC] hover:bg-[#1D4ED8]/10 hover:text-[#1D4ED8]"
+                          ? isDark
+                            ? "bg-[#3F3F46] text-[#F4F4F5] border-[#52525B]"
+                            : "bg-[#1D4ED8] text-white border-[#1D4ED8]"
+                          : isDark
+                            ? "bg-[#27272A] text-[#71717A] border-[#3F3F46] hover:bg-[#3F3F46] hover:text-[#A1A1AA]"
+                            : "bg-[#E3ECFC] text-[#0C2472] border-[#E3ECFC] hover:bg-[#1D4ED8]/10"
                       }`}>
                       {l}
                     </button>
@@ -148,9 +152,9 @@ export default function FiltersDrawer({ open, onClose, filters, onChange, column
               )}
 
               {/* Filter row */}
-              <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] p-4 shadow-sm">
+              <div className={`rounded-2xl border p-4 shadow-sm ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
                 {idx === 0 && (
-                  <p className="font-heading text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">Where</p>
+                  <p className={`font-heading text-[10px] font-bold uppercase tracking-wider mb-3 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>Where</p>
                 )}
 
                 <div className="flex items-start gap-2">
@@ -175,19 +179,23 @@ export default function FiltersDrawer({ open, onClose, filters, onChange, column
 
                     {/* Value */}
                     {!noValue && (
-                      <div className="col-span-2 flex items-center gap-2 bg-[#EFF6FF] border border-[#E3ECFC] rounded-xl px-3 py-1.5 focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all">
+                      <div className={`col-span-2 flex items-center gap-2 border rounded-xl px-3 py-1.5 transition-all ${
+                        isDark
+                          ? "bg-[#111113] border-[#3F3F46] focus-within:border-[#52525B]"
+                          : "bg-[#EFF6FF] border-[#E3ECFC] focus-within:border-[#1D4ED8] focus-within:border-2"
+                      }`}>
                         <InputBase
                           fullWidth
                           placeholder="Enter value…"
                           value={row.value}
                           onChange={e => update(row.id, { value: e.target.value })}
-                          sx={{ fontSize: "0.78rem", color: "#334155", "& input::placeholder": { color: "#94A3B8", opacity: 1 } }}
+                          sx={{ fontSize: "0.78rem", color: isDark ? "#D4D4D8" : "#334155", "& input::placeholder": { color: isDark ? "#52525B" : "#94A3B8", opacity: 1 } }}
                         />
                       </div>
                     )}
                     {noValue && (
-                      <div className="col-span-2 flex items-center justify-center py-2 rounded-xl bg-[#EFF6FF] border border-[#E3ECFC]">
-                        <p className="text-[11.5px] text-slate-400 italic">No value needed for this condition</p>
+                      <div className={`col-span-2 flex items-center justify-center py-2 rounded-xl border ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
+                        <p className={`text-[11.5px] italic ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>No value needed for this condition</p>
                       </div>
                     )}
                   </div>
@@ -195,7 +203,7 @@ export default function FiltersDrawer({ open, onClose, filters, onChange, column
                   {/* Remove */}
                   <Tooltip title="Remove filter">
                     <IconButton size="small" onClick={() => removeRow(row.id)}
-                      sx={{ borderRadius: "8px", mt: 0.5, flexShrink: 0, "&:hover": { bgcolor: "#FEF2F2" } }}>
+                      sx={{ borderRadius: "8px", mt: 0.5, flexShrink: 0, "&:hover": { bgcolor: isDark ? "#27272A" : "#FEF2F2" } }}>
                       <Trash size={15} color="#EF4444" weight="duotone" />
                     </IconButton>
                   </Tooltip>
@@ -207,20 +215,24 @@ export default function FiltersDrawer({ open, onClose, filters, onChange, column
 
         {/* Add row */}
         <button onClick={addRow}
-          className="flex items-center gap-2 text-[12.5px] font-semibold text-[#1D4ED8] hover:text-[#0C2472] py-2 px-3 rounded-xl hover:bg-[#EFF6FF] transition-all w-full">
-          <Plus size={14} weight="duotone" />
+          className={`flex items-center gap-2 text-[12.5px] font-semibold py-2 px-3 rounded-xl transition-all w-full ${
+            isDark
+              ? "text-[#A1A1AA] hover:text-[#F4F4F5] hover:bg-[#27272A]"
+              : "text-[#1D4ED8] hover:text-[#0C2472] hover:bg-[#EFF6FF]"
+          }`}>
+          <Plus size={14} weight="bold" />
           Add filter row
         </button>
 
-        {/* Empty / tip */}
-        <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] p-4 shadow-sm">
+        {/* Tips card */}
+        <div className={`rounded-2xl border p-4 shadow-sm ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
           <div className="flex items-start gap-2.5">
-            <SlidersHorizontal size={16} color="#4A7AE8" weight="duotone" className="mt-0.5 flex-shrink-0" />
+            <SlidersHorizontal size={16} color={isDark ? "#3F3F46" : "#E3ECFC"} weight="duotone" className="mt-0.5 flex-shrink-0" />
             <div>
-              <p className="text-[12px] font-semibold text-slate-700 mb-0.5">How filters work</p>
-              <p className="text-[11px] text-slate-400 leading-relaxed">
-                Rows joined by <span className="font-bold text-slate-600">AND</span> must all match.
-                Rows joined by <span className="font-bold text-slate-600">OR</span> match if any condition is true.
+              <p className={`text-[12px] font-semibold mb-0.5 ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>How filters work</p>
+              <p className={`text-[11px] leading-relaxed ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>
+                Rows joined by <span className={`font-bold ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>AND</span> must all match.
+                Rows joined by <span className={`font-bold ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>OR</span> match if any condition is true.
               </p>
             </div>
           </div>
@@ -228,14 +240,21 @@ export default function FiltersDrawer({ open, onClose, filters, onChange, column
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between px-6 py-4 bg-[#f9fbff] border-t border-[#E3ECFC] flex-shrink-0">
+      <div className={`flex items-center justify-between px-6 py-4 border-t flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <button onClick={handleClear}
-          className="text-[13px] font-semibold text-slate-400 hover:text-slate-600 px-3 py-2 rounded-xl hover:bg-[#EFF6FF] transition-colors">
+          className={`text-[13px] font-semibold px-3 py-2 rounded-xl transition-colors ${isDark ? "text-[#71717A] hover:text-[#A1A1AA] hover:bg-[#27272A]" : "text-slate-400 hover:text-slate-600 hover:bg-[#EFF6FF]"}`}>
           Clear All
         </button>
         <Button variant="contained" size="small" startIcon={<FunnelSimple size={14} weight="duotone" />}
           onClick={handleApply}
-          sx={{ bgcolor: "#1D4ED8", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.78rem", px: 2.5, py: 0.9, boxShadow: "0 2px 12px #1D4ED833", "&:hover": { bgcolor: "#60A5FA", boxShadow: "0 2px 14px #60A5FA55" }, "&:active": { bgcolor: "#0C2472" } }}>
+          sx={{
+            bgcolor: isDark ? "#27272A" : "inherit",
+            color: isDark ? "#F4F4F5" : undefined,
+            borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.78rem", px: 2.5, py: 0.9,
+            boxShadow: isDark ? "none" : "0 2px 12px #1D4ED833",
+            "&:hover": { bgcolor: isDark ? "#3F3F46" : "inherit", boxShadow: isDark ? "none" : "0 2px 14px #60A5FA55" },
+            "&:active": { bgcolor: isDark ? "#18181B" : "#0C2472" },
+          }}>
           Apply{activeCount > 0 ? ` (${activeCount})` : ""}
         </Button>
       </div>

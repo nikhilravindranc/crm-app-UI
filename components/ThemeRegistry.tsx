@@ -8,10 +8,10 @@ const BODY    = "var(--font-body), system-ui, -apple-system, sans-serif";
 
 const C = {
   depth:   "#0C2472",
-  primary: "#1D4ED8",
+  primary: "#E3ECFC",
   action:  "#3B82F6",
-  hover:   "#60A5FA",
-  soft:    "#4A7AE8",
+  hover:   "#E3ECFC",
+  soft:    "#E3ECFC",
 };
 
 function buildTheme(isDark: boolean) {

@@ -60,10 +60,10 @@ const ALL_DEALS: Deal[] = [
 //  Stage config
 // ─────────────────────────────────────────────
 const STAGE_CFG: Record<DealStage, { bg: string; text: string; dot: string; bgDark: string; textDark: string }> = {
-  "Qualification":            { bg: "#EFF6FF", text: "#0C2472", dot: "#1D4ED8", bgDark: "rgba(96, 165, 250, 0.15)", textDark: "#60A5FA" },
-  "Needs Analysis":           { bg: "#E3ECFC", text: "#1D4ED8", dot: "#3B82F6", bgDark: "rgba(52, 211, 153, 0.15)", textDark: "#34D399" },
-  "Value Proposition":        { bg: "#E3ECFC", text: "#0C2472", dot: "#60A5FA", bgDark: "rgba(251, 191, 36, 0.15)", textDark: "#FBBF24" },
-  "Identify Decision Makers": { bg: "#E3ECFC", text: "#1D4ED8", dot: "#0C2472", bgDark: "rgba(244, 114, 182, 0.15)", textDark: "#F472B6" },
+  "Qualification":            { bg: "#EFF6FF", text: "#0C2472", dot: "#E3ECFC", bgDark: "rgba(96, 165, 250, 0.15)", textDark: "#E3ECFC" },
+  "Needs Analysis":           { bg: "#E3ECFC", text: "#E3ECFC", dot: "#3B82F6", bgDark: "rgba(52, 211, 153, 0.15)", textDark: "#34D399" },
+  "Value Proposition":        { bg: "#E3ECFC", text: "#0C2472", dot: "#E3ECFC", bgDark: "rgba(251, 191, 36, 0.15)", textDark: "#FBBF24" },
+  "Identify Decision Makers": { bg: "#E3ECFC", text: "#E3ECFC", dot: "#0C2472", bgDark: "rgba(244, 114, 182, 0.15)", textDark: "#F472B6" },
   "Proposal/Price Quote":     { bg: "#EFF6FF", text: "#0C2472", dot: "#0C2472", bgDark: "rgba(167, 139, 250, 0.15)", textDark: "#A78BFA" },
   "Negotiation/Review":       { bg: "#FEF3C7", text: "#92400E", dot: "#F59E0B", bgDark: "rgba(56, 189, 248, 0.15)", textDark: "#38BDF8" },
   "Closed Won":               { bg: "#DCFCE7", text: "#166534", dot: "#10B981", bgDark: "rgba(16, 185, 129, 0.15)", textDark: "#10B981" },
@@ -105,7 +105,7 @@ const fmt = (n: number) => n === 0 ? "₹0" : `₹${n.toLocaleString("en-IN")}`;
 
 function ColHeader({ label, isDark = false }: { label: string; isDark?: boolean }) {
   return (
-    <div className={`font-heading flex items-center gap-0.5 text-[10.5px] font-bold uppercase tracking-wider cursor-pointer transition-colors group select-none ${isDark ? "text-[#737373] hover:text-[#D4D4D8]" : "text-[#0C2472] hover:text-[#1D4ED8]"}`}>
+    <div className={`font-heading flex items-center gap-0.5 text-[10.5px] font-bold uppercase tracking-wider cursor-pointer transition-colors group select-none ${isDark ? "text-[#737373] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
       {label}
       <ArrowsDownUp size={12} weight="duotone" className={`opacity-30 group-hover:opacity-100 transition-opacity ${isDark ? "text-[#52525B]" : "text-[#60A5FA]"}`} />
     </div>
@@ -204,9 +204,9 @@ export default function DealsPage() {
               </div>
 
               <Button variant="contained"
-                startIcon={<Plus size={16} weight="duotone" />}
+                startIcon={<Plus size={16} weight="bold" />}
                 onClick={() => setDrawerOpen(true)}
-                sx={{ bgcolor: "#1D4ED8", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.78rem", px: 2, py: 0.85, boxShadow: "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: "#60A5FA", boxShadow: "0 2px 14px #60A5FA55" }, "&:active": { bgcolor: "#0C2472" } }}>
+                sx={{ bgcolor: "inherit", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.78rem", px: 2, py: 0.85, boxShadow: "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: "inherit", boxShadow: "0 2px 14px #60A5FA55" }, "&:active": { bgcolor: "#0C2472" } }}>
                 New Deal
               </Button>
             </div>
@@ -222,7 +222,7 @@ export default function DealsPage() {
                 <button key={stage} onClick={() => setActiveStage(stage)}
                   className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[12px] font-semibold whitespace-nowrap transition-all flex-shrink-0 border ${
                     active ? isDark ? "bg-[#18181B] text-white border-[#27272A] shadow-sm shadow-[#27272A]/10" : "bg-[#1D4ED8] text-white border-[#1D4ED8] shadow-sm shadow-[#1D4ED8]/20"
-                           : isDark ? "bg-[#0A0A0A] text-[#A1A1AA] border-[#27272A] hover:bg-[#27272A] hover:text-[#FFFFFF]" : "bg-[#f9fbff] text-slate-600 border-[#E3ECFC] hover:bg-[#E3ECFC] hover:text-[#1D4ED8]"
+                           : isDark ? "bg-[#0A0A0A] text-[#A1A1AA] border-[#27272A] hover:bg-[#27272A] hover:text-[#FFFFFF]" : "bg-[#f9fbff] text-slate-600 border-[#E3ECFC] hover:bg-[#E3ECFC]"
                   }`}>
                   {stage}
                   {cnt > 0 && <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold leading-none ${
@@ -255,11 +255,11 @@ export default function DealsPage() {
               }
               onClick={() => setFiltersOpen(true)}
               sx={{
-                borderColor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#27272A" : "#E3ECFC",
-                color: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#737373" : "#0C2472",
+                borderColor: activeFilters.length > 0 ? "#E3ECFC" : isDark ? "#27272A" : "#E3ECFC",
+                color: activeFilters.length > 0 ? "#E3ECFC" : isDark ? "#737373" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : activeFilters.length > 0 ? "#f9fbff" : "#E3ECFC",
                 borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem",
-                "&:hover": { borderColor: "#1D4ED8", color: "#4A7AE8", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
+                "&:hover": { borderColor: "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
               }}>
               Filters{activeFilters.length > 0 ? ` (${activeFilters.length})` : ""}
             </Button>
@@ -273,7 +273,7 @@ export default function DealsPage() {
                 color: isDark ? "#737373" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
                 borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem",
-                "&:hover": { borderColor: "#1D4ED8", color: "#4A7AE8", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
+                "&:hover": { borderColor: "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
               }}>
               Columns
             </Button>
@@ -288,7 +288,7 @@ export default function DealsPage() {
                 color: isDark ? "#737373" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
                 borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem",
-                "&:hover": { borderColor: "#1D4ED8", color: "#4A7AE8", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
+                "&:hover": { borderColor: "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
               }}>
               Sort{activeSorts.length > 0 ? ` (${activeSorts.length})` : ""}
             </Button>
@@ -314,8 +314,8 @@ export default function DealsPage() {
                 <span className="text-[12px] font-semibold">selected</span>
               </div>
               <div className="w-px h-4 bg-[#f9fbff]/15" />
-              <button className="text-[11.5px] font-semibold text-[#4A7AE8] hover:text-white transition-colors">Update Stage</button>
-              <button className="text-[11.5px] font-semibold text-[#4A7AE8] hover:text-white transition-colors">Assign Owner</button>
+              <button className="text-[11.5px] font-semibold text-inherit hover:text-white transition-colors">Update Stage</button>
+              <button className="text-[11.5px] font-semibold text-inherit hover:text-white transition-colors">Assign Owner</button>
               <button onClick={() => setSelected([])} className="ml-auto text-[11.5px] font-semibold text-white/50 hover:text-white transition-colors">Clear</button>
               <button className="flex items-center gap-1.5 text-[11.5px] font-semibold text-red-300 hover:text-red-200 transition-colors">
                 <Trash size={14} weight="duotone" /> Delete
@@ -338,7 +338,7 @@ export default function DealsPage() {
               <div className="grid items-center px-4 py-2.5 bg-[#E3ECFC] border-b border-[#E3ECFC]"
                 style={{ gridTemplateColumns: gridTemplate }}>
                 <Checkbox size="small" checked={allChecked} indeterminate={someChecked} onChange={toggleAll}
-                  sx={{ p: 0.5, color: "#E2E8F0", "&.Mui-checked, &.MuiCheckbox-indeterminate": { color: "#1D4ED8" } }} />
+                  sx={{ p: 0.5, color: "#E2E8F0", "&.Mui-checked, &.MuiCheckbox-indeterminate": { color: "inherit" } }} />
                 {visibleColDefs.map(c => <ColHeader key={c.key} label={c.label} isDark={isDark} />)}
                 <div />
               </div>
@@ -358,11 +358,11 @@ export default function DealsPage() {
                       onClick={() => router.push(`/deals/${deal.id}`)}>
 
                       <Checkbox size="small" checked={isSel} onChange={() => toggleOne(deal.id)} onClick={e => e.stopPropagation()}
-                        sx={{ p: 0.5, color: "#E2E8F0", "&.Mui-checked": { color: "#1D4ED8" } }} />
+                        sx={{ p: 0.5, color: "#E2E8F0", "&.Mui-checked": { color: "inherit" } }} />
 
                       {/* Deal Name */}
                       {visibleCols.has("dealName") && (
-                        <p className={`font-heading text-[12.5px] font-semibold truncate pr-2 transition-colors ${isDark ? "text-[#FFFFFF] group-hover:text-[#60A5FA]" : "text-slate-800 group-hover:text-[#1D4ED8]"}`}>
+                        <p className={`font-heading text-[12.5px] font-semibold truncate pr-2 transition-colors ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}>
                           {deal.name}
                         </p>
                       )}
@@ -445,7 +445,7 @@ export default function DealsPage() {
               {filtered.length === 0 && (
                 <div className="py-16 text-center">
                   <div className="w-12 h-12 rounded-2xl bg-[#f9fbff] flex items-center justify-center mx-auto mb-3">
-                    <MagnifyingGlass size={22} color="#4A7AE8" weight="duotone" />
+                    <MagnifyingGlass size={22} color="#E3ECFC" weight="duotone" />
                   </div>
                   <p className="font-heading text-slate-500 text-sm font-semibold">No deals found</p>
                   <p className="text-slate-300 text-xs mt-1">Try adjusting your search or stage filter</p>

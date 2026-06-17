@@ -80,19 +80,19 @@ const USERS: UserRecord[] = [
   { id:2,  name:"sdl aug0701",             role:"Administrator",     email:"sdlaug0701@mailinator.com",       initials:"SA", firstName:"sdl",       lastName:"aug0701",     phone:"",           avatarColor:"#EDE9FE", textColor:"#6D28D9" },
   { id:3,  name:"Rajarajan N",             role:"Administrator",     email:"rajarajan.n@socialdnalabs.com",   initials:"RN", firstName:"Rajarajan", lastName:"N",           phone:"",           avatarColor:"#DCFCE7", textColor:"#166534" },
   { id:4,  name:"Admin",                   role:"Administrator",     email:"admin@mailinator.com",            initials:"A",  firstName:"Admin",     lastName:"",            phone:"",           avatarColor:"#FEF3C7", textColor:"#B45309" },
-  { id:5,  name:"crmuser",                 role:"Support Executive", email:"crmuser@mailinator.com",          initials:"CU", firstName:"crm",       lastName:"user",        phone:"",           avatarColor:"#EFF6FF", textColor:"#1D4ED8" },
+  { id:5,  name:"crmuser",                 role:"Support Executive", email:"crmuser@mailinator.com",          initials:"CU", firstName:"crm",       lastName:"user",        phone:"",           avatarColor:"#EFF6FF", textColor:"#E3ECFC" },
   { id:6,  name:"Sales manager",           role:"Operations Manager",email:"sdlsalesmanager@mailinator.com",  initials:"SM", firstName:"Sales",     lastName:"manager",     phone:"",           avatarColor:"#FEF2F2", textColor:"#DC2626" },
   { id:7,  name:"manager sdl",             role:"Operations Manager",email:"sdlmanager@mailinator.com",       initials:"MS", firstName:"manager",   lastName:"sdl",         phone:"",           avatarColor:"#F0FDF4", textColor:"#16A34A" },
-  { id:8,  name:"Support executive user1", role:"Support Executive", email:"seuser1@mailinator.com",          initials:"SU", firstName:"Support",   lastName:"exec user1",  phone:"",           avatarColor:"#EFF6FF", textColor:"#1D4ED8" },
+  { id:8,  name:"Support executive user1", role:"Support Executive", email:"seuser1@mailinator.com",          initials:"SU", firstName:"Support",   lastName:"exec user1",  phone:"",           avatarColor:"#EFF6FF", textColor:"#E3ECFC" },
   { id:9,  name:"Operation Manager user 1",role:"Operations Manager",email:"opmanageruser1@mailinator.com",   initials:"OM", firstName:"Operation", lastName:"Mgr user 1",  phone:"",           avatarColor:"#FDF4FF", textColor:"#7E22CE" },
-  { id:10, name:"Support executive user 2",role:"Support Executive", email:"seuser2@mailinator.com",          initials:"SU", firstName:"Support",   lastName:"exec user 2", phone:"",           avatarColor:"#EFF6FF", textColor:"#1D4ED8" },
+  { id:10, name:"Support executive user 2",role:"Support Executive", email:"seuser2@mailinator.com",          initials:"SU", firstName:"Support",   lastName:"exec user 2", phone:"",           avatarColor:"#EFF6FF", textColor:"#E3ECFC" },
   { id:11, name:"VP Operation User 1",     role:"VP of Operations",  email:"vpoperationuser1@mailinator.com", initials:"VP", firstName:"VP Ops",   lastName:"User 1",      phone:"",           avatarColor:"#FEF3C7", textColor:"#B45309" },
 ];
 
 const ROLE_BADGE: Record<string, { bg: string; text: string; border: string }> = {
   "Super Admin":        { bg:"#FEF3C7", text:"#B45309", border:"#FDE68A" },
   "Administrator":      { bg:"#FEF3C7", text:"#B45309", border:"#FDE68A" },
-  "Support Executive":  { bg:"#EFF6FF", text:"#1D4ED8", border:"#BFDBFE" },
+  "Support Executive":  { bg:"#EFF6FF", text:"#E3ECFC", border:"#BFDBFE" },
   "Operations Manager": { bg:"#F0FDF4", text:"#166534", border:"#BBF7D0" },
   "VP of Operations":   { bg:"#EDE9FE", text:"#6D28D9", border:"#DDD6FE" },
   "Team Leader":        { bg:"#FEF2F2", text:"#DC2626", border:"#FECACA" },
@@ -135,17 +135,19 @@ const ROLE_ACTIVITIES: RoleActivity[] = [
 // ─────────────────────────────────────────────
 //  Shared UI primitives — NO <p> tags
 // ─────────────────────────────────────────────
-function SettingCard({ icon: Icon, title, color = "#1D4ED8", children, action }: {
+function SettingCard({ icon: Icon, title, color = "#E3ECFC", children, action }: {
   icon: React.ElementType; title: string; color?: string;
   children: React.ReactNode; action?: React.ReactNode;
 }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   return (
-    <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
-      <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[#EFF6FF]">
-        <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ backgroundColor: color + "18" }}>
+    <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+      <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
+        <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ backgroundColor: color + (isDark ? "22" : "18") }}>
           <Icon size={13} color={color} weight="duotone" />
         </div>
-        <span className="font-heading text-[11px] font-bold uppercase tracking-[0.12em] flex-1" style={{ color }}>{title}</span>
+        <span className={`font-heading text-[11px] font-bold uppercase tracking-[0.12em] flex-1 ${isDark ? "text-[#71717A]" : ""}`} style={isDark ? undefined : { color }}>{title}</span>
         {action}
       </div>
       <div className="px-5 py-2">{children}</div>
@@ -156,6 +158,8 @@ function SettingCard({ icon: Icon, title, color = "#1D4ED8", children, action }:
 function KV({ label, value, link, editable, onSave }: {
   label: string; value: string; link?: boolean; editable?: boolean; onSave?: (newValue: string) => void;
 }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(value);
   const empty = !value || value === "—" || value === "-";
@@ -173,9 +177,9 @@ function KV({ label, value, link, editable, onSave }: {
   };
 
   return (
-    <div className="py-2.5 border-b border-[#EFF6FF] last:border-0 flex items-start justify-between group">
+    <div className={`py-2.5 border-b last:border-0 flex items-start justify-between group ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
       <div className="flex-1 min-w-0">
-        <div className="text-[10.5px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">{label}</div>
+        <div className={`text-[10.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{label}</div>
         {isEditing ? (
           <div className="flex items-center gap-1.5 -mx-2">
             <input
@@ -187,17 +191,17 @@ function KV({ label, value, link, editable, onSave }: {
                 if (e.key === "Escape") handleCancel();
               }}
               autoFocus
-              className="flex-1 px-2 py-1 text-[13px] font-medium border border-[#4A7AE8] rounded-lg bg-white focus:outline-none focus:border-[#1D4ED8] focus:ring-1 focus:ring-[#4A7AE8] text-slate-700"
+              className={`flex-1 px-2 py-1 text-[13px] font-medium border rounded-lg focus:outline-none ${isDark ? "border-[#52525B] bg-[#27272A] text-[#D4D4D8] focus:border-[#71717A]" : "border-[#4A7AE8] bg-white focus:border-[#1D4ED8] focus:ring-1 focus:ring-[#4A7AE8] text-slate-700"}`}
             />
-            <button onClick={handleSave} className="px-2 py-1 text-[11px] font-bold text-white bg-[#1D4ED8] rounded hover:bg-[#60A5FA] transition-colors whitespace-nowrap">
+            <button onClick={handleSave} className={`px-2 py-1 text-[11px] font-bold rounded whitespace-nowrap transition-colors ${isDark ? "bg-[#3F3F46] text-[#D4D4D8] hover:bg-[#52525B]" : "bg-[#1D4ED8] text-white hover:bg-[#60A5FA]"}`}>
               Save
             </button>
-            <button onClick={handleCancel} className="px-2 py-1 text-[11px] font-semibold text-slate-500 border border-[#E3ECFC] rounded hover:bg-slate-50 transition-colors whitespace-nowrap">
+            <button onClick={handleCancel} className={`px-2 py-1 text-[11px] font-semibold border rounded whitespace-nowrap transition-colors ${isDark ? "border-[#3F3F46] text-[#71717A] hover:bg-[#27272A]" : "border-[#E3ECFC] text-slate-500 hover:bg-slate-50"}`}>
               Cancel
             </button>
           </div>
         ) : (
-          <div className={`text-[13px] font-medium leading-snug ${link?"text-[#1D4ED8]":empty?"text-slate-300":"text-slate-700"}`}>
+          <div className={`text-[13px] font-medium leading-snug ${link ? (isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]") : empty ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>
             {empty ? "—" : editValue}
           </div>
         )}
@@ -207,7 +211,7 @@ function KV({ label, value, link, editable, onSave }: {
           <IconButton
             onClick={() => setIsEditing(true)}
             size="small"
-            sx={{ p:0.4, mt:0.5, color:"#E2E8F0", opacity:0, transition:"opacity 0.15s", ".group:hover &":{opacity:1}, "&:hover":{color:"#1D4ED8",bgcolor:"#EFF6FF"}, borderRadius:"6px", cursor:"pointer" }}>
+            sx={{ p:0.4, mt:0.5, color: isDark ? "#3F3F46" : "#E2E8F0", opacity:0, transition:"opacity 0.15s", ".group:hover &":{opacity:1}, "&:hover":{color: isDark ? "#71717A" : "#E3ECFC", bgcolor: isDark ? "#27272A" : "#EFF6FF"}, borderRadius:"6px", cursor:"pointer" }}>
             <PencilSimple size={13} weight="duotone" />
           </IconButton>
         </Tooltip>
@@ -234,31 +238,33 @@ function ProfileHero({ initials, name, role, subtitle, contacts, avatarBg, avata
   contacts: { icon: React.ElementType; value: string; link?: boolean }[];
   avatarBg: string; avatarText: string;
 }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   return (
-    <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden mb-4">
-      <div className="relative h-[64px] bg-gradient-to-r from-[#1D4ED8] to-[#3B82F6]">
-        <div className="absolute inset-0" style={{ background:"radial-gradient(ellipse at 80% 50%, rgba(255,255,255,0.15) 0%, transparent 70%)" }} />
+    <div className={`rounded-2xl border shadow-sm overflow-hidden mb-4 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+      <div className={`relative h-[64px] ${isDark ? "bg-gradient-to-r from-[#18181B] to-[#27272A]" : "bg-gradient-to-r from-[#1D4ED8] to-[#3B82F6]"}`}>
+        <div className="absolute inset-0" style={{ background:"radial-gradient(ellipse at 80% 50%, rgba(255,255,255,0.07) 0%, transparent 70%)" }} />
       </div>
       <div className="relative px-6 pb-5">
         <div className="absolute -top-8 left-6">
           <div className="relative">
-            <div className="w-[64px] h-[64px] rounded-full border-[3px] border-[#f9fbff] shadow-md flex items-center justify-center" style={{ backgroundColor:avatarBg }}>
+            <div className={`w-[64px] h-[64px] rounded-full border-[3px] shadow-md flex items-center justify-center ${isDark ? "border-[#1C1C1E]" : "border-[#f9fbff]"}`} style={{ backgroundColor:avatarBg }}>
               <span className="text-[20px] font-extrabold leading-none select-none" style={{ color:avatarText }}>{initials}</span>
             </div>
-            <button className="absolute bottom-0 right-0 w-5 h-5 rounded-full bg-white border border-[#E3ECFC] shadow-sm flex items-center justify-center hover:bg-[#EFF6FF] transition-colors">
-              <Camera size={10} color="#64748B" weight="duotone" />
+            <button className={`absolute bottom-0 right-0 w-5 h-5 rounded-full border shadow-sm flex items-center justify-center transition-colors ${isDark ? "bg-[#27272A] border-[#3F3F46] hover:bg-[#3F3F46]" : "bg-white border-[#E3ECFC] hover:bg-[#EFF6FF]"}`}>
+              <Camera size={10} color={isDark ? "#71717A" : "#64748B"} weight="duotone" />
             </button>
           </div>
         </div>
         <div className="pt-3 pl-[80px]">
           <div className="flex items-center gap-2 flex-wrap mb-1">
-            <span className="text-[16px] font-extrabold text-slate-900 tracking-tight leading-tight">{name}</span>
+            <span className={`text-[16px] font-extrabold tracking-tight leading-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>{name}</span>
             <RoleBadge role={role} />
           </div>
-          {subtitle && <div className="text-[11.5px] text-slate-400 mb-1.5">{subtitle}</div>}
+          {subtitle && <div className={`text-[11.5px] mb-1.5 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{subtitle}</div>}
           <div className="flex items-center gap-3 flex-wrap">
             {contacts.map(({ icon: Icon, value, link }, i) => (
-              <div key={i} className={`flex items-center gap-1.5 text-[11.5px] ${link?"text-[#1D4ED8]":"text-slate-500"}`}>
+              <div key={i} className={`flex items-center gap-1.5 text-[11.5px] ${link ? (isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]") : (isDark ? "text-[#71717A]" : "text-slate-500")}`}>
                 <Icon size={11} weight="duotone" />
                 <span>{value}</span>
               </div>
@@ -289,8 +295,10 @@ function PersonalSettingsPanel() {
     setData(prev => ({ ...prev, [field]: value }));
   };
 
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   return (
-    <div className="flex-1 overflow-y-auto bg-[#EFF6FF] px-6 py-6 space-y-4">
+    <div className={`flex-1 overflow-y-auto px-6 py-6 space-y-4 ${isDark ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
       <ProfileHero
         initials="PM" name="PM SDL" role="Super Admin"
         avatarBg="#FEF3C7" avatarText="#B45309"
@@ -408,13 +416,13 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
       backgroundColor: "#EFF6FF",
       fontSize: "0.82rem",
       "& fieldset":             { borderColor: "#E3ECFC", borderWidth: 1.5 },
-      "&:hover fieldset":       { borderColor: "#60A5FA" },
-      "&.Mui-focused fieldset": { borderColor: "#1D4ED8", borderWidth: 2 },
+      "&:hover fieldset":       { borderColor: "#E3ECFC" },
+      "&.Mui-focused fieldset": { borderColor: "#E3ECFC", borderWidth: 2 },
       "&.Mui-focused":          { boxShadow: "0 0 0 2px #4A7AE8" },
       "& input":                { padding: "10px 14px" },
     },
     "& .MuiInputLabel-root":             { fontSize: "0.79rem", color: "#6B7280" },
-    "& .MuiInputLabel-root.Mui-focused": { color: "#1D4ED8" },
+    "& .MuiInputLabel-root.Mui-focused": { color: "inherit" },
     "& .MuiSelect-select":               { fontSize: "0.82rem", padding: "10px 14px", backgroundColor: "#EFF6FF" },
   };
 
@@ -595,7 +603,7 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
         </Button>
         <Button variant="contained" onClick={handleSubmit}
           disabled={!formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim()}
-          sx={{ bgcolor: "#1D4ED8", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: "0 1px 8px #1D4ED833", "&:hover": { bgcolor: "#60A5FA" }, "&:active": { bgcolor: "#0C2472" }, "&:disabled": { bgcolor: "#E2E8F0", color: "#F1F5F9" } }}>
+          sx={{ bgcolor: "inherit", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: "0 1px 8px #1D4ED833", "&:hover": { bgcolor: "inherit" }, "&:active": { bgcolor: "#0C2472" }, "&:disabled": { bgcolor: "#E2E8F0", color: "#F1F5F9" } }}>
           Create User
         </Button>
       </div>
@@ -625,8 +633,10 @@ function UserDetailPanel({ user, onUpdate }: { user: UserRecord; onUpdate: (upda
     }
   };
 
+  const { theme: uTheme } = useTheme();
+  const isDarkUD = uTheme === "dark";
   return (
-    <div className="flex-1 overflow-y-auto bg-[#EFF6FF] px-5 py-5 space-y-4">
+    <div className={`flex-1 overflow-y-auto px-5 py-5 space-y-4 ${isDarkUD ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
       <ProfileHero
         initials={user.initials} name={user.name} role={user.role}
         avatarBg={user.avatarColor} avatarText={user.textColor}
@@ -713,9 +723,9 @@ function UsersPanel() {
             <InputBase placeholder="Search" value={search} onChange={e => setSearch(e.target.value)}
               sx={{ flex:1, fontSize:"0.75rem", color:"#334155", "& input::placeholder":{color:"#94A3B8",opacity:1} }} />
           </div>
-          <Button variant="contained" size="small" startIcon={<Plus size={12} weight="duotone" />}
+          <Button variant="contained" size="small" startIcon={<Plus size={12} weight="bold" />}
             onClick={() => setShowNewUserModal(true)}
-            sx={{ bgcolor:"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", px:1.5, py:0.7, whiteSpace:"nowrap", boxShadow:"0 1px 6px #1D4ED833", "&:hover":{bgcolor:"#60A5FA"} }}>
+            sx={{ bgcolor:"#E3ECFC", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", px:1.5, py:0.7, whiteSpace:"nowrap", boxShadow:"0 1px 6px #1D4ED833", "&:hover":{bgcolor:"#E3ECFC"} }}>
             New User
           </Button>
         </div>
@@ -732,7 +742,7 @@ function UsersPanel() {
                 }`}>
                 <div onClick={e => toggleCheck(user.id, e)}>
                   <Checkbox size="small" checked={isChecked}
-                    sx={{ p:0.3, color:"#E2E8F0", "&.Mui-checked":{color:"#1D4ED8"} }} />
+                    sx={{ p:0.3, color:"#E2E8F0", "&.Mui-checked":{color:"#E3ECFC"} }} />
                 </div>
                 <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-[13px] font-bold"
                   style={{ backgroundColor: user.avatarColor, color: user.textColor }}>
@@ -801,8 +811,10 @@ function OrganizationPanel() {
     setOrgData(prev => ({ ...prev, [field]: value }));
   };
 
+  const { theme: orgTheme } = useTheme();
+  const isDarkOrg = orgTheme === "dark";
   return (
-    <div className="flex-1 overflow-y-auto bg-[#EFF6FF] px-6 py-6 space-y-4">
+    <div className={`flex-1 overflow-y-auto px-6 py-6 space-y-4 ${isDarkOrg ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
       <ProfileHero
         initials="S" name="Social DNA Labs" role="Super Admin"
         subtitle="India · INR"
@@ -878,13 +890,13 @@ function NewRoleDrawer({ open, onClose }: { open: boolean; onClose: () => void }
       backgroundColor: "#EFF6FF",
       fontSize: "0.82rem",
       "& fieldset":             { borderColor: "#E3ECFC", borderWidth: 1.5 },
-      "&:hover fieldset":       { borderColor: "#60A5FA" },
-      "&.Mui-focused fieldset": { borderColor: "#1D4ED8", borderWidth: 2 },
+      "&:hover fieldset":       { borderColor: "#E3ECFC" },
+      "&.Mui-focused fieldset": { borderColor: "#E3ECFC", borderWidth: 2 },
       "&.Mui-focused":          { boxShadow: "0 0 0 2px #4A7AE8" },
       "& input":                { padding: "10px 14px" },
     },
     "& .MuiInputLabel-root":             { fontSize: "0.79rem", color: "#6B7280" },
-    "& .MuiInputLabel-root.Mui-focused": { color: "#1D4ED8" },
+    "& .MuiInputLabel-root.Mui-focused": { color: "inherit" },
     "& .MuiSelect-select":               { fontSize: "0.82rem", padding: "10px 14px", backgroundColor: "#EFF6FF" },
   };
 
@@ -953,7 +965,7 @@ function NewRoleDrawer({ open, onClose }: { open: boolean; onClose: () => void }
           Cancel
         </Button>
         <Button variant="contained" onClick={handleSubmit}
-          sx={{ bgcolor: "#1D4ED8", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: "0 1px 8px #1D4ED833", "&:hover": { bgcolor: "#60A5FA" }, "&:active": { bgcolor: "#0C2472" } }}>
+          sx={{ bgcolor: "inherit", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: "0 1px 8px #1D4ED833", "&:hover": { bgcolor: "inherit" }, "&:active": { bgcolor: "#0C2472" } }}>
           Create Role
         </Button>
       </div>
@@ -975,24 +987,24 @@ function RoleTreeNode({ node, depth, selectedId, expandedIds, onSelect, onToggle
   return (
     <div>
       <div onClick={() => onSelect(node)}
-        className={`flex items-center gap-2 px-3 py-2.5 cursor-pointer border-b border-[#EFF6FF] transition-colors group ${
-          isSelected ? "bg-[#EFF6FF]" : "hover:bg-[#f9fbff]"
+        className={`flex items-center gap-2 px-3 py-2.5 cursor-pointer border-b border-[#27272A] transition-colors group ${
+          isSelected ? "bg-[#27272A]" : "hover:bg-[#1C1C1E]"
         }`}
         style={{ paddingLeft: `${12 + depth * 20}px` }}>
         {/* Expand toggle */}
         <button onClick={e => { e.stopPropagation(); if (hasChildren) onToggle(node.id); }}
-          className="w-5 h-5 flex items-center justify-center flex-shrink-0 rounded-md hover:bg-[#E3ECFC] transition-colors">
+          className="w-5 h-5 flex items-center justify-center flex-shrink-0 rounded-md hover:bg-[#3F3F46] transition-colors">
           {hasChildren
             ? isExpanded
-              ? <CaretDown size={10} color="#64748B" weight="bold" />
-              : <CaretRight size={10} color="#64748B" weight="bold" />
-            : <span className="w-1.5 h-1.5 rounded-full bg-slate-200 inline-block" />
+              ? <CaretDown size={10} color="#71717A" weight="bold" />
+              : <CaretRight size={10} color="#71717A" weight="bold" />
+            : <span className="w-1.5 h-1.5 rounded-full bg-[#3F3F46] inline-block" />
           }
         </button>
-        <div className={`text-[13px] font-medium flex-1 ${isSelected?"text-[#1D4ED8] font-semibold":"text-slate-700"}`}>
+        <div className={`text-[13px] font-medium flex-1 ${isSelected ? "text-[#D4D4D8] font-semibold" : "text-[#71717A]"}`}>
           {node.name}
         </div>
-        {isSelected && <CheckCircle size={14} color="#1D4ED8" weight="duotone" />}
+        {isSelected && <CheckCircle size={14} color="#52525B" weight="duotone" />}
       </div>
 
       {hasChildren && isExpanded && node.children!.map(child => (
@@ -1036,13 +1048,13 @@ function RolesPanel() {
         <button key={role.id} onClick={() => setSelectedRole(role)}
           className={`w-full text-left px-3 py-2.5 rounded-lg border transition-all ${
             selectedRole.id === role.id
-              ? "bg-[#EFF6FF] border-[#1D4ED8] shadow-sm"
-              : "border-[#E3ECFC] hover:bg-[#f9fbff]"
+              ? "bg-[#27272A] border-[#3F3F46] shadow-sm"
+              : "border-[#27272A] hover:bg-[#1C1C1E]"
           }`}>
-          <div className={`text-[13px] font-semibold ${selectedRole.id === role.id ? "text-[#1D4ED8]" : "text-slate-700"}`}>
+          <div className={`text-[13px] font-semibold ${selectedRole.id === role.id ? "text-[#D4D4D8]" : "text-[#71717A]"}`}>
             {role.name}
           </div>
-          <div className="text-[11px] text-slate-500 mt-0.5">{role.description}</div>
+          <div className="text-[11px] text-[#52525B] mt-0.5">{role.description}</div>
         </button>
       ))}
     </div>
@@ -1051,20 +1063,20 @@ function RolesPanel() {
   return (
     <div className="flex-1 flex overflow-hidden">
       {/* Role sidebar */}
-      <div className="w-[340px] flex-shrink-0 flex flex-col border-r border-[#E3ECFC] bg-[#f9fbff]">
+      <div className="w-[340px] flex-shrink-0 flex flex-col border-r border-[#27272A] bg-[#111113]">
         {/* Toolbar */}
-        <div className="px-4 py-3 border-b border-[#E3ECFC] flex items-center gap-2">
-          <div className="flex items-center bg-white border border-[#E3ECFC] rounded-xl p-1 gap-1">
+        <div className="px-4 py-3 border-b border-[#27272A] flex items-center gap-2">
+          <div className="flex items-center bg-[#1C1C1E] border border-[#27272A] rounded-xl p-1 gap-1">
             <button onClick={() => setViewMode("tree")}
               className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
-                viewMode === "tree" ? "bg-[#EFF6FF] text-[#1D4ED8]" : "text-slate-600 hover:text-[#1D4ED8]"
+                viewMode === "tree" ? "bg-[#27272A] text-[#D4D4D8]" : "text-[#52525B]"
               }`}>
               <Tree size={12} weight="duotone" />
               Tree
             </button>
             <button onClick={() => setViewMode("list")}
               className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
-                viewMode === "list" ? "bg-[#EFF6FF] text-[#1D4ED8]" : "text-slate-600 hover:text-[#1D4ED8]"
+                viewMode === "list" ? "bg-[#27272A] text-[#D4D4D8]" : "text-[#52525B]"
               }`}>
               <ListBullets size={12} weight="duotone" />
               List
@@ -1072,7 +1084,7 @@ function RolesPanel() {
           </div>
           <div className="flex-1" />
           <Button variant="contained" size="small" onClick={() => setNewRoleOpen(true)}
-            sx={{ bgcolor:"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", px:1.5, py:0.7, boxShadow:"0 1px 6px #1D4ED833", "&:hover":{bgcolor:"#60A5FA"} }}>
+            sx={{ bgcolor:"#27272A", color:"#D4D4D8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", px:1.5, py:0.7, boxShadow:"none", "&:hover":{bgcolor:"#3F3F46", color:"#F4F4F5"} }}>
             New Role
           </Button>
         </div>
@@ -1092,15 +1104,15 @@ function RolesPanel() {
       </div>
 
       {/* Role detail */}
-      <div className="flex-1 overflow-y-auto bg-[#EFF6FF] px-6 py-6">
+      <div className="flex-1 overflow-y-auto bg-[#0A0A0A] px-6 py-6">
         {/* Tabs */}
         <div className="flex items-center gap-2 mb-5">
           {(["overview","timeline"] as const).map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
               className={`px-4 py-1.5 rounded-full text-[12.5px] font-semibold capitalize transition-all ${
                 activeTab === tab
-                  ? "bg-[#1D4ED8] text-white shadow-sm"
-                  : "bg-[#f9fbff] text-slate-500 hover:bg-[#E3ECFC] hover:text-[#1D4ED8]"
+                  ? "bg-[#27272A] text-[#D4D4D8] shadow-sm"
+                  : "bg-[#1C1C1E] text-[#52525B] hover:bg-[#27272A] hover:text-[#A1A1AA]"
               }`}>
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
@@ -1126,11 +1138,11 @@ function RolesPanel() {
             };
           };
           const getIcon = (action: string) => {
-            if (action.toLowerCase().includes("created")) return { icon: Plus,          color:"#1D4ED8", bg:"#EFF6FF" };
-            if (action.toLowerCase().includes("updated")) return { icon: PencilSimple,  color:"#1D4ED8", bg:"#EFF6FF" };
-            if (action.toLowerCase().includes("modified"))return { icon: PencilSimple,  color:"#1D4ED8", bg:"#EFF6FF" };
-            if (action.toLowerCase().includes("changed")) return { icon: PencilSimple,  color:"#1D4ED8", bg:"#EFF6FF" };
-            return                                               { icon: PencilSimple,  color:"#1D4ED8", bg:"#EFF6FF" };
+            if (action.toLowerCase().includes("created")) return { icon: Plus,          color:"#E3ECFC", bg:"#EFF6FF" };
+            if (action.toLowerCase().includes("updated")) return { icon: PencilSimple,  color:"#E3ECFC", bg:"#EFF6FF" };
+            if (action.toLowerCase().includes("modified"))return { icon: PencilSimple,  color:"#E3ECFC", bg:"#EFF6FF" };
+            if (action.toLowerCase().includes("changed")) return { icon: PencilSimple,  color:"#E3ECFC", bg:"#EFF6FF" };
+            return                                               { icon: PencilSimple,  color:"#E3ECFC", bg:"#EFF6FF" };
           };
           // group by date
           const grouped: { date: string; items: typeof roleActivities }[] = [];
@@ -1146,7 +1158,7 @@ function RolesPanel() {
               {/* Header */}
               <div className="flex items-center gap-2 px-5 py-3.5 border-b border-[#EFF6FF]">
                 <div className="w-6 h-6 rounded-lg bg-[#EFF6FF] flex items-center justify-center">
-                  <ClockCounterClockwise size={13} color="#1D4ED8" weight="duotone" />
+                  <ClockCounterClockwise size={13} color="#E3ECFC" weight="duotone" />
                 </div>
                 <span className="font-heading text-[11px] font-bold uppercase tracking-[0.12em] text-[#1D4ED8]">History</span>
               </div>
@@ -1221,7 +1233,7 @@ const PERM_PAIRS: [PermKey, PermKey][] = [
 
 const PERM_META: Record<PermKey, { label: string; icon: React.ElementType; color: string }> = {
   fullAccess:        { label:"Full Access",           icon:Square,         color:"#10B981" },
-  create:            { label:"Create",                icon:Plus,           color:"#1D4ED8" },
+  create:            { label:"Create",                icon:Plus,           color:"#E3ECFC" },
   read:              { label:"Read",                  icon:Eye,            color:"#06B6D4" },
   update:            { label:"Update",                icon:PencilSimple,   color:"#F59E0B" },
   delete:            { label:"Delete",                icon:Trash,          color:"#EF4444" },
@@ -1240,7 +1252,7 @@ const PERM_MODULES = [
 ];
 
 const PERM_ROLES = [
-  { key:"administrator",  label:"Administrator",      color:"#1D4ED8" },
+  { key:"administrator",  label:"Administrator",      color:"#3B82F6" },
   { key:"vpOperations",   label:"VP of Operations",   color:"#8B5CF6" },
   { key:"opsManager",     label:"Operations Manager", color:"#10B981" },
   { key:"supportExec",    label:"Support Executive",  color:"#06B6D4" },
@@ -1265,7 +1277,7 @@ function buildDefaultPerms(): PermState {
 function MiniToggle({ checked, onChange }: { checked: boolean; onChange: () => void }) {
   return (
     <button onClick={onChange}
-      className={`relative inline-flex w-[28px] h-[15px] rounded-full transition-colors duration-200 focus:outline-none flex-shrink-0 ${checked ? "bg-[#1D4ED8]" : "bg-slate-200"}`}>
+      className={`relative inline-flex w-[28px] h-[15px] rounded-full transition-colors duration-200 focus:outline-none flex-shrink-0 ${checked ? "bg-[#10B981]" : "bg-slate-200"}`}>
       <span className={`inline-block w-[11px] h-[11px] rounded-full bg-white shadow-sm transform transition-transform duration-200 absolute top-[2px] ${checked ? "translate-x-[15px]" : "translate-x-[2px]"}`} />
     </button>
   );
@@ -1315,13 +1327,13 @@ function PermissionPanel() {
   };
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden bg-[#EFF6FF]">
+    <div className="flex-1 flex flex-col overflow-hidden bg-[#0A0A0A]">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 bg-[#f9fbff] border-b border-[#E3ECFC]">
-        <div className="text-[18px] font-extrabold text-[#0C2472] tracking-tight">Permissions</div>
+      <div className="flex items-center justify-between px-6 py-4 bg-[#111113] border-b border-[#27272A]">
+        <div className="text-[18px] font-extrabold text-[#D4D4D8] tracking-tight">Permissions</div>
         <Button variant="contained" size="small"
           onClick={() => setSaved(true)}
-          sx={{ bgcolor: saved ? "#10B981" : "#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.8, boxShadow:"0 1px 6px #1D4ED833", "&:hover":{ bgcolor: saved ? "#059669" : "#60A5FA" } }}>
+          sx={{ bgcolor: saved ? "#10B981" : "#27272A", color: saved ? "#fff" : "#D4D4D8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.8, boxShadow:"none", "&:hover":{ bgcolor: saved ? "#059669" : "#3F3F46" } }}>
           {saved ? "Saved!" : "Save Changes"}
         </Button>
       </div>
@@ -1332,8 +1344,8 @@ function PermissionPanel() {
           <button key={t} onClick={() => setTab(t)}
             className={`px-4 py-1.5 rounded-t-xl text-[12.5px] font-semibold transition-all border border-b-0 ${
               tab === t
-                ? "bg-white border-[#E3ECFC] text-[#1D4ED8]"
-                : "bg-transparent border-transparent text-slate-400 hover:text-slate-600"
+                ? "bg-[#1C1C1E] border-[#27272A] text-[#D4D4D8]"
+                : "bg-transparent border-transparent text-[#52525B] hover:text-[#A1A1AA]"
             }`}>
             {t === "matrix" ? "Permission Matrix" : "Summary View"}
           </button>
@@ -1342,11 +1354,11 @@ function PermissionPanel() {
 
       {/* Matrix */}
       {tab === "matrix" && (
-        <div className="flex-1 overflow-auto mx-6 mb-4 bg-white rounded-b-2xl rounded-tr-2xl border border-[#E3ECFC] shadow-sm">
+        <div className="flex-1 overflow-auto mx-6 mb-4 bg-[#1C1C1E] rounded-b-2xl rounded-tr-2xl border border-[#27272A] shadow-sm">
           <table className="w-full border-collapse text-left" style={{ minWidth: 900 }}>
             <thead>
-              <tr className="bg-[#f9fbff] border-b border-[#E3ECFC]">
-                <th className="sticky left-0 z-10 bg-[#f9fbff] px-5 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider w-[160px] border-r border-[#E3ECFC]">
+              <tr className="bg-[#111113] border-b border-[#27272A]">
+                <th className="sticky left-0 z-10 bg-[#111113] px-5 py-3 text-[11px] font-bold text-[#52525B] uppercase tracking-wider w-[160px] border-r border-[#27272A]">
                   Module
                 </th>
                 {PERM_ROLES.map(role => (
@@ -1360,12 +1372,12 @@ function PermissionPanel() {
             </thead>
             <tbody>
               {PERM_MODULES.map((mod, i) => (
-                <tr key={mod} className={`border-b border-[#EFF6FF] ${i % 2 === 0 ? "bg-white" : "bg-[#fafcff]"}`}>
-                  <td className="sticky left-0 z-10 px-5 py-2 border-r border-[#E3ECFC] font-semibold text-[13px] text-slate-700 bg-inherit align-middle whitespace-nowrap">
+                <tr key={mod} className={`border-b border-[#27272A] ${i % 2 === 0 ? "bg-[#1C1C1E]" : "bg-[#18181B]"}`}>
+                  <td className="sticky left-0 z-10 px-5 py-2 border-r border-[#27272A] font-semibold text-[13px] text-[#A1A1AA] bg-inherit align-middle whitespace-nowrap">
                     {mod}
                   </td>
                   {PERM_ROLES.map(role => (
-                    <td key={role.key} className="border-r border-[#EFF6FF] last:border-r-0 align-top">
+                    <td key={role.key} className="border-r border-[#27272A] last:border-r-0 align-top">
                       <PermCell module={mod} role={role.key} state={perms[mod][role.key]} onToggle={toggle} />
                     </td>
                   ))}
@@ -1452,15 +1464,15 @@ function PermissionPanel() {
 
       {/* Legend */}
       {tab === "matrix" && (
-        <div className="mx-6 mb-5 bg-white rounded-2xl border border-[#E3ECFC] px-5 py-3">
-          <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Permission Legend</div>
+        <div className="mx-6 mb-5 bg-[#1C1C1E] rounded-2xl border border-[#27272A] px-5 py-3">
+          <div className="text-[11px] font-bold text-[#52525B] uppercase tracking-wider mb-2">Permission Legend</div>
           <div className="grid grid-cols-4 gap-x-6 gap-y-1.5">
             {(Object.entries(PERM_META) as [PermKey, typeof PERM_META[PermKey]][]).map(([key, meta]) => {
               const Icon = meta.icon;
               return (
                 <div key={key} className="flex items-center gap-1.5">
                   <Icon size={12} color={meta.color} weight={key==="fullAccess"||key==="delete"?"fill":"duotone"} />
-                  <span className="text-[11.5px] text-slate-600">{meta.label}</span>
+                  <span className="text-[11.5px] text-[#71717A]">{meta.label}</span>
                 </div>
               );
             })}
@@ -1569,7 +1581,7 @@ function FieldCell({ field }: { field: LField }) {
       </div>
       <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
         {field.prefix && <span className="text-[11px] text-slate-400">{field.prefix} ·</span>}
-        {field.type && <span className="text-[11px] text-[#4A7AE8]">{field.type}</span>}
+        {field.type && <span className="text-[11px] text-inherit">{field.type}</span>}
         <span className="text-slate-300 group-hover:text-slate-500 text-[11px] font-bold">···</span>
       </div>
     </div>
@@ -1589,14 +1601,14 @@ function LayoutEditor({ module, layoutName, onClose }: {
     <div className="fixed inset-0 z-50 bg-white flex flex-col overflow-hidden">
       {/* Top bar */}
       <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#E3ECFC] flex-shrink-0">
-        <button onClick={onClose} className="flex items-center gap-1.5 text-[12.5px] font-semibold text-slate-600 hover:text-[#1D4ED8] transition-colors">
+        <button onClick={onClose} className="flex items-center gap-1.5 text-[12.5px] font-semibold text-slate-600 transition-colors">
           <ArrowLeft size={14} weight="bold" />
           {modDef?.label ?? module}
         </button>
         <button className="flex items-center gap-1.5 px-2.5 py-1 border border-[#E3ECFC] rounded-lg text-[12.5px] font-semibold text-slate-700 hover:border-[#1D4ED8] bg-white transition-colors">
           {layoutName} <CaretDown size={11} weight="bold" />
         </button>
-        <IconButton size="small" sx={{ p:0.5, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
+        <IconButton size="small" sx={{ p:0.5, color:"#94A3B8", "&:hover":{color:"#E3ECFC"}, borderRadius:"6px" }}>
           <Gear size={14} weight="duotone" />
         </IconButton>
         <div className="flex-1" />
@@ -1622,7 +1634,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                   return (
                     <div key={ft.label}
                       className="flex items-center gap-1.5 px-2 py-1.5 border border-[#E3ECFC] rounded-lg bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF] cursor-grab transition-colors text-[11px] font-medium text-slate-600">
-                      <Icon size={11} color="#1D4ED8" weight="duotone" />
+                      <Icon size={11} color="#E3ECFC" weight="duotone" />
                       {ft.label}
                     </div>
                   );
@@ -1646,7 +1658,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
             <div>
               <div className="flex items-center justify-between px-4 py-3 border-b border-[#E3ECFC]">
                 <span className="text-[13px] font-bold text-slate-700">Available Fields</span>
-                <IconButton size="small" sx={{ p:0.4, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
+                <IconButton size="small" sx={{ p:0.4, color:"#94A3B8", "&:hover":{color:"#E3ECFC"}, borderRadius:"6px" }}>
                   <MagnifyingGlass size={13} weight="duotone"/>
                 </IconButton>
               </div>
@@ -1704,7 +1716,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                   <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#E3ECFC] bg-[#fafcff]">
                     <DotsSixVertical size={14} color="#E2E8F0"/>
                     <span className="text-[13px] font-bold text-slate-700 flex-1">{section.title}</span>
-                    <IconButton size="small" sx={{ p:0.3, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
+                    <IconButton size="small" sx={{ p:0.3, color:"#94A3B8", "&:hover":{color:"#E3ECFC"}, borderRadius:"6px" }}>
                       <Gear size={13} weight="duotone"/>
                     </IconButton>
                   </div>
@@ -1714,7 +1726,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                         <div key={i} className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-[#fafcff] hover:border-[#4A7AE8] transition-colors cursor-pointer group">
                           <span className="text-[12px] font-medium text-slate-700">{f.label}</span>
                           <div className="flex items-center gap-1.5">
-                            {f.type && <span className="text-[11px] text-[#4A7AE8]">{f.type}</span>}
+                            {f.type && <span className="text-[11px] text-inherit">{f.type}</span>}
                             <span className="text-slate-300 group-hover:text-slate-500 text-[11px] font-bold">···</span>
                           </div>
                         </div>
@@ -1749,7 +1761,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                 {QC_ACTIVE.map((f,i) => (
                   <div key={i} className="flex items-center px-4 py-2.5 border-b border-[#EFF6FF] last:border-0 group">
                     <span className="text-[13px] text-slate-700 w-36 flex-shrink-0">{f.label}</span>
-                    <span className="flex-1 text-[13px] text-[#4A7AE8]">{f.type}</span>
+                    <span className="flex-1 text-[13px] text-inherit">{f.type}</span>
                     {f.removable && (
                       <button className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors opacity-60 hover:opacity-100">
                         <X size={11} color="#94A3B8" weight="bold"/>
@@ -1778,7 +1790,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                     <div key={i} className="flex items-center gap-3 px-4 py-2.5">
                       <DotsSixVertical size={13} color="#E2E8F0"/>
                       <span className="text-[13px] text-slate-700 flex-1">{f.label}</span>
-                      <span className="text-[12px] text-[#4A7AE8]">{f.type}</span>
+                      <span className="text-[12px] text-inherit">{f.type}</span>
                     </div>
                   ))}
                 </div>
@@ -1842,7 +1854,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
 }
 
 const MODULE_DEFS = [
-  { key:"leads",    label:"Leads",    icon:UserPlus,    color:"#1D4ED8", sharedTo:"Administrator, Operations Manager, Support Executive, VP of Operations", lastMod:"Feb 27, 2026" },
+  { key:"leads",    label:"Leads",    icon:UserPlus,    color:"#E3ECFC", sharedTo:"Administrator, Operations Manager, Support Executive, VP of Operations", lastMod:"Feb 27, 2026" },
   { key:"deals",    label:"Deals",    icon:Lightning,   color:"#F59E0B", sharedTo:"Administrator, Operations Manager, Support Executive, VP of Operations", lastMod:"Feb 27, 2026" },
   { key:"contacts", label:"Contacts", icon:AddressBook, color:"#10B981", sharedTo:"Administrator, Operations Manager, Support Executive, VP of Operations", lastMod:"Feb 27, 2026" },
   { key:"accounts", label:"Accounts", icon:SquaresFour, color:"#8B5CF6", sharedTo:"Administrator, Operations Manager, Support Executive, VP of Operations", lastMod:"Feb 27, 2026" },
@@ -1884,11 +1896,11 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
       {/* Sub-sidebar */}
       <div className="w-[200px] flex-shrink-0 border-r border-[#E3ECFC] bg-[#f9fbff] flex flex-col">
         <div className="flex items-center justify-between px-3 py-3 border-b border-[#E3ECFC]">
-          <button onClick={onBack} className="flex items-center gap-1 text-[12px] font-semibold text-slate-600 hover:text-[#1D4ED8] transition-colors">
+          <button onClick={onBack} className="flex items-center gap-1 text-[12px] font-semibold text-slate-600 transition-colors">
             <ArrowLeft size={13} weight="bold" />
             Modules
           </button>
-          <IconButton size="small" sx={{ p:0.4, color:"#94A3B8", "&:hover":{color:"#1D4ED8",bgcolor:"#EFF6FF"}, borderRadius:"6px" }}>
+          <IconButton size="small" sx={{ p:0.4, color:"#94A3B8", "&:hover":{color:"#E3ECFC",bgcolor:"#EFF6FF"}, borderRadius:"6px" }}>
             <MagnifyingGlass size={13} weight="duotone" />
           </IconButton>
         </div>
@@ -1899,7 +1911,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
             return (
               <button key={m.key} onClick={() => onSelect(m.key)}
                 className={`flex items-center gap-2.5 w-full px-3 py-2.5 text-[12.5px] font-medium transition-colors ${
-                  isActive ? "bg-[#1D4ED8] text-white" : "text-slate-600 hover:bg-[#EFF6FF] hover:text-[#1D4ED8]"
+                  isActive ? "bg-[#1D4ED8] text-white" : "text-slate-600 hover:bg-[#EFF6FF]"
                 }`}>
                 <Icon size={13} color={isActive ? "#fff" : m.color} weight="duotone" />
                 {m.label}
@@ -1952,7 +1964,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
               </div>
               <div className="flex justify-end mb-4">
                 <Button variant="contained" size="small"
-                  sx={{ bgcolor:"#1D4ED8", borderRadius:"8px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.8, boxShadow:"0 1px 6px #1D4ED833", "&:hover":{bgcolor:"#60A5FA"} }}>
+                  sx={{ bgcolor:"#E3ECFC", borderRadius:"8px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.8, boxShadow:"0 1px 6px #1D4ED833", "&:hover":{bgcolor:"#E3ECFC"} }}>
                   Create New Layout
                 </Button>
               </div>
@@ -2033,14 +2045,14 @@ function ModulesAndFieldsPanel() {
           <InputBase placeholder="Search" value={search} onChange={e => setSearch(e.target.value)}
             sx={{ flex:1, fontSize:"0.75rem", color:"#334155", "& input::placeholder":{color:"#94A3B8",opacity:1} }} />
         </div>
-        <button className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold text-slate-600 bg-[#f9fbff] border border-[#E3ECFC] rounded-xl hover:border-[#1D4ED8] hover:text-[#1D4ED8] transition-colors">
+        <button className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold text-slate-600 bg-[#f9fbff] border border-[#E3ECFC] rounded-xl hover:border-[#1D4ED8] transition-colors">
           <Gear size={13} weight="duotone" />
           Custom Module
         </button>
         <div className="flex-1" />
         <Button variant="contained" size="small"
           onClick={() => { setSelectedMod("new"); setView("detail"); }}
-          sx={{ bgcolor:"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.8, boxShadow:"0 1px 6px #1D4ED833", whiteSpace:"nowrap", "&:hover":{bgcolor:"#60A5FA"} }}>
+          sx={{ bgcolor:"#E3ECFC", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.8, boxShadow:"0 1px 6px #1D4ED833", whiteSpace:"nowrap", "&:hover":{bgcolor:"#E3ECFC"} }}>
           Create New Module
         </Button>
       </div>
@@ -2083,7 +2095,7 @@ function ModulesAndFieldsPanel() {
                   <div className="flex items-center justify-center gap-2">
                     <GreenSwitch checked={isOn} onChange={() => setModStatuses(p => ({ ...p, [mod.key]: !p[mod.key] }))} />
                     <Tooltip title="Module info">
-                      <IconButton size="small" sx={{ p:0.3, color:"#E2E8F0", "&:hover":{color:"#1D4ED8",bgcolor:"#EFF6FF"}, borderRadius:"6px" }}>
+                      <IconButton size="small" sx={{ p:0.3, color:"#E2E8F0", "&:hover":{color:"#E3ECFC",bgcolor:"#EFF6FF"}, borderRadius:"6px" }}>
                         <Info size={13} weight="duotone" />
                       </IconButton>
                     </Tooltip>
@@ -2106,7 +2118,7 @@ function PlaceholderPanel({ label }: { label: string }) {
     <div className="flex-1 flex items-center justify-center bg-[#EFF6FF]">
       <div className="text-center">
         <div className="w-12 h-12 rounded-2xl bg-[#EFF6FF] flex items-center justify-center mx-auto mb-3">
-          <Gear size={22} color="#1D4ED8" weight="duotone" />
+          <Gear size={22} color="#E3ECFC" weight="duotone" />
         </div>
         <div className="text-[15px] font-bold text-slate-700">{label}</div>
         <div className="text-[12.5px] text-slate-400 mt-1">This section is coming soon.</div>
@@ -2163,8 +2175,8 @@ function SettingsSidebar({ activeItem, setActiveItem, isDark = false }: {
                             ? isDark ? "bg-[#27272A] text-[#D4D4D8] font-semibold" : "bg-[#EFF6FF] text-[#1D4ED8] font-semibold"
                             : isDark ? "text-[#737373] hover:bg-[#27272A] hover:text-[#FFFFFF]" : "text-slate-500 hover:bg-[#EFF6FF]/60 hover:text-slate-700"
                         }`}>
-                        {isActive && <span className={`absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full ${isDark ? "bg-[#4A7AE8]" : "bg-[#1D4ED8]"}`} />}
-                        <IIcon size={13} color={isActive ? (isDark ? "#6B8BA3" : "#1D4ED8") : "#94A3B8"} weight="duotone" />
+                        {isActive && <span className={`absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full ${isDark ? "bg-[#52525B]" : "bg-[#1D4ED8]"}`} />}
+                        <IIcon size={13} color={isActive ? (isDark ? "#6B8BA3" : "#E3ECFC") : "#94A3B8"} weight="duotone" />
                         {item.label}
                       </button>
                     );
