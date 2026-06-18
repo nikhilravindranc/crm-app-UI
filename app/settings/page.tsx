@@ -978,9 +978,10 @@ function NewRoleDrawer({ open, onClose }: { open: boolean; onClose: () => void }
 // ─────────────────────────────────────────────
 //  Roles panel
 // ─────────────────────────────────────────────
-function RoleTreeNode({ node, depth, selectedId, expandedIds, onSelect, onToggle }: {
+function RoleTreeNode({ node, depth, selectedId, expandedIds, onSelect, onToggle, isDark }: {
   node: RoleNode; depth: number; selectedId: string;
   expandedIds: Set<string>; onSelect: (n: RoleNode) => void; onToggle: (id: string) => void;
+  isDark: boolean;
 }) {
   const isSelected = selectedId === node.id;
   const isExpanded = expandedIds.has(node.id);
@@ -989,30 +990,36 @@ function RoleTreeNode({ node, depth, selectedId, expandedIds, onSelect, onToggle
   return (
     <div>
       <div onClick={() => onSelect(node)}
-        className={`flex items-center gap-2 px-3 py-2.5 cursor-pointer border-b border-[#27272A] transition-colors group ${
-          isSelected ? "bg-[#27272A]" : "hover:bg-[#1C1C1E]"
+        className={`flex items-center gap-2 px-3 py-2.5 cursor-pointer transition-colors group ${
+          isDark
+            ? `border-b border-[#27272A] ${isSelected ? "bg-[#27272A]" : "hover:bg-[#1C1C1E]"}`
+            : `border-b border-[#E3ECFC] ${isSelected ? "bg-[#EFF6FF]" : "hover:bg-[#f9fbff]"}`
         }`}
         style={{ paddingLeft: `${12 + depth * 20}px` }}>
         {/* Expand toggle */}
         <button onClick={e => { e.stopPropagation(); if (hasChildren) onToggle(node.id); }}
-          className="w-5 h-5 flex items-center justify-center flex-shrink-0 rounded-md hover:bg-[#3F3F46] transition-colors">
+          className={`w-5 h-5 flex items-center justify-center flex-shrink-0 rounded-md transition-colors ${isDark ? "hover:bg-[#3F3F46]" : "hover:bg-[#E3ECFC]"}`}>
           {hasChildren
             ? isExpanded
-              ? <CaretDown size={10} color="#71717A" weight="bold" />
-              : <CaretRight size={10} color="#71717A" weight="bold" />
-            : <span className="w-1.5 h-1.5 rounded-full bg-[#3F3F46] inline-block" />
+              ? <CaretDown size={10} color={isDark ? "#71717A" : "#94A3B8"} weight="bold" />
+              : <CaretRight size={10} color={isDark ? "#71717A" : "#94A3B8"} weight="bold" />
+            : <span className={`w-1.5 h-1.5 rounded-full inline-block ${isDark ? "bg-[#3F3F46]" : "bg-[#CBD5E1]"}`} />
           }
         </button>
-        <div className={`text-[13px] font-medium flex-1 ${isSelected ? "text-[#D4D4D8] font-semibold" : "text-[#71717A]"}`}>
+        <div className={`text-[13px] font-medium flex-1 ${
+          isSelected
+            ? isDark ? "text-[#D4D4D8] font-semibold" : "text-[#0C2472] font-semibold"
+            : isDark ? "text-[#71717A]" : "text-slate-500"
+        }`}>
           {node.name}
         </div>
-        {isSelected && <CheckCircle size={14} color="#52525B" weight="duotone" />}
+        {isSelected && <CheckCircle size={14} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />}
       </div>
 
       {hasChildren && isExpanded && node.children!.map(child => (
         <RoleTreeNode key={child.id} node={child} depth={depth + 1}
           selectedId={selectedId} expandedIds={expandedIds}
-          onSelect={onSelect} onToggle={onToggle} />
+          onSelect={onSelect} onToggle={onToggle} isDark={isDark} />
       ))}
     </div>
   );
@@ -1107,7 +1114,7 @@ function RolesPanel() {
             ROLE_TREE.map(node => (
               <RoleTreeNode key={node.id} node={node} depth={0}
                 selectedId={selectedRole.id} expandedIds={expandedIds}
-                onSelect={setSelectedRole} onToggle={toggleExpand} />
+                onSelect={setSelectedRole} onToggle={toggleExpand} isDark={isDark} />
             ))
           ) : (
             <RoleListView />
@@ -1116,15 +1123,15 @@ function RolesPanel() {
       </div>
 
       {/* Role detail */}
-      <div className="flex-1 overflow-y-auto bg-[#0A0A0A] px-6 py-6">
+      <div className={`flex-1 overflow-y-auto px-6 py-6 ${isDark ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
         {/* Tabs */}
         <div className="flex items-center gap-2 mb-5">
           {(["overview","timeline"] as const).map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
               className={`px-4 py-1.5 rounded-full text-[12.5px] font-semibold capitalize transition-all ${
                 activeTab === tab
-                  ? "bg-[#27272A] text-[#D4D4D8] shadow-sm"
-                  : "bg-[#1C1C1E] text-[#52525B] hover:bg-[#27272A] hover:text-[#A1A1AA]"
+                  ? isDark ? "bg-[#27272A] text-[#D4D4D8] shadow-sm" : "bg-[#1D4ED8] text-white shadow-sm"
+                  : isDark ? "bg-[#1C1C1E] text-[#52525B] hover:bg-[#27272A] hover:text-[#A1A1AA]" : "bg-white text-slate-500 hover:bg-[#E3ECFC] hover:text-[#0C2472]"
               }`}>
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
@@ -1478,15 +1485,15 @@ function PermissionPanel() {
 
       {/* Legend */}
       {tab === "matrix" && (
-        <div className="mx-6 mb-5 bg-[#1C1C1E] rounded-2xl border border-[#27272A] px-5 py-3">
-          <div className="text-[11px] font-bold text-[#52525B] uppercase tracking-wider mb-2">Permission Legend</div>
+        <div className={`mx-6 mb-5 rounded-2xl border px-5 py-3 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
+          <div className={`text-[11px] font-bold uppercase tracking-wider mb-2 ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>Permission Legend</div>
           <div className="grid grid-cols-4 gap-x-6 gap-y-1.5">
             {(Object.entries(PERM_META) as [PermKey, typeof PERM_META[PermKey]][]).map(([key, meta]) => {
               const Icon = meta.icon;
               return (
                 <div key={key} className="flex items-center gap-1.5">
                   <Icon size={12} color={meta.color} weight={key==="fullAccess"||key==="delete"?"fill":"duotone"} />
-                  <span className="text-[11.5px] text-[#71717A]">{meta.label}</span>
+                  <span className={`text-[11.5px] ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>{meta.label}</span>
                 </div>
               );
             })}
