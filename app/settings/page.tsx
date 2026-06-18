@@ -1019,6 +1019,8 @@ function RoleTreeNode({ node, depth, selectedId, expandedIds, onSelect, onToggle
 }
 
 function RolesPanel() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [selectedRole, setSelectedRole] = useState<RoleNode>(ROLE_TREE[0]);
   const [activeTab, setActiveTab]       = useState<"overview"|"timeline">("overview");
   const [viewMode, setViewMode]         = useState<"tree"|"list">("tree");
@@ -1050,13 +1052,17 @@ function RolesPanel() {
         <button key={role.id} onClick={() => setSelectedRole(role)}
           className={`w-full text-left px-3 py-2.5 rounded-lg border transition-all ${
             selectedRole.id === role.id
-              ? "bg-[#27272A] border-[#3F3F46] shadow-sm"
-              : "border-[#27272A] hover:bg-[#1C1C1E]"
+              ? isDark ? "bg-[#27272A] border-[#3F3F46] shadow-sm" : "bg-[#EFF6FF] border-[#1D4ED8] shadow-sm"
+              : isDark ? "border-[#27272A] hover:bg-[#1C1C1E]" : "border-[#E3ECFC] hover:bg-[#f9fbff]"
           }`}>
-          <div className={`text-[13px] font-semibold ${selectedRole.id === role.id ? "text-[#D4D4D8]" : "text-[#71717A]"}`}>
+          <div className={`text-[13px] font-semibold ${
+            selectedRole.id === role.id
+              ? isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"
+              : isDark ? "text-[#71717A]" : "text-slate-600"
+          }`}>
             {role.name}
           </div>
-          <div className="text-[11px] text-[#52525B] mt-0.5">{role.description}</div>
+          <div className={`text-[11px] mt-0.5 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{role.description}</div>
         </button>
       ))}
     </div>
@@ -1065,20 +1071,24 @@ function RolesPanel() {
   return (
     <div className="flex-1 flex overflow-hidden">
       {/* Role sidebar */}
-      <div className="w-[340px] flex-shrink-0 flex flex-col border-r border-[#27272A] bg-[#111113]">
+      <div className={`w-[340px] flex-shrink-0 flex flex-col border-r ${isDark ? "border-[#27272A] bg-[#111113]" : "border-[#E3ECFC] bg-[#f9fbff]"}`}>
         {/* Toolbar */}
-        <div className="px-4 py-3 border-b border-[#27272A] flex items-center gap-2">
-          <div className="flex items-center bg-[#1C1C1E] border border-[#27272A] rounded-xl p-1 gap-1">
+        <div className={`px-4 py-3 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"} flex items-center gap-2`}>
+          <div className={`flex items-center rounded-xl p-1 gap-1 ${isDark ? "bg-[#1C1C1E] border border-[#27272A]" : "bg-[#EFF6FF] border border-[#E3ECFC]"}`}>
             <button onClick={() => setViewMode("tree")}
               className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
-                viewMode === "tree" ? "bg-[#27272A] text-[#D4D4D8]" : "text-[#52525B]"
+                viewMode === "tree"
+                  ? isDark ? "bg-[#27272A] text-[#D4D4D8]" : "bg-[#E3ECFC] text-[#0C2472]"
+                  : isDark ? "text-[#52525B]" : "text-slate-400"
               }`}>
               <Tree size={12} weight="duotone" />
               Tree
             </button>
             <button onClick={() => setViewMode("list")}
               className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
-                viewMode === "list" ? "bg-[#27272A] text-[#D4D4D8]" : "text-[#52525B]"
+                viewMode === "list"
+                  ? isDark ? "bg-[#27272A] text-[#D4D4D8]" : "bg-[#E3ECFC] text-[#0C2472]"
+                  : isDark ? "text-[#52525B]" : "text-slate-400"
               }`}>
               <ListBullets size={12} weight="duotone" />
               List
@@ -1086,7 +1096,7 @@ function RolesPanel() {
           </div>
           <div className="flex-1" />
           <Button variant="contained" size="small" onClick={() => setNewRoleOpen(true)}
-            sx={{ bgcolor:"#27272A", color:"#D4D4D8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", px:1.5, py:0.7, boxShadow:"none", "&:hover":{bgcolor:"#3F3F46", color:"#F4F4F5"} }}>
+            sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#D4D4D8" : "white", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", px:1.5, py:0.7, boxShadow: isDark ? "none" : "0 1px 6px #1D4ED833", "&:hover":{ bgcolor: isDark ? "#3F3F46" : "#2563EB", color: isDark ? "#F4F4F5" : "white" } }}>
             New Role
           </Button>
         </div>
@@ -1316,6 +1326,8 @@ function PermCell({ module, role, state, onToggle }: {
 }
 
 function PermissionPanel() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [tab, setTab]         = useState<"matrix"|"summary">("matrix");
   const [perms, setPerms]     = useState<PermState>(buildDefaultPerms);
   const [saved, setSaved]     = useState(false);
@@ -1329,13 +1341,13 @@ function PermissionPanel() {
   };
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden bg-[#0A0A0A]">
+    <div className={`flex-1 flex flex-col overflow-hidden ${isDark ? "bg-[#0A0A0A]" : "bg-white"}`}>
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 bg-[#111113] border-b border-[#27272A]">
-        <div className="text-[18px] font-extrabold text-[#D4D4D8] tracking-tight">Permissions</div>
+      <div className={`flex items-center justify-between px-6 py-4 border-b ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+        <div className={`text-[18px] font-extrabold tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-900"}`}>Permissions</div>
         <Button variant="contained" size="small"
           onClick={() => setSaved(true)}
-          sx={{ bgcolor: saved ? "#10B981" : "#27272A", color: saved ? "#fff" : "#D4D4D8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.8, boxShadow:"none", "&:hover":{ bgcolor: saved ? "#059669" : "#3F3F46" } }}>
+          sx={{ bgcolor: saved ? "#10B981" : (isDark ? "#27272A" : "#1D4ED8"), color: saved ? "#fff" : (isDark ? "#D4D4D8" : "white"), borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.8, boxShadow: isDark ? "none" : "0 1px 6px #1D4ED833", "&:hover":{ bgcolor: saved ? "#059669" : (isDark ? "#3F3F46" : "#2563EB") } }}>
           {saved ? "Saved!" : "Save Changes"}
         </Button>
       </div>
@@ -1346,8 +1358,8 @@ function PermissionPanel() {
           <button key={t} onClick={() => setTab(t)}
             className={`px-4 py-1.5 rounded-t-xl text-[12.5px] font-semibold transition-all border border-b-0 ${
               tab === t
-                ? "bg-[#1C1C1E] border-[#27272A] text-[#D4D4D8]"
-                : "bg-transparent border-transparent text-[#52525B] hover:text-[#A1A1AA]"
+                ? isDark ? "bg-[#1C1C1E] border-[#27272A] text-[#D4D4D8]" : "bg-white border-[#E3ECFC] text-slate-900"
+                : isDark ? "bg-transparent border-transparent text-[#52525B] hover:text-[#A1A1AA]" : "bg-transparent border-transparent text-slate-400 hover:text-slate-600"
             }`}>
             {t === "matrix" ? "Permission Matrix" : "Summary View"}
           </button>
@@ -1356,11 +1368,11 @@ function PermissionPanel() {
 
       {/* Matrix */}
       {tab === "matrix" && (
-        <div className="flex-1 overflow-auto mx-6 mb-4 bg-[#1C1C1E] rounded-b-2xl rounded-tr-2xl border border-[#27272A] shadow-sm">
+        <div className={`flex-1 overflow-auto mx-6 mb-4 rounded-b-2xl rounded-tr-2xl border shadow-sm ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
           <table className="w-full border-collapse text-left" style={{ minWidth: 900 }}>
             <thead>
-              <tr className="bg-[#111113] border-b border-[#27272A]">
-                <th className="sticky left-0 z-10 bg-[#111113] px-5 py-3 text-[11px] font-bold text-[#52525B] uppercase tracking-wider w-[160px] border-r border-[#27272A]">
+              <tr className={`border-b ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+                <th className={`sticky left-0 z-10 px-5 py-3 text-[11px] font-bold uppercase tracking-wider w-[160px] border-r ${isDark ? "bg-[#111113] text-[#52525B] border-[#27272A]" : "bg-[#f9fbff] text-slate-600 border-[#E3ECFC]"}`}>
                   Module
                 </th>
                 {PERM_ROLES.map(role => (
@@ -1374,12 +1386,12 @@ function PermissionPanel() {
             </thead>
             <tbody>
               {PERM_MODULES.map((mod, i) => (
-                <tr key={mod} className={`border-b border-[#27272A] ${i % 2 === 0 ? "bg-[#1C1C1E]" : "bg-[#18181B]"}`}>
-                  <td className="sticky left-0 z-10 px-5 py-2 border-r border-[#27272A] font-semibold text-[13px] text-[#A1A1AA] bg-inherit align-middle whitespace-nowrap">
+                <tr key={mod} className={`border-b ${isDark ? `border-[#27272A] ${i % 2 === 0 ? "bg-[#1C1C1E]" : "bg-[#18181B]"}` : `border-[#E3ECFC] ${i % 2 === 0 ? "bg-white" : "bg-[#f9fbff]"}`}`}>
+                  <td className={`sticky left-0 z-10 px-5 py-2 border-r font-semibold text-[13px] bg-inherit align-middle whitespace-nowrap ${isDark ? "text-[#A1A1AA] border-[#27272A]" : "text-slate-700 border-[#E3ECFC]"}`}>
                     {mod}
                   </td>
                   {PERM_ROLES.map(role => (
-                    <td key={role.key} className="border-r border-[#27272A] last:border-r-0 align-top">
+                    <td key={role.key} className={`border-r last:border-r-0 align-top ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
                       <PermCell module={mod} role={role.key} state={perms[mod][role.key]} onToggle={toggle} />
                     </td>
                   ))}
