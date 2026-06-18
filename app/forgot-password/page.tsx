@@ -143,7 +143,8 @@ export default function ForgotPasswordPage() {
 
           {/* Back to sign in */}
           <button
-            onClick={() => router.push("/login")}
+            type="button"
+            onClick={() => { window.location.href = "/login"; }}
             className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-[13px] font-bold transition-all mt-2"
             style={{ color: "#64748B", background: "#F8FAFC", border: "1.5px solid #E2E8F0" }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = "#CBD5E1"; e.currentTarget.style.color = "#334155"; }}
