@@ -26,7 +26,9 @@ export default function LoginPage() {
     await new Promise(r => setTimeout(r, 600));
 
     if (email === VALID_EMAIL && password === VALID_PASSWORD) {
-      if (remember) localStorage.setItem("crm_remember", "true");
+      // Set cookie so middleware can protect routes server-side
+      const maxAge = remember ? 60 * 60 * 24 * 30 : 60 * 60 * 8; // 30 days or 8 hours
+      document.cookie = `crm_auth=true; path=/; max-age=${maxAge}; SameSite=Lax`;
       localStorage.setItem("crm_auth", "true");
       router.push("/");
     } else {
