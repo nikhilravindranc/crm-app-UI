@@ -65,18 +65,18 @@ export default function LoginPage() {
         {/* Top accent bar */}
         <div className="h-1 w-full" style={{ background: "linear-gradient(90deg, #1D4ED8 0%, #3B82F6 50%, #60A5FA 100%)" }} />
 
-        <div className="px-10 py-10">
+        <div className="px-10 py-7">
           {/* Logo */}
-          <div className="flex justify-center mb-8">
-            <img src="/logo.png" alt="EVOQ CRM" style={{ height: "36px", width: "auto" }} />
+          <div className="flex justify-center mb-5">
+            <img src="/logo.png" alt="EVOQ CRM" style={{ height: "28px", width: "auto" }} />
           </div>
 
           {/* Heading */}
-          <div className="mb-8">
-            <h1 className="text-[28px] font-extrabold text-slate-900 tracking-tight leading-tight">
+          <div className="mb-5">
+            <h1 className="text-[22px] font-extrabold text-slate-900 tracking-tight leading-tight">
               Welcome back
             </h1>
-            <p className="text-slate-500 text-[14px] mt-1.5 font-medium">
+            <p className="text-slate-400 text-[13px] mt-0.5 font-medium">
               Sign in to your EVOQ CRM workspace
             </p>
           </div>
@@ -90,7 +90,7 @@ export default function LoginPage() {
             </div>
           )}
 
-          <form onSubmit={handleSignIn} className="space-y-4">
+          <form onSubmit={handleSignIn} className="space-y-3">
             {/* Email */}
             <div className="relative">
               <label
@@ -114,7 +114,7 @@ export default function LoginPage() {
                 onFocus={() => setEmailFocus(true)}
                 onBlur={() => setEmailFocus(false)}
                 required
-                className="w-full pt-6 pb-2.5 px-4 rounded-xl text-[14px] font-medium text-slate-800 outline-none transition-all"
+                className="w-full pt-5 pb-2 px-4 rounded-xl text-[14px] font-medium text-slate-800 outline-none transition-all"
                 style={{
                   background: emailFocus ? "#F8FBFF" : "#F8FAFC",
                   border: `1.5px solid ${emailFocus ? "#1D4ED8" : "#E2E8F0"}`,
@@ -144,7 +144,7 @@ export default function LoginPage() {
                 onFocus={() => setPassFocus(true)}
                 onBlur={() => setPassFocus(false)}
                 required
-                className="w-full pt-6 pb-2.5 px-4 pr-12 rounded-xl text-[14px] font-medium text-slate-800 outline-none transition-all"
+                className="w-full pt-5 pb-2 px-4 pr-12 rounded-xl text-[14px] font-medium text-slate-800 outline-none transition-all"
                 style={{
                   background: passFocus ? "#F8FBFF" : "#F8FAFC",
                   border: `1.5px solid ${passFocus ? "#1D4ED8" : "#E2E8F0"}`,
@@ -196,7 +196,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 rounded-xl text-[14px] font-bold text-white transition-all flex items-center justify-center gap-2 mt-2"
+              className="w-full py-3 rounded-xl text-[14px] font-bold text-white transition-all flex items-center justify-center gap-2 mt-1"
               style={{
                 background: loading ? "#93C5FD" : "linear-gradient(135deg, #1D4ED8 0%, #2563EB 100%)",
                 boxShadow: loading ? "none" : "0 4px 16px rgba(29,78,216,0.35)",
@@ -223,7 +223,7 @@ export default function LoginPage() {
           </form>
 
           {/* Create account */}
-          <p className="text-center text-[13px] text-slate-500 mt-5 font-medium">
+          <p className="text-center text-[13px] text-slate-500 mt-3 font-medium">
             Don&apos;t have an account?{" "}
             <button
               className="font-bold transition-colors"
@@ -236,7 +236,7 @@ export default function LoginPage() {
           </p>
 
           {/* Divider */}
-          <div className="flex items-center gap-3 my-5">
+          <div className="flex items-center gap-3 my-3">
             <div className="flex-1 h-px" style={{ background: "#E3ECFC" }} />
             <span className="text-[12px] font-semibold text-slate-400 uppercase tracking-wider">Or</span>
             <div className="flex-1 h-px" style={{ background: "#E3ECFC" }} />
@@ -245,7 +245,7 @@ export default function LoginPage() {
           {/* OTP */}
           <button
             type="button"
-            className="w-full py-3 rounded-xl text-[13.5px] font-bold transition-all flex items-center justify-center gap-2 mb-5"
+            className="w-full py-2.5 rounded-xl text-[13.5px] font-bold transition-all flex items-center justify-center gap-2 mb-3"
             style={{
               color: "#1D4ED8",
               background: "#F0F5FF",
@@ -259,7 +259,7 @@ export default function LoginPage() {
           </button>
 
           {/* Social login */}
-          <div className="flex items-center gap-3 mb-5">
+          <div className="flex items-center gap-3 mb-3">
             <div className="flex-1 h-px" style={{ background: "#E3ECFC" }} />
             <span className="text-[12px] font-semibold text-slate-400 uppercase tracking-wider whitespace-nowrap">Or, login with</span>
             <div className="flex-1 h-px" style={{ background: "#E3ECFC" }} />
@@ -269,7 +269,7 @@ export default function LoginPage() {
             {/* Google */}
             <button
               type="button"
-              className="flex items-center justify-center gap-2.5 py-3 rounded-xl text-[13px] font-bold transition-all"
+              className="flex items-center justify-center gap-2.5 py-2.5 rounded-xl text-[13px] font-bold transition-all"
               style={{ color: "#374151", background: "white", border: "1.5px solid #E2E8F0" }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = "#93C5FD"; e.currentTarget.style.background = "#F8FBFF"; }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = "#E2E8F0"; e.currentTarget.style.background = "white"; }}
@@ -286,7 +286,7 @@ export default function LoginPage() {
             {/* Microsoft */}
             <button
               type="button"
-              className="flex items-center justify-center gap-2.5 py-3 rounded-xl text-[13px] font-bold transition-all"
+              className="flex items-center justify-center gap-2.5 py-2.5 rounded-xl text-[13px] font-bold transition-all"
               style={{ color: "#374151", background: "white", border: "1.5px solid #E2E8F0" }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = "#93C5FD"; e.currentTarget.style.background = "#F8FBFF"; }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = "#E2E8F0"; e.currentTarget.style.background = "white"; }}
