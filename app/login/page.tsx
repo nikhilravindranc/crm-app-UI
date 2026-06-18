@@ -228,6 +228,7 @@ export default function LoginPage() {
             <button
               className="font-bold transition-colors"
               style={{ color: "#1D4ED8" }}
+              onClick={() => router.push("/register")}
               onMouseEnter={e => (e.currentTarget.style.color = "#1E40AF")}
               onMouseLeave={e => (e.currentTarget.style.color = "#1D4ED8")}
             >
