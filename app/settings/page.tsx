@@ -671,6 +671,8 @@ function UserDetailPanel({ user, onUpdate }: { user: UserRecord; onUpdate: (upda
 }
 
 function UsersPanel() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [selected, setSelected]   = useState<UserRecord>(USERS[0]);
   const [search, setSearch]       = useState("");
   const [checked, setChecked]     = useState<number[]>([]);
@@ -725,7 +727,7 @@ function UsersPanel() {
           </div>
           <Button variant="contained" size="small" startIcon={<Plus size={12} weight="bold" />}
             onClick={() => setShowNewUserModal(true)}
-            sx={{ bgcolor:"#E3ECFC", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", px:1.5, py:0.7, whiteSpace:"nowrap", boxShadow:"0 1px 6px #1D4ED833", "&:hover":{bgcolor:"#E3ECFC"} }}>
+            sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", px:1.5, py:0.7, whiteSpace:"nowrap", boxShadow: isDark ? "none" : "0 1px 6px #1D4ED833", "&:hover":{ bgcolor: isDark ? "#3F3F46" : "#2563EB" } }}>
             New User
           </Button>
         </div>
@@ -1883,6 +1885,8 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
   modKey: string; onBack: () => void; onSelect: (k: string) => void;
   onOpenLayout: (name: string) => void;
 }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [tab, setTab]     = useState<"layouts"|"fields">("layouts");
   const [search, setSearch] = useState("");
   const mod     = MODULE_DEFS.find(m => m.key === modKey);
@@ -1964,7 +1968,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
               </div>
               <div className="flex justify-end mb-4">
                 <Button variant="contained" size="small"
-                  sx={{ bgcolor:"#E3ECFC", borderRadius:"8px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.8, boxShadow:"0 1px 6px #1D4ED833", "&:hover":{bgcolor:"#E3ECFC"} }}>
+                  sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius:"8px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.8, boxShadow: isDark ? "none" : "0 1px 6px #1D4ED833", "&:hover":{ bgcolor: isDark ? "#3F3F46" : "#2563EB" } }}>
                   Create New Layout
                 </Button>
               </div>
@@ -2011,6 +2015,8 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
 }
 
 function ModulesAndFieldsPanel() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [view, setView]             = useState<"list"|"detail">("list");
   const [selectedMod, setSelectedMod] = useState("leads");
   const [openLayout, setOpenLayout] = useState<string|null>(null);
@@ -2052,7 +2058,7 @@ function ModulesAndFieldsPanel() {
         <div className="flex-1" />
         <Button variant="contained" size="small"
           onClick={() => { setSelectedMod("new"); setView("detail"); }}
-          sx={{ bgcolor:"#E3ECFC", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.8, boxShadow:"0 1px 6px #1D4ED833", whiteSpace:"nowrap", "&:hover":{bgcolor:"#E3ECFC"} }}>
+          sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.8, boxShadow: isDark ? "none" : "0 1px 6px #1D4ED833", whiteSpace:"nowrap", "&:hover":{ bgcolor: isDark ? "#3F3F46" : "#2563EB" } }}>
           Create New Module
         </Button>
       </div>

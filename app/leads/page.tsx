@@ -212,7 +212,7 @@ export default function LeadsPage() {
 
               <Button variant="contained" startIcon={<Plus size={16} weight="bold" />}
                 onClick={() => setDrawerOpen(true)}
-                sx={{ bgcolor:"#E3ECFC", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.78rem", px:2, py:0.85, boxShadow:"0 1px 8px 0 #1D4ED833", "&:hover":{ bgcolor:"#E3ECFC", boxShadow:"0 2px 14px 0 #60A5FA55" }, "&:active":{ bgcolor:"#0C2472" } }}>
+                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.78rem", px:2, py:0.85, boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", "&:hover":{ bgcolor: isDark ? "#3F3F46" : "#2563EB", boxShadow: isDark ? "none" : "0 2px 14px 0 #60A5FA55" }, "&:active":{ bgcolor: isDark ? "#52525B" : "#0C2472" } }}>
                 New Lead
               </Button>
             </div>

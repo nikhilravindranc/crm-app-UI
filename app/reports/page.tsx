@@ -100,7 +100,7 @@ export default function ReportsPage() {
 
             <Button variant="contained" startIcon={<Plus size={16} weight="bold" />}
               onClick={() => router.push("/reports/create")}
-              sx={{ bgcolor: isDark ? "#27272A" : "#E3ECFC", color: isDark ? "#F4F4F5" : undefined, borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.8rem", px:2.5, py:0.9, mt:1, boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833", "&:hover":{ bgcolor: isDark ? "#3F3F46" : "#E3ECFC" } }}>
+              sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.8rem", px:2.5, py:0.9, mt:1, boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833", "&:hover":{ bgcolor: isDark ? "#3F3F46" : "#2563EB" } }}>
               Create Report
             </Button>
           </div>

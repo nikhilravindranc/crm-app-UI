@@ -82,7 +82,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
               </div>
               <Button variant="contained" size="small"
                 startIcon={<ChartBar size={14} weight="duotone" />}
-                sx={{ bgcolor: isDark ? "#27272A" : "#E3ECFC", color: isDark ? "#F4F4F5" : undefined, borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.76rem", px:2, py:0.8, boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833", "&:hover":{ bgcolor: isDark ? "#3F3F46" : "#E3ECFC" } }}>
+                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.76rem", px:2, py:0.8, boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833", "&:hover":{ bgcolor: isDark ? "#3F3F46" : "#2563EB" } }}>
                 Create Chart
               </Button>
             </div>

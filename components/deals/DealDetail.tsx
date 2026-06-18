@@ -476,7 +476,7 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                     action={
                       <div className="flex items-center gap-2">
                         <Button size="small" variant="contained" startIcon={<Plus size={13} weight="bold" />}
-                          sx={{ bgcolor: isDark ? "#27272A" : "#E3ECFC", color: isDark ? "#F4F4F5" : undefined, borderRadius:"8px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", boxShadow: isDark ? "none" : "0 1px 6px #1D4ED833", "&:hover":{bgcolor: isDark ? "#3F3F46" : "#E3ECFC"} }}>
+                          sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius:"8px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", boxShadow: isDark ? "none" : "0 1px 6px #1D4ED833", "&:hover":{bgcolor: isDark ? "#3F3F46" : "#2563EB"} }}>
                           New Task
                         </Button>
                         <IconButton size="small" sx={{ p:0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&:hover":{color:"#E3ECFC"}, borderRadius:"6px" }}>
