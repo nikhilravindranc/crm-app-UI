@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const isAuthed   = request.cookies.get("crm_auth")?.value === "true";
   const { pathname } = request.nextUrl;
-  const isPublic   = pathname === "/login" || pathname === "/register";
+  const isPublic   = pathname === "/login" || pathname === "/register" || pathname === "/forgot-password";
 
   // Unauthenticated → always send to login
   if (!isAuthed && !isPublic) {

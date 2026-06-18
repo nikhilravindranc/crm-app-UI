@@ -183,6 +183,7 @@ export default function LoginPage() {
               </label>
               <button
                 type="button"
+                onClick={() => router.push("/forgot-password")}
                 className="text-[13px] font-semibold transition-colors"
                 style={{ color: "#1D4ED8" }}
                 onMouseEnter={e => (e.currentTarget.style.color = "#1E40AF")}

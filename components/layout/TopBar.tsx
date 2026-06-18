@@ -1,21 +1,41 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Badge from "@mui/material/Badge";
 import InputBase from "@mui/material/InputBase";
-import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
-import { MagnifyingGlass, Bell, Plus, Command, Sun, Moon, List } from "@phosphor-icons/react";
+import { MagnifyingGlass, Bell, Plus, Command, Sun, Moon, List, User, SignOut } from "@phosphor-icons/react";
 import { OWNER_AVATARS } from "@/lib/avatars";
 import { useTheme } from "@/components/ThemeContext";
 import { useSidebar } from "@/components/SidebarContext";
+import { useRouter } from "next/navigation";
 
 export default function TopBar({ title }: { title?: string }) {
-  const [search, setSearch] = useState("");
+  const [search,      setSearch]      = useState("");
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
   const { theme, toggle } = useTheme();
   const isDark = theme === "dark";
   const { openMobile } = useSidebar();
+  const router = useRouter();
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const handleLogout = () => {
+    document.cookie = "crm_auth=; path=/; max-age=0";
+    localStorage.removeItem("crm_auth");
+    router.push("/login");
+  };
 
   const today = new Date().toLocaleDateString("en-IN", {
     weekday: "long",
@@ -113,16 +133,60 @@ export default function TopBar({ title }: { title?: string }) {
         </IconButton>
       </Tooltip>
 
-      {/* Avatar */}
-      <Tooltip title="PM SDL - Admin">
+      {/* Avatar + dropdown */}
+      <div ref={profileRef} className="relative">
         <Avatar
           src={OWNER_AVATARS["PM SDL"]}
+          onClick={() => setProfileOpen(p => !p)}
           sx={{ width: 32, height: 32, bgcolor: isDark ? "#27272A" : "#E3ECFC", fontSize: "0.6rem", fontWeight: 800, cursor: "pointer" }}
-          className={`ring-2 ring-transparent transition-all ${isDark ? "hover:ring-[#D4D4D8]" : "hover:ring-[#4A7AE8]"}`}
+          className={`ring-2 transition-all ${profileOpen ? (isDark ? "ring-[#D4D4D8]" : "ring-[#4A7AE8]") : "ring-transparent"} ${isDark ? "hover:ring-[#D4D4D8]" : "hover:ring-[#4A7AE8]"}`}
         >
           PM
         </Avatar>
-      </Tooltip>
+
+        {profileOpen && (
+          <div
+            className="absolute right-0 top-[calc(100%+8px)] w-52 rounded-2xl overflow-hidden z-50"
+            style={{
+              background: isDark ? "#18181B" : "white",
+              border: `1px solid ${isDark ? "#27272A" : "#E3ECFC"}`,
+              boxShadow: isDark
+                ? "0 16px 40px rgba(0,0,0,0.6)"
+                : "0 16px 40px rgba(29,78,216,0.12), 0 4px 12px rgba(0,0,0,0.06)",
+            }}
+          >
+            {/* Profile info */}
+            <div className={`px-4 py-3 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+              <p className={`text-[13px] font-bold ${isDark ? "text-[#F4F4F5]" : "text-slate-800"}`}>PM SDL</p>
+              <p className={`text-[11px] font-medium mt-0.5 ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>Super Admin</p>
+            </div>
+
+            {/* My Account */}
+            <button
+              onClick={() => { setProfileOpen(false); router.push("/settings"); }}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 text-[13px] font-semibold transition-colors ${
+                isDark ? "text-[#D4D4D8] hover:bg-[#27272A]" : "text-slate-700 hover:bg-[#EFF6FF]"
+              }`}
+            >
+              <User size={15} weight="duotone" className={isDark ? "text-[#71717A]" : "text-slate-400"} />
+              My Account
+            </button>
+
+            {/* Logout */}
+            <button
+              onClick={handleLogout}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 text-[13px] font-semibold transition-colors border-t ${
+                isDark
+                  ? "text-red-400 hover:bg-[#27272A] border-[#27272A]"
+                  : "text-red-500 hover:bg-red-50 border-[#E3ECFC]"
+              }`}
+            >
+              <SignOut size={15} weight="duotone" />
+              Log out
+            </button>
+          </div>
+        )}
+      </div>
     </header>
   );
 }
