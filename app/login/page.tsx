@@ -3,8 +3,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeSlash, GoogleLogo, ArrowRight, LockSimple, EnvelopeSimple } from "@phosphor-icons/react";
 
-const VALID_EMAIL    = "test@test.com";
-const VALID_PASSWORD = "123456";
+const VALID_EMAIL    = "tech@evoq.one";
+const VALID_PASSWORD = "Sdl@T3#1";
 
 export default function LoginPage() {
   const router = useRouter();
