@@ -108,7 +108,7 @@ export default function Sidebar() {
                 key={href}
                 href={href}
                 className={`
-                  flex items-center rounded-lg text-[13px] font-medium
+                  flex items-center rounded-lg text-[15px] font-medium
                   transition-all duration-150 group relative
                   ${collapsed ? "justify-center w-12 h-12 mx-auto" : "gap-3 px-3 py-2.5 w-full"}
                   ${active
@@ -172,7 +172,7 @@ export default function Sidebar() {
           ) : (
             <Link
               href="/settings"
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all duration-150 ${isDark ? "text-[#737373] hover:bg-[#262626] hover:text-[#FAFAFA]" : "text-slate-600 hover:bg-[#EFF6FF]"}`}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[15px] font-medium transition-all duration-150 ${isDark ? "text-[#737373] hover:bg-[#262626] hover:text-[#FAFAFA]" : "text-slate-600 hover:bg-[#EFF6FF]"}`}
             >
               <Gear size={18} weight="duotone" className={`flex-shrink-0 ${isDark ? "text-[#52525B]" : "text-slate-400"}`} />
               Settings
@@ -202,8 +202,8 @@ export default function Sidebar() {
                 <span className={`absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-400 border-2 ${isDark ? "border-[#18181B]" : "border-white"}`} />
               </div>
               <div className="min-w-0 flex-1">
-                <p className={`text-[12px] font-semibold truncate ${isDark ? "text-[#FFFFFF]" : "text-[#0C2472]"}`}>PM SDL</p>
-                <p className="text-[10px] text-slate-400 truncate">Admin · dmops@socialdnalabs.com</p>
+                <p className={`text-[14px] font-semibold truncate ${isDark ? "text-[#FFFFFF]" : "text-[#0C2472]"}`}>PM SDL</p>
+                <p className="text-[12px] text-slate-400 truncate">Admin · dmops@socialdnalabs.com</p>
               </div>
             </div>
           )}

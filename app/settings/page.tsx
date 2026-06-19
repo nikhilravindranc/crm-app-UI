@@ -1,5 +1,5 @@
 ﻿"use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Sidebar from "@/components/layout/Sidebar";
 import TopBar from "@/components/layout/TopBar";
 import IconButton from "@mui/material/IconButton";
@@ -58,7 +58,7 @@ const SECTIONS = [
     ],
   },
   {
-    key: "data", label: "Data Administrator", icon: HardDrive,
+    key: "data", label: "Data Administration", icon: HardDrive,
     items: [
       { key: "import",  label: "Import",      icon: UploadSimple   },
       { key: "export",  label: "Export",      icon: DownloadSimple },
@@ -1619,7 +1619,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
   const modDef = MODULE_DEFS.find(m => m.key === module);
 
   return (
-    <div className="fixed inset-0 z-50 bg-white flex flex-col overflow-hidden">
+    <div className="absolute inset-0 z-30 bg-white flex flex-col overflow-hidden">
       {/* Top bar */}
       <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#E3ECFC] flex-shrink-0">
         <button onClick={onClose} className="flex items-center gap-1.5 text-[12.5px] font-semibold text-slate-600 transition-colors">
@@ -1654,7 +1654,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                   const Icon = ft.icon;
                   return (
                     <div key={ft.label}
-                      className="flex items-center gap-1.5 px-2 py-1.5 border border-[#E3ECFC] rounded-lg bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF] cursor-grab transition-colors text-[11px] font-medium text-slate-600">
+                      className="flex items-center gap-1.5 px-2 py-1.5 border border-[#E3ECFC] rounded-lg bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF] cursor-grab transition-colors text-[13px] font-medium text-slate-600">
                       <Icon size={11} color="#E3ECFC" weight="duotone" />
                       {ft.label}
                     </div>
@@ -1874,6 +1874,353 @@ function LayoutEditor({ module, layoutName, onClose }: {
   );
 }
 
+interface BField { id:number; label:string; }
+interface BSection { id:number; title:string; fields:BField[]; }
+
+function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void; }) {
+  const [tab, setTab]             = useState<"create"|"quickCreate"|"detailView">("create");
+  const [layoutName, setLayoutName] = useState("");
+  const [nameTouched, setNameTouched] = useState(false);
+  const [nfOpen, setNfOpen]       = useState(true);
+  const [unusedOpen, setUnusedOpen] = useState(true);
+  const [sections, setSections]   = useState<BSection[]>([]);
+  const [qcFields, setQcFields]   = useState<BField[]>([]);
+  const [qcDragOver, setQcDragOver] = useState(false);
+  const [dvBcEnabled, setDvBcEnabled] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [dragField, setDragField] = useState<string|null>(null);
+  const [dragOverSection, setDragOverSection] = useState<number|null>(null);
+  const idRef = useRef(1);
+  const modDef = MODULE_DEFS.find(m => m.key === module);
+  const hasSections = sections.length > 0;
+  const canDragFields = tab === "create" ? hasSections : tab === "quickCreate";
+  const allFields = sections.flatMap(s => s.fields);
+
+  const addSection = () => {
+    setSections(prev => [...prev, { id: idRef.current++, title: `New Section ${prev.length + 1}`, fields: [] }]);
+  };
+  const handleDrop = (sectionId: number) => {
+    if (!dragField) { setDragOverSection(null); return; }
+    setSections(prev => prev.map(s =>
+      s.id === sectionId ? { ...s, fields: [...s.fields, { id: idRef.current++, label: dragField }] } : s
+    ));
+    setDragField(null);
+    setDragOverSection(null);
+  };
+  const removeField = (sectionId: number, fieldId: number) => {
+    setSections(prev => prev.map(s => s.id === sectionId ? { ...s, fields: s.fields.filter(f => f.id !== fieldId) } : s));
+  };
+  const removeSection = (sectionId: number) => {
+    setSections(prev => prev.filter(s => s.id !== sectionId));
+  };
+  const handleQcDrop = () => {
+    if (!dragField) { setQcDragOver(false); return; }
+    setQcFields(prev => [...prev, { id: idRef.current++, label: dragField }]);
+    setDragField(null);
+    setQcDragOver(false);
+  };
+  const removeQcField = (fieldId: number) => {
+    setQcFields(prev => prev.filter(f => f.id !== fieldId));
+  };
+  const requireName = () => { if (!layoutName.trim()) setNameTouched(true); };
+
+  return (
+    <div className="absolute inset-0 z-30 bg-white flex flex-col overflow-hidden">
+      {/* Top bar */}
+      <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#E3ECFC] flex-shrink-0">
+        <button onClick={onClose} className="flex items-center gap-1.5 text-[14px] font-semibold text-slate-600 transition-colors">
+          <ArrowLeft size={14} weight="bold" />
+          {modDef?.label ?? module}
+        </button>
+        <span className="text-[14px] font-semibold text-slate-400">add</span>
+        <div className="relative">
+          <input
+            value={layoutName}
+            onChange={e => setLayoutName(e.target.value)}
+            onBlur={requireName}
+            placeholder="Layout Name"
+            className={`px-3 py-1.5 rounded-lg text-[14px] font-semibold text-slate-700 w-40 outline-none transition-colors border ${
+              nameTouched && !layoutName.trim() ? "border-red-400" : "border-[#E3ECFC] focus:border-[#1D4ED8]"
+            }`}
+          />
+          {nameTouched && !layoutName.trim() && (
+            <div className="absolute left-0 top-full mt-0.5 text-[12px] text-red-500 font-medium whitespace-nowrap">Layout Name is required</div>
+          )}
+        </div>
+        <IconButton size="small" sx={{ p:0.5, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
+          <Gear size={14} weight="duotone" />
+        </IconButton>
+        <div className="flex-1" />
+        <button onClick={onClose} className="px-3 py-1.5 text-[14px] font-semibold text-slate-500 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">Cancel</button>
+        <button onClick={requireName} className="px-3 py-1.5 text-[14px] font-semibold text-slate-500 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">Save and Close</button>
+        <button onClick={requireName} className="px-4 py-1.5 text-[14px] font-bold text-white bg-[#1D4ED8] rounded-lg hover:bg-[#60A5FA] transition-colors">Save</button>
+      </div>
+
+      {/* Body */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Left sidebar */}
+        <div className="w-[260px] flex-shrink-0 border-r border-[#E3ECFC] bg-[#f9fbff] overflow-y-auto">
+          {tab === "detailView" ? (
+            <>
+              <button onClick={() => setUnusedOpen(p=>!p)}
+                className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold text-slate-400 uppercase tracking-wider hover:bg-[#EFF6FF] border-b border-[#E3ECFC]">
+                <span>Unused Related List</span>
+                {unusedOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
+              </button>
+              {unusedOpen && <div className="px-4 py-3 text-[13.5px] text-slate-400">No more related lists available.</div>}
+            </>
+          ) : (
+            <>
+              <button onClick={() => setNfOpen(p=>!p)}
+                className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold text-slate-400 uppercase tracking-wider hover:bg-[#EFF6FF]">
+                <span>New Fields</span>
+                {nfOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
+              </button>
+              {nfOpen && (
+                <>
+                  {!canDragFields && (
+                    <div className="px-3 pb-2 text-[12.5px] font-medium text-amber-600 bg-amber-50 border border-amber-200 rounded-lg mx-3 px-2.5 py-1.5">
+                      {tab === "create" ? "Add a section before dragging in fields." : "Switch to a tab with a drop target to add fields."}
+                    </div>
+                  )}
+                  <div className="px-3 pb-3 grid grid-cols-2 gap-1.5">
+                    {NEW_FIELD_TYPES.map(ft => {
+                      const Icon = ft.icon;
+                      return (
+                        <div key={ft.label}
+                          draggable={canDragFields}
+                          onDragStart={() => canDragFields && setDragField(ft.label)}
+                          onDragEnd={() => setDragField(null)}
+                          title={canDragFields ? undefined : "Add a section first"}
+                          className={`flex items-center gap-1.5 px-2 py-1.5 border rounded-lg transition-colors text-[13px] font-medium ${
+                            canDragFields
+                              ? "border-[#E3ECFC] bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF] cursor-grab active:cursor-grabbing text-slate-600"
+                              : "border-[#EFF6FF] bg-slate-50 text-slate-300 cursor-not-allowed"
+                          }`}>
+                          <Icon size={11} color={canDragFields ? "#1D4ED8" : "#CBD5E1"} weight="duotone" />
+                          {ft.label}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+              <div className="px-3 pb-3">
+                <button onClick={addSection}
+                  className="flex items-center gap-1.5 w-full px-3 py-2 border border-dashed border-[#4A7AE8] rounded-lg text-[13px] font-bold text-[#1D4ED8] hover:bg-[#EFF6FF] transition-colors justify-center">
+                  <Plus size={11} weight="bold"/> NEW SECTION
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Main area */}
+        <div className="flex-1 overflow-y-auto bg-[#F8FAFC]">
+          <div className="flex items-center justify-between px-6 pt-4 border-b border-[#E3ECFC] bg-white mb-0">
+            <div className="flex items-center">
+              {(["create","quickCreate","detailView"] as const).map(t => {
+                const labels = { create:"Create", quickCreate:"Quick Create", detailView:"Detail View" };
+                return (
+                  <button key={t} onClick={() => setTab(t)}
+                    className={`px-5 py-2.5 text-[14.5px] font-semibold transition-all border-b-2 -mb-px ${
+                      tab===t ? "border-[#1D4ED8] text-[#1D4ED8]" : "border-transparent text-slate-400 hover:text-slate-600"
+                    }`}>
+                    {labels[t]}
+                  </button>
+                );
+              })}
+            </div>
+            <button onClick={() => setPreviewOpen(true)} className="text-[14px] font-semibold text-[#1D4ED8] hover:underline pb-2.5">Preview</button>
+          </div>
+
+          {tab === "create" ? (
+            <div className="px-6 py-5 space-y-4">
+              {sections.length === 0 ? (
+                <div className="border-2 border-dashed border-[#CBD5E1] rounded-xl py-16 flex flex-col items-center justify-center gap-2 text-slate-300">
+                  <SquaresFour size={28} weight="duotone"/>
+                  <span className="text-[14.5px] font-semibold text-slate-400">Click &quot;New Section&quot; to start building this layout</span>
+                </div>
+              ) : sections.map(section => (
+                <div key={section.id} className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
+                  <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#E3ECFC] bg-[#fafcff]">
+                    <DotsSixVertical size={14} color="#E2E8F0"/>
+                    <span className="text-[14.5px] font-bold text-slate-700 flex-1">{section.title}</span>
+                    <IconButton size="small" onClick={() => removeSection(section.id)} sx={{ p:0.3, color:"#94A3B8", "&:hover":{color:"#EF4444"}, borderRadius:"6px" }}>
+                      <Trash size={13} weight="duotone"/>
+                    </IconButton>
+                  </div>
+                  <div
+                    onDragOver={e => { e.preventDefault(); setDragOverSection(section.id); }}
+                    onDragLeave={() => setDragOverSection(prev => prev === section.id ? null : prev)}
+                    onDrop={() => handleDrop(section.id)}
+                    className={`p-3 grid grid-cols-2 gap-1.5 min-h-[64px] rounded-b-xl transition-colors ${dragOverSection === section.id ? "bg-[#EFF6FF]" : ""}`}>
+                    {section.fields.length === 0 ? (
+                      <div className="col-span-2 flex items-center justify-center py-6 text-[13.5px] text-slate-300 border border-dashed border-[#E3ECFC] rounded-lg">
+                        Drag fields here
+                      </div>
+                    ) : section.fields.map(f => (
+                      <div key={f.id} className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-[#fafcff] hover:border-[#4A7AE8] transition-colors group">
+                        <span className="text-[13.5px] font-medium text-slate-700">{f.label}</span>
+                        <button onClick={() => removeField(section.id, f.id)} className="opacity-0 group-hover:opacity-100 transition-opacity">
+                          <X size={11} color="#94A3B8" weight="bold"/>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : tab === "quickCreate" ? (
+            <div className="px-6 py-5 flex flex-col items-center">
+              <div className="w-[420px] bg-white rounded-xl border border-[#E3ECFC] overflow-hidden shadow-sm">
+                <div className="px-4 py-2.5 border-b border-[#E3ECFC] bg-[#fafcff]">
+                  <span className="text-[14.5px] font-bold text-slate-700">Quick Create</span>
+                </div>
+                <div
+                  onDragOver={e => { e.preventDefault(); setQcDragOver(true); }}
+                  onDragLeave={() => setQcDragOver(false)}
+                  onDrop={handleQcDrop}
+                  className={`transition-colors ${qcDragOver ? "bg-[#EFF6FF]" : ""}`}>
+                  {qcFields.length === 0 ? (
+                    <div className="flex items-center justify-center py-10 text-[13.5px] text-slate-300 m-3 border border-dashed border-[#E3ECFC] rounded-lg">
+                      Drag fields here
+                    </div>
+                  ) : (
+                    <div className="divide-y divide-[#EFF6FF]">
+                      {qcFields.map(f => (
+                        <div key={f.id} className="flex items-center px-4 py-2.5 group">
+                          <span className="text-[14.5px] text-slate-700 flex-1">{f.label}</span>
+                          <button onClick={() => removeQcField(f.id)} className="opacity-0 group-hover:opacity-100 transition-opacity">
+                            <X size={11} color="#94A3B8" weight="bold"/>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <p className="text-[13px] text-slate-400 font-medium mt-3 text-center max-w-[420px]">
+                Fields shown here appear in the Quick Create popup used to add a new {modDef?.label.toLowerCase().replace(/s$/, "") ?? "record"} from a list view.
+              </p>
+            </div>
+          ) : (
+            <div className="px-6 py-5 space-y-4">
+              {/* Business Card */}
+              <div className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-[#E3ECFC]">
+                  <span className="text-[12.5px] font-bold text-slate-500 uppercase tracking-wider">Business Card</span>
+                  <div className="flex items-center gap-3">
+                    <GreenSwitch checked={dvBcEnabled} onChange={() => setDvBcEnabled(p=>!p)}/>
+                    {dvBcEnabled && <button className="text-[14px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>}
+                  </div>
+                </div>
+                {dvBcEnabled ? (
+                  allFields.length === 0 ? (
+                    <div className="px-4 py-3 text-[14px] text-slate-400 bg-[#fafcff]">
+                      Add fields in the Create tab to feature them on the Business Card.
+                    </div>
+                  ) : (
+                    <>
+                      <div className="divide-y divide-[#EFF6FF]">
+                        {allFields.slice(0,5).map(f => (
+                          <div key={f.id} className="flex items-center gap-3 px-4 py-2.5">
+                            <DotsSixVertical size={13} color="#E2E8F0"/>
+                            <span className="text-[14.5px] text-slate-700 flex-1">{f.label}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="px-4 py-2.5 border-t border-[#EFF6FF]">
+                        <div className="flex items-center gap-1.5 text-[13px] text-slate-400">
+                          <Info size={11} weight="duotone"/>
+                          You can add up to <span className="font-bold text-slate-600 mx-0.5">5 fields</span> to your Business Card.
+                        </div>
+                      </div>
+                    </>
+                  )
+                ) : (
+                  <div className="px-4 py-3 text-[14px] text-slate-400">
+                    Business Card cannot be customized as it is hidden.<br/>
+                    Turn it on to customize the fields to be shown in details page.
+                  </div>
+                )}
+              </div>
+              {/* Details */}
+              <div className="bg-white rounded-xl border border-[#E3ECFC]">
+                <div className="px-4 py-2.5 border-b border-[#E3ECFC]">
+                  <span className="text-[12.5px] font-bold text-slate-500 uppercase tracking-wider">Details</span>
+                </div>
+                {allFields.length === 0 ? (
+                  <div className="mx-3 my-3 px-4 py-3 text-[14px] text-slate-400 bg-[#fafcff] rounded-lg border border-[#E3ECFC]">
+                    Fields customized in the Create page will appear here.
+                  </div>
+                ) : (
+                  <div className="divide-y divide-[#EFF6FF]">
+                    {allFields.map(f => (
+                      <div key={f.id} className="flex items-center gap-3 px-4 py-2.5">
+                        <DotsSixVertical size={13} color="#E2E8F0"/>
+                        <span className="text-[14.5px] text-slate-700 flex-1">{f.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {/* Related List */}
+              <div className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
+                <div className="px-4 py-2.5 border-b border-[#E3ECFC]">
+                  <span className="text-[12.5px] font-bold text-slate-500 uppercase tracking-wider">Related List</span>
+                </div>
+                <div className="px-4 py-3 text-[14px] text-slate-400">No related lists added yet.</div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Preview */}
+      {previewOpen && (
+        <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/40">
+          <div className="w-[480px] max-h-[80%] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#E3ECFC] flex-shrink-0">
+              <span className="text-[15.5px] font-extrabold text-slate-900">
+                {layoutName.trim() || "Untitled Layout"} &middot; Preview
+              </span>
+              <IconButton size="small" onClick={() => setPreviewOpen(false)} sx={{ p:0.4, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
+                <X size={14} weight="bold"/>
+              </IconButton>
+            </div>
+            <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5 bg-[#F8FAFC]">
+              {sections.length === 0 ? (
+                <div className="text-center text-[14px] text-slate-400 py-10">
+                  No sections added yet. Build the Create tab to preview the form here.
+                </div>
+              ) : sections.map(section => (
+                <div key={section.id}>
+                  <div className="text-[12.5px] font-bold text-slate-500 uppercase tracking-wider mb-2">{section.title}</div>
+                  {section.fields.length === 0 ? (
+                    <div className="text-[13.5px] text-slate-300 italic">No fields in this section.</div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3">
+                      {section.fields.map(f => (
+                        <div key={f.id}>
+                          <label className="block text-[12.5px] font-semibold text-slate-500 mb-1">{f.label}</label>
+                          <div className="px-3 py-2 rounded-lg border border-[#E3ECFC] bg-white text-[13.5px] text-slate-300">
+                            {f.label.toLowerCase()}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 const MODULE_DEFS = [
   { key:"leads",    label:"Leads",    icon:UserPlus,    color:"#E3ECFC", sharedTo:"Administrator, Operations Manager, Support Executive, VP of Operations", lastMod:"Feb 27, 2026" },
   { key:"deals",    label:"Deals",    icon:Lightning,   color:"#F59E0B", sharedTo:"Administrator, Operations Manager, Support Executive, VP of Operations", lastMod:"Feb 27, 2026" },
@@ -1908,6 +2255,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
   const isDark = theme === "dark";
   const [tab, setTab]     = useState<"layouts"|"fields">("layouts");
   const [search, setSearch] = useState("");
+  const [showCreateLayoutModal, setShowCreateLayoutModal] = useState(false);
   const mod     = MODULE_DEFS.find(m => m.key === modKey);
   const layouts = MODULE_LAYOUTS[modKey] ?? [];
   const title   = modKey === "new" ? "add" : (mod?.label ?? modKey);
@@ -1986,7 +2334,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
                 Design your own layouts to fit your business processes, then assign them to your user accounts based on permission profiles.
               </div>
               <div className="flex justify-end mb-4">
-                <Button variant="contained" size="small"
+                <Button variant="contained" size="small" onClick={() => setShowCreateLayoutModal(true)}
                   sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius:"8px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.8, boxShadow: isDark ? "none" : "0 1px 6px #1D4ED833", "&:hover":{ bgcolor: isDark ? "#3F3F46" : "#2563EB" } }}>
                   Create New Layout
                 </Button>
@@ -2029,6 +2377,42 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
           )}
         </div>
       </div>
+
+      {showCreateLayoutModal && (
+        <CreateLayoutModal
+          existingLayouts={layouts.map(l => l.name)}
+          onClose={() => setShowCreateLayoutModal(false)}
+          onContinue={() => { setShowCreateLayoutModal(false); onOpenLayout("__NEW__"); }}
+        />
+      )}
+    </div>
+  );
+}
+
+function CreateLayoutModal({ existingLayouts, onClose, onContinue }: {
+  existingLayouts: string[]; onClose: () => void; onContinue: (cloneFrom: string|null) => void;
+}) {
+  const [cloneFrom, setCloneFrom] = useState("");
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
+      <div className="w-[460px] bg-white rounded-2xl shadow-2xl p-6">
+        <div className="text-[17px] font-extrabold text-slate-900 mb-5">Create New Layout</div>
+        <FormControl fullWidth size="small" sx={{ mb: 5 }}>
+          <InputLabel sx={{ fontSize: "0.8rem", color: "#1D4ED8" }}>Clone Layout from</InputLabel>
+          <Select value={cloneFrom} label="Clone Layout from" onChange={e => setCloneFrom(e.target.value)}
+            sx={{ borderRadius: "10px", fontSize: "0.8rem",
+              "& .MuiOutlinedInput-notchedOutline": { borderColor: "#1D4ED8" },
+              "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#1D4ED8" } }}>
+            {existingLayouts.map(l => (<MenuItem key={l} value={l} sx={{ fontSize: "0.8rem" }}>{l}</MenuItem>))}
+            <MenuItem value="__scratch__" sx={{ fontSize: "0.8rem" }}>Create from scratch (empty)</MenuItem>
+          </Select>
+        </FormControl>
+        <div className="flex justify-end gap-2">
+          <button onClick={onClose} className="px-4 py-2 text-[13px] font-semibold text-slate-500 hover:text-slate-700 transition-colors">Cancel</button>
+          <button disabled={!cloneFrom} onClick={() => onContinue(cloneFrom === "__scratch__" ? null : cloneFrom)}
+            className="px-5 py-2 rounded-lg text-[13px] font-bold text-white bg-[#1D4ED8] hover:bg-[#2563EB] disabled:opacity-40 disabled:cursor-not-allowed transition-colors">Continue</button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -2046,6 +2430,9 @@ function ModulesAndFieldsPanel() {
 
   const filtered = MODULE_DEFS.filter(m => !search || m.label.toLowerCase().includes(search.toLowerCase()));
 
+  if (openLayout === "__NEW__") {
+    return <NewLayoutBuilder module={selectedMod} onClose={() => setOpenLayout(null)} />;
+  }
   if (openLayout !== null) {
     return <LayoutEditor module={selectedMod} layoutName={openLayout} onClose={() => setOpenLayout(null)} />;
   }
@@ -2182,7 +2569,7 @@ function SettingsSidebar({ activeItem, setActiveItem, isDark = false }: {
             <div key={section.key}>
               <button onClick={() => toggle(section.key)}
                 className={`flex items-center justify-between w-full px-2 py-1.5 rounded-lg transition-colors group ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}>
-                <span className={`font-heading text-[10px] font-bold uppercase tracking-widest transition-colors ${isDark ? "text-[#475569] group-hover:text-[#64748B]" : "text-slate-400 group-hover:text-slate-500"}`}>
+                <span className={`font-heading text-[12px] font-bold uppercase tracking-widest transition-colors ${isDark ? "text-[#475569] group-hover:text-[#64748B]" : "text-slate-400 group-hover:text-slate-500"}`}>
                   {section.label}
                 </span>
                 {isOpen ? <CaretUp size={10} color={isDark ? "#475569" : "#E2E8F0"} weight="bold" /> : <CaretDown size={10} color={isDark ? "#475569" : "#E2E8F0"} weight="bold" />}
@@ -2195,7 +2582,7 @@ function SettingsSidebar({ activeItem, setActiveItem, isDark = false }: {
                     const isActive = activeItem === item.key;
                     return (
                       <button key={item.key} onClick={() => setActiveItem(item.key)}
-                        className={`relative flex items-center gap-2 w-full px-3 py-2 rounded-xl text-[12px] font-medium transition-all ${
+                        className={`relative flex items-center gap-2 w-full px-3 py-2 rounded-xl text-[14px] font-medium transition-all ${
                           isActive
                             ? isDark ? "bg-[#27272A] text-[#D4D4D8] font-semibold" : "bg-[#EFF6FF] text-[#1D4ED8] font-semibold"
                             : isDark ? "text-[#737373] hover:bg-[#27272A] hover:text-[#FFFFFF]" : "text-slate-500 hover:bg-[#EFF6FF]/60 hover:text-slate-700"
@@ -2245,7 +2632,7 @@ export default function SettingsPage() {
         <TopBar />
         <div className="flex flex-col md:flex-row flex-1 overflow-auto md:overflow-hidden">
           <SettingsSidebar activeItem={activeItem} setActiveItem={setActiveItem} isDark={isDark} />
-          <div className={`flex-1 overflow-auto ${isDark ? "bg-[#000000]" : "bg-[#EFF6FF]"}`}>
+          <div className={`relative flex-1 overflow-auto ${isDark ? "bg-[#000000]" : "bg-[#EFF6FF]"}`}>
             {content()}
           </div>
         </div>

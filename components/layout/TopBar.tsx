@@ -5,7 +5,7 @@ import InputBase from "@mui/material/InputBase";
 import Tooltip from "@mui/material/Tooltip";
 import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
-import { MagnifyingGlass, Bell, Plus, Command, Sun, Moon, List, User, SignOut } from "@phosphor-icons/react";
+import { MagnifyingGlass, Bell, Command, Sun, Moon, List, User, SignOut } from "@phosphor-icons/react";
 import { OWNER_AVATARS } from "@/lib/avatars";
 import { useTheme } from "@/components/ThemeContext";
 import { useSidebar } from "@/components/SidebarContext";
@@ -60,11 +60,11 @@ export default function TopBar({ title }: { title?: string }) {
       <div className="flex-1 min-w-0">
         {title ? (
           <div className="flex items-baseline gap-2 whitespace-nowrap">
-            <h1 className={`text-[16px] lg:text-[18px] font-extrabold leading-none tracking-tight m-0 ${isDark ? "text-white" : "text-[#0C2472]"}`}>{title}</h1>
-            <span className="hidden sm:inline text-[11.5px] text-slate-400 font-medium">&middot; {today}</span>
+            <h1 className={`text-[18px] lg:text-[20px] font-extrabold leading-none tracking-tight m-0 ${isDark ? "text-white" : "text-[#0C2472]"}`}>{title}</h1>
+            <span className="hidden sm:inline text-[13.5px] text-slate-400 font-medium">&middot; {today}</span>
           </div>
         ) : (
-          <p className="hidden sm:block text-[12px] text-slate-400 font-medium whitespace-nowrap">{today}</p>
+          <p className="hidden sm:block text-[14px] text-slate-400 font-medium whitespace-nowrap">{today}</p>
         )}
       </div>
 
@@ -77,7 +77,7 @@ export default function TopBar({ title }: { title?: string }) {
           onChange={(e) => setSearch(e.target.value)}
           sx={{
             flex: 1,
-            fontSize: "0.78rem",
+            fontSize: "0.85rem",
             color: isDark ? "#D4D4D8" : "#334155",
             "& input::placeholder": { color: "#94A3B8", opacity: 1 },
           }}
@@ -86,19 +86,6 @@ export default function TopBar({ title }: { title?: string }) {
           <Command size={13} color="#E2E8F0" weight="duotone" />
         </Tooltip>
       </div>
-
-      {/* New Deal - full button on md+, icon-only on mobile */}
-      <button
-        className={`flex items-center gap-1.5 rounded-[9px] font-bold text-[0.78rem] transition-all whitespace-nowrap
-          px-2 py-2 md:px-4 md:py-[7px]
-          ${isDark
-            ? "text-[#A1A1AA] hover:text-[#F4F4F5] hover:bg-[#27272A] md:bg-[#27272A] md:text-[#D4D4D8] md:border md:border-[#3F3F46] md:hover:bg-[#3F3F46]"
-            : "text-[#1D4ED8] hover:bg-[#EFF6FF] md:bg-[#1D4ED8] md:text-white md:hover:bg-[#2563EB]"
-          }`}
-      >
-        <Plus size={16} weight="bold" />
-        <span className="hidden md:inline">New Deal</span>
-      </button>
 
       {/* Dark / Light toggle */}
       <Tooltip title={isDark ? "Switch to Light mode" : "Switch to Dark mode"}>
@@ -157,14 +144,14 @@ export default function TopBar({ title }: { title?: string }) {
           >
             {/* Profile info */}
             <div className={`px-4 py-3 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
-              <p className={`text-[13px] font-bold ${isDark ? "text-[#F4F4F5]" : "text-slate-800"}`}>PM SDL</p>
-              <p className={`text-[11px] font-medium mt-0.5 ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>Super Admin</p>
+              <p className={`text-[15px] font-bold ${isDark ? "text-[#F4F4F5]" : "text-slate-800"}`}>PM SDL</p>
+              <p className={`text-[13px] font-medium mt-0.5 ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>Super Admin</p>
             </div>
 
             {/* My Account */}
             <button
               onClick={() => { setProfileOpen(false); router.push("/settings"); }}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 text-[13px] font-semibold transition-colors ${
+              className={`w-full flex items-center gap-3 px-4 py-2.5 text-[15px] font-semibold transition-colors ${
                 isDark ? "text-[#D4D4D8] hover:bg-[#27272A]" : "text-slate-700 hover:bg-[#EFF6FF]"
               }`}
             >
@@ -175,7 +162,7 @@ export default function TopBar({ title }: { title?: string }) {
             {/* Logout */}
             <button
               onClick={handleLogout}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 text-[13px] font-semibold transition-colors border-t ${
+              className={`w-full flex items-center gap-3 px-4 py-2.5 text-[15px] font-semibold transition-colors border-t ${
                 isDark
                   ? "text-red-400 hover:bg-[#27272A] border-[#27272A]"
                   : "text-red-500 hover:bg-red-50 border-[#E3ECFC]"
