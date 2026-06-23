@@ -136,11 +136,11 @@ export default function ColumnsDrawer({ open, onClose, selected, onChange }: Pro
       <div className={`flex items-center justify-between px-6 py-4 border-b flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <div className="flex items-center gap-3">
           <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
-            <Columns size={18} color={isDark ? "#71717A" : "#E3ECFC"} weight="duotone" />
+            <Columns size={18} color={isDark ? "#71717A" : "#1D4ED8"} weight="duotone" />
           </div>
           <div>
-            <h2 className={`font-heading text-[15px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Configure Columns</h2>
-            <p className={`text-[11px] ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>{local.size} of {TOTAL} columns selected</p>
+            <h2 className={`m-0 font-heading text-h2 tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Configure Columns</h2>
+            <p className={`m-0 text-caption ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>{local.size} of {TOTAL} columns selected</p>
           </div>
         </div>
         <Tooltip title="Close">
@@ -168,17 +168,17 @@ export default function ColumnsDrawer({ open, onClose, selected, onChange }: Pro
 
         <div className="flex items-center gap-2">
           <button onClick={selectAll}
-            className={`text-[11.5px] font-semibold px-2.5 py-1 rounded-lg transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#F4F4F5] hover:bg-[#27272A]" : "text-[#1D4ED8] hover:text-[#0C2472] hover:bg-[#EFF6FF]"}`}>
+            className={`text-button-sm px-2.5 py-1 rounded-lg transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#F4F4F5] hover:bg-[#27272A]" : "text-[#1D4ED8] hover:text-[#0C2472] hover:bg-[#EFF6FF]"}`}>
             Select All
           </button>
           <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>·</span>
           <button onClick={clearAll}
-            className={`text-[11.5px] font-semibold px-2.5 py-1 rounded-lg transition-colors ${isDark ? "text-[#71717A] hover:text-[#A1A1AA] hover:bg-[#27272A]" : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"}`}>
+            className={`text-button-sm px-2.5 py-1 rounded-lg transition-colors ${isDark ? "text-[#71717A] hover:text-[#A1A1AA] hover:bg-[#27272A]" : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"}`}>
             Clear
           </button>
           <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>·</span>
           <button onClick={resetDefault}
-            className={`text-[11.5px] font-semibold px-2.5 py-1 rounded-lg transition-colors ${isDark ? "text-[#71717A] hover:text-[#A1A1AA] hover:bg-[#27272A]" : "text-slate-400 hover:bg-[#EFF6FF]"}`}>
+            className={`text-button-sm px-2.5 py-1 rounded-lg transition-colors ${isDark ? "text-[#71717A] hover:text-[#A1A1AA] hover:bg-[#27272A]" : "text-slate-400 hover:bg-[#EFF6FF]"}`}>
             Reset Default
           </button>
         </div>
@@ -205,8 +205,8 @@ export default function ColumnsDrawer({ open, onClose, selected, onChange }: Pro
                   onClick={e => { e.stopPropagation(); toggleGroup(keys); }}
                   sx={{ p: 0.25, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked, &.MuiCheckbox-indeterminate": { color: "inherit" } }}
                 />
-                <span className={`font-heading text-[11px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-[#1D4ED8]"}`}>{group}</span>
-                <span className={`ml-auto text-[10px] font-medium ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+                <span className={`font-heading text-nav-group-label uppercase ${isDark ? "text-[#71717A]" : "text-[#1D4ED8]"}`}>{group}</span>
+                <span className={`ml-auto text-caption ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
                   {unlocked.filter(k => local.has(k)).length} / {unlocked.length}
                 </span>
               </button>
@@ -229,11 +229,11 @@ export default function ColumnsDrawer({ open, onClose, selected, onChange }: Pro
                         onChange={() => toggle(col.key as string, locked)}
                         sx={{ p: 0.25, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked": { color: "inherit" }, "&.Mui-disabled": { color: isDark ? "#27272A" : "#E2E8F0" } }}
                       />
-                      <span className={`text-[12.5px] flex-1 truncate ${locked ? (isDark ? "text-[#52525B]" : "text-slate-400") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>
+                      <span className={`text-body flex-1 truncate ${locked ? (isDark ? "text-[#52525B]" : "text-slate-400") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>
                         {col.label}
                       </span>
                       {locked && (
-                        <span className={`text-[9.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>Locked</span>
+                        <span className={`text-caption font-medium uppercase tracking-wide ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>Locked</span>
                       )}
                     </label>
                   );
@@ -251,18 +251,17 @@ export default function ColumnsDrawer({ open, onClose, selected, onChange }: Pro
       {/* Footer */}
       <div className={`flex items-center justify-between px-6 py-4 border-t flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <button onClick={onClose}
-          className={`text-[13px] font-semibold px-3 py-2 rounded-xl transition-colors ${isDark ? "text-[#71717A] hover:text-[#A1A1AA] hover:bg-[#27272A]" : "text-slate-400 hover:text-slate-600 hover:bg-[#EFF6FF]"}`}>
+          className={`text-button-sm px-3 py-2 rounded-xl transition-colors ${isDark ? "text-[#71717A] hover:text-[#A1A1AA] hover:bg-[#27272A]" : "text-slate-400 hover:text-slate-600 hover:bg-[#EFF6FF]"}`}>
           Cancel
         </button>
         <Button variant="contained" size="small" startIcon={<Columns size={14} weight="duotone" />}
           onClick={handleApply}
           sx={{
-            bgcolor: isDark ? "#27272A" : "inherit",
-            color: isDark ? "#F4F4F5" : undefined,
-            borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.78rem", px: 2.5, py: 0.9,
+            bgcolor: isDark ? "#3F3F46" : "#1D4ED8",
+            color: "#fff",
+            borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px", px: 2.5, py: 0.9,
             boxShadow: isDark ? "none" : "0 2px 12px #1D4ED833",
-            "&:hover": { bgcolor: isDark ? "#3F3F46" : "inherit", boxShadow: isDark ? "none" : "0 2px 14px #60A5FA55" },
-            "&:active": { bgcolor: isDark ? "#18181B" : "#0C2472" },
+            "&:hover": { bgcolor: isDark ? "#52525B" : "#1640B8", boxShadow: isDark ? "none" : "0 2px 14px #60A5FA55" },
           }}>
           Apply Columns
         </Button>

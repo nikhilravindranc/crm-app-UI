@@ -9,7 +9,7 @@ import Chip from "@mui/material/Chip";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
-import { ArrowSquareOut, TrendUp } from "@phosphor-icons/react";
+import { ArrowSquareOut, TrendUp, TrendDown, Minus } from "@phosphor-icons/react";
 import { OWNER_AVATARS } from "@/lib/avatars";
 
 type Deal = {
@@ -20,10 +20,10 @@ type Deal = {
 };
 
 const deals: Deal[] = [
-  { id:"CRM-2026-0013", name:"Sweany Inc",     amount:29999,  stage:"Qualification",  stageBg:"#EFF6FF", stageFg:"#0C2472", owner:"PM SDL",   initials:"PM", avatarBg:"#E3ECFC", closeDate:"15 May", change:"same" },
-  { id:"CRM-2026-0012", name:"TechFlow Ltd",   amount:85000,  stage:"Proposal",       stageBg:"#E3ECFC", stageFg:"#E3ECFC", owner:"Sarah K",  initials:"SK", avatarBg:"#3B82F6", closeDate:"12 May", change:"up"   },
-  { id:"CRM-2026-0011", name:"Apex Solutions", amount:42500,  stage:"Needs Analysis", stageBg:"#EFF6FF", stageFg:"#E3ECFC", owner:"John D",   initials:"JD", avatarBg:"#E3ECFC", closeDate:"10 May", change:"up"   },
-  { id:"CRM-2026-0010", name:"Matrix Corp",    amount:120000, stage:"Negotiation",    stageBg:"#E3ECFC", stageFg:"#0C2472", owner:"PM SDL",   initials:"PM", avatarBg:"#E3ECFC", closeDate:"08 May", change:"up"   },
+  { id:"CRM-2026-0013", name:"Sweany Inc",     amount:29999,  stage:"Qualification",  stageBg:"#EFF6FF", stageFg:"#0C2472", owner:"PM SDL",   initials:"PM", avatarBg:"#1D4ED8", closeDate:"15 May", change:"same" },
+  { id:"CRM-2026-0012", name:"TechFlow Ltd",   amount:85000,  stage:"Proposal",       stageBg:"#E3ECFC", stageFg:"#0C2472", owner:"Sarah K",  initials:"SK", avatarBg:"#3B82F6", closeDate:"12 May", change:"up"   },
+  { id:"CRM-2026-0011", name:"Apex Solutions", amount:42500,  stage:"Needs Analysis", stageBg:"#EFF6FF", stageFg:"#0C2472", owner:"John D",   initials:"JD", avatarBg:"#2E9E7B", closeDate:"10 May", change:"up"   },
+  { id:"CRM-2026-0010", name:"Matrix Corp",    amount:120000, stage:"Negotiation",    stageBg:"#E3ECFC", stageFg:"#0C2472", owner:"PM SDL",   initials:"PM", avatarBg:"#1D4ED8", closeDate:"08 May", change:"up"   },
   { id:"CRM-2026-0009", name:"Pixel Studios",  amount:18750,  stage:"Qualification",  stageBg:"#EFF6FF", stageFg:"#0C2472", owner:"Ria M",    initials:"RM", avatarBg:"#0C2472", closeDate:"05 May", change:"down" },
 ];
 
@@ -52,7 +52,7 @@ export default function RecentDeals({ isDark = false }: { isDark?: boolean }) {
         <Button
           size="small"
           endIcon={<ArrowSquareOut size={12} weight="duotone" />}
-          sx={{ textTransform:"none", fontSize:"0.72rem", color: isDark ? "#737373" : "#E3ECFC", fontWeight:700, borderRadius:"8px", "&:hover":{ bgcolor: isDark ? "rgba(255,255,255,0.05)" : "rgba(96, 165, 250, 0.1)" } }}
+          sx={{ textTransform:"none", fontSize:"0.72rem", color: isDark ? "#737373" : "#1D4ED8", fontWeight:700, borderRadius:"8px", "&:hover":{ bgcolor: isDark ? "rgba(255,255,255,0.05)" : "rgba(96, 165, 250, 0.1)" } }}
         >
           View All
         </Button>
@@ -72,8 +72,12 @@ export default function RecentDeals({ isDark = false }: { isDark?: boolean }) {
               <TableRow key={deal.id} hover sx={{ "&:hover td":{ bgcolor: isDark ? "rgba(255,255,255,0.03)" : "rgba(29,78,216,0.04)" }, cursor:"pointer", "& td": cellSx }}>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    {deal.change === "up" && <TrendUp size={13} color="#10B981" weight="duotone" />}
-                    <div>
+                    <div className="w-[13px] h-[13px] flex items-center justify-center flex-shrink-0">
+                      {deal.change === "up" && <TrendUp size={13} color="#10B981" weight="duotone" />}
+                      {deal.change === "down" && <TrendDown size={13} color="#EF4444" weight="duotone" />}
+                      {deal.change === "same" && <Minus size={11} color="#94A3B8" weight="bold" />}
+                    </div>
+                    <div className="flex items-center gap-1.5 whitespace-nowrap">
                       <p className={`text-[12px] font-semibold leading-tight ${isDark ? "text-[#E2E8F0]" : "text-slate-800"}`}>{deal.name}</p>
                       <p className="text-[10px] text-slate-400 font-mono">{deal.id}</p>
                     </div>

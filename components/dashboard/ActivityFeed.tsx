@@ -7,6 +7,7 @@ type FeedItem = {
   id: number;
   Icon: React.ElementType;
   iconColor: string;
+  iconColorDark: string;
   iconBg: string;
   title: string;
   user: string;
@@ -17,11 +18,11 @@ type FeedItem = {
 };
 
 const feed: FeedItem[] = [
-  { id:1, Icon:TrendUp,       iconColor:"#0C2472", iconBg:"#E3ECFC", title:"Matrix Corp moved to Negotiation",   user:"PM SDL",  initials:"PM", avatarBg:"#E3ECFC", ownerKey:"PM SDL",  time:"5m ago"  },
-  { id:2, Icon:UserPlus,      iconColor:"#E3ECFC", iconBg:"#EFF6FF", title:"New lead added: James Wilson",        user:"Sarah K", initials:"SK", avatarBg:"#3B82F6", ownerKey:"Sarah K", time:"23m ago" },
-  { id:3, Icon:PencilSimple,  iconColor:"#3B82F6", iconBg:"#EFF6FF", title:"Sweany Inc contact updated",          user:"PM SDL",  initials:"PM", avatarBg:"#E3ECFC", ownerKey:"PM SDL",  time:"1h ago"  },
-  { id:4, Icon:CheckCircle,   iconColor:"#E3ECFC", iconBg:"#E3ECFC", title:"Task: Follow up with Apex done",      user:"John D",  initials:"JD", avatarBg:"#E3ECFC", ownerKey:"John D",  time:"2h ago"  },
-  { id:5, Icon:CurrencyDollar,iconColor:"#E3ECFC", iconBg:"#EFF6FF", title:"New deal created: Pixel Studios",     user:"Ria M",   initials:"RM", avatarBg:"#0C2472", ownerKey:"Ria M",   time:"3h ago"  },
+  { id:1, Icon:TrendUp,       iconColor:"#0C2472", iconColorDark:"#60A5FA", iconBg:"#E3ECFC", title:"Matrix Corp moved to Negotiation",   user:"PM SDL",  initials:"PM", avatarBg:"#1D4ED8", ownerKey:"PM SDL",  time:"5m ago"  },
+  { id:2, Icon:UserPlus,      iconColor:"#2F6FED", iconColorDark:"#60A5FA", iconBg:"#EFF6FF", title:"New lead added: James Wilson",        user:"Sarah K", initials:"SK", avatarBg:"#3B82F6", ownerKey:"Sarah K", time:"23m ago" },
+  { id:3, Icon:PencilSimple,  iconColor:"#3B82F6", iconColorDark:"#60A5FA", iconBg:"#EFF6FF", title:"Sweany Inc contact updated",          user:"PM SDL",  initials:"PM", avatarBg:"#1D4ED8", ownerKey:"PM SDL",  time:"1h ago"  },
+  { id:4, Icon:CheckCircle,   iconColor:"#2E9E7B", iconColorDark:"#34D399", iconBg:"#EFF6FF", title:"Task: Follow up with Apex done",      user:"John D",  initials:"JD", avatarBg:"#2E9E7B", ownerKey:"John D",  time:"2h ago"  },
+  { id:5, Icon:CurrencyDollar,iconColor:"#E0883F", iconColorDark:"#FB923C", iconBg:"#EFF6FF", title:"New deal created: Pixel Studios",     user:"Ria M",   initials:"RM", avatarBg:"#0C2472", ownerKey:"Ria M",   time:"3h ago"  },
 ];
 
 export default function ActivityFeed({ isDark = false }: { isDark?: boolean }) {
@@ -43,8 +44,8 @@ export default function ActivityFeed({ isDark = false }: { isDark?: boolean }) {
           return (
             <div key={item.id} className="flex items-start gap-3 group">
               <div className="relative flex flex-col items-center flex-shrink-0">
-                <div className="w-7 h-7 rounded-[9px] flex items-center justify-center" style={{ backgroundColor: isDark ? "#0A0A0A" : item.iconBg }}>
-                  <Icon size={14} color={isDark ? "#737373" : item.iconColor} weight="duotone" />
+                <div className="w-7 h-7 rounded-[9px] flex items-center justify-center" style={{ backgroundColor: isDark ? "#27272A" : item.iconBg }}>
+                  <Icon size={14} color={isDark ? item.iconColorDark : item.iconColor} weight="duotone" />
                 </div>
                 {idx < feed.length - 1 && (
                   <div className={`w-px flex-1 mt-1 mb-0 h-[14px] ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
@@ -72,7 +73,7 @@ export default function ActivityFeed({ isDark = false }: { isDark?: boolean }) {
         })}
       </div>
 
-      <button className={`mt-4 w-full text-center text-[11.5px] font-bold py-2 rounded-xl transition-all duration-150 ${isDark ? "text-[#737373] hover:text-[#FAFAFA] hover:bg-[#27272A]" : "text-[#1D4ED8] hover:text-[#0C2472] hover:bg-[rgba(96,165,250,0.1)]"}`}>
+      <button className={`mt-4 w-full text-center text-[11.5px] font-bold py-2 rounded-xl transition-all duration-150 ${isDark ? "text-[#60A5FA] hover:text-[#FAFAFA] hover:bg-[#27272A]" : "text-[#1D4ED8] hover:text-[#0C2472] hover:bg-[rgba(96,165,250,0.1)]"}`}>
         View all activity →
       </button>
     </div>

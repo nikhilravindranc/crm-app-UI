@@ -43,7 +43,7 @@ interface LeadRecord {
 }
 
 const LEADS: Record<number, LeadRecord> = {
-  1:  { id:1,  salutation:"Mrs.", firstName:"Shobha",    lastName:"R",       company:"Shobha Realty",     title:"Director",  email:"",                      phone:"",            mobile:"",               fax:"", website:"www.shobarealty.in",     status:"New",         leadSource:"Web",         industry:"Real Estate",   rating:"Hot",  noOfEmployees:"1–10",   annualRevenue:"",         owner:"PM SDL",    ownerInitials:"PM", ownerColor:"#E3ECFC", created:"27 May 2026", modified:"27 May 2026", emailOptOut:false, description:"" },
+  1:  { id:1,  salutation:"Mrs.", firstName:"Shobha",    lastName:"R",       company:"Shobha Realty",     title:"Director",  email:"",                      phone:"",            mobile:"",               fax:"", website:"www.shobarealty.in",     status:"New",         leadSource:"Web",         industry:"Real Estate",   rating:"Hot",  noOfEmployees:"1–10",   annualRevenue:"",         owner:"PM SDL",    ownerInitials:"PM", ownerColor:"#1D4ED8", created:"27 May 2026", modified:"27 May 2026", emailOptOut:false, description:"" },
   2:  { id:2,  salutation:"Ms.",  firstName:"Priya",     lastName:"Nair",    company:"Nair & Co",         title:"Manager",   email:"priya.nair@demo.com",    phone:"04425561234", mobile:"9988776655",     fax:"", website:"",                      status:"Contacted",    leadSource:"Referral",    industry:"Finance",       rating:"Warm", noOfEmployees:"11–50",  annualRevenue:"2500000",  owner:"SE User 1", ownerInitials:"SU", ownerColor:"#3B82F6", created:"02 Feb 2025", modified:"15 Apr 2026", emailOptOut:false, description:"Interested in enterprise plan." },
   3:  { id:3,  salutation:"Mr.",  firstName:"John",      lastName:"Carter",  company:"Carter Traders",    title:"CEO",       email:"john.carter@demo.com",   phone:"",            mobile:"9876543210",     fax:"", website:"www.cartertraders.com", status:"Qualified",    leadSource:"Cold Call",   industry:"Retail",        rating:"Hot",  noOfEmployees:"51–200", annualRevenue:"8000000",  owner:"SE User 1", ownerInitials:"SU", ownerColor:"#3B82F6", created:"02 Feb 2025", modified:"10 May 2026", emailOptOut:false, description:"Looking for bulk pricing. Follow up next week." },
   4:  { id:4,  salutation:"Mrs.", firstName:"Sudha",     lastName:"R",       company:"ddd",               title:"",          email:"Sudha@gmail.com",        phone:"",            mobile:"76656564456544", fax:"", website:"",                      status:"In Progress",  leadSource:"Advertisement",industry:"Other",          rating:"Cold", noOfEmployees:"1–10",   annualRevenue:"",         owner:"Admin",     ownerInitials:"AD", ownerColor:"#0C2472", created:"22 Jul 2025", modified:"22 Jul 2025", emailOptOut:false, description:"" },
@@ -52,15 +52,15 @@ const LEADS: Record<number, LeadRecord> = {
   7:  { id:7,  salutation:"",     firstName:"gfdsfs",    lastName:"",        company:"",                  title:"",          email:"",                       phone:"",            mobile:"9876543212",     fax:"", website:"",                      status:"Lost",         leadSource:"",            industry:"",              rating:"",     noOfEmployees:"",       annualRevenue:"",         owner:"Admin",     ownerInitials:"AD", ownerColor:"#0C2472", created:"22 Jul 2025", modified:"22 Jul 2025", emailOptOut:false, description:"" },
   8:  { id:8,  salutation:"",     firstName:"335634656", lastName:"",        company:"",                  title:"",          email:"",                       phone:"",            mobile:"675432124578",   fax:"", website:"",                      status:"New",          leadSource:"",            industry:"",              rating:"",     noOfEmployees:"",       annualRevenue:"",         owner:"Admin",     ownerInitials:"AD", ownerColor:"#0C2472", created:"22 Jul 2025", modified:"22 Jul 2025", emailOptOut:false, description:"" },
   9:  { id:9,  salutation:"Mr.",  firstName:"Leo",       lastName:"",        company:"",                  title:"",          email:"",                       phone:"",            mobile:"6757567456",     fax:"", website:"",                      status:"Contacted",    leadSource:"Web",         industry:"",              rating:"Cold", noOfEmployees:"",       annualRevenue:"",         owner:"Admin",     ownerInitials:"AD", ownerColor:"#0C2472", created:"22 Jul 2025", modified:"22 Jul 2025", emailOptOut:false, description:"" },
-  10: { id:10, salutation:"Mr.",  firstName:"James",     lastName:"Wilson",  company:"Wilson & Partners", title:"Partner",   email:"james@wilson.com",       phone:"02244556677", mobile:"9876541234",     fax:"", website:"www.wilsonpartners.com",status:"Qualified",    leadSource:"Referral",    industry:"Finance",       rating:"Hot",  noOfEmployees:"11–50",  annualRevenue:"12000000", owner:"PM SDL",    ownerInitials:"PM", ownerColor:"#E3ECFC", created:"15 May 2026", modified:"28 May 2026", emailOptOut:false, description:"High-value lead via Apex Solutions." },
+  10: { id:10, salutation:"Mr.",  firstName:"James",     lastName:"Wilson",  company:"Wilson & Partners", title:"Partner",   email:"james@wilson.com",       phone:"02244556677", mobile:"9876541234",     fax:"", website:"www.wilsonpartners.com",status:"Qualified",    leadSource:"Referral",    industry:"Finance",       rating:"Hot",  noOfEmployees:"11–50",  annualRevenue:"12000000", owner:"PM SDL",    ownerInitials:"PM", ownerColor:"#1D4ED8", created:"15 May 2026", modified:"28 May 2026", emailOptOut:false, description:"High-value lead via Apex Solutions." },
   11: { id:11, salutation:"Ms.",  firstName:"Sara",      lastName:"Kim",     company:"TechFlow Ltd",      title:"CTO",       email:"sara.kim@techflow.io",   phone:"",            mobile:"8765432109",     fax:"", website:"www.techflow.io",       status:"In Progress",  leadSource:"Trade Show",  industry:"Technology",    rating:"Warm", noOfEmployees:"51–200", annualRevenue:"5000000",  owner:"SE User 1", ownerInitials:"SU", ownerColor:"#3B82F6", created:"10 Apr 2026", modified:"20 May 2026", emailOptOut:false, description:"Met at TechSummit 2026. Needs platform demo." },
   12: { id:12, salutation:"Mr.",  firstName:"Raj",       lastName:"Mehta",   company:"Apex Group",        title:"MD",        email:"raj@apex.in",            phone:"08033445566", mobile:"9845123456",     fax:"", website:"www.apexgroup.in",      status:"New",          leadSource:"Web",         industry:"Manufacturing", rating:"Hot",  noOfEmployees:"200+",   annualRevenue:"50000000", owner:"Admin",     ownerInitials:"AD", ownerColor:"#0C2472", created:"08 Mar 2026", modified:"08 Mar 2026", emailOptOut:false, description:"" },
 };
 
 const STATUS_CFG: Record<LeadStatus, { bg: string; text: string; dot: string }> = {
-  "New":         { bg:"#EFF6FF", text:"#0C2472", dot:"#E3ECFC" },
-  "Contacted":   { bg:"#E3ECFC", text:"#E3ECFC", dot:"#3B82F6" },
-  "In Progress": { bg:"#E3ECFC", text:"#0C2472", dot:"#E3ECFC" },
+  "New":         { bg:"#EFF6FF", text:"#0C2472", dot:"#94A3B8" },
+  "Contacted":   { bg:"#E3ECFC", text:"#0C2472", dot:"#3B82F6" },
+  "In Progress": { bg:"#E3ECFC", text:"#0C2472", dot:"#1D4ED8" },
   "Qualified":   { bg:"#DCFCE7", text:"#166534", dot:"#16A34A" },
   "Lost":        { bg:"#FEF2F2", text:"#991B1B", dot:"#EF4444" },
   "Unqualified": { bg:"#EFF6FF", text:"#475569", dot:"#94A3B8" },
@@ -89,7 +89,7 @@ function SectionCard({ icon: Icon, title, children }: { icon: React.ElementType;
     <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
       <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[#EFF6FF]">
         <div className="w-6 h-6 rounded-lg bg-[#EFF6FF] flex items-center justify-center">
-          <Icon size={13} color="#E3ECFC" weight="duotone" />
+          <Icon size={13} color="#1D4ED8" weight="duotone" />
         </div>
         <p className="font-heading text-[11px] font-bold text-[#1D4ED8] uppercase tracking-[0.12em]">{title}</p>
       </div>
@@ -127,8 +127,8 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
   const [newNoteText, setNewNoteText]     = useState("");
   const [addingNote, setAddingNote]       = useState(false);
   const [notes, setNotes]                 = useState([
-    { id:1, text:"Initial contact made. Interested in residential properties.", author:"PM SDL", initials:"PM", color:"#E3ECFC", date:"27 May 2026, 3:54 PM" },
-    { id:2, text:"Sent property listings via email. Will follow up next week.", author:"PM SDL", initials:"PM", color:"#E3ECFC", date:"27 May 2026, 4:20 PM" },
+    { id:1, text:"Initial contact made. Interested in residential properties.", author:"PM SDL", initials:"PM", color:"#1D4ED8", date:"27 May 2026, 3:54 PM" },
+    { id:2, text:"Sent property listings via email. Will follow up next week.", author:"PM SDL", initials:"PM", color:"#1D4ED8", date:"27 May 2026, 4:20 PM" },
     { id:3, text:"Meeting tentatively scheduled for June.", author:"SE User 1", initials:"SU", color:"#3B82F6", date:"28 May 2026, 10:00 AM" },
   ]);
 
@@ -162,18 +162,18 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
   // Activity timeline items
   const actBg = isDark ? "#27272A" : "#EFF6FF";
   const activityFeed = [
-    { icon: UserPlus,            color:"#E3ECFC", bg:actBg, text:`Lead created by ${lead.owner}`,          time:lead.created  },
+    { icon: UserPlus,            color:"#2F6FED", bg:actBg, text:`Lead created by ${lead.owner}`,          time:lead.created  },
     { icon: TrendUp,             color:"#3B82F6", bg:actBg, text:`Status set to "${lead.status}"`,         time:lead.created  },
-    { icon: Note,                color:"#E3ECFC", bg:actBg, text:"Note added: Initial contact made…",      time:lead.modified },
-    { icon: Envelope,            color:"#E3ECFC", bg:actBg, text:"Email sent to lead",                     time:lead.modified },
-    { icon: Phone,               color:"#E3ECFC", bg:actBg, text:"Call logged — 5 min, no answer",         time:lead.modified },
+    { icon: Note,                color:"#7C3AED", bg:actBg, text:"Note added: Initial contact made…",      time:lead.modified },
+    { icon: Envelope,            color:"#E0883F", bg:actBg, text:"Email sent to lead",                     time:lead.modified },
+    { icon: Phone,               color:"#DB5E8C", bg:actBg, text:"Call logged — 5 min, no answer",         time:lead.modified },
   ];
 
   // More menu options
   const moreOptions = [
     { icon: Envelope,       label:"Send Email",      color:"#3B82F6" },
-    { icon: Users,          label:"Assign to Team",  color:"#E3ECFC" },
-    { icon: Copy,           label:"Duplicate Lead",  color:"#E3ECFC" },
+    { icon: Users,          label:"Assign to Team",  color:"#2E9E7B" },
+    { icon: Copy,           label:"Duplicate Lead",  color:"#5B6CB5" },
     { icon: DownloadSimple, label:"Export as PDF",   color:"#94A3B8" },
     { type:"divider" as const },
     { icon: Trash,          label:"Delete Lead",     color:"#EF4444" },
@@ -181,12 +181,12 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
 
   // Related list → tab mapping
   const relatedItems = [
-    { icon: Note,                label:"Notes",         count:notes.length, color:"#E3ECFC", tab:"notes"    as const },
+    { icon: Note,                label:"Notes",         count:notes.length, color:"#7C3AED", tab:"notes"    as const },
     { icon: ClipboardText,       label:"Tasks",         count:2,            color:"#3B82F6", tab:"activity" as const },
-    { icon: Phone,               label:"Calls",         count:1,            color:"#E3ECFC", tab:"activity" as const },
-    { icon: Envelope,            label:"Emails",        count:0,            color:"#E3ECFC", tab:"activity" as const },
+    { icon: Phone,               label:"Calls",         count:1,            color:"#DB5E8C", tab:"activity" as const },
+    { icon: Envelope,            label:"Emails",        count:0,            color:"#E0883F", tab:"activity" as const },
     { icon: Paperclip,           label:"Attachments",   count:0,            color:"#94A3B8", tab:"activity" as const },
-    { icon: ClockCounterClockwise,label:"Stage History", count:1,           color:"#0C2472", tab:"activity" as const },
+    { icon: ClockCounterClockwise,label:"Stage History", count:1,           color: isDark?"#38BDF8":"#0C2472", tab:"activity" as const },
   ];
 
   return (
@@ -230,7 +230,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                 </div>
                 {lead.company && (
                   <p className="text-[13px] text-slate-500 font-medium flex items-center gap-1.5">
-                    <Buildings size={13} color="#E3ECFC" weight="duotone" />
+                    <Buildings size={13} color="#94A3B8" weight="duotone" />
                     {lead.company}
                     {lead.industry && <><span className="text-slate-300">·</span><span className="text-slate-400">{lead.industry}</span></>}
                   </p>
@@ -244,13 +244,13 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
               <div className="flex items-center gap-2 flex-shrink-0">
                 {(lead.phone || lead.mobile) && (
                   <Button variant="outlined" size="small" startIcon={<Phone size={14} weight="duotone" />}
-                    sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#737373":"#475569", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.74rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#E3ECFC", color:"#E3ECFC", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
+                    sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#737373":"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.74rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#1D4ED8", color:"#1D4ED8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
                     Call
                   </Button>
                 )}
                 {lead.email && (
                   <Button variant="outlined" size="small" startIcon={<Envelope size={14} weight="duotone" />}
-                    sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#737373":"#475569", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.74rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#E3ECFC", color:"#E3ECFC", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
+                    sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#737373":"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.74rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#1D4ED8", color:"#1D4ED8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
                     Email
                   </Button>
                 )}
@@ -258,14 +258,14 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                 {/* Convert to Deal */}
                 <Button variant="outlined" size="small" startIcon={<ArrowsLeftRight size={14} weight="duotone" />}
                   onClick={() => setConvertOpen(true)}
-                  sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#E3ECFC":"#E3ECFC", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.74rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#E3ECFC", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
+                  sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#737373":"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.74rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#1D4ED8", color:"#1D4ED8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
                   Convert
                 </Button>
 
                 {/* Edit */}
                 <Button variant="contained" size="small" startIcon={<PencilSimple size={14} weight="duotone" />}
                   onClick={() => setEditOpen(true)}
-                  sx={{ bgcolor:"#E3ECFC", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.74rem", boxShadow:"0 1px 8px 0 #1D4ED833", "&:hover":{ bgcolor:"#E3ECFC", boxShadow:"0 2px 14px 0 #60A5FA55" }, "&:active":{ bgcolor:"#0C2472" } }}>
+                  sx={{ bgcolor:"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.74rem", boxShadow:"0 1px 8px 0 #1D4ED833", "&:hover":{ bgcolor:"#60A5FA", boxShadow:"0 2px 14px 0 #60A5FA55" }, "&:active":{ bgcolor:"#0C2472" } }}>
                   Edit
                 </Button>
 
@@ -310,7 +310,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
             {(["overview","activity","notes"] as const).map(t => (
               <button key={t} onClick={() => setActiveTab(t)}
                 className={`px-4 py-1.5 rounded-lg text-[12.5px] font-semibold capitalize transition-all ${
-                  activeTab===t ? "bg-[#334155] text-white shadow-sm"
+                  activeTab===t ? "bg-[#1D4ED8] text-white shadow-sm"
                     : isDark ? "text-[#737373] bg-[#0A0A0A] hover:bg-[#27272A] hover:text-[#D4D4D8]"
                     : "text-[#0C2472] bg-[#E3ECFC] hover:bg-[#1D4ED8]/10"
                 }`}>
@@ -365,7 +365,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                             </button>
                           </Tooltip>
                           {i < PIPELINE.length - 1 && (
-                            <CaretRight size={16} color={isDone||isActive?"#E3ECFC":"#FFFFFF"} weight="duotone" style={{ flexShrink:0 }} />
+                            <CaretRight size={16} color={isDone||isActive?"#1D4ED8":"#CBD5E1"} weight="duotone" style={{ flexShrink:0 }} />
                           )}
                         </div>
                       );
@@ -403,7 +403,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                 {/* Quick Stats */}
                 <div className="grid grid-cols-4 gap-3">
                   {[
-                    { label:"Lead Source", value:lead.leadSource||"—",    icon:TrendUp,   fill: isDark?"#1A2D4A":"#D6E4F9", deep: isDark?"#E3ECFC":"#2F6FED" },
+                    { label:"Lead Source", value:lead.leadSource||"—",    icon:TrendUp,   fill: isDark?"#1A2D4A":"#D6E4F9", deep: isDark?"#60A5FA":"#2F6FED" },
                     { label:"Rating",      value:lead.rating||"—",        icon:Star,      fill: isDark?"#1A2D3A":"#D0E5E0", deep: isDark?"#34D399":"#2E9E7B" },
                     { label:"Industry",    value:lead.industry||"—",      icon:Buildings, fill: isDark?"#2A1E10":"#FAE3D0", deep: isDark?"#FB923C":"#E0883F" },
                     { label:"Employees",   value:lead.noOfEmployees||"—", icon:User,      fill: isDark?"#2A1828":"#F5D9E1", deep: isDark?"#F472B6":"#DB5E8C" },
@@ -577,7 +577,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                 {addingNote ? (
                   <div className="bg-[#f9fbff] rounded-2xl border border-[#1D4ED8] shadow-sm p-4 space-y-3">
                     <div className="flex items-center gap-2.5">
-                      <Avatar sx={{ width:28, height:28, bgcolor:"#E3ECFC", fontSize:"0.58rem", fontWeight:800 }}>PM</Avatar>
+                      <Avatar sx={{ width:28, height:28, bgcolor:"#1D4ED8", fontSize:"0.58rem", fontWeight:800 }}>PM</Avatar>
                       <p className="text-[12px] font-semibold text-slate-700">PM SDL · Just now</p>
                     </div>
                     <InputBase
@@ -588,7 +588,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                       placeholder="Write a note about this lead…"
                       value={newNoteText}
                       onChange={e => setNewNoteText(e.target.value)}
-                      sx={{ fontSize:"0.82rem", color:"#334155", lineHeight:1.6, "& textarea::placeholder":{ color:"#E2E8F0" } }}
+                      sx={{ fontSize:"0.82rem", color: isDark?"#E2E8F0":"#334155", lineHeight:1.6, "& textarea::placeholder":{ color: isDark?"#52525B":"#E2E8F0" } }}
                     />
                     <div className="flex items-center gap-2 justify-end pt-1 border-t border-[#EFF6FF]">
                       <button onClick={() => { setAddingNote(false); setNewNoteText(""); }}
@@ -597,7 +597,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                       </button>
                       <Button variant="contained" size="small" endIcon={<PaperPlaneTilt size={13} weight="duotone" />}
                         onClick={addNote} disabled={!newNoteText.trim()}
-                        sx={{ bgcolor:"#E3ECFC", borderRadius:"8px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", "&:hover":{ bgcolor:"#E3ECFC" }, "&:active":{ bgcolor:"#0C2472" }, "&.Mui-disabled":{ bgcolor:"#E3ECFC", color:"#9CA3AF" } }}>
+                        sx={{ bgcolor:"#1D4ED8", borderRadius:"8px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", "&:hover":{ bgcolor:"#60A5FA" }, "&:active":{ bgcolor:"#0C2472" }, "&.Mui-disabled":{ bgcolor: isDark?"#27272A":"#E3ECFC", color: isDark?"#52525B":"#9CA3AF" } }}>
                         Add Note
                       </Button>
                     </div>
@@ -605,7 +605,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                 ) : (
                   <button onClick={() => setAddingNote(true)}
                     className="w-full flex items-center gap-3 bg-[#f9fbff] border border-[#E3ECFC] hover:border-[#1D4ED8] rounded-2xl px-4 py-3.5 text-left shadow-sm group transition-all">
-                    <Avatar sx={{ width:28, height:28, bgcolor:"#E3ECFC", fontSize:"0.58rem", fontWeight:800 }}>PM</Avatar>
+                    <Avatar sx={{ width:28, height:28, bgcolor:"#1D4ED8", fontSize:"0.58rem", fontWeight:800 }}>PM</Avatar>
                     <span className="text-[12.5px] text-slate-400 group-hover:text-slate-600 transition-colors">Write a note about this lead…</span>
                     <Plus size={16} color="#E2E8F0" weight="bold" style={{ marginLeft:"auto" }} className="group-hover:text-[#1D4ED8]" />
                   </button>
@@ -645,7 +645,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
 
                 {notes.length === 0 && !addingNote && (
                   <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] p-10 text-center shadow-sm">
-                    <Note size={28} color="#E3ECFC" weight="duotone" style={{ marginBottom:4 }} />
+                    <Note size={28} color="#94A3B8" weight="duotone" style={{ marginBottom:4 }} />
                     <p className="text-slate-400 text-sm font-medium">No notes yet. Add one above.</p>
                   </div>
                 )}

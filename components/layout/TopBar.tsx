@@ -60,11 +60,11 @@ export default function TopBar({ title }: { title?: string }) {
       <div className="flex-1 min-w-0">
         {title ? (
           <div className="flex items-baseline gap-2 whitespace-nowrap">
-            <h1 className={`text-[18px] lg:text-[20px] font-extrabold leading-none tracking-tight m-0 ${isDark ? "text-white" : "text-[#0C2472]"}`}>{title}</h1>
-            <span className="hidden sm:inline text-[13.5px] text-slate-400 font-medium">&middot; {today}</span>
+            <h1 className={`text-h1 tracking-tight m-0 ${isDark ? "text-white" : "text-[#0C2472]"}`}>{title}</h1>
+            <span className="hidden sm:inline text-caption text-slate-400">&middot; {today}</span>
           </div>
         ) : (
-          <p className="hidden sm:block text-[14px] text-slate-400 font-medium whitespace-nowrap">{today}</p>
+          <p className="m-0 hidden sm:block text-caption text-slate-400 whitespace-nowrap">{today}</p>
         )}
       </div>
 
@@ -144,14 +144,14 @@ export default function TopBar({ title }: { title?: string }) {
           >
             {/* Profile info */}
             <div className={`px-4 py-3 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
-              <p className={`text-[15px] font-bold ${isDark ? "text-[#F4F4F5]" : "text-slate-800"}`}>PM SDL</p>
-              <p className={`text-[13px] font-medium mt-0.5 ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>Super Admin</p>
+              <p className={`m-0 text-label ${isDark ? "text-[#F4F4F5]" : "text-slate-800"}`}>PM SDL</p>
+              <p className={`m-0 text-caption mt-0.5 ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>Super Admin</p>
             </div>
 
             {/* My Account */}
             <button
               onClick={() => { setProfileOpen(false); router.push("/settings"); }}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 text-[15px] font-semibold transition-colors ${
+              className={`w-full flex items-center gap-3 px-4 py-2.5 text-button transition-colors ${
                 isDark ? "text-[#D4D4D8] hover:bg-[#27272A]" : "text-slate-700 hover:bg-[#EFF6FF]"
               }`}
             >
@@ -162,7 +162,7 @@ export default function TopBar({ title }: { title?: string }) {
             {/* Logout */}
             <button
               onClick={handleLogout}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 text-[15px] font-semibold transition-colors border-t ${
+              className={`w-full flex items-center gap-3 px-4 py-2.5 text-button transition-colors border-t ${
                 isDark
                   ? "text-red-400 hover:bg-[#27272A] border-[#27272A]"
                   : "text-red-500 hover:bg-red-50 border-[#E3ECFC]"

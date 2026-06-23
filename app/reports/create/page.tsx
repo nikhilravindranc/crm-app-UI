@@ -10,6 +10,8 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Checkbox from "@mui/material/Checkbox";
 import InputBase from "@mui/material/InputBase";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import { getDataGridSx } from "@/lib/dataGridStyles";
 import {
   Plus, PencilSimple, CaretDown, Play, FloppyDisk, X,
   ChartBar, Info, Check, MagnifyingGlass, FunnelSimple,
@@ -330,20 +332,23 @@ export default function CreateReportPage() {
                       </span>
                       <span className={`text-[11px] font-medium ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>{sampleRows.length} records</span>
                     </div>
-                    <div className={`grid px-4 py-2 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}
-                      style={{ gridTemplateColumns:`repeat(${Math.min(visibleCols.length, 5)}, 1fr)` }}>
-                      {visibleCols.map(col => (
-                        <p key={col} className={`font-heading text-[10.5px] font-bold uppercase tracking-wider truncate pr-2 ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>{col}</p>
-                      ))}
+                    <div style={{ height: Math.min(sampleRows.length, 5) * 44 + 56 }}>
+                      <DataGrid
+                        rows={sampleRows.map((row, i) => {
+                          const r: Record<string, string | number> = { id: i };
+                          visibleCols.forEach((col, j) => { r[col] = row[j] ?? ""; });
+                          return r;
+                        })}
+                        columns={visibleCols.map((col): GridColDef => ({
+                          field: col, headerName: col, flex: 1, sortable: false,
+                          renderHeader: () => <p className={`m-0 font-heading text-table-header uppercase tracking-wide truncate ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>{col}</p>,
+                          renderCell: (params) => <p className={`m-0 text-table-cell truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>{params.value}</p>,
+                        }))}
+                        hideFooter
+                        disableColumnMenu
+                        sx={getDataGridSx(isDark)}
+                      />
                     </div>
-                    {sampleRows.map((row, i) => (
-                      <div key={i} className={`grid px-4 py-2.5 border-b last:border-0 transition-colors ${isDark ? "border-[#27272A] hover:bg-[#27272A]" : "border-[#EFF6FF] hover:bg-[#60A5FA]/[0.04]"}`}
-                        style={{ gridTemplateColumns:`repeat(${Math.min(visibleCols.length, 5)}, 1fr)` }}>
-                        {row.slice(0, Math.min(visibleCols.length, 5)).map((cell, j) => (
-                          <p key={j} className={`text-[12px] truncate pr-2 ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>{cell}</p>
-                        ))}
-                      </div>
-                    ))}
                   </div>
                   <p className={`text-center text-[11px] mt-3 ${isDark ? "text-[#3F3F46]" : "text-slate-400"}`}>
                     Preview · Save the report to see full results

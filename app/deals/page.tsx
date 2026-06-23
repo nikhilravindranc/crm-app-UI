@@ -10,13 +10,13 @@ import DealKanbanView from "@/components/deals/DealKanbanView";
 import FiltersDrawer, { type FilterRow } from "@/components/leads/FiltersDrawer";
 import ColumnsDrawer from "@/components/leads/ColumnsDrawer";
 import SortPopover, { type SortRow } from "@/components/leads/SortPopover";
-import Checkbox from "@mui/material/Checkbox";
-import Chip from "@mui/material/Chip";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import InputBase from "@mui/material/InputBase";
 import Badge from "@mui/material/Badge";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import { getDataGridSx, ROWS_PER_PAGE_OPTIONS } from "@/lib/dataGridStyles";
 import {
   Plus, MagnifyingGlass, SlidersHorizontal, SortAscending, Columns,
   ArrowsDownUp, List, GridFour, Kanban, CaretDown, House, CaretRight,
@@ -61,9 +61,9 @@ const ALL_DEALS: Deal[] = [
 // ─────────────────────────────────────────────
 const STAGE_CFG: Record<DealStage, { bg: string; text: string; dot: string; bgDark: string; textDark: string }> = {
   "Qualification":            { bg: "#EFF6FF", text: "#0C2472", dot: "#E3ECFC", bgDark: "rgba(96, 165, 250, 0.15)", textDark: "#E3ECFC" },
-  "Needs Analysis":           { bg: "#E3ECFC", text: "#E3ECFC", dot: "#3B82F6", bgDark: "rgba(52, 211, 153, 0.15)", textDark: "#34D399" },
+  "Needs Analysis":           { bg: "#E3ECFC", text: "#0C2472", dot: "#3B82F6", bgDark: "rgba(52, 211, 153, 0.15)", textDark: "#34D399" },
   "Value Proposition":        { bg: "#E3ECFC", text: "#0C2472", dot: "#E3ECFC", bgDark: "rgba(251, 191, 36, 0.15)", textDark: "#FBBF24" },
-  "Identify Decision Makers": { bg: "#E3ECFC", text: "#E3ECFC", dot: "#0C2472", bgDark: "rgba(244, 114, 182, 0.15)", textDark: "#F472B6" },
+  "Identify Decision Makers": { bg: "#E3ECFC", text: "#0C2472", dot: "#0C2472", bgDark: "rgba(244, 114, 182, 0.15)", textDark: "#F472B6" },
   "Proposal/Price Quote":     { bg: "#EFF6FF", text: "#0C2472", dot: "#0C2472", bgDark: "rgba(167, 139, 250, 0.15)", textDark: "#A78BFA" },
   "Negotiation/Review":       { bg: "#FEF3C7", text: "#92400E", dot: "#F59E0B", bgDark: "rgba(56, 189, 248, 0.15)", textDark: "#38BDF8" },
   "Closed Won":               { bg: "#DCFCE7", text: "#166534", dot: "#10B981", bgDark: "rgba(16, 185, 129, 0.15)", textDark: "#10B981" },
@@ -105,7 +105,7 @@ const fmt = (n: number) => n === 0 ? "₹0" : `₹${n.toLocaleString("en-IN")}`;
 
 function ColHeader({ label, isDark = false }: { label: string; isDark?: boolean }) {
   return (
-    <div className={`font-heading flex items-center gap-0.5 text-[10.5px] font-bold uppercase tracking-wider cursor-pointer transition-colors group select-none ${isDark ? "text-[#737373] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+    <div className={`font-heading flex items-center gap-0.5 text-table-header uppercase tracking-wide cursor-pointer transition-colors group select-none ${isDark ? "text-[#737373] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
       {label}
       <ArrowsDownUp size={12} weight="duotone" className={`opacity-30 group-hover:opacity-100 transition-opacity ${isDark ? "text-[#52525B]" : "text-[#60A5FA]"}`} />
     </div>
@@ -125,7 +125,7 @@ export default function DealsPage() {
   const [search, setSearch]           = useState("");
   const [view, setView]               = useState<"list" | "grid" | "kanban">("list");
   const [drawerOpen, setDrawerOpen]   = useState(false);
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filtersAnchor, setFiltersAnchor] = useState<HTMLElement | null>(null);
   const [columnsOpen, setColumnsOpen] = useState(false);
   const [sortAnchor, setSortAnchor]   = useState<HTMLElement | null>(null);
   const [activeFilters, setActiveFilters] = useState<FilterRow[]>([]);
@@ -146,13 +146,104 @@ export default function DealsPage() {
 
   const totalValue = filtered.reduce((s, d) => s + d.amount, 0);
 
-  const allChecked  = selected.length === filtered.length && filtered.length > 0;
-  const someChecked = selected.length > 0 && !allChecked;
-  const toggleAll   = () => setSelected(allChecked ? [] : filtered.map(d => d.id));
-  const toggleOne   = (id: number) => setSelected(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
+  // ── DataGrid column builders, keyed by COL_DEFS.key
+  const COLUMN_BUILDERS: Record<string, GridColDef<Deal>> = {
+    dealName: {
+      field: "dealName", headerName: "Deal Name", flex: 1.8, minWidth: 160, sortable: false,
+      renderHeader: () => <ColHeader label="Deal Name" isDark={isDark} />,
+      renderCell: (params) => (
+        <p className={`m-0 font-heading text-table-cell font-medium truncate ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}>{params.row.name}</p>
+      ),
+    },
+    amount: {
+      field: "amount", headerName: "Amount", flex: 1, minWidth: 100, sortable: false,
+      renderHeader: () => <ColHeader label="Amount" isDark={isDark} />,
+      renderCell: (params) => <p className={`m-0 text-table-cell font-medium truncate ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}>{fmt(params.row.amount)}</p>,
+    },
+    accountName: {
+      field: "accountName", headerName: "Account Name", flex: 1.3, minWidth: 120, sortable: false,
+      renderHeader: () => <ColHeader label="Account Name" isDark={isDark} />,
+      renderCell: (params) => (
+        <p className={`m-0 text-table-cell truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
+          {params.row.account || <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>}
+        </p>
+      ),
+    },
+    stage: {
+      field: "stage", headerName: "Stage", flex: 1.7, minWidth: 160, sortable: false,
+      renderHeader: () => <ColHeader label="Stage" isDark={isDark} />,
+      renderCell: (params) => {
+        const cfg = STAGE_CFG[params.row.stage] ?? STAGE_CFG["Qualification"];
+        return (
+          <span className="self-center inline-flex items-center gap-1.5 text-badge-text px-2 py-[3px] rounded-full leading-none"
+            style={{ backgroundColor: isDark ? cfg.bgDark : cfg.bg, color: isDark ? cfg.textDark : cfg.text }}>
+            <span className="w-[5px] h-[5px] rounded-full flex-shrink-0" style={{ backgroundColor: isDark ? cfg.textDark : cfg.dot }} />
+            {params.row.stage}
+          </span>
+        );
+      },
+    },
+    probability: {
+      field: "probability", headerName: "Probability (%)", flex: 1, minWidth: 100, sortable: false,
+      renderHeader: () => <ColHeader label="Probability (%)" isDark={isDark} />,
+      renderCell: (params) => {
+        const cfg = STAGE_CFG[params.row.stage] ?? STAGE_CFG["Qualification"];
+        return (
+          <div className="flex items-center gap-1.5">
+            <div className={`w-14 h-1 rounded-full overflow-hidden flex-shrink-0 ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`}>
+              <div className="h-full rounded-full" style={{ width: `${params.row.probability}%`, backgroundColor: isDark ? cfg.textDark : cfg.dot }} />
+            </div>
+            <span className={`text-table-cell-secondary font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>{params.row.probability}%</span>
+          </div>
+        );
+      },
+    },
+    contactName: {
+      field: "contactName", headerName: "Contact Name", flex: 1.3, minWidth: 120, sortable: false,
+      renderHeader: () => <ColHeader label="Contact Name" isDark={isDark} />,
+      renderCell: (params) => (
+        <p className={`m-0 text-table-cell truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
+          {params.row.contactName || <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>}
+        </p>
+      ),
+    },
+    createdBy: {
+      field: "createdBy", headerName: "Created By", flex: 1.2, minWidth: 110, sortable: false,
+      renderHeader: () => <ColHeader label="Created By" isDark={isDark} />,
+      renderCell: (params) => <p className={`m-0 text-table-cell-secondary truncate ${isDark ? "text-[#737373]" : "text-slate-400"}`}>{params.row.createdBy}</p>,
+    },
+    modifiedBy: {
+      field: "modifiedBy", headerName: "Modified By", flex: 1.2, minWidth: 110, sortable: false,
+      renderHeader: () => <ColHeader label="Modified By" isDark={isDark} />,
+      renderCell: (params) => <p className={`m-0 text-table-cell-secondary truncate ${isDark ? "text-[#737373]" : "text-slate-400"}`}>{params.row.modifiedBy}</p>,
+    },
+    creation: {
+      field: "creation", headerName: "Creation", flex: 1.5, minWidth: 150, sortable: false,
+      renderHeader: () => <ColHeader label="Creation" isDark={isDark} />,
+      renderCell: (params) => <p className={`m-0 text-table-cell-secondary truncate ${isDark ? "text-[#737373]" : "text-slate-400"}`}>{params.row.creation}</p>,
+    },
+    modified: {
+      field: "modified", headerName: "Modified", flex: 1.5, minWidth: 150, sortable: false,
+      renderHeader: () => <ColHeader label="Modified" isDark={isDark} />,
+      renderCell: (params) => <p className={`m-0 text-table-cell-secondary truncate ${isDark ? "text-[#737373]" : "text-slate-400"}`}>{params.row.modified}</p>,
+    },
+  };
 
-  const visibleColDefs = COL_DEFS.filter(c => visibleCols.has(c.key));
-  const gridTemplate   = ["36px", ...visibleColDefs.map(c => c.width), "40px"].join(" ");
+  const gridColumns: GridColDef<Deal>[] = [
+    ...COL_DEFS.filter(c => visibleCols.has(c.key)).map(c => COLUMN_BUILDERS[c.key]),
+    {
+      field: "actions", headerName: "", width: 50, sortable: false, disableColumnMenu: true,
+      renderCell: () => (
+        <div className="flex justify-end w-full opacity-0 group-hover:opacity-100 transition-opacity">
+          <Tooltip title="Actions">
+            <IconButton size="small" onClick={e => e.stopPropagation()} sx={{ borderRadius: "6px", p: 0.5, "&:hover": { bgcolor: "#E3ECFC" } }}>
+              <DotsThreeVertical size={15} color="#94A3B8" weight="duotone" />
+            </IconButton>
+          </Tooltip>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div className="flex h-screen bg-transparent font-sans">
@@ -161,23 +252,23 @@ export default function DealsPage() {
       <div className={`sidebar-content flex-1 flex flex-col min-h-screen overflow-auto transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
         <TopBar />
 
-        <main className="flex-1 px-4 md:px-8 py-4 md:py-6 space-y-5 animate-fade-in">
+        <main className="flex-1 px-4 md:px-8 py-3 md:py-4 space-y-3 animate-fade-in">
 
           {/* ══ Breadcrumb + Header ══ */}
           <div className="flex items-start justify-between">
             <div>
-              <div className="flex items-center gap-1 text-[11px] text-slate-400 mb-2">
+              <div className="flex items-center gap-1 text-caption text-slate-400 mb-2">
                 <House size={12} weight="duotone" />
                 <CaretRight size={11} weight="duotone" />
                 <Link href="/deals" className={`transition-colors font-medium ${isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#1D4ED8]"}`}>Deals</Link>
               </div>
               <div className="flex items-center gap-2.5">
-                <h1 className="font-heading text-[20px] font-extrabold text-slate-900 tracking-tight">Deals</h1>
-                <span className="text-[11px] font-bold text-slate-400 bg-[#f9fbff] border border-[#E3ECFC] px-2 py-0.5 rounded-full shadow-sm">
+                <h1 className="font-heading text-h1 text-slate-900 tracking-tight">Deals</h1>
+                <span className="text-badge-text text-slate-400 bg-[#f9fbff] border border-[#E3ECFC] px-2 py-0.5 rounded-full shadow-sm">
                   {ALL_DEALS.length} total
                 </span>
                 {/* Total pipeline value */}
-                <span className="flex items-center gap-1 text-[11px] font-bold text-[#059669] bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full">
+                <span className="flex items-center gap-1 text-badge-text text-[#059669] bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full">
                   <TrendUp size={10} weight="duotone" />
                   Pipeline: ₹{(ALL_DEALS.reduce((s, d) => s + d.amount, 0) / 100000).toFixed(1)}L
                 </span>
@@ -193,7 +284,7 @@ export default function DealsPage() {
                   { k: "kanban", Icon: Kanban,   label: "Kanban" },
                 ].map(({ k, Icon, label }) => (
                   <button key={k} onClick={() => setView(k as typeof view)}
-                    className={`flex items-center gap-1.5 px-2.5 py-[7px] rounded-lg text-[11.5px] font-semibold transition-all ${
+                    className={`flex items-center gap-1.5 px-2.5 py-[7px] rounded-lg text-button-sm transition-all ${
                       view === k
                         ? isDark ? "bg-[#18181B] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]"
                         : isDark ? "text-[#737373] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "text-slate-400 hover:text-slate-600"
@@ -206,7 +297,7 @@ export default function DealsPage() {
               <Button variant="contained"
                 startIcon={<Plus size={16} weight="bold" />}
                 onClick={() => setDrawerOpen(true)}
-                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.78rem", px: 2, py: 0.85, boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB", boxShadow: isDark ? "none" : "0 2px 14px #60A5FA55" }, "&:active": { bgcolor: isDark ? "#52525B" : "#0C2472" } }}>
+                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px", px: 2, py: 0.85, boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB", boxShadow: isDark ? "none" : "0 2px 14px #60A5FA55" }, "&:active": { bgcolor: isDark ? "#52525B" : "#0C2472" } }}>
                 New Deal
               </Button>
             </div>
@@ -220,12 +311,12 @@ export default function DealsPage() {
               if (stage !== "All" && cnt === 0) return null;
               return (
                 <button key={stage} onClick={() => setActiveStage(stage)}
-                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[12px] font-semibold whitespace-nowrap transition-all flex-shrink-0 border ${
+                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-button-sm whitespace-nowrap transition-all flex-shrink-0 border ${
                     active ? isDark ? "bg-[#18181B] text-white border-[#27272A] shadow-sm shadow-[#27272A]/10" : "bg-[#1D4ED8] text-white border-[#1D4ED8] shadow-sm shadow-[#1D4ED8]/20"
                            : isDark ? "bg-[#0A0A0A] text-[#A1A1AA] border-[#27272A] hover:bg-[#27272A] hover:text-[#FFFFFF]" : "bg-[#f9fbff] text-slate-600 border-[#E3ECFC] hover:bg-[#E3ECFC]"
                   }`}>
                   {stage}
-                  {cnt > 0 && <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold leading-none ${
+                  {cnt > 0 && <span className={`text-badge-text px-2 py-0.5 rounded-full leading-none ${
                     active ? "bg-[#f9fbff]/20 text-white" : "bg-slate-100 text-slate-600"
                   }`}>{cnt}</span>}
                 </button>
@@ -253,13 +344,17 @@ export default function DealsPage() {
                   </Badge>
                 : <FunnelSimple size={14} weight="duotone" />
               }
-              onClick={() => setFiltersOpen(true)}
+              onClick={e => setFiltersAnchor(e.currentTarget)}
               sx={{
-                borderColor: activeFilters.length > 0 ? "#E3ECFC" : isDark ? "#27272A" : "#E3ECFC",
-                color: activeFilters.length > 0 ? "#E3ECFC" : isDark ? "#737373" : "#0C2472",
-                bgcolor: isDark ? "#0F0F0F" : activeFilters.length > 0 ? "#f9fbff" : "#E3ECFC",
-                borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem",
-                "&:hover": { borderColor: "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
+                borderColor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#27272A" : "#E3ECFC",
+                color: activeFilters.length > 0 ? "#fff" : isDark ? "#737373" : "#0C2472",
+                bgcolor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#0F0F0F" : "#E3ECFC",
+                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "13px",
+                "&:hover": {
+                  borderColor: activeFilters.length > 0 ? "#1640B8" : "#1D4ED8",
+                  color: activeFilters.length > 0 ? "#fff" : "#0C2472",
+                  bgcolor: activeFilters.length > 0 ? "#1640B8" : isDark ? "#0A0A0A" : "#DCE6FB",
+                },
               }}>
               Filters{activeFilters.length > 0 ? ` (${activeFilters.length})` : ""}
             </Button>
@@ -272,7 +367,7 @@ export default function DealsPage() {
                 borderColor: isDark ? "#27272A" : "#E3ECFC",
                 color: isDark ? "#737373" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
-                borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem",
+                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "13px",
                 "&:hover": { borderColor: "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
               }}>
               Columns
@@ -287,7 +382,7 @@ export default function DealsPage() {
                 borderColor: isDark ? "#27272A" : "#E3ECFC",
                 color: isDark ? "#737373" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
-                borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem",
+                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "13px",
                 "&:hover": { borderColor: "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
               }}>
               Sort{activeSorts.length > 0 ? ` (${activeSorts.length})` : ""}
@@ -296,11 +391,11 @@ export default function DealsPage() {
             {/* Filtered value */}
             <div className="ml-auto flex items-center gap-3">
               {filtered.length !== ALL_DEALS.length && (
-                <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                <span className="text-badge-text text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
                   ₹{(totalValue / 100000).toFixed(1)}L filtered
                 </span>
               )}
-              <span className="text-[11px] text-slate-400 font-medium bg-[#f9fbff] px-3 py-1.5 rounded-lg">
+              <span className="text-caption text-slate-400 bg-[#f9fbff] px-3 py-1.5 rounded-lg">
                 {filtered.length} of {ALL_DEALS.length} records
               </span>
             </div>
@@ -310,14 +405,14 @@ export default function DealsPage() {
           {selected.length > 0 && (
             <div className="flex items-center gap-3 bg-[#0C2472] text-white px-4 py-2.5 rounded-xl animate-slide-up shadow-lg shadow-[#0C2472]/20">
               <div className="flex items-center gap-2">
-                <span className="w-5 h-5 rounded-md bg-[#1D4ED8] flex items-center justify-center text-[10px] font-extrabold">{selected.length}</span>
-                <span className="text-[12px] font-semibold">selected</span>
+                <span className="w-5 h-5 rounded-md bg-[#1D4ED8] flex items-center justify-center text-badge-text">{selected.length}</span>
+                <span className="text-button-sm">selected</span>
               </div>
               <div className="w-px h-4 bg-[#f9fbff]/15" />
-              <button className="text-[11.5px] font-semibold text-inherit hover:text-white transition-colors">Update Stage</button>
-              <button className="text-[11.5px] font-semibold text-inherit hover:text-white transition-colors">Assign Owner</button>
-              <button onClick={() => setSelected([])} className="ml-auto text-[11.5px] font-semibold text-white/50 hover:text-white transition-colors">Clear</button>
-              <button className="flex items-center gap-1.5 text-[11.5px] font-semibold text-red-300 hover:text-red-200 transition-colors">
+              <button className="text-button-sm text-inherit hover:text-white transition-colors">Update Stage</button>
+              <button className="text-button-sm text-inherit hover:text-white transition-colors">Assign Owner</button>
+              <button onClick={() => setSelected([])} className="ml-auto text-button-sm text-white/50 hover:text-white transition-colors">Clear</button>
+              <button className="flex items-center gap-1.5 text-button-sm text-red-300 hover:text-red-200 transition-colors">
                 <Trash size={14} weight="duotone" /> Delete
               </button>
             </div>
@@ -329,149 +424,36 @@ export default function DealsPage() {
           {/* ══ KANBAN ══ */}
           {view === "kanban" && <DealKanbanView deals={filtered} />}
 
-          {/* ══ LIST ══ */}
+          {/* ══ LIST (MUI DataGrid) ══ */}
           {view === "list" && (
-            <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
-              <div className="overflow-x-auto" style={{ scrollbarWidth: "thin" }}>
-              <div style={{ minWidth: "700px" }}>
-              {/* Table header */}
-              <div className="grid items-center px-4 py-2.5 bg-[#E3ECFC] border-b border-[#E3ECFC]"
-                style={{ gridTemplateColumns: gridTemplate }}>
-                <Checkbox size="small" checked={allChecked} indeterminate={someChecked} onChange={toggleAll}
-                  sx={{ p: 0.5, color: "#E2E8F0", "&.Mui-checked, &.MuiCheckbox-indeterminate": { color: "inherit" } }} />
-                {visibleColDefs.map(c => <ColHeader key={c.key} label={c.label} isDark={isDark} />)}
-                <div />
-              </div>
-
-              {/* Rows */}
-              <div className="divide-y divide-[#EFF6FF]">
-                {filtered.map(deal => {
-                  const isSel = selected.includes(deal.id);
-                  const cfg   = STAGE_CFG[deal.stage] ?? STAGE_CFG["Qualification"];
-
-                  return (
-                    <div key={deal.id}
-                      className={`grid items-center px-4 py-3 transition-all duration-100 cursor-pointer group ${
-                        isSel ? isDark ? "bg-[#18181B]" : "bg-[#f9fbff]" : isDark ? "hover:bg-[#0F0F0F]" : "hover:bg-[#60A5FA]/[0.04]"
-                      }`}
-                      style={{ gridTemplateColumns: gridTemplate }}
-                      onClick={() => router.push(`/deals/${deal.id}`)}>
-
-                      <Checkbox size="small" checked={isSel} onChange={() => toggleOne(deal.id)} onClick={e => e.stopPropagation()}
-                        sx={{ p: 0.5, color: "#E2E8F0", "&.Mui-checked": { color: "inherit" } }} />
-
-                      {/* Deal Name */}
-                      {visibleCols.has("dealName") && (
-                        <p className={`font-heading text-[12.5px] font-semibold truncate pr-2 transition-colors ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}>
-                          {deal.name}
-                        </p>
-                      )}
-
-                      {/* Amount */}
-                      {visibleCols.has("amount") && (
-                        <p className={`text-[12px] font-bold truncate pr-2 ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}>{fmt(deal.amount)}</p>
-                      )}
-
-                      {/* Account Name */}
-                      {visibleCols.has("accountName") && (
-                        <p className={`text-[12px] truncate pr-2 ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
-                          {deal.account || <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>}
-                        </p>
-                      )}
-
-                      {/* Stage */}
-                      {visibleCols.has("stage") && (
-                        <div className="pr-2">
-                          <span className="inline-flex items-center gap-1.5 text-[10.5px] font-bold px-2 py-[3px] rounded-full"
-                            style={{ backgroundColor: isDark ? cfg.bgDark : cfg.bg, color: isDark ? cfg.textDark : cfg.text }}>
-                            <span className="w-[5px] h-[5px] rounded-full flex-shrink-0" style={{ backgroundColor: isDark ? cfg.textDark : cfg.dot }} />
-                            {deal.stage}
-                          </span>
-                        </div>
-                      )}
-
-                      {/* Probability */}
-                      {visibleCols.has("probability") && (
-                        <div className="flex items-center gap-1.5 pr-2">
-                          <div className={`w-14 h-1 rounded-full overflow-hidden flex-shrink-0 ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`}>
-                            <div className="h-full rounded-full" style={{ width: `${deal.probability}%`, backgroundColor: isDark ? cfg.textDark : cfg.dot }} />
-                          </div>
-                          <span className={`text-[11.5px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>{deal.probability}%</span>
-                        </div>
-                      )}
-
-                      {/* Contact Name */}
-                      {visibleCols.has("contactName") && (
-                        <p className={`text-[12px] truncate pr-2 ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
-                          {deal.contactName || <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>}
-                        </p>
-                      )}
-
-                      {/* Created By */}
-                      {visibleCols.has("createdBy") && (
-                        <p className={`text-[11.5px] truncate pr-2 ${isDark ? "text-[#737373]" : "text-slate-400"}`}>{deal.createdBy}</p>
-                      )}
-
-                      {/* Modified By */}
-                      {visibleCols.has("modifiedBy") && (
-                        <p className={`text-[11.5px] truncate pr-2 ${isDark ? "text-[#737373]" : "text-slate-400"}`}>{deal.modifiedBy}</p>
-                      )}
-
-                      {/* Creation */}
-                      {visibleCols.has("creation") && (
-                        <p className={`text-[11px] truncate pr-2 ${isDark ? "text-[#737373]" : "text-slate-400"}`}>{deal.creation}</p>
-                      )}
-
-                      {/* Modified */}
-                      {visibleCols.has("modified") && (
-                        <p className={`text-[11px] truncate ${isDark ? "text-[#737373]" : "text-slate-400"}`}>{deal.modified}</p>
-                      )}
-
-                      {/* Row action */}
-                      <div className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Tooltip title="Actions">
-                          <IconButton size="small" sx={{ borderRadius: "6px", p: 0.5, "&:hover": { bgcolor: "#E3ECFC" } }}>
-                            <DotsThreeVertical size={15} color="#94A3B8" weight="duotone" />
-                          </IconButton>
-                        </Tooltip>
+            <div className="rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden" style={{ height: 600 }}>
+              <DataGrid<Deal>
+                rows={filtered}
+                columns={gridColumns}
+                getRowId={row => row.id}
+                checkboxSelection
+                disableRowSelectionOnClick
+                disableColumnMenu
+                rowHeight={44}
+                columnHeaderHeight={40}
+                rowSelectionModel={selected}
+                onRowSelectionModelChange={model => setSelected(model as number[])}
+                onRowClick={params => router.push(`/deals/${params.id}`)}
+                initialState={{ pagination: { paginationModel: { pageSize: 20 } } }}
+                pageSizeOptions={ROWS_PER_PAGE_OPTIONS}
+                slots={{
+                  noRowsOverlay: () => (
+                    <div className="py-16 text-center">
+                      <div className="w-12 h-12 rounded-2xl bg-[#f9fbff] flex items-center justify-center mx-auto mb-3">
+                        <MagnifyingGlass size={22} color="#E3ECFC" weight="duotone" />
                       </div>
+                      <p className="font-heading text-slate-500 text-sm font-semibold">No deals found</p>
+                      <p className="text-slate-300 text-xs mt-1">Try adjusting your search or stage filter</p>
                     </div>
-                  );
-                })}
-              </div>
-              </div></div>
-
-              {/* Empty state */}
-              {filtered.length === 0 && (
-                <div className="py-16 text-center">
-                  <div className="w-12 h-12 rounded-2xl bg-[#f9fbff] flex items-center justify-center mx-auto mb-3">
-                    <MagnifyingGlass size={22} color="#E3ECFC" weight="duotone" />
-                  </div>
-                  <p className="font-heading text-slate-500 text-sm font-semibold">No deals found</p>
-                  <p className="text-slate-300 text-xs mt-1">Try adjusting your search or stage filter</p>
-                </div>
-              )}
-
-              {/* Pagination */}
-              <div className="flex items-center justify-between px-4 py-3 border-t border-[#EFF6FF]">
-                <p className="text-[11px] text-slate-400 font-medium">
-                  Showing <span className="text-slate-700 font-bold">1–{filtered.length}</span> of{" "}
-                  <span className="text-slate-700 font-bold">{ALL_DEALS.length}</span> records
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
-                    <span>Rows per page:</span>
-                    <button className="flex items-center gap-0.5 bg-[#f9fbff] text-[#1D4ED8] font-bold px-2 py-1 rounded-lg hover:bg-[#E3ECFC] transition-colors text-[11px]">
-                      20 <CaretDown size={12} weight="duotone" />
-                    </button>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <button className="w-7 h-7 flex items-center justify-center rounded-lg bg-[#f9fbff] text-[#1D4ED8] hover:bg-[#E3ECFC] disabled:opacity-30 font-bold text-sm" disabled>‹</button>
-                    <button className="w-7 h-7 flex items-center justify-center rounded-lg bg-[#1D4ED8] text-white text-[11px] font-bold shadow-sm">1</button>
-                    <button className="w-7 h-7 flex items-center justify-center rounded-lg bg-[#f9fbff] text-[#1D4ED8] hover:bg-[#E3ECFC] disabled:opacity-30 font-bold text-sm" disabled>›</button>
-                  </div>
-                </div>
-              </div>
+                  ),
+                }}
+                sx={getDataGridSx(isDark)}
+              />
             </div>
           )}
         </main>
@@ -481,7 +463,7 @@ export default function DealsPage() {
       <NewDealDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
       <FiltersDrawer
-        open={filtersOpen} onClose={() => setFiltersOpen(false)}
+        anchor={filtersAnchor} onClose={() => setFiltersAnchor(null)}
         filters={activeFilters} onChange={setActiveFilters}
       />
 

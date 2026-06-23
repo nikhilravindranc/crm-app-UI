@@ -12,15 +12,15 @@ import {
 
 const STAGES_LIGHT = [
   { name: "Qualification", deals: 425, color: "#0C2472" },
-  { name: "Needs Analysis", deals: 287 },
+  { name: "Needs Analysis", deals: 287, color: "#10B981" },
   { name: "Value Prop.", deals: 198, color: "#3B82F6" },
   { name: "Decision", deals: 156, color: "#3B82F6" },
-  { name: "Proposal", deals: 124 },
-  { name: "Negotiation", deals: 93 },
+  { name: "Proposal", deals: 124, color: "#F59E0B" },
+  { name: "Negotiation", deals: 93, color: "#EC4899" },
 ];
 
 const STAGES_DARK = [
-  { name: "Qualification", deals: 425 },
+  { name: "Qualification", deals: 425, color: "#60A5FA" },
   { name: "Needs Analysis", deals: 287, color: "#34D399" },
   { name: "Value Prop.", deals: 198, color: "#FBBF24" },
   { name: "Decision", deals: 156, color: "#F472B6" },

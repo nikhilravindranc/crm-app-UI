@@ -85,9 +85,9 @@ export default function SortPopover({ anchor, onClose, sorts, onChange }: Props)
       <div className="w-[380px]">
         {/* Popover header */}
         <div className={`flex items-center gap-2.5 px-4 py-3 border-b ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
-          <SortAscending size={16} color={isDark ? "#52525B" : "#E3ECFC"} weight="duotone" />
-          <p className={`font-heading text-[12.5px] font-bold ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Sort Records</p>
-          <span className={`ml-auto text-[11px] ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{local.length} sort{local.length !== 1 ? "s" : ""}</span>
+          <SortAscending size={16} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
+          <p className={`m-0 font-heading text-h2 ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Sort Records</p>
+          <span className={`ml-auto text-caption ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{local.length} sort{local.length !== 1 ? "s" : ""}</span>
         </div>
 
         {/* Sort rows */}
@@ -95,7 +95,7 @@ export default function SortPopover({ anchor, onClose, sorts, onChange }: Props)
           {local.map((row, idx) => (
             <div key={row.id} className="flex items-center gap-2">
               {/* Priority label */}
-              <span className={`font-heading text-[10px] font-bold uppercase tracking-wider w-10 flex-shrink-0 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+              <span className={`font-heading text-nav-group-label uppercase w-10 flex-shrink-0 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
                 {idx === 0 ? "By" : "Then"}
               </span>
 
@@ -142,7 +142,7 @@ export default function SortPopover({ anchor, onClose, sorts, onChange }: Props)
           {/* Add sort */}
           {local.length < 3 && (
             <button onClick={add}
-              className={`flex items-center gap-1.5 text-[12px] font-semibold py-1.5 px-2 rounded-lg transition-colors w-full ${
+              className={`flex items-center gap-1.5 text-button-sm py-1.5 px-2 rounded-lg transition-colors w-full ${
                 isDark
                   ? "text-[#A1A1AA] hover:text-[#F4F4F5] hover:bg-[#27272A]"
                   : "text-[#1D4ED8] hover:text-[#0C2472] hover:bg-[#EFF6FF]"
@@ -156,17 +156,16 @@ export default function SortPopover({ anchor, onClose, sorts, onChange }: Props)
         {/* Footer */}
         <div className={`flex items-center justify-between px-4 py-3 border-t ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#EFF6FF]"}`}>
           <button onClick={handleClear}
-            className={`text-[12px] font-semibold px-2 py-1 rounded-lg transition-colors ${isDark ? "text-[#71717A] hover:text-[#A1A1AA] hover:bg-[#27272A]" : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"}`}>
+            className={`text-button-sm px-2 py-1 rounded-lg transition-colors ${isDark ? "text-[#71717A] hover:text-[#A1A1AA] hover:bg-[#27272A]" : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"}`}>
             Clear
           </button>
           <Button variant="contained" size="small" onClick={handleApply}
             sx={{
-              bgcolor: isDark ? "#27272A" : "inherit",
-              color: isDark ? "#F4F4F5" : undefined,
-              borderRadius: "8px", textTransform: "none", fontWeight: 700, fontSize: "0.75rem", px: 2,
+              bgcolor: isDark ? "#3F3F46" : "#1D4ED8",
+              color: "#fff",
+              borderRadius: "8px", textTransform: "none", fontWeight: 500, fontSize: "13px", px: 2,
               boxShadow: isDark ? "none" : undefined,
-              "&:hover": { bgcolor: isDark ? "#3F3F46" : "inherit", boxShadow: isDark ? "none" : undefined },
-              "&:active": { bgcolor: isDark ? "#18181B" : "#0C2472" },
+              "&:hover": { bgcolor: isDark ? "#52525B" : "#1640B8", boxShadow: isDark ? "none" : undefined },
             }}>
             Apply Sort
           </Button>

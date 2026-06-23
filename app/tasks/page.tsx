@@ -7,12 +7,13 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import InputBase from "@mui/material/InputBase";
-import Checkbox from "@mui/material/Checkbox";
-import Badge from "@mui/material/Badge";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import { getDataGridSx, ROWS_PER_PAGE_OPTIONS } from "@/lib/dataGridStyles";
+import { useRouter } from "next/navigation";
 import {
   House, CaretRight, Plus, MagnifyingGlass, FunnelSimple,
   ArrowsDownUp, DotsThreeVertical, Trash, CaretDown, List,
@@ -77,7 +78,7 @@ const PRIORITY_CFG: Record<string, { bg: string; text: string }> = {
 // ─────────────────────────────────────────────
 function ColHeader({ label, isDark = false }: { label: string; isDark?: boolean }) {
   return (
-    <div className={`font-heading flex items-center gap-0.5 text-[10.5px] font-bold uppercase tracking-wider cursor-pointer transition-colors group select-none ${isDark ? "text-[#737373] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+    <div className={`font-heading flex items-center gap-0.5 text-table-header uppercase tracking-wide cursor-pointer transition-colors group select-none ${isDark ? "text-[#737373] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
       {label}
       <ArrowsDownUp size={12} weight="duotone" className={`opacity-30 group-hover:opacity-100 transition-opacity ${isDark ? "text-[#52525B]" : "text-[#60A5FA]"}`} />
     </div>
@@ -88,13 +89,14 @@ function ColHeader({ label, isDark = false }: { label: string; isDark?: boolean 
 //  Page
 // ─────────────────────────────────────────────
 export default function TasksPage() {
+  const router = useRouter();
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
   const [selected, setSelected]         = useState<number[]>([]);
   const [search, setSearch]             = useState("");
   const [drawerOpen, setDrawerOpen]     = useState(false);
-  const [filtersOpen, setFiltersOpen]   = useState(false);
+  const [filtersAnchor, setFiltersAnchor] = useState<HTMLElement | null>(null);
   const [activeFilters, setActiveFilters] = useState<FilterRow[]>([]);
   const [moreAnchor, setMoreAnchor]     = useState<HTMLElement | null>(null);
   const [activeFilter, setActiveFilter] = useState<TaskStatus | "All">("All");
@@ -140,13 +142,100 @@ export default function TasksPage() {
   const statusCounts: Record<string, number> = { All: ALL_TASKS.length };
   ALL_TASKS.forEach(t => { if (t.status) statusCounts[t.status] = (statusCounts[t.status] ?? 0) + 1; });
 
-  const allChecked  = selected.length === filtered.length && filtered.length > 0;
-  const someChecked = selected.length > 0 && !allChecked;
-  const toggleAll   = () => setSelected(allChecked ? [] : filtered.map(t => t.id));
-  const toggleOne   = (id: number) => setSelected(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
-
-  const gridTemplate = "36px 90px 220px 110px 130px 100px 170px 190px 220px 40px";
-  const minTableWidth = "1340px";
+  // ── DataGrid column definitions
+  const gridColumns: GridColDef<TaskRecord>[] = [
+    {
+      field: "type", headerName: "Type", flex: 0.8, minWidth: 80, sortable: false,
+      renderHeader: () => <ColHeader label="Type" isDark={isDark} />,
+      renderCell: (params) => (
+        <p className={`text-table-cell font-medium truncate mb-0 ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>
+          {params.row.type || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
+        </p>
+      ),
+    },
+    {
+      field: "subject", headerName: "Subject", flex: 1.8, minWidth: 200, sortable: false,
+      renderHeader: () => <ColHeader label="Subject" isDark={isDark} />,
+      renderCell: (params) => (
+        <Link href={`/tasks/${params.row.id}`} className={`font-heading text-table-cell font-medium truncate hover:underline ${isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]"}`} onClick={e => e.stopPropagation()}>
+          {params.row.subject}
+        </Link>
+      ),
+    },
+    {
+      field: "dueDate", headerName: "Due Date", flex: 1, minWidth: 100, sortable: false,
+      renderHeader: () => <ColHeader label="Due Date" isDark={isDark} />,
+      renderCell: (params) => (
+        <p className={`text-table-cell truncate mb-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
+          {params.row.dueDate || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
+        </p>
+      ),
+    },
+    {
+      field: "status", headerName: "Status", flex: 1.2, minWidth: 120, sortable: false,
+      renderHeader: () => <ColHeader label="Status" isDark={isDark} />,
+      renderCell: (params) => {
+        const rawCfg    = params.row.status ? STATUS_CFG[params.row.status] : null;
+        const statusCfg = isDark && params.row.status ? STATUS_CFG_DARK[params.row.status] : rawCfg;
+        return statusCfg ? (
+          <span className="self-center inline-flex items-center gap-1.5 text-badge-text px-2 py-[3px] rounded-full leading-none"
+            style={{ backgroundColor: statusCfg.bg, color: statusCfg.text }}>
+            <span className="w-[5px] h-[5px] rounded-full flex-shrink-0" style={{ backgroundColor: statusCfg.dot }} />
+            {params.row.status}
+          </span>
+        ) : <span className={`text-table-cell ${isDark ? "text-[#3F3F46]" : "text-slate-200"}`}>—</span>;
+      },
+    },
+    {
+      field: "priority", headerName: "Priority", flex: 0.9, minWidth: 90, sortable: false,
+      renderHeader: () => <ColHeader label="Priority" isDark={isDark} />,
+      renderCell: (params) => {
+        const priCfg = params.row.priority ? PRIORITY_CFG[params.row.priority] : null;
+        return priCfg ? (
+          <span className="self-center inline-flex items-center gap-1 text-badge-text px-2 py-[3px] rounded-full leading-none"
+            style={{ backgroundColor: priCfg.bg, color: priCfg.text }}>
+            {params.row.priority}
+          </span>
+        ) : <span className={`text-table-cell ${isDark ? "text-[#3F3F46]" : "text-slate-200"}`}>—</span>;
+      },
+    },
+    {
+      field: "contact", headerName: "Contact", flex: 1.5, minWidth: 150, sortable: false,
+      renderHeader: () => <ColHeader label="Contact" isDark={isDark} />,
+      renderCell: (params) => (
+        <p className={`text-table-cell truncate mb-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
+          {params.row.contact || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
+        </p>
+      ),
+    },
+    {
+      field: "relatedTo", headerName: "Related To", flex: 1.7, minWidth: 170, sortable: false,
+      renderHeader: () => <ColHeader label="Related To" isDark={isDark} />,
+      renderCell: (params) => (
+        <p className={`text-table-cell truncate mb-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
+          {params.row.relatedTo || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
+        </p>
+      ),
+    },
+    {
+      field: "taskOwner", headerName: "Task Owner", flex: 2, minWidth: 200, sortable: false,
+      renderHeader: () => <ColHeader label="Task Owner" isDark={isDark} />,
+      renderCell: (params) => <p className={`text-table-cell-secondary truncate mb-0 ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>{params.row.taskOwner}</p>,
+    },
+    {
+      field: "actions", headerName: "", width: 50, sortable: false, disableColumnMenu: true,
+      renderCell: () => (
+        <div className="flex justify-end w-full opacity-0 group-hover:opacity-100 transition-opacity">
+          <Tooltip title="Actions">
+            <IconButton size="small" onClick={e => e.stopPropagation()}
+              sx={{ borderRadius: "6px", p: 0.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#E3ECFC" } }}>
+              <DotsThreeVertical size={15} color={isDark ? "#52525B" : "#94A3B8"} weight="duotone" />
+            </IconButton>
+          </Tooltip>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div className="flex h-screen bg-transparent font-sans">
@@ -155,22 +244,22 @@ export default function TasksPage() {
       <div className={`sidebar-content flex-1 flex flex-col min-h-screen overflow-auto transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
         <TopBar />
 
-        <main className="flex-1 px-4 md:px-8 py-4 md:py-6 space-y-5 animate-fade-in">
+        <main className="flex-1 px-4 md:px-8 py-3 md:py-4 space-y-3 animate-fade-in">
 
           {/* ══ Breadcrumb + Header ══ */}
           <div className="flex items-start justify-between">
             <div>
-              <div className="flex items-center gap-1 text-[11px] text-slate-400 mb-2">
+              <div className="flex items-center gap-1 text-caption text-slate-400 mb-2">
                 <House size={12} weight="duotone" />
                 <CaretRight size={11} weight="duotone" />
                 <Link href="/tasks" className={`transition-colors font-medium ${isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#1D4ED8]"}`}>Tasks</Link>
               </div>
               <div className="flex items-center gap-2.5">
-                <h1 className="font-heading text-[20px] font-extrabold text-slate-900 tracking-tight">Tasks</h1>
-                <span className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-400">
+                <h1 className="font-heading text-h1 text-slate-900 tracking-tight">Tasks</h1>
+                <span className="flex items-center gap-1.5 text-button-sm text-slate-400">
                   <List size={13} weight="duotone" />
                 </span>
-                <span className="text-[11px] font-bold text-slate-400 bg-[#f9fbff] border border-[#E3ECFC] px-2 py-0.5 rounded-full shadow-sm">
+                <span className="text-badge-text text-slate-400 bg-[#f9fbff] border border-[#E3ECFC] px-2 py-0.5 rounded-full shadow-sm">
                   Total Records: {ALL_TASKS.length}
                 </span>
               </div>
@@ -180,7 +269,7 @@ export default function TasksPage() {
               <Button variant="contained"
                 startIcon={<Plus size={16} weight="bold" />}
                 onClick={() => setDrawerOpen(true)}
-                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.78rem", px: 2, py: 0.85, boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB", boxShadow: isDark ? "none" : "0 2px 14px #60A5FA55" }, "&:active": { bgcolor: isDark ? "#52525B" : "#0C2472" } }}>
+                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px", px: 2, py: 0.85, boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB", boxShadow: isDark ? "none" : "0 2px 14px #60A5FA55" }, "&:active": { bgcolor: isDark ? "#52525B" : "#0C2472" } }}>
                 New Task
               </Button>
               <Tooltip title="More options">
@@ -200,14 +289,14 @@ export default function TasksPage() {
               if (tab !== "All" && cnt === 0) return null;
               return (
                 <button key={tab} onClick={() => setActiveFilter(tab)}
-                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-[12px] font-semibold whitespace-nowrap transition-all flex-shrink-0 border ${
+                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-button-sm whitespace-nowrap transition-all flex-shrink-0 border ${
                     active
                       ? isDark ? "bg-[#27272A] text-[#D4D4D8] border-[#3F3F46] shadow-sm" : "bg-[#0C2472] text-white border-[#0C2472] shadow-sm shadow-[#0C2472]/20"
                       : isDark ? "bg-[#111113] text-[#71717A] border-[#27272A] hover:bg-[#27272A] hover:text-[#A1A1AA] hover:border-[#3F3F46]" : "bg-[#f9fbff] text-slate-600 border-[#E3ECFC] hover:bg-[#EFF6FF]"
                   }`}>
                   {tab}
                   {tab !== "All" && cnt > 0 && (
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold leading-none ${
+                    <span className={`text-badge-text px-1.5 py-0.5 rounded-full leading-none ${
                       active
                         ? isDark ? "bg-white/10 text-[#A1A1AA]" : "bg-white/20 text-white"
                         : isDark ? "bg-[#27272A] text-[#52525B]" : "bg-slate-100 text-slate-600"
@@ -234,18 +323,22 @@ export default function TasksPage() {
                 ? <span className="relative"><FunnelSimple size={14} weight="duotone" /></span>
                 : <FunnelSimple size={14} weight="duotone" />
               }
-              onClick={() => setFiltersOpen(true)}
+              onClick={e => setFiltersAnchor(e.currentTarget)}
               sx={{
-                borderColor: activeFilters.length > 0 ? "#E3ECFC" : isDark ? "#27272A" : "#E3ECFC",
-                color: activeFilters.length > 0 ? "#E3ECFC" : isDark ? "#5A7089" : "#0C2472",
-                bgcolor: isDark ? "#0F0F0F" : activeFilters.length > 0 ? "#f9fbff" : "#E3ECFC",
-                borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem",
-                "&:hover": { borderColor: "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
+                borderColor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#27272A" : "#E3ECFC",
+                color: activeFilters.length > 0 ? "#fff" : isDark ? "#5A7089" : "#0C2472",
+                bgcolor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#0F0F0F" : "#E3ECFC",
+                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "13px",
+                "&:hover": {
+                  borderColor: activeFilters.length > 0 ? "#1640B8" : "#1D4ED8",
+                  color: activeFilters.length > 0 ? "#fff" : "#0C2472",
+                  bgcolor: activeFilters.length > 0 ? "#1640B8" : isDark ? "#0A0A0A" : "#DCE6FB",
+                },
               }}>
               Filters{activeFilters.length > 0 ? ` (${activeFilters.length})` : ""}
             </Button>
 
-            <span className="ml-auto text-[11px] text-slate-400 font-medium bg-[#f9fbff] px-3 py-1.5 rounded-lg">
+            <span className="ml-auto text-caption text-slate-400 bg-[#f9fbff] px-3 py-1.5 rounded-lg">
               {filtered.length} of {ALL_TASKS.length} records
             </span>
           </div>
@@ -254,155 +347,48 @@ export default function TasksPage() {
           {selected.length > 0 && (
             <div className="flex items-center gap-3 bg-[#0C2472] text-white px-4 py-2.5 rounded-xl shadow-lg shadow-[#0C2472]/20">
               <div className="flex items-center gap-2">
-                <span className="w-5 h-5 rounded-md bg-[#1D4ED8] flex items-center justify-center text-[10px] font-extrabold">{selected.length}</span>
-                <span className="text-[12px] font-semibold">selected</span>
+                <span className="w-5 h-5 rounded-md bg-[#1D4ED8] flex items-center justify-center text-badge-text">{selected.length}</span>
+                <span className="text-button-sm">selected</span>
               </div>
               <div className="w-px h-4 bg-white/15" />
-              <button className="text-[11.5px] font-semibold text-inherit hover:text-white transition-colors">Update Status</button>
-              <button className="text-[11.5px] font-semibold text-inherit hover:text-white transition-colors">Assign Owner</button>
-              <button onClick={() => setSelected([])} className="ml-auto text-[11.5px] font-semibold text-white/50 hover:text-white transition-colors">Clear</button>
-              <button className="flex items-center gap-1.5 text-[11.5px] font-semibold text-red-300 hover:text-red-200 transition-colors">
+              <button className="text-button-sm text-inherit hover:text-white transition-colors">Update Status</button>
+              <button className="text-button-sm text-inherit hover:text-white transition-colors">Assign Owner</button>
+              <button onClick={() => setSelected([])} className="ml-auto text-button-sm text-white/50 hover:text-white transition-colors">Clear</button>
+              <button className="flex items-center gap-1.5 text-button-sm text-red-300 hover:text-red-200 transition-colors">
                 <Trash size={14} weight="duotone" /> Delete
               </button>
             </div>
           )}
 
-          {/* ══ Table ══ */}
-          <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
-            <div className="overflow-x-auto" style={{ scrollbarWidth: "thin" }}>
-
-              {/* Header */}
-              <div className={`grid items-center px-4 py-2.5 border-b ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#E3ECFC] border-[#E3ECFC]"}`}
-                style={{ gridTemplateColumns: gridTemplate, minWidth: minTableWidth }}>
-                <Checkbox size="small" checked={allChecked} indeterminate={someChecked} onChange={toggleAll}
-                  sx={{ p: 0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked, &.MuiCheckbox-indeterminate": { color: isDark ? "#52525B" : "inherit" } }} />
-                <ColHeader label="Type" isDark={isDark} />
-                <ColHeader label="Subject" isDark={isDark} />
-                <ColHeader label="Due Date" isDark={isDark} />
-                <ColHeader label="Status" isDark={isDark} />
-                <ColHeader label="Priority" isDark={isDark} />
-                <ColHeader label="Contact" isDark={isDark} />
-                <ColHeader label="Related To" isDark={isDark} />
-                <ColHeader label="Task Owner" isDark={isDark} />
-                <div />
-              </div>
-
-              {/* Rows */}
-              <div className={`divide-y ${isDark ? "divide-[#27272A]" : "divide-[#EFF6FF]"}`}>
-                {filtered.map(task => {
-                  const isSel     = selected.includes(task.id);
-                  const rawCfg    = task.status ? STATUS_CFG[task.status] : null;
-                  const statusCfg = isDark && task.status ? STATUS_CFG_DARK[task.status] : rawCfg;
-                  const priCfg    = task.priority ? PRIORITY_CFG[task.priority] : null;
-
-                  return (
-                    <div key={task.id}
-                      className={`grid items-center px-4 py-3 transition-all duration-100 cursor-pointer group ${
-                        isSel
-                          ? isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"
-                          : isDark ? "hover:bg-[#27272A]" : "hover:bg-[#60A5FA]/[0.04]"
-                      }`}
-                      style={{ gridTemplateColumns: gridTemplate, minWidth: minTableWidth }}>
-
-                      <Checkbox size="small" checked={isSel} onChange={() => toggleOne(task.id)} onClick={e => e.stopPropagation()}
-                        sx={{ p: 0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked": { color: isDark ? "#52525B" : "inherit" } }} />
-
-                      {/* Type */}
-                      <p className={`text-[12px] font-semibold truncate pr-2 mb-0 ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>
-                        {task.type || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
-                      </p>
-
-                      {/* Subject */}
-                      <Link href={`/tasks/${task.id}`} className={`font-heading text-[12.5px] font-semibold truncate pr-2 hover:underline ${isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]"}`} onClick={e => e.stopPropagation()}>
-                        {task.subject}
-                      </Link>
-
-                      {/* Due Date */}
-                      <p className={`text-[12px] truncate pr-2 mb-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
-                        {task.dueDate || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
-                      </p>
-
-                      {/* Status */}
-                      <div className="pr-2">
-                        {statusCfg ? (
-                          <span className="inline-flex items-center gap-1.5 text-[10.5px] font-bold px-2 py-[3px] rounded-full"
-                            style={{ backgroundColor: statusCfg.bg, color: statusCfg.text }}>
-                            <span className="w-[5px] h-[5px] rounded-full flex-shrink-0" style={{ backgroundColor: statusCfg.dot }} />
-                            {task.status}
-                          </span>
-                        ) : <span className={`text-[12px] ${isDark ? "text-[#3F3F46]" : "text-slate-200"}`}>—</span>}
-                      </div>
-
-                      {/* Priority */}
-                      <div className="pr-2">
-                        {priCfg ? (
-                          <span className="inline-flex items-center gap-1 text-[10.5px] font-bold px-2 py-[3px] rounded-full"
-                            style={{ backgroundColor: priCfg.bg, color: priCfg.text }}>
-                            {task.priority}
-                          </span>
-                        ) : <span className={`text-[12px] ${isDark ? "text-[#3F3F46]" : "text-slate-200"}`}>—</span>}
-                      </div>
-
-                      {/* Contact */}
-                      <p className={`text-[12px] truncate pr-2 mb-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
-                        {task.contact || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
-                      </p>
-
-                      {/* Related To */}
-                      <p className={`text-[12px] truncate pr-2 mb-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
-                        {task.relatedTo || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
-                      </p>
-
-                      {/* Task Owner */}
-                      <p className={`text-[11px] truncate pr-2 mb-0 ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>{task.taskOwner}</p>
-
-                      {/* Row action */}
-                      <div className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Tooltip title="Actions">
-                          <IconButton size="small" onClick={e => e.stopPropagation()}
-                            sx={{ borderRadius: "6px", p: 0.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#E3ECFC" } }}>
-                            <DotsThreeVertical size={15} color={isDark ? "#52525B" : "#94A3B8"} weight="duotone" />
-                          </IconButton>
-                        </Tooltip>
-                      </div>
+          {/* ══ Table (MUI DataGrid) ══ */}
+          <div className="rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden" style={{ height: 600 }}>
+            <DataGrid<TaskRecord>
+              rows={filtered}
+              columns={gridColumns}
+              getRowId={row => row.id}
+              checkboxSelection
+              disableRowSelectionOnClick
+              disableColumnMenu
+              rowHeight={44}
+              columnHeaderHeight={40}
+              rowSelectionModel={selected}
+              onRowSelectionModelChange={model => setSelected(model as number[])}
+              onRowClick={params => router.push(`/tasks/${params.id}`)}
+              initialState={{ pagination: { paginationModel: { pageSize: 20 } } }}
+              pageSizeOptions={ROWS_PER_PAGE_OPTIONS}
+              slots={{
+                noRowsOverlay: () => (
+                  <div className="py-16 text-center">
+                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 ${isDark ? "bg-[#27272A]" : "bg-[#f9fbff]"}`}>
+                      <CheckCircle size={22} color={isDark ? "#3F3F46" : "#E3ECFC"} weight="duotone" />
                     </div>
-                  );
-                })}
-              </div>
-
-              {/* Empty */}
-              {filtered.length === 0 && (
-                <div className="py-16 text-center">
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 ${isDark ? "bg-[#27272A]" : "bg-[#f9fbff]"}`}>
-                    <CheckCircle size={22} color={isDark ? "#3F3F46" : "#E3ECFC"} weight="duotone" />
+                    <p className={`font-heading text-sm font-semibold ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>No tasks found</p>
+                    <p className={`text-xs mt-1 ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>Try adjusting your search or filter</p>
                   </div>
-                  <p className={`font-heading text-sm font-semibold ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>No tasks found</p>
-                  <p className={`text-xs mt-1 ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>Try adjusting your search or filter</p>
-                </div>
-              )}
-
-            </div>
-
-            {/* Pagination */}
-            <div className={`flex items-center justify-between px-4 py-3 border-t ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
-              <p className={`text-[11px] font-medium ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
-                Showing <span className={`font-bold ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>1–{filtered.length}</span> of{" "}
-                <span className={`font-bold ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>{ALL_TASKS.length}</span> records
-              </p>
-              <div className="flex items-center gap-3">
-                <div className={`flex items-center gap-1.5 text-[11px] ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
-                  <span>Rows per page:</span>
-                  <button className={`flex items-center gap-0.5 font-bold px-2 py-1 rounded-lg text-[11px] ${isDark ? "bg-[#27272A] text-[#A1A1AA] hover:bg-[#3F3F46]" : "bg-[#f9fbff] text-[#1D4ED8] hover:bg-[#E3ECFC]"}`}>
-                    20 <CaretDown size={12} weight="duotone" />
-                  </button>
-                </div>
-                <div className="flex items-center gap-1">
-                  <button className={`w-7 h-7 flex items-center justify-center rounded-lg font-bold text-sm disabled:opacity-30 ${isDark ? "bg-[#27272A] text-[#52525B]" : "bg-[#f9fbff] text-slate-300"}`} disabled>‹</button>
-                  <button className={`w-7 h-7 flex items-center justify-center rounded-lg text-[11px] font-bold shadow-sm ${isDark ? "bg-[#3F3F46] text-[#D4D4D8]" : "bg-[#0C2472] text-white"}`}>1</button>
-                  <button className={`w-7 h-7 flex items-center justify-center rounded-lg font-bold text-sm disabled:opacity-30 ${isDark ? "bg-[#27272A] text-[#52525B]" : "bg-[#f9fbff] text-slate-300"}`} disabled>›</button>
-                </div>
-              </div>
-            </div>
+                ),
+              }}
+              sx={getDataGridSx(isDark)}
+            />
           </div>
 
         </main>
@@ -411,7 +397,7 @@ export default function TasksPage() {
       <NewTaskDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
       <FiltersDrawer
-        open={filtersOpen} onClose={() => setFiltersOpen(false)}
+        anchor={filtersAnchor} onClose={() => setFiltersAnchor(null)}
         filters={activeFilters} onChange={setActiveFilters}
         columns={TASK_FILTER_COLUMNS}
         subtitle="Narrow down tasks by conditions"
@@ -430,7 +416,7 @@ export default function TasksPage() {
             <ListItemIcon sx={{ minWidth: 30 }}>
               <opt.icon size={15} color={opt.color} weight="duotone" />
             </ListItemIcon>
-            <ListItemText primaryTypographyProps={{ fontSize: "0.8rem", fontWeight: 600, color: opt.color === "#EF4444" ? "#EF4444" : "#334155" }}>
+            <ListItemText primaryTypographyProps={{ fontSize: "14px", fontWeight: 500, color: opt.color === "#EF4444" ? "#EF4444" : "#334155" }}>
               {opt.label}
             </ListItemText>
           </MenuItem>
