@@ -318,7 +318,7 @@ function SectionCard({ icon: Icon, title, children, action, id }: {
     <div id={id} className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
       <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
         <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
-          <Icon size={13} color={isDark ? "#52525B" : "#E3ECFC"} weight="duotone" />
+          <Icon size={13} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
         </div>
         <p className={`font-heading text-[11px] font-bold uppercase tracking-[0.12em] flex-1 ${isDark ? "text-[#71717A]" : "text-[#1D4ED8]"}`}>{title}</p>
         {action}
@@ -481,7 +481,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                 <SectionCard icon={UserCircle} title="Contact Information"
                   action={
                     <IconButton size="small"
-                      sx={{ p: 0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&:hover": { color: "inherit", bgcolor: isDark ? "#27272A" : "#EFF6FF" }, borderRadius: "6px" }}>
+                      sx={{ p: 0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&:hover": { color: "#1D4ED8", bgcolor: isDark ? "#27272A" : "#EFF6FF" }, borderRadius: "6px" }}>
                       <DotsThreeVertical size={16} weight="bold" />
                     </IconButton>
                   }>
@@ -531,7 +531,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                           New Task
                         </Button>
                         <IconButton size="small"
-                          sx={{ p: 0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&:hover": { color: "inherit" }, borderRadius: "6px" }}>
+                          sx={{ p: 0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&:hover": { color: "#1D4ED8" }, borderRadius: "6px" }}>
                           <DotsThreeVertical size={16} weight="bold" />
                         </IconButton>
                       </div>
@@ -621,7 +621,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                           New Contact
                         </Button>
                         <IconButton size="small"
-                          sx={{ p: 0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&:hover": { color: "inherit" }, borderRadius: "6px" }}>
+                          sx={{ p: 0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&:hover": { color: "#1D4ED8" }, borderRadius: "6px" }}>
                           <DotsThreeVertical size={16} weight="bold" />
                         </IconButton>
                       </div>
@@ -670,7 +670,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
             <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
                 <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
                   <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
-                    <ClockCounterClockwise size={13} color={isDark ? "#52525B" : "#E3ECFC"} weight="duotone" />
+                    <ClockCounterClockwise size={13} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
                   </div>
                   <p className={`font-heading text-[11px] font-bold uppercase tracking-[0.12em] ${isDark ? "text-[#71717A]" : "text-[#1D4ED8]"}`}>History</p>
                 </div>
@@ -709,7 +709,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                                   </div>
                                   <div className="flex flex-col items-center flex-shrink-0">
                                     <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center z-10 flex-shrink-0 ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
-                                      <PencilSimple size={13} color={isDark ? "#52525B" : "#E3ECFC"} weight="duotone" />
+                                      <PencilSimple size={13} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
                                     </div>
                                     {!isLast && <div className={`w-px flex-1 my-1 min-h-[24px] ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />}
                                   </div>

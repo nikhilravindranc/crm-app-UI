@@ -15,11 +15,11 @@ interface Deal {
 }
 
 const STAGES: { key: DealStage; label: string; headerBg: string; dot: string }[] = [
-  { key: "Qualification",            label: "Qualification",            headerBg: "#0C2472", dot: "#E3ECFC" },
-  { key: "Needs Analysis",           label: "Needs Analysis",           headerBg: "#E3ECFC", dot: "#3B82F6" },
-  { key: "Value Proposition",        label: "Value Proposition",        headerBg: "#3B82F6", dot: "#E3ECFC" },
-  { key: "Identify Decision Makers", label: "Identify Decision Makers", headerBg: "#E3ECFC", dot: "#E3ECFC" },
-  { key: "Proposal/Price Quote",     label: "Proposal / Price Quote",   headerBg: "#0C2472", dot: "#E3ECFC" },
+  { key: "Qualification",            label: "Qualification",            headerBg: "#0C2472", dot: "#94A3B8" },
+  { key: "Needs Analysis",           label: "Needs Analysis",           headerBg: "#2E9E7B", dot: "#2E9E7B" },
+  { key: "Value Proposition",        label: "Value Proposition",        headerBg: "#3B82F6", dot: "#E0883F" },
+  { key: "Identify Decision Makers", label: "Identify Decision Makers", headerBg: "#9D174D", dot: "#DB5E8C" },
+  { key: "Proposal/Price Quote",     label: "Proposal / Price Quote",   headerBg: "#0C2472", dot: "#5B6CB5" },
   { key: "Negotiation/Review",       label: "Negotiation / Review",     headerBg: "#B45309", dot: "#F59E0B" },
   { key: "Closed Won",               label: "Closed Won",               headerBg: "#059669", dot: "#10B981" },
 ];
@@ -69,7 +69,7 @@ export default function DealKanbanView({ deals }: Props) {
                 style={{ borderTop: `2px solid ${col.dot}` }}
               >
                 <p className={`text-[10px] font-medium flex items-center gap-1 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
-                  <CurrencyDollar size={10} color={isDark ? "#3F3F46" : "#E3ECFC"} weight="duotone" />
+                  <CurrencyDollar size={10} color={isDark ? "#3F3F46" : "#94A3B8"} weight="duotone" />
                   Total: <span className={`font-bold ml-0.5 ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>{fmtTotal(total)}</span>
                 </p>
               </div>
@@ -115,13 +115,13 @@ export default function DealKanbanView({ deals }: Props) {
                     <div className="space-y-1 mb-2.5">
                       {deal.account && (
                         <div className={`flex items-center gap-1 text-[10.5px] truncate ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
-                          <Buildings size={10} color={isDark ? "#3F3F46" : "#E2E8F0"} weight="duotone" className="flex-shrink-0" />
+                          <Buildings size={10} color={isDark ? "#3F3F46" : "#94A3B8"} weight="duotone" className="flex-shrink-0" />
                           <span className="truncate">{deal.account}</span>
                         </div>
                       )}
                       {deal.contactName && (
                         <div className={`flex items-center gap-1 text-[10.5px] truncate ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
-                          <User size={10} color={isDark ? "#3F3F46" : "#E2E8F0"} weight="duotone" className="flex-shrink-0" />
+                          <User size={10} color={isDark ? "#3F3F46" : "#94A3B8"} weight="duotone" className="flex-shrink-0" />
                           <span className="truncate">{deal.contactName}</span>
                         </div>
                       )}

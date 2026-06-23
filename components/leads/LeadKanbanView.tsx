@@ -47,8 +47,8 @@ export default function LeadKanbanView({ leads }: Props) {
               style={{ backgroundColor: col.headerBg }}
             >
               <div className="flex items-center gap-2">
-                <span className="font-heading text-[12px] font-bold">{col.label}</span>
-                <span className="text-[10px] font-bold bg-[#f9fbff]/20 px-1.5 py-0.5 rounded-full leading-none">
+                <span className="font-heading text-[13px] font-bold">{col.label}</span>
+                <span className="text-[11px] font-bold bg-[#f9fbff]/20 px-1.5 py-0.5 rounded-full leading-none">
                   {colLeads.length}
                 </span>
               </div>
@@ -66,7 +66,7 @@ export default function LeadKanbanView({ leads }: Props) {
             <div className="flex-1 space-y-2.5 overflow-y-auto" style={{ maxHeight: "calc(100vh - 340px)" }}>
               {colLeads.length === 0 ? (
                 <div
-                  className={`flex flex-col items-center justify-center py-8 rounded-xl border-2 border-dashed text-[11px] text-center ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}
+                  className={`flex flex-col items-center justify-center py-8 rounded-xl border-2 border-dashed text-[12px] text-center ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}
                   style={{ borderColor: col.dot + "60" }}
                 >
                   <Plus size={20} color={col.dot} weight="bold" className="mb-1 opacity-40" />
@@ -91,16 +91,16 @@ export default function LeadKanbanView({ leads }: Props) {
                     <div className="flex items-start gap-2 mb-2">
                       <Avatar
                         src={LEAD_AVATARS[lead.id]}
-                        sx={{ width: 32, height: 32, bgcolor: avCol, fontSize: "0.62rem", fontWeight: 800, flexShrink: 0 }}
+                        sx={{ width: 32, height: 32, bgcolor: avCol, fontSize: "0.72rem", fontWeight: 800, flexShrink: 0 }}
                       >
                         {avInit}
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <p className={`font-heading text-[12px] font-bold truncate leading-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>
+                        <p className={`font-heading text-[13px] font-bold truncate leading-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>
                           {lead.name}
                         </p>
                         {lead.company && (
-                          <p className={`text-[10.5px] truncate flex items-center gap-0.5 mt-0.5 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+                          <p className={`text-[11.5px] truncate flex items-center gap-0.5 mt-0.5 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
                             <Buildings size={10} color={isDark ? "#3F3F46" : "#E2E8F0"} weight="duotone" />
                             {lead.company}
                           </p>
@@ -117,13 +117,13 @@ export default function LeadKanbanView({ leads }: Props) {
                     {/* Contact */}
                     <div className="space-y-1 mb-2.5">
                       {lead.email && (
-                        <div className={`flex items-center gap-1.5 text-[10.5px] truncate ${isDark ? "text-[#71717A]" : "text-inherit"}`}>
+                        <div className={`flex items-center gap-1.5 text-[11.5px] truncate ${isDark ? "text-[#71717A]" : "text-inherit"}`}>
                           <Envelope size={10} color={isDark ? "#3F3F46" : "#E3ECFC"} weight="duotone" className="flex-shrink-0" />
                           <span className="truncate">{lead.email}</span>
                         </div>
                       )}
                       {lead.mobile && (
-                        <div className={`flex items-center gap-1.5 text-[10.5px] font-mono ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
+                        <div className={`flex items-center gap-1.5 text-[11.5px] font-mono ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
                           <Phone size={10} color={isDark ? "#3F3F46" : "#E3ECFC"} weight="duotone" className="flex-shrink-0" />
                           <span>{lead.mobile}</span>
                         </div>
@@ -133,11 +133,11 @@ export default function LeadKanbanView({ leads }: Props) {
                     {/* Footer */}
                     <div className={`flex items-center gap-1.5 pt-2 border-t ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
                       <Tooltip title={lead.owner}>
-                        <Avatar src={OWNER_AVATARS[lead.owner]} sx={{ width: 16, height: 16, bgcolor: owCol, fontSize: "0.45rem", fontWeight: 800 }}>
+                        <Avatar src={OWNER_AVATARS[lead.owner]} sx={{ width: 16, height: 16, bgcolor: owCol, fontSize: "0.55rem", fontWeight: 800 }}>
                           {lead.ownerInitials}
                         </Avatar>
                       </Tooltip>
-                      <span className={`text-[10px] truncate ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{lead.owner}</span>
+                      <span className={`text-[11px] truncate ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{lead.owner}</span>
                     </div>
                   </div>
                 );
@@ -147,7 +147,7 @@ export default function LeadKanbanView({ leads }: Props) {
             {/* Column footer — add lead */}
             <button
               onClick={e => e.stopPropagation()}
-              className={`flex items-center gap-1.5 mt-3 px-2 py-2 rounded-xl border border-dashed text-[11.5px] font-medium w-full transition-all ${
+              className={`flex items-center gap-1.5 mt-3 px-2 py-2 rounded-xl border border-dashed text-[12.5px] font-medium w-full transition-all ${
                 isDark ? "text-[#52525B] hover:bg-[#1C1C1E] hover:text-[#71717A]" : ""
               }`}
               style={{ borderColor: col.dot + "60", color: isDark ? undefined : col.color + "99" }}

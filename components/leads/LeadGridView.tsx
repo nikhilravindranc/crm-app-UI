@@ -44,8 +44,8 @@ export default function LeadGridView({ leads }: Props) {
   if (leads.length === 0) {
     return (
       <div className={`flex flex-col items-center justify-center py-20 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
-        <p className="font-heading text-sm font-semibold">No leads found</p>
-        <p className="text-xs mt-1">Adjust filters or add a new lead</p>
+        <p className="font-heading text-[15px]/[20px] font-semibold">No leads found</p>
+        <p className="text-[13px]/[16px] mt-1">Adjust filters or add a new lead</p>
       </div>
     );
   }
@@ -81,16 +81,16 @@ export default function LeadGridView({ leads }: Props) {
               <div className="flex items-start gap-3 mb-3">
                 <Avatar
                   src={LEAD_AVATARS[lead.id]}
-                  sx={{ width: 44, height: 44, bgcolor: avCol, fontSize: "0.85rem", fontWeight: 800, flexShrink: 0, boxShadow: "0 2px 8px rgba(12,36,114,0.15)" }}
+                  sx={{ width: 44, height: 44, bgcolor: avCol, fontSize: "0.95rem", fontWeight: 800, flexShrink: 0, boxShadow: "0 2px 8px rgba(12,36,114,0.15)" }}
                 >
                   {avInit}
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <p className={`font-heading text-[13.5px] font-bold truncate transition-colors ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+                  <p className={`font-heading text-[14.5px] font-bold truncate transition-colors ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>
                     {lead.name}
                   </p>
                   {lead.company && (
-                    <p className={`text-[11.5px] truncate flex items-center gap-1 mt-0.5 ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>
+                    <p className={`text-[12.5px] truncate flex items-center gap-1 mt-0.5 ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>
                       <Buildings size={11} color={cardT.deep} weight="duotone" />
                       {lead.company}
                     </p>
@@ -105,7 +105,7 @@ export default function LeadGridView({ leads }: Props) {
               </div>
 
               {/* Status badge */}
-              <span className={`inline-flex items-center gap-1.5 text-[10.5px] font-bold px-2.5 py-0.5 rounded-full mb-3 ${isDark ? "bg-white/10 text-[#A1A1AA]" : "bg-[#f9fbff]/70 text-[#0C2472]"}`}>
+              <span className={`inline-flex items-center gap-1.5 text-[11.5px] font-bold px-2.5 py-0.5 rounded-full mb-3 ${isDark ? "bg-white/10 text-[#A1A1AA]" : "bg-[#f9fbff]/70 text-[#0C2472]"}`}>
                 <span className="w-[5px] h-[5px] rounded-full" style={{ backgroundColor: cardT.deep }} />
                 {lead.status}
               </span>
@@ -113,19 +113,19 @@ export default function LeadGridView({ leads }: Props) {
               {/* Contact info */}
               <div className="space-y-1.5">
                 {lead.email ? (
-                  <div className={`flex items-center gap-2 text-[11.5px] ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>
+                  <div className={`flex items-center gap-2 text-[12.5px] ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>
                     <Envelope size={12} color={cardT.deep} weight="duotone" className="flex-shrink-0" />
                     <span className="truncate font-medium">{lead.email}</span>
                   </div>
                 ) : null}
                 {lead.mobile ? (
-                  <div className={`flex items-center gap-2 text-[11.5px] ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>
+                  <div className={`flex items-center gap-2 text-[12.5px] ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>
                     <Phone size={12} color={cardT.deep} weight="duotone" className="flex-shrink-0" />
                     <span className="font-mono">{lead.mobile}</span>
                   </div>
                 ) : null}
                 {!lead.email && !lead.mobile && (
-                  <p className={`text-[11px] italic ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>No contact info</p>
+                  <p className={`text-[12px] italic ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>No contact info</p>
                 )}
               </div>
             </div>
@@ -138,20 +138,20 @@ export default function LeadGridView({ leads }: Props) {
             }`}>
               <Tooltip title={lead.owner}>
                 <div className="flex items-center gap-1.5">
-                  <Avatar src={OWNER_AVATARS[lead.owner]} sx={{ width: 20, height: 20, bgcolor: owCol, fontSize: "0.48rem", fontWeight: 800 }}>
+                  <Avatar src={OWNER_AVATARS[lead.owner]} sx={{ width: 20, height: 20, bgcolor: owCol, fontSize: "0.58rem", fontWeight: 800 }}>
                     {lead.ownerInitials}
                   </Avatar>
-                  <span className={`text-[11px] font-medium truncate max-w-[80px] ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>{lead.owner}</span>
+                  <span className={`text-[12px] font-medium truncate max-w-[80px] ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>{lead.owner}</span>
                 </div>
               </Tooltip>
               <div className="flex items-center gap-1.5">
                 {lead.leadSource && (
-                  <span className={`flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full ${isDark ? "bg-white/10 text-[#71717A]" : "bg-[#f9fbff]/70 text-slate-600"}`}>
+                  <span className={`flex items-center gap-0.5 text-[11px] px-1.5 py-0.5 rounded-full ${isDark ? "bg-white/10 text-[#71717A]" : "bg-[#f9fbff]/70 text-slate-600"}`}>
                     <TrendUp size={10} color={cardT.deep} weight="duotone" />{lead.leadSource}
                   </span>
                 )}
                 {lead.rating && (
-                  <span className={`flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full ${isDark ? "bg-white/10 text-[#71717A]" : "bg-[#f9fbff]/70 text-slate-600"}`}>
+                  <span className={`flex items-center gap-0.5 text-[11px] px-1.5 py-0.5 rounded-full ${isDark ? "bg-white/10 text-[#71717A]" : "bg-[#f9fbff]/70 text-slate-600"}`}>
                     <Star size={10} color="#F59E0B" weight="duotone" />{lead.rating}
                   </span>
                 )}

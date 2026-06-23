@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 export default {
+  darkMode: "class",
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -34,7 +35,7 @@ export default {
         "kpi-label":   ["13px", { lineHeight: "18px", fontWeight: "500" }],
         "kpi-trend":   ["12px", { lineHeight: "16px", fontWeight: "500" }],
         // Navigation
-        "nav-item":        ["14px", { lineHeight: "20px", fontWeight: "500" }],
+        "nav-item":        ["16px", { lineHeight: "22px", fontWeight: "500" }],
         "nav-group-label": ["12px", { lineHeight: "16px", fontWeight: "600", letterSpacing: "0.04em" }],
         // Tables
         "table-header":         ["13px", { lineHeight: "18px", fontWeight: "600" }],

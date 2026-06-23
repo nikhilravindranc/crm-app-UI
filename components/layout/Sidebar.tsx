@@ -202,7 +202,7 @@ export default function Sidebar() {
                 <span className={`absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-400 border-2 ${isDark ? "border-[#18181B]" : "border-white"}`} />
               </div>
               <div className="min-w-0 flex-1">
-                <p className={`m-0 text-label truncate ${isDark ? "text-[#FFFFFF]" : "text-[#0C2472]"}`}>PM SDL</p>
+                <p className={`m-0 text-[16px] leading-[22px] font-medium truncate ${isDark ? "text-[#FFFFFF]" : "text-[#0C2472]"}`}>PM SDL</p>
                 <p className="m-0 text-caption text-slate-400 truncate">Admin · dmops@socialdnalabs.com</p>
               </div>
             </div>

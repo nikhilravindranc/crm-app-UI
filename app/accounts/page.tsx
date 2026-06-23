@@ -57,11 +57,11 @@ const ALL_ACCOUNTS: Account[] = [
 //  Account type config
 // ─────────────────────────────────────────────
 const TYPE_CFG: Record<string, { bg: string; text: string; dot: string; bgDark: string; textDark: string }> = {
-  "Individual": { bg: "#EFF6FF", text: "#0C2472", dot: "#E3ECFC", bgDark: "rgba(96, 165, 250, 0.15)", textDark: "#E3ECFC" },
+  "Individual": { bg: "#EFF6FF", text: "#0C2472", dot: "#94A3B8", bgDark: "rgba(96, 165, 250, 0.15)", textDark: "#60A5FA" },
   "Customer":   { bg: "#DCFCE7", text: "#166534", dot: "#10B981", bgDark: "rgba(16, 185, 129, 0.15)", textDark: "#10B981" },
   "Partner":    { bg: "#E3ECFC", text: "#0C2472", dot: "#3B82F6", bgDark: "rgba(52, 211, 153, 0.15)", textDark: "#34D399" },
   "Prospect":   { bg: "#FEF3C7", text: "#92400E", dot: "#F59E0B", bgDark: "rgba(251, 191, 36, 0.15)", textDark: "#FBBF24" },
-  "Vendor":     { bg: "#E3ECFC", text: "#0C2472", dot: "#E3ECFC", bgDark: "rgba(244, 114, 182, 0.15)", textDark: "#F472B6" },
+  "Vendor":     { bg: "#E3ECFC", text: "#0C2472", dot: "#DB5E8C", bgDark: "rgba(244, 114, 182, 0.15)", textDark: "#F472B6" },
   "Analyst":    { bg: "#EFF6FF", text: "#475569", dot: "#94A3B8", bgDark: "rgba(167, 139, 250, 0.15)", textDark: "#A78BFA" },
   "Competitor": { bg: "#FEF2F2", text: "#991B1B", dot: "#EF4444", bgDark: "rgba(244, 63, 94, 0.15)", textDark: "#F43F5E" },
 };
@@ -155,7 +155,7 @@ export default function AccountsPage() {
       renderCell: (params) => (
         <div className="text-table-cell text-slate-500 font-mono truncate">
           {params.row.phone
-            ? <span className="flex items-center gap-1"><Phone size={11} color="#E3ECFC" weight="duotone" />{params.row.phone}</span>
+            ? <span className="flex items-center gap-1"><Phone size={11} color="#94A3B8" weight="duotone" />{params.row.phone}</span>
             : <span className="text-slate-200">—</span>}
         </div>
       ),
@@ -208,7 +208,7 @@ export default function AccountsPage() {
       renderCell: () => (
         <div className="flex justify-end w-full opacity-0 group-hover:opacity-100 transition-opacity">
           <Tooltip title="Actions">
-            <IconButton size="small" onClick={e => e.stopPropagation()} sx={{ borderRadius: "6px", p: 0.5, "&:hover": { bgcolor: "#E3ECFC" } }}>
+            <IconButton size="small" onClick={e => e.stopPropagation()} sx={{ borderRadius: "6px", p: 0.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#E3ECFC" } }}>
               <DotsThreeVertical size={15} color="#94A3B8" weight="duotone" />
             </IconButton>
           </Tooltip>
@@ -310,7 +310,7 @@ export default function AccountsPage() {
                 color: isDark ? "#737373" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
                 borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "13px",
-                "&:hover": { borderColor: "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
+                "&:hover": { borderColor: isDark ? "#3F3F46" : "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
               }}>
               Columns
             </Button>
@@ -324,28 +324,28 @@ export default function AccountsPage() {
                 color: isDark ? "#737373" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
                 borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "13px",
-                "&:hover": { borderColor: "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
+                "&:hover": { borderColor: isDark ? "#3F3F46" : "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
               }}>
               Sort{activeSorts.length > 0 ? ` (${activeSorts.length})` : ""}
             </Button>
 
-            <span className="ml-auto text-caption text-slate-400 bg-[#f9fbff] px-3 py-1.5 rounded-lg">
+            <span className={`ml-auto text-caption px-3 py-1.5 rounded-lg ${isDark ? "text-[#71717A] bg-[#18181B]" : "text-slate-400 bg-[#f9fbff]"}`}>
               {filtered.length} of {ALL_ACCOUNTS.length} records
             </span>
           </div>
 
           {/* ══ Bulk action bar ══ */}
           {selected.length > 0 && (
-            <div className="flex items-center gap-3 bg-[#0C2472] text-white px-4 py-2.5 rounded-xl animate-slide-up shadow-lg shadow-[#0C2472]/20">
+            <div className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border animate-slide-up shadow-sm ${isDark ? "bg-[#18181B] border-[#27272A]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
               <div className="flex items-center gap-2">
-                <span className="w-5 h-5 rounded-md bg-[#1D4ED8] flex items-center justify-center text-badge-text">{selected.length}</span>
-                <span className="text-button-sm">selected</span>
+                <span className="w-5 h-5 rounded-md bg-[#1D4ED8] text-white flex items-center justify-center text-badge-text">{selected.length}</span>
+                <span className={`text-button-sm font-semibold ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>selected</span>
               </div>
-              <div className="w-px h-4 bg-[#f9fbff]/15" />
-              <button className="text-button-sm text-inherit hover:text-white transition-colors">Assign Owner</button>
-              <button className="text-button-sm text-inherit hover:text-white transition-colors">Update Type</button>
-              <button onClick={() => setSelected([])} className="ml-auto text-button-sm text-white/50 hover:text-white transition-colors">Clear</button>
-              <button className="flex items-center gap-1.5 text-button-sm text-red-300 hover:text-red-200 transition-colors">
+              <div className={`w-px h-4 ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
+              <button className={`text-button-sm font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Assign Owner</button>
+              <button className={`text-button-sm font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Update Type</button>
+              <button onClick={() => setSelected([])} className={`ml-auto text-button-sm font-medium transition-colors ${isDark ? "text-[#52525B] hover:text-[#A1A1AA]" : "text-slate-400 hover:text-slate-600"}`}>Clear</button>
+              <button className={`flex items-center gap-1.5 text-button-sm font-medium transition-colors ${isDark ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"}`}>
                 <Trash size={14} weight="duotone" /> Delete
               </button>
             </div>
@@ -380,7 +380,7 @@ export default function AccountsPage() {
                   noRowsOverlay: () => (
                     <div className="py-16 text-center">
                       <div className="w-12 h-12 rounded-2xl bg-[#f9fbff] flex items-center justify-center mx-auto mb-3">
-                        <Buildings size={22} color="#E3ECFC" weight="duotone" />
+                        <Buildings size={22} color="#94A3B8" weight="duotone" />
                       </div>
                       <p className="font-heading text-slate-500 text-sm font-semibold">No accounts found</p>
                       <p className="text-slate-300 text-xs mt-1">Try adjusting your search or filters</p>

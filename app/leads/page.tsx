@@ -117,7 +117,7 @@ const ROWS_PER_PAGE_OPTIONS = [10, 20, 50, 100];
 
 function ColHeader({ label }: { label: string }) {
   return (
-    <div className="font-heading text-table-header text-[#737373] uppercase tracking-wide select-none">
+    <div className="font-heading text-[14px]/[18px] font-semibold text-[#737373] uppercase tracking-wide select-none">
       {label}
     </div>
   );
@@ -256,8 +256,8 @@ export default function LeadsPage() {
         const lead = params.row;
         return (
           <div className="flex items-center gap-2.5 min-w-0">
-            <Avatar src={LEAD_AVATARS[lead.id]} sx={{ width: 28, height: 28, bgcolor: avatarColor(lead.name), fontSize: "0.6rem", fontWeight: 800, flexShrink: 0 }}>{initials(lead.name)}</Avatar>
-            <p className={`m-0 font-heading text-table-cell font-medium truncate ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}>{lead.name}</p>
+            <Avatar src={LEAD_AVATARS[lead.id]} sx={{ width: 28, height: 28, bgcolor: avatarColor(lead.name), fontSize: "0.7rem", fontWeight: 800, flexShrink: 0 }}>{initials(lead.name)}</Avatar>
+            <p className={`m-0 font-heading text-[15px]/[20px] font-medium truncate ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}>{lead.name}</p>
           </div>
         );
       },
@@ -266,7 +266,7 @@ export default function LeadsPage() {
       field: "company", headerName: "Company", flex: 1.3, minWidth: 120, sortable: false,
       renderHeader: () => <ColHeader label="Company" />,
       renderCell: (params) => (
-        <div className={`text-table-cell truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
+        <div className={`text-[15px]/[20px] truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
           {params.row.company || <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>}
         </div>
       ),
@@ -276,7 +276,7 @@ export default function LeadsPage() {
       renderHeader: () => <ColHeader label="Email" />,
       renderCell: (params) => (
         <Tooltip title={params.row.email} placement="top">
-          <div className="text-table-cell truncate w-full">
+          <div className="text-[15px]/[20px] truncate w-full">
             {params.row.email
               ? <span className={`hover:underline cursor-pointer ${isDark ? "text-[#D4D4D8]" : "text-inherit"}`}>{params.row.email}</span>
               : <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>}
@@ -288,7 +288,7 @@ export default function LeadsPage() {
       field: "mobile", headerName: "Mobile", flex: 1.2, minWidth: 120, sortable: false,
       renderHeader: () => <ColHeader label="Mobile" />,
       renderCell: (params) => (
-        <div className={`text-table-cell font-mono truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
+        <div className={`text-[15px]/[20px] font-mono truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
           {params.row.mobile
             ? <span className="flex items-center gap-1"><Phone size={11} color="#94A3B8" weight="duotone" />{params.row.mobile}</span>
             : <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>}
@@ -301,7 +301,7 @@ export default function LeadsPage() {
       renderCell: (params) => {
         const cfg = STATUS_CFG[params.row.status];
         return (
-          <span className="self-center inline-flex items-center gap-1.5 text-badge-text px-2 py-[3px] rounded-full leading-none"
+          <span className="self-center inline-flex items-center gap-1.5 text-[13px] font-medium px-2 py-[3px] rounded-full leading-none"
             style={{ backgroundColor: isDark ? cfg.bgDark : cfg.bg, color: isDark ? cfg.textDark : cfg.text }}>
             <span className="w-[5px] h-[5px] rounded-full flex-shrink-0" style={{ backgroundColor: isDark ? cfg.textDark : cfg.dot }} />
             {params.row.status}
@@ -317,8 +317,8 @@ export default function LeadsPage() {
         return (
           <Tooltip title={lead.owner} placement="top">
             <div className="flex items-center gap-1.5 min-w-0">
-              <Avatar src={OWNER_AVATARS[lead.owner]} sx={{ width: 20, height: 20, bgcolor: avatarColor(lead.owner), fontSize: "0.48rem", fontWeight: 800, flexShrink: 0 }}>{lead.ownerInitials}</Avatar>
-              <span className={`text-table-cell-secondary truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>{lead.owner}</span>
+              <Avatar src={OWNER_AVATARS[lead.owner]} sx={{ width: 20, height: 20, bgcolor: avatarColor(lead.owner), fontSize: "0.58rem", fontWeight: 800, flexShrink: 0 }}>{lead.ownerInitials}</Avatar>
+              <span className={`text-[13px]/[16px] truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>{lead.owner}</span>
             </div>
           </Tooltip>
         );
@@ -327,7 +327,7 @@ export default function LeadsPage() {
     creation: {
       field: "creation", headerName: "Created", flex: 1, minWidth: 100, sortable: false,
       renderHeader: () => <ColHeader label="Created" />,
-      renderCell: (params) => <div className={`text-table-cell-secondary truncate ${isDark ? "text-[#737373]" : "text-slate-400"}`}>{params.row.created}</div>,
+      renderCell: (params) => <div className={`text-[13px]/[16px] truncate ${isDark ? "text-[#737373]" : "text-slate-400"}`}>{params.row.created}</div>,
     },
   };
 
@@ -360,14 +360,14 @@ export default function LeadsPage() {
           {/* ══ Page header ══ */}
           <div className="flex items-start justify-between">
             <div>
-              <div className="flex items-center gap-1 text-caption text-slate-400 mb-1">
+              <div className="flex items-center gap-1 text-[13px]/[16px] text-slate-400 mb-1">
                 <House size={12} weight="duotone" />
                 <CaretRight size={11} weight="duotone" />
                 <Link href="/leads" className={`transition-colors font-medium ${isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#1D4ED8]"}`}>Leads</Link>
               </div>
               <div className="flex items-center gap-2.5">
-                <h1 className="font-heading text-h1 text-slate-900 tracking-tight m-0">Leads</h1>
-                <span className={`text-badge-text text-slate-400 border px-2.5 py-1 rounded-full shadow-sm flex items-center ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+                <h1 className="font-heading text-[22px]/[28px] font-semibold text-slate-900 tracking-tight m-0">Leads</h1>
+                <span className={`text-[13px]/[16px] font-medium text-slate-400 border px-2.5 py-1 rounded-full shadow-sm flex items-center ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
                   {leads.length} total
                 </span>
               </div>
@@ -382,7 +382,7 @@ export default function LeadsPage() {
                   { k:"kanban", Icon:Kanban,   label:"Kanban" },
                 ].map(({ k, Icon, label }) => (
                   <button key={k} onClick={() => setView(k as typeof view)}
-                    className={`flex items-center gap-1.5 px-2.5 py-[7px] rounded-lg text-button-sm transition-all ${
+                    className={`flex items-center gap-1.5 px-2.5 py-[7px] rounded-lg text-[14px]/[18px] font-medium transition-all ${
                       view === k
                         ? isDark ? "bg-[#18181B] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]"
                         : isDark ? "text-[#737373] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "bg-[#f9fbff] text-slate-400 hover:bg-[#E3ECFC]"
@@ -394,7 +394,7 @@ export default function LeadsPage() {
 
               <Button variant="contained" startIcon={<Plus size={16} weight="bold" />}
                 onClick={() => setDrawerOpen(true)}
-                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius:"9px", textTransform:"none", fontWeight:500, fontSize:"14px", px:2, py:0.85, boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", "&:hover":{ bgcolor: isDark ? "#3F3F46" : "#2563EB", boxShadow: isDark ? "none" : "0 2px 14px 0 #60A5FA55" }, "&:active":{ bgcolor: isDark ? "#52525B" : "#0C2472" } }}>
+                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius:"9px", textTransform:"none", fontWeight:500, fontSize:"15px", px:2, py:0.85, boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", "&:hover":{ bgcolor: isDark ? "#3F3F46" : "#2563EB", boxShadow: isDark ? "none" : "0 2px 14px 0 #60A5FA55" }, "&:active":{ bgcolor: isDark ? "#52525B" : "#0C2472" } }}>
                 New Lead
               </Button>
             </div>
@@ -408,12 +408,12 @@ export default function LeadsPage() {
               if (key !== "All" && cnt === 0) return null;
               return (
                 <button key={key} onClick={() => { setActiveTab(key); resetToFirstPage(); }}
-                  className={`flex items-center gap-1.5 px-3 py-[7px] rounded-xl text-button-sm whitespace-nowrap transition-all border ${
+                  className={`flex items-center gap-1.5 px-3 py-[7px] rounded-xl text-[14px]/[18px] font-medium whitespace-nowrap transition-all border ${
                     active ? isDark ? "bg-[#18181B] text-white shadow-sm shadow-[#27272A]/10 border-[#27272A]" : "bg-[#1D4ED8] text-white shadow-sm shadow-[#1D4ED8]/25 border-[#1D4ED8]"
                            : isDark ? "bg-[#0A0A0A] text-[#A1A1AA] border-[#27272A] hover:bg-[#27272A] hover:text-[#FFFFFF]" : "bg-[#f9fbff] text-[#0C2472] border-[#E3ECFC] hover:bg-[#E3ECFC]"
                   }`}>
                   {label}
-                  <span className={`text-badge-text px-1.5 py-0.5 rounded-full leading-none ${
+                  <span className={`text-[13px]/[16px] font-medium px-1.5 py-0.5 rounded-full leading-none ${
                     active ? "bg-white/20 text-white" : "bg-[#1D4ED8]/10 text-[#0C2472]"
                   }`}>{cnt}</span>
                 </button>
@@ -428,16 +428,16 @@ export default function LeadsPage() {
               <MagnifyingGlass size={15} color="#94A3B8" weight="duotone" />
               <InputBase placeholder="Search by name, company, email…" value={search}
                 onChange={e => { setSearch(e.target.value); resetToFirstPage(); }}
-                sx={{ flex:1, fontSize:"0.76rem", color: isDark ? "#D4D4D8" : "#334155", "& input::placeholder":{ color:"#94A3B8", opacity:1 } }}
+                sx={{ flex:1, fontSize:"0.86rem", color: isDark ? "#D4D4D8" : "#334155", "& input::placeholder":{ color:"#94A3B8", opacity:1 } }}
               />
-              {search && <button onClick={() => { setSearch(""); resetToFirstPage(); }} className="text-slate-300 hover:text-slate-500 transition-colors text-sm">✕</button>}
+              {search && <button onClick={() => { setSearch(""); resetToFirstPage(); }} className="text-slate-300 hover:text-slate-500 transition-colors text-[15px]/[20px]">✕</button>}
             </div>
 
             {/* Filters button */}
             <Button variant="outlined" size="small"
               startIcon={
                 activeFilters.length > 0
-                  ? <Badge badgeContent={activeFilters.length} color="primary" sx={{ "& .MuiBadge-badge": { fontSize: "0.55rem", height: 14, minWidth: 14 } }}>
+                  ? <Badge badgeContent={activeFilters.length} color="primary" sx={{ "& .MuiBadge-badge": { fontSize: "0.65rem", height: 14, minWidth: 14 } }}>
                       <FunnelSimple size={14} weight="duotone" />
                     </Badge>
                   : <FunnelSimple size={14} weight="duotone" />
@@ -447,7 +447,7 @@ export default function LeadsPage() {
                 borderColor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#27272A" : "#E3ECFC",
                 color: activeFilters.length > 0 ? "#fff" : isDark ? "#737373" : "#0C2472",
                 bgcolor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#0F0F0F" : "#E3ECFC",
-                borderRadius:"9px", textTransform:"none", fontWeight:500, fontSize:"13px",
+                borderRadius:"9px", textTransform:"none", fontWeight:500, fontSize:"14px",
                 "&:hover":{
                   borderColor: activeFilters.length > 0 ? "#1640B8" : "#1D4ED8",
                   color: activeFilters.length > 0 ? "#fff" : "#0C2472",
@@ -465,7 +465,7 @@ export default function LeadsPage() {
                 borderColor: isDark ? "#27272A" : "#E3ECFC",
                 color: isDark ? "#737373" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
-                borderRadius:"9px", textTransform:"none", fontWeight:500, fontSize:"13px",
+                borderRadius:"9px", textTransform:"none", fontWeight:500, fontSize:"14px",
                 "&:hover":{ borderColor:"#1D4ED8", color:"#0C2472", bgcolor: isDark ? "#0A0A0A" : "#DCE6FB" },
               }}>
               Columns
@@ -480,33 +480,33 @@ export default function LeadsPage() {
                 borderColor: isDark ? "#27272A" : "#E3ECFC",
                 color: isDark ? "#737373" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
-                borderRadius:"9px", textTransform:"none", fontWeight:500, fontSize:"13px",
+                borderRadius:"9px", textTransform:"none", fontWeight:500, fontSize:"14px",
                 "&:hover":{ borderColor:"#1D4ED8", color:"#0C2472", bgcolor: isDark ? "#0A0A0A" : "#DCE6FB" },
               }}>
               Sort{activeSorts.length > 0 ? ` (${activeSorts.length})` : ""}
             </Button>
 
-            <span className="ml-auto text-caption text-slate-400 bg-[#f9fbff] px-3 py-1.5 rounded-lg">
+            <span className="ml-auto text-[13px]/[16px] text-slate-400 bg-[#f9fbff] px-3 py-1.5 rounded-lg">
               {sorted.length} of {leads.length} records
             </span>
           </div>
 
           {/* ══ Bulk action bar ══ */}
           {selected.length > 0 && (
-            <div className="flex items-center gap-3 bg-[#0C2472] text-white px-4 py-2.5 rounded-xl animate-slide-up shadow-lg shadow-[#0C2472]/20">
+            <div className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border animate-slide-up shadow-sm ${isDark ? "bg-[#18181B] border-[#27272A]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
               <div className="flex items-center gap-2">
-                <span className="w-5 h-5 rounded-md bg-[#1D4ED8] flex items-center justify-center text-badge-text">{selected.length}</span>
-                <span className="text-button-sm">selected</span>
+                <span className="w-5 h-5 rounded-md bg-[#1D4ED8] text-white flex items-center justify-center text-[13px]/[16px] font-medium">{selected.length}</span>
+                <span className={`text-[14px]/[18px] font-semibold ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>selected</span>
               </div>
-              <div className="w-px h-4 bg-white/15" />
-              <button onClick={e => setOwnerMenuAnchor(e.currentTarget)} className="flex items-center gap-1.5 text-button-sm text-inherit hover:text-white transition-colors">
+              <div className={`w-px h-4 ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
+              <button onClick={e => setOwnerMenuAnchor(e.currentTarget)} className={`flex items-center gap-1.5 text-[14px]/[18px] font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>
                 <UserCheck size={14} weight="duotone" /> Assign Owner
               </button>
-              <button onClick={e => setStatusMenuAnchor(e.currentTarget)} className="flex items-center gap-1.5 text-button-sm text-inherit hover:text-white transition-colors">
+              <button onClick={e => setStatusMenuAnchor(e.currentTarget)} className={`flex items-center gap-1.5 text-[14px]/[18px] font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>
                 <NotePencil size={14} weight="duotone" /> Update Status
               </button>
-              <button onClick={() => setSelected([])} className="ml-auto text-button-sm text-white/50 hover:text-white transition-colors">Clear</button>
-              <button onClick={deleteSelected} className="flex items-center gap-1.5 text-button-sm text-red-300 hover:text-red-200 transition-colors">
+              <button onClick={() => setSelected([])} className={`ml-auto text-[14px]/[18px] font-medium transition-colors ${isDark ? "text-[#52525B] hover:text-[#A1A1AA]" : "text-slate-400 hover:text-slate-600"}`}>Clear</button>
+              <button onClick={deleteSelected} className={`flex items-center gap-1.5 text-[14px]/[18px] font-medium transition-colors ${isDark ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"}`}>
                 <Trash size={14} weight="duotone" /> Delete
               </button>
             </div>
@@ -515,15 +515,15 @@ export default function LeadsPage() {
           {/* ══ Bulk action menus ══ */}
           <Menu anchorEl={ownerMenuAnchor} open={Boolean(ownerMenuAnchor)} onClose={() => setOwnerMenuAnchor(null)}>
             {OWNERS.map(o => (
-              <MenuItem key={o.name} onClick={() => assignOwner(o)} sx={{ fontSize: "0.8rem", gap: 1 }}>
-                <Avatar sx={{ width: 20, height: 20, bgcolor: avatarColor(o.name), fontSize: "0.5rem", fontWeight: 800 }}>{o.initials}</Avatar>
+              <MenuItem key={o.name} onClick={() => assignOwner(o)} sx={{ fontSize: "0.9rem", gap: 1 }}>
+                <Avatar sx={{ width: 20, height: 20, bgcolor: avatarColor(o.name), fontSize: "0.6rem", fontWeight: 800 }}>{o.initials}</Avatar>
                 {o.name}
               </MenuItem>
             ))}
           </Menu>
           <Menu anchorEl={statusMenuAnchor} open={Boolean(statusMenuAnchor)} onClose={() => setStatusMenuAnchor(null)}>
             {TABS.filter(t => t.key !== "All").map(t => (
-              <MenuItem key={t.key} onClick={() => updateStatus(t.key as LeadStatus)} sx={{ fontSize: "0.8rem" }}>
+              <MenuItem key={t.key} onClick={() => updateStatus(t.key as LeadStatus)} sx={{ fontSize: "0.9rem" }}>
                 {t.label}
               </MenuItem>
             ))}
@@ -559,8 +559,8 @@ export default function LeadsPage() {
                       <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
                         <MagnifyingGlass size={22} color={isDark ? "#737373" : "#94A3B8"} weight="duotone" />
                       </div>
-                      <p className={`font-heading text-sm font-semibold ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>No leads found</p>
-                      <p className={`text-xs mt-1 ${isDark ? "text-[#52525B]" : "text-slate-300"}`}>Try adjusting your search, filters or tab</p>
+                      <p className={`font-heading text-[15px]/[20px] font-semibold ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>No leads found</p>
+                      <p className={`text-[13px]/[16px] mt-1 ${isDark ? "text-[#52525B]" : "text-slate-300"}`}>Try adjusting your search, filters or tab</p>
                     </div>
                   ),
                 }}
@@ -571,13 +571,13 @@ export default function LeadsPage() {
 
           {/* ══ Row action menu ══ */}
           <Menu anchorEl={rowMenuAnchor} open={Boolean(rowMenuAnchor)} onClose={() => setRowMenuAnchor(null)}>
-            <MenuItem onClick={() => { if (rowMenuLeadId) router.push(`/leads/${rowMenuLeadId}`); setRowMenuAnchor(null); }} sx={{ fontSize: "0.8rem", gap: 1 }}>
+            <MenuItem onClick={() => { if (rowMenuLeadId) router.push(`/leads/${rowMenuLeadId}`); setRowMenuAnchor(null); }} sx={{ fontSize: "0.9rem", gap: 1 }}>
               <Eye size={14} weight="duotone" /> View
             </MenuItem>
-            <MenuItem onClick={() => { if (rowMenuLeadId) router.push(`/leads/${rowMenuLeadId}`); setRowMenuAnchor(null); }} sx={{ fontSize: "0.8rem", gap: 1 }}>
+            <MenuItem onClick={() => { if (rowMenuLeadId) router.push(`/leads/${rowMenuLeadId}`); setRowMenuAnchor(null); }} sx={{ fontSize: "0.9rem", gap: 1 }}>
               <PencilSimple size={14} weight="duotone" /> Edit
             </MenuItem>
-            <MenuItem onClick={() => rowMenuLeadId && deleteLead(rowMenuLeadId)} sx={{ fontSize: "0.8rem", gap: 1, color: "#EF4444" }}>
+            <MenuItem onClick={() => rowMenuLeadId && deleteLead(rowMenuLeadId)} sx={{ fontSize: "0.9rem", gap: 1, color: "#EF4444" }}>
               <Trash size={14} weight="duotone" /> Delete
             </MenuItem>
           </Menu>

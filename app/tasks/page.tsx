@@ -338,23 +338,23 @@ export default function TasksPage() {
               Filters{activeFilters.length > 0 ? ` (${activeFilters.length})` : ""}
             </Button>
 
-            <span className="ml-auto text-caption text-slate-400 bg-[#f9fbff] px-3 py-1.5 rounded-lg">
+            <span className={`ml-auto text-caption px-3 py-1.5 rounded-lg ${isDark ? "text-[#71717A] bg-[#18181B]" : "text-slate-400 bg-[#f9fbff]"}`}>
               {filtered.length} of {ALL_TASKS.length} records
             </span>
           </div>
 
           {/* ══ Bulk action bar ══ */}
           {selected.length > 0 && (
-            <div className="flex items-center gap-3 bg-[#0C2472] text-white px-4 py-2.5 rounded-xl shadow-lg shadow-[#0C2472]/20">
+            <div className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border shadow-sm ${isDark ? "bg-[#18181B] border-[#27272A]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
               <div className="flex items-center gap-2">
-                <span className="w-5 h-5 rounded-md bg-[#1D4ED8] flex items-center justify-center text-badge-text">{selected.length}</span>
-                <span className="text-button-sm">selected</span>
+                <span className="w-5 h-5 rounded-md bg-[#1D4ED8] text-white flex items-center justify-center text-badge-text">{selected.length}</span>
+                <span className={`text-button-sm font-semibold ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>selected</span>
               </div>
-              <div className="w-px h-4 bg-white/15" />
-              <button className="text-button-sm text-inherit hover:text-white transition-colors">Update Status</button>
-              <button className="text-button-sm text-inherit hover:text-white transition-colors">Assign Owner</button>
-              <button onClick={() => setSelected([])} className="ml-auto text-button-sm text-white/50 hover:text-white transition-colors">Clear</button>
-              <button className="flex items-center gap-1.5 text-button-sm text-red-300 hover:text-red-200 transition-colors">
+              <div className={`w-px h-4 ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
+              <button className={`text-button-sm font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Update Status</button>
+              <button className={`text-button-sm font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Assign Owner</button>
+              <button onClick={() => setSelected([])} className={`ml-auto text-button-sm font-medium transition-colors ${isDark ? "text-[#52525B] hover:text-[#A1A1AA]" : "text-slate-400 hover:text-slate-600"}`}>Clear</button>
+              <button className={`flex items-center gap-1.5 text-button-sm font-medium transition-colors ${isDark ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"}`}>
                 <Trash size={14} weight="duotone" /> Delete
               </button>
             </div>
@@ -380,7 +380,7 @@ export default function TasksPage() {
                 noRowsOverlay: () => (
                   <div className="py-16 text-center">
                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 ${isDark ? "bg-[#27272A]" : "bg-[#f9fbff]"}`}>
-                      <CheckCircle size={22} color={isDark ? "#3F3F46" : "#E3ECFC"} weight="duotone" />
+                      <CheckCircle size={22} color={isDark ? "#3F3F46" : "#94A3B8"} weight="duotone" />
                     </div>
                     <p className={`font-heading text-sm font-semibold ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>No tasks found</p>
                     <p className={`text-xs mt-1 ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>Try adjusting your search or filter</p>
@@ -405,18 +405,18 @@ export default function TasksPage() {
 
       {/* ══ More menu ══ */}
       <Menu anchorEl={moreAnchor} open={Boolean(moreAnchor)} onClose={() => setMoreAnchor(null)}
-        PaperProps={{ sx: { borderRadius: "12px", border: "1px solid #E3ECFC", boxShadow: "0 8px 32px rgba(12,36,114,0.10)", minWidth: 160 } }}>
+        PaperProps={{ sx: { borderRadius: "12px", border: `1px solid ${isDark ? "#27272A" : "#E3ECFC"}`, boxShadow: isDark ? "0 8px 32px rgba(0,0,0,0.4)" : "0 8px 32px rgba(12,36,114,0.10)", minWidth: 160 } }}>
         {[
-          { label: "Export",     icon: Copy,          color: "#334155" },
-          { label: "Import",     icon: PencilSimple,  color: "#334155" },
+          { label: "Export",     icon: Copy,          color: isDark ? "#D4D4D8" : "#334155" },
+          { label: "Import",     icon: PencilSimple,  color: isDark ? "#D4D4D8" : "#334155" },
           { label: "Delete All", icon: Trash,         color: "#EF4444" },
         ].map(opt => (
           <MenuItem key={opt.label} onClick={() => setMoreAnchor(null)}
-            sx={{ mx: 0.5, borderRadius: "8px", py: 1, "&:hover": { bgcolor: "#EFF6FF" } }}>
+            sx={{ mx: 0.5, borderRadius: "8px", py: 1, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
             <ListItemIcon sx={{ minWidth: 30 }}>
               <opt.icon size={15} color={opt.color} weight="duotone" />
             </ListItemIcon>
-            <ListItemText primaryTypographyProps={{ fontSize: "14px", fontWeight: 500, color: opt.color === "#EF4444" ? "#EF4444" : "#334155" }}>
+            <ListItemText primaryTypographyProps={{ fontSize: "14px", fontWeight: 500, color: opt.color === "#EF4444" ? "#EF4444" : (isDark ? "#D4D4D8" : "#334155") }}>
               {opt.label}
             </ListItemText>
           </MenuItem>

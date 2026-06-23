@@ -119,7 +119,7 @@ const TASKS_DETAIL: Record<number, TaskRecord> = {
 //  Config
 // ─────────────────────────────────────────────
 const STATUS_CFG: Record<string, { bg: string; text: string; dot: string }> = {
-  "Todo":        { bg: "#EFF6FF",  text: "#E3ECFC", dot: "#3B82F6" },
+  "Todo":        { bg: "#EFF6FF",  text: "#0C2472", dot: "#3B82F6" },
   "In Progress": { bg: "#FEF3C7",  text: "#92400E", dot: "#F59E0B" },
   "Backlog":     { bg: "#F1F5F9",  text: "#475569", dot: "#94A3B8" },
   "Completed":   { bg: "#DCFCE7",  text: "#166534", dot: "#10B981" },
@@ -154,7 +154,7 @@ function SectionCard({ icon: Icon, title, children, action }: {
     <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
       <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
         <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
-          <Icon size={13} color={isDark ? "#52525B" : "#E3ECFC"} weight="duotone" />
+          <Icon size={13} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
         </div>
         <span className={`font-heading text-[11px] font-bold uppercase tracking-[0.12em] flex-1 ${isDark ? "text-[#71717A]" : "text-[#1D4ED8]"}`}>{title}</span>
         {action}
@@ -176,7 +176,7 @@ function KV({ label, value, editable }: { label: string; value?: string | number
       </div>
       {editable && (
         <IconButton size="small"
-          sx={{ p: 0.5, color: isDark ? "#3F3F46" : "#E2E8F0", opacity: 0, transition: "opacity 0.15s", ".group:hover &": { opacity: 1 }, "&:hover": { color: "inherit", bgcolor: isDark ? "#27272A" : "#EFF6FF" }, borderRadius: "6px" }}>
+          sx={{ p: 0.5, color: isDark ? "#3F3F46" : "#E2E8F0", opacity: 0, transition: "opacity 0.15s", ".group:hover &": { opacity: 1 }, "&:hover": { color: "#1D4ED8", bgcolor: isDark ? "#27272A" : "#EFF6FF" }, borderRadius: "6px" }}>
           <PencilSimple size={13} weight="duotone" />
         </IconButton>
       )}
@@ -358,7 +358,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
                 <SectionCard icon={ClipboardText} title="Task Information"
                   action={
                     <IconButton size="small" onClick={e => setMoreAnchor(e.currentTarget)}
-                      sx={{ p: 0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&:hover": { color: "inherit", bgcolor: isDark ? "#27272A" : "#EFF6FF" }, borderRadius: "6px" }}>
+                      sx={{ p: 0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&:hover": { color: "#1D4ED8", bgcolor: isDark ? "#27272A" : "#EFF6FF" }, borderRadius: "6px" }}>
                       <DotsThreeVertical size={16} weight="bold" />
                     </IconButton>
                   }>
@@ -455,7 +455,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
                 <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
                   <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
                     <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
-                      <ClipboardText size={13} color={isDark ? "#52525B" : "#E3ECFC"} weight="duotone" />
+                      <ClipboardText size={13} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
                     </div>
                     <span className={`font-heading text-[11px] font-bold uppercase tracking-[0.12em] flex-1 ${isDark ? "text-[#71717A]" : "text-[#1D4ED8]"}`}>Activity Timeline</span>
                   </div>
@@ -469,7 +469,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
                           {task.timeline.map((entry, i) => (
                             <div key={i} className="flex items-start gap-4 pl-7 relative">
                               <div className={`absolute left-0 top-1 w-[22px] h-[22px] rounded-full border-2 flex items-center justify-center flex-shrink-0 ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
-                                <ClipboardText size={10} color={isDark ? "#52525B" : "#E3ECFC"} weight="duotone" />
+                                <ClipboardText size={10} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
                               </div>
                               <div className="flex-1">
                                 <div className={`text-[12.5px] font-semibold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{entry.event}</div>

@@ -91,7 +91,7 @@ function SectionCard({ icon: Icon, title, children }: { icon: React.ElementType;
         <div className="w-6 h-6 rounded-lg bg-[#EFF6FF] flex items-center justify-center">
           <Icon size={13} color="#1D4ED8" weight="duotone" />
         </div>
-        <p className="font-heading text-[11px] font-bold text-[#1D4ED8] uppercase tracking-[0.12em]">{title}</p>
+        <p className="font-heading text-[12px] font-bold text-[#1D4ED8] uppercase tracking-[0.12em]">{title}</p>
       </div>
       <div className="px-5 py-4">{children}</div>
     </div>
@@ -101,8 +101,8 @@ function SectionCard({ icon: Icon, title, children }: { icon: React.ElementType;
 function KV({ label, value, blue }: { label: string; value?: string; blue?: boolean }) {
   return (
     <div className="py-2 border-b border-[#EFF6FF] last:border-0">
-      <p className="font-heading text-[10.5px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">{label}</p>
-      <p className={`text-[13px] font-medium ${blue?"text-inherit":"text-slate-800"} ${!value?"text-slate-300 italic":""}`}>
+      <p className="font-heading text-[11.5px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">{label}</p>
+      <p className={`text-[14px] font-medium ${blue?"text-inherit":"text-slate-800"} ${!value?"text-slate-300 italic":""}`}>
         {value || "—"}
       </p>
     </div>
@@ -137,7 +137,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
       <div className="flex h-screen bg-[#f9fbff]"><Sidebar />
         <div className="sidebar-content flex-1 flex items-center justify-center flex-col gap-4">
           <p className="text-slate-500 font-semibold">Lead not found</p>
-          <button onClick={() => router.push("/leads")} className="text-[#1D4ED8] text-sm font-bold hover:underline">← Back to Leads</button>
+          <button onClick={() => router.push("/leads")} className="text-[#1D4ED8] text-[15px] font-bold hover:underline">← Back to Leads</button>
         </div>
       </div>
     );
@@ -199,7 +199,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
         <main className="flex-1 px-6 py-5 space-y-4 animate-fade-in">
 
           {/* ══ Breadcrumb ══ */}
-          <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
+          <div className="flex items-center gap-1.5 text-[12px] text-slate-400">
             <House size={12} weight="duotone" />
             <CaretRight size={11} weight="duotone" />
             <Link href="/leads" className="hover:text-[#1D4ED8] transition-colors font-medium">Leads</Link>
@@ -213,7 +213,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
               <div className="relative flex-shrink-0">
                 <Avatar
                   src={LEAD_AVATARS[leadId]}
-                  sx={{ width:56, height:56, bgcolor:avColor, fontSize:"1.1rem", fontWeight:800, boxShadow:"0 4px 14px 0 rgba(12,36,114,0.2)" }}
+                  sx={{ width:56, height:56, bgcolor:avColor, fontSize:"1.2rem", fontWeight:800, boxShadow:"0 4px 14px 0 rgba(12,36,114,0.2)" }}
                 >
                   {avInit}
                 </Avatar>
@@ -222,20 +222,20 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2.5 mb-0.5 flex-wrap">
-                  <h1 className="text-[18px] font-extrabold text-slate-900 tracking-tight">{fullName}</h1>
-                  <span className="inline-flex items-center gap-1 text-[10.5px] font-bold px-2.5 py-0.5 rounded-full flex-shrink-0" style={{ backgroundColor:cfg.bg, color:cfg.text }}>
+                  <h1 className="text-[20px] font-extrabold text-slate-900 tracking-tight">{fullName}</h1>
+                  <span className="inline-flex items-center gap-1 text-[11.5px] font-bold px-2.5 py-0.5 rounded-full flex-shrink-0" style={{ backgroundColor:cfg.bg, color:cfg.text }}>
                     <span className="w-[5px] h-[5px] rounded-full" style={{ backgroundColor:cfg.dot }} />
                     {currentStatus}
                   </span>
                 </div>
                 {lead.company && (
-                  <p className="text-[13px] text-slate-500 font-medium flex items-center gap-1.5">
+                  <p className="text-[14px] text-slate-500 font-medium flex items-center gap-1.5">
                     <Buildings size={13} color="#94A3B8" weight="duotone" />
                     {lead.company}
                     {lead.industry && <><span className="text-slate-300">·</span><span className="text-slate-400">{lead.industry}</span></>}
                   </p>
                 )}
-                <p className="text-[11px] text-slate-400 mt-0.5">
+                <p className="text-[12px] text-slate-400 mt-0.5">
                   Lead ID: CRM-LEAD-{String(lead.id).padStart(4,"0")} · Created {lead.created}
                 </p>
               </div>
@@ -244,13 +244,13 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
               <div className="flex items-center gap-2 flex-shrink-0">
                 {(lead.phone || lead.mobile) && (
                   <Button variant="outlined" size="small" startIcon={<Phone size={14} weight="duotone" />}
-                    sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#737373":"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.74rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#1D4ED8", color:"#1D4ED8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
+                    sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#737373":"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.84rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#1D4ED8", color:"#1D4ED8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
                     Call
                   </Button>
                 )}
                 {lead.email && (
                   <Button variant="outlined" size="small" startIcon={<Envelope size={14} weight="duotone" />}
-                    sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#737373":"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.74rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#1D4ED8", color:"#1D4ED8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
+                    sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#737373":"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.84rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#1D4ED8", color:"#1D4ED8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
                     Email
                   </Button>
                 )}
@@ -258,14 +258,14 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                 {/* Convert to Deal */}
                 <Button variant="outlined" size="small" startIcon={<ArrowsLeftRight size={14} weight="duotone" />}
                   onClick={() => setConvertOpen(true)}
-                  sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#737373":"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.74rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#1D4ED8", color:"#1D4ED8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
+                  sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#737373":"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.84rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#1D4ED8", color:"#1D4ED8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
                   Convert
                 </Button>
 
                 {/* Edit */}
                 <Button variant="contained" size="small" startIcon={<PencilSimple size={14} weight="duotone" />}
                   onClick={() => setEditOpen(true)}
-                  sx={{ bgcolor:"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.74rem", boxShadow:"0 1px 8px 0 #1D4ED833", "&:hover":{ bgcolor:"#60A5FA", boxShadow:"0 2px 14px 0 #60A5FA55" }, "&:active":{ bgcolor:"#0C2472" } }}>
+                  sx={{ bgcolor:"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.84rem", boxShadow:"0 1px 8px 0 #1D4ED833", "&:hover":{ bgcolor:"#60A5FA", boxShadow:"0 2px 14px 0 #60A5FA55" }, "&:active":{ bgcolor:"#0C2472" } }}>
                   Edit
                 </Button>
 
@@ -294,7 +294,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                           <ListItemIcon sx={{ minWidth:30 }}>
                             <opt.icon size={16} color={opt.color} weight="duotone" />
                           </ListItemIcon>
-                          <ListItemText primaryTypographyProps={{ fontSize:"0.8rem", fontWeight:600, color: opt.color==="#EF4444"?"#EF4444": isDark?"#E2E8F0":"#334155" }}>
+                          <ListItemText primaryTypographyProps={{ fontSize:"0.9rem", fontWeight:600, color: opt.color==="#EF4444"?"#EF4444": isDark?"#E2E8F0":"#334155" }}>
                             {opt.label}
                           </ListItemText>
                         </MenuItem>
@@ -309,14 +309,14 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
           <div className={`flex items-center gap-1 border rounded-xl p-1 w-fit shadow-sm ${isDark ? "bg-[#000000] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
             {(["overview","activity","notes"] as const).map(t => (
               <button key={t} onClick={() => setActiveTab(t)}
-                className={`px-4 py-1.5 rounded-lg text-[12.5px] font-semibold capitalize transition-all ${
+                className={`px-4 py-1.5 rounded-lg text-[13.5px] font-semibold capitalize transition-all ${
                   activeTab===t ? "bg-[#1D4ED8] text-white shadow-sm"
                     : isDark ? "text-[#737373] bg-[#0A0A0A] hover:bg-[#27272A] hover:text-[#D4D4D8]"
                     : "text-[#0C2472] bg-[#E3ECFC] hover:bg-[#1D4ED8]/10"
                 }`}>
                 {t}
                 {t==="notes" && notes.length > 0 && (
-                  <span className={`ml-1.5 text-[9px] px-1 py-0.5 rounded-full font-bold ${activeTab===t ? "bg-white/20 text-white" : isDark ? "bg-[#27272A] text-[#D4D4D8]" : "bg-[#E3ECFC] text-[#1D4ED8]"}`}>
+                  <span className={`ml-1.5 text-[10px] px-1 py-0.5 rounded-full font-bold ${activeTab===t ? "bg-white/20 text-white" : isDark ? "bg-[#27272A] text-[#D4D4D8]" : "bg-[#E3ECFC] text-[#1D4ED8]"}`}>
                     {notes.length}
                   </span>
                 )}
@@ -335,12 +335,12 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                 <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm p-5">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <p className="font-heading text-[10px] font-bold text-slate-400 uppercase tracking-widest">Stage Progress</p>
-                      <p className="text-[11px] text-slate-500 mt-0.5">Click a stage to update · Started <span className="font-semibold text-slate-700">{lead.created}</span></p>
+                      <p className="font-heading text-[11px] font-bold text-slate-400 uppercase tracking-widest">Stage Progress</p>
+                      <p className="text-[12px] text-slate-500 mt-0.5">Click a stage to update · Started <span className="font-semibold text-slate-700">{lead.created}</span></p>
                     </div>
                     <div className="text-right">
-                      <p className="font-heading text-[10px] font-bold text-slate-400 uppercase tracking-widest">Last Updated</p>
-                      <p className="text-[11px] font-semibold text-slate-700 mt-0.5">{lead.modified}</p>
+                      <p className="font-heading text-[11px] font-bold text-slate-400 uppercase tracking-widest">Last Updated</p>
+                      <p className="text-[12px] font-semibold text-slate-700 mt-0.5">{lead.modified}</p>
                     </div>
                   </div>
 
@@ -354,7 +354,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                           <Tooltip title={isDone ? "Completed" : isActive ? "Current stage" : "Click to set stage"}>
                             <button
                               onClick={() => setCurrentStatus(stage)}
-                              className={`flex items-center justify-center gap-1.5 flex-1 py-2 px-2 rounded-xl text-[11.5px] font-bold transition-all
+                              className={`flex items-center justify-center gap-1.5 flex-1 py-2 px-2 rounded-xl text-[12.5px] font-bold transition-all
                                 ${isActive  ? "bg-[#1D4ED8] text-white shadow-md shadow-[#1D4ED8]/25 scale-[1.02]" : ""}
                                 ${isDone    ? isDark ? "bg-[#27272A] text-[#D4D4D8] hover:bg-[#3F3F46]" : "bg-[#E3ECFC] text-[#1D4ED8] hover:bg-[#DBEAFE]" : ""}
                                 ${isPending ? isDark ? "bg-[#0A0A0A] text-[#737373] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "bg-slate-50 text-slate-400 hover:bg-[#EFF6FF]" : ""}
@@ -375,14 +375,14 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                     <div className="flex items-center gap-1 ml-2 flex-shrink-0">
                       <Tooltip title="Mark as Qualified / Won">
                         <button onClick={() => setCurrentStatus("Qualified")}
-                          className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all text-sm
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all text-[17px]
                             ${currentStatus==="Qualified" ? "bg-emerald-500 scale-110" : "bg-emerald-50 hover:bg-emerald-100"}`}>
                           👍
                         </button>
                       </Tooltip>
                       <Tooltip title="Mark as Lost">
                         <button onClick={() => setCurrentStatus("Lost")}
-                          className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all text-sm
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all text-[17px]
                             ${currentStatus==="Lost" ? "bg-red-500 scale-110" : "bg-red-50 hover:bg-red-100"}`}>
                           👎
                         </button>
@@ -392,7 +392,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
 
                   {/* Status changed banner */}
                   {currentStatus !== lead.status && (
-                    <div className="mt-3 flex items-center gap-2 bg-[#EFF6FF] border border-[#E3ECFC] rounded-xl px-3 py-2 text-[11.5px] animate-slide-up">
+                    <div className="mt-3 flex items-center gap-2 bg-[#EFF6FF] border border-[#E3ECFC] rounded-xl px-3 py-2 text-[12.5px] animate-slide-up">
                       <span className="text-[#1D4ED8] font-semibold">Stage updated to "{currentStatus}"</span>
                       <span className="text-slate-400">— not saved yet</span>
                       <button onClick={() => setCurrentStatus(lead.status)} className="ml-auto text-inherit font-bold hover:text-[#0C2472] transition-colors">Undo</button>
@@ -413,8 +413,8 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                       <div className="w-7 h-7 rounded-lg flex items-center justify-center mb-2" style={{ backgroundColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(249,251,255,0.7)" }}>
                         <Icon size={15} color={deep} weight="duotone" />
                       </div>
-                      <p className="font-heading text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: isDark ? "#94A3B8" : "#475569" }}>{label}</p>
-                      <p className="text-[12.5px] font-bold truncate" style={{ color: isDark ? "#FFFFFF" : "#0C2472" }}>{value}</p>
+                      <p className="font-heading text-[11px] font-bold uppercase tracking-wider mb-0.5" style={{ color: isDark ? "#94A3B8" : "#475569" }}>{label}</p>
+                      <p className="text-[13.5px] font-bold truncate" style={{ color: isDark ? "#FFFFFF" : "#0C2472" }}>{value}</p>
                     </div>
                   ))}
                 </div>
@@ -462,7 +462,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                 {/* Related List */}
                 <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
                   <div className="px-4 py-3.5 border-b border-[#EFF6FF]">
-                    <p className="font-heading text-[11px] font-bold text-slate-500 uppercase tracking-wider">Related List</p>
+                    <p className="font-heading text-[12px] font-bold text-slate-500 uppercase tracking-wider">Related List</p>
                   </div>
                   <div className="p-2 space-y-0.5">
                     {relatedItems.map(({ icon: Icon, label, count, color, tab }) => (
@@ -473,9 +473,9 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                         <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor:color+"20" }}>
                           <Icon size={14} color={color} weight="duotone" />
                         </div>
-                        <span className="flex-1 text-left text-[12.5px] font-medium text-slate-700 transition-colors">{label}</span>
+                        <span className="flex-1 text-left text-[13.5px] font-medium text-slate-700 transition-colors">{label}</span>
                         {count > 0 && (
-                          <span className="text-[10px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>
+                          <span className="text-[11px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>
                         )}
                         <CaretRight size={14} color="#E2E8F0" weight="duotone" className="group-hover:text-[#60A5FA] transition-colors" />
                       </button>
@@ -485,23 +485,23 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
 
                 {/* Lead Owner */}
                 <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm p-4 space-y-3">
-                  <p className="font-heading text-[11px] font-bold text-slate-500 uppercase tracking-wider">Ownership</p>
+                  <p className="font-heading text-[12px] font-bold text-slate-500 uppercase tracking-wider">Ownership</p>
                   <div className="flex items-center gap-2.5">
-                    <Avatar src={OWNER_AVATARS[lead.owner]} sx={{ width:32, height:32, bgcolor:lead.ownerColor, fontSize:"0.62rem", fontWeight:800 }}>
+                    <Avatar src={OWNER_AVATARS[lead.owner]} sx={{ width:32, height:32, bgcolor:lead.ownerColor, fontSize:"0.72rem", fontWeight:800 }}>
                       {lead.ownerInitials}
                     </Avatar>
                     <div>
-                      <p className="text-[12.5px] font-semibold text-slate-800">{lead.owner}</p>
-                      <p className="text-[10.5px] text-slate-400">Lead Owner</p>
+                      <p className="text-[13.5px] font-semibold text-slate-800">{lead.owner}</p>
+                      <p className="text-[11.5px] text-slate-400">Lead Owner</p>
                     </div>
                   </div>
                   <Divider sx={{ borderColor:"#EFF6FF" }} />
                   <div className="space-y-2">
-                    <div className="flex justify-between text-[11px]">
+                    <div className="flex justify-between text-[12px]">
                       <span className="text-slate-400 font-medium">Created</span>
                       <span className="text-slate-700 font-semibold">{lead.created}</span>
                     </div>
-                    <div className="flex justify-between text-[11px]">
+                    <div className="flex justify-between text-[12px]">
                       <span className="text-slate-400 font-medium">Modified</span>
                       <span className="text-slate-700 font-semibold">{lead.modified}</span>
                     </div>
@@ -516,8 +516,8 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
             <div className="grid grid-cols-3 gap-4">
               <div className="col-span-2 bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm">
                 <div className="flex items-center justify-between px-5 py-4 border-b border-[#EFF6FF]">
-                  <p className="font-heading text-[13px] font-bold text-slate-900">Activity Timeline</p>
-                  <span className="text-[10.5px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">{activityFeed.length} events</span>
+                  <p className="font-heading text-[14px] font-bold text-slate-900">Activity Timeline</p>
+                  <span className="text-[11.5px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">{activityFeed.length} events</span>
                 </div>
                 <div className="px-5 py-4 space-y-0">
                   {activityFeed.map((item, i) => {
@@ -533,8 +533,8 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                         </div>
                         {/* Content */}
                         <div className="flex-1 pb-4">
-                          <p className="text-[12.5px] font-medium text-slate-700 group-hover:text-slate-900 transition-colors mt-1">{item.text}</p>
-                          <p className="text-[10.5px] text-slate-400 mt-0.5 flex items-center gap-1">
+                          <p className="text-[13.5px] font-medium text-slate-700 group-hover:text-slate-900 transition-colors mt-1">{item.text}</p>
+                          <p className="text-[11.5px] text-slate-400 mt-0.5 flex items-center gap-1">
                             <Clock size={11} weight="duotone" />{item.time}
                           </p>
                         </div>
@@ -548,7 +548,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
               <div className="space-y-4">
                 <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
                   <div className="px-4 py-3.5 border-b border-[#EFF6FF]">
-                    <p className="font-heading text-[11px] font-bold text-slate-500 uppercase tracking-wider">Related List</p>
+                    <p className="font-heading text-[12px] font-bold text-slate-500 uppercase tracking-wider">Related List</p>
                   </div>
                   <div className="p-2 space-y-0.5">
                     {relatedItems.map(({ icon: Icon, label, count, color, tab }) => (
@@ -557,8 +557,8 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                         <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor:color+"20" }}>
                           <Icon size={14} color={color} weight="duotone" />
                         </div>
-                        <span className="flex-1 text-left text-[12.5px] font-medium text-slate-700">{label}</span>
-                        {count>0 && <span className="text-[10px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>}
+                        <span className="flex-1 text-left text-[13.5px] font-medium text-slate-700">{label}</span>
+                        {count>0 && <span className="text-[11px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>}
                         <CaretRight size={14} color="#E2E8F0" weight="duotone" />
                       </button>
                     ))}
@@ -577,8 +577,8 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                 {addingNote ? (
                   <div className="bg-[#f9fbff] rounded-2xl border border-[#1D4ED8] shadow-sm p-4 space-y-3">
                     <div className="flex items-center gap-2.5">
-                      <Avatar sx={{ width:28, height:28, bgcolor:"#1D4ED8", fontSize:"0.58rem", fontWeight:800 }}>PM</Avatar>
-                      <p className="text-[12px] font-semibold text-slate-700">PM SDL · Just now</p>
+                      <Avatar sx={{ width:28, height:28, bgcolor:"#1D4ED8", fontSize:"0.68rem", fontWeight:800 }}>PM</Avatar>
+                      <p className="text-[13px] font-semibold text-slate-700">PM SDL · Just now</p>
                     </div>
                     <InputBase
                       multiline
@@ -588,16 +588,16 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                       placeholder="Write a note about this lead…"
                       value={newNoteText}
                       onChange={e => setNewNoteText(e.target.value)}
-                      sx={{ fontSize:"0.82rem", color: isDark?"#E2E8F0":"#334155", lineHeight:1.6, "& textarea::placeholder":{ color: isDark?"#52525B":"#E2E8F0" } }}
+                      sx={{ fontSize:"0.92rem", color: isDark?"#E2E8F0":"#334155", lineHeight:1.6, "& textarea::placeholder":{ color: isDark?"#52525B":"#E2E8F0" } }}
                     />
                     <div className="flex items-center gap-2 justify-end pt-1 border-t border-[#EFF6FF]">
                       <button onClick={() => { setAddingNote(false); setNewNoteText(""); }}
-                        className="text-[12px] font-semibold text-slate-400 hover:text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-50 transition-colors">
+                        className="text-[13px] font-semibold text-slate-400 hover:text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-50 transition-colors">
                         Cancel
                       </button>
                       <Button variant="contained" size="small" endIcon={<PaperPlaneTilt size={13} weight="duotone" />}
                         onClick={addNote} disabled={!newNoteText.trim()}
-                        sx={{ bgcolor:"#1D4ED8", borderRadius:"8px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", "&:hover":{ bgcolor:"#60A5FA" }, "&:active":{ bgcolor:"#0C2472" }, "&.Mui-disabled":{ bgcolor: isDark?"#27272A":"#E3ECFC", color: isDark?"#52525B":"#9CA3AF" } }}>
+                        sx={{ bgcolor:"#1D4ED8", borderRadius:"8px", textTransform:"none", fontWeight:700, fontSize:"0.85rem", "&:hover":{ bgcolor:"#60A5FA" }, "&:active":{ bgcolor:"#0C2472" }, "&.Mui-disabled":{ bgcolor: isDark?"#27272A":"#E3ECFC", color: isDark?"#52525B":"#9CA3AF" } }}>
                         Add Note
                       </Button>
                     </div>
@@ -605,8 +605,8 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                 ) : (
                   <button onClick={() => setAddingNote(true)}
                     className="w-full flex items-center gap-3 bg-[#f9fbff] border border-[#E3ECFC] hover:border-[#1D4ED8] rounded-2xl px-4 py-3.5 text-left shadow-sm group transition-all">
-                    <Avatar sx={{ width:28, height:28, bgcolor:"#1D4ED8", fontSize:"0.58rem", fontWeight:800 }}>PM</Avatar>
-                    <span className="text-[12.5px] text-slate-400 group-hover:text-slate-600 transition-colors">Write a note about this lead…</span>
+                    <Avatar sx={{ width:28, height:28, bgcolor:"#1D4ED8", fontSize:"0.68rem", fontWeight:800 }}>PM</Avatar>
+                    <span className="text-[13.5px] text-slate-400 group-hover:text-slate-600 transition-colors">Write a note about this lead…</span>
                     <Plus size={16} color="#E2E8F0" weight="bold" style={{ marginLeft:"auto" }} className="group-hover:text-[#1D4ED8]" />
                   </button>
                 )}
@@ -616,12 +616,12 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                   <div key={note.id} className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm p-4 group hover:border-[#E3ECFC] transition-all">
                     <div className="flex items-start justify-between mb-2.5">
                       <div className="flex items-center gap-2.5">
-                        <Avatar sx={{ width:28, height:28, bgcolor:note.color, fontSize:"0.58rem", fontWeight:800 }}>
+                        <Avatar sx={{ width:28, height:28, bgcolor:note.color, fontSize:"0.68rem", fontWeight:800 }}>
                           {note.initials}
                         </Avatar>
                         <div>
-                          <p className="text-[12px] font-semibold text-slate-800">{note.author}</p>
-                          <p className="text-[10px] text-slate-400">{note.date}</p>
+                          <p className="text-[13px] font-semibold text-slate-800">{note.author}</p>
+                          <p className="text-[11px] text-slate-400">{note.date}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -639,14 +639,14 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                         </Tooltip>
                       </div>
                     </div>
-                    <p className="text-[13px] text-slate-700 leading-relaxed">{note.text}</p>
+                    <p className="text-[14px] text-slate-700 leading-relaxed">{note.text}</p>
                   </div>
                 ))}
 
                 {notes.length === 0 && !addingNote && (
                   <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] p-10 text-center shadow-sm">
                     <Note size={28} color="#94A3B8" weight="duotone" style={{ marginBottom:4 }} />
-                    <p className="text-slate-400 text-sm font-medium">No notes yet. Add one above.</p>
+                    <p className="text-slate-400 text-[15px] font-medium">No notes yet. Add one above.</p>
                   </div>
                 )}
               </div>
@@ -655,7 +655,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
               <div className="space-y-4">
                 <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
                   <div className="px-4 py-3.5 border-b border-[#EFF6FF]">
-                    <p className="font-heading text-[11px] font-bold text-slate-500 uppercase tracking-wider">Related List</p>
+                    <p className="font-heading text-[12px] font-bold text-slate-500 uppercase tracking-wider">Related List</p>
                   </div>
                   <div className="p-2 space-y-0.5">
                     {relatedItems.map(({ icon: Icon, label, count, color, tab }) => (
@@ -664,8 +664,8 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                         <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor:color+"20" }}>
                           <Icon size={14} color={color} weight="duotone" />
                         </div>
-                        <span className="flex-1 text-left text-[12.5px] font-medium text-slate-700">{label}</span>
-                        {count>0 && <span className="text-[10px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>}
+                        <span className="flex-1 text-left text-[13.5px] font-medium text-slate-700">{label}</span>
+                        {count>0 && <span className="text-[11px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>}
                         <CaretRight size={14} color="#E2E8F0" weight="duotone" />
                       </button>
                     ))}

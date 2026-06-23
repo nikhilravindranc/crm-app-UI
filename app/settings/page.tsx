@@ -80,19 +80,19 @@ const USERS: UserRecord[] = [
   { id:2,  name:"sdl aug0701",             role:"Administrator",     email:"sdlaug0701@mailinator.com",       initials:"SA", firstName:"sdl",       lastName:"aug0701",     phone:"",           avatarColor:"#EDE9FE", textColor:"#6D28D9" },
   { id:3,  name:"Rajarajan N",             role:"Administrator",     email:"rajarajan.n@socialdnalabs.com",   initials:"RN", firstName:"Rajarajan", lastName:"N",           phone:"",           avatarColor:"#DCFCE7", textColor:"#166534" },
   { id:4,  name:"Admin",                   role:"Administrator",     email:"admin@mailinator.com",            initials:"A",  firstName:"Admin",     lastName:"",            phone:"",           avatarColor:"#FEF3C7", textColor:"#B45309" },
-  { id:5,  name:"crmuser",                 role:"Support Executive", email:"crmuser@mailinator.com",          initials:"CU", firstName:"crm",       lastName:"user",        phone:"",           avatarColor:"#EFF6FF", textColor:"#E3ECFC" },
+  { id:5,  name:"crmuser",                 role:"Support Executive", email:"crmuser@mailinator.com",          initials:"CU", firstName:"crm",       lastName:"user",        phone:"",           avatarColor:"#EFF6FF", textColor:"#1D4ED8" },
   { id:6,  name:"Sales manager",           role:"Operations Manager",email:"sdlsalesmanager@mailinator.com",  initials:"SM", firstName:"Sales",     lastName:"manager",     phone:"",           avatarColor:"#FEF2F2", textColor:"#DC2626" },
   { id:7,  name:"manager sdl",             role:"Operations Manager",email:"sdlmanager@mailinator.com",       initials:"MS", firstName:"manager",   lastName:"sdl",         phone:"",           avatarColor:"#F0FDF4", textColor:"#16A34A" },
-  { id:8,  name:"Support executive user1", role:"Support Executive", email:"seuser1@mailinator.com",          initials:"SU", firstName:"Support",   lastName:"exec user1",  phone:"",           avatarColor:"#EFF6FF", textColor:"#E3ECFC" },
+  { id:8,  name:"Support executive user1", role:"Support Executive", email:"seuser1@mailinator.com",          initials:"SU", firstName:"Support",   lastName:"exec user1",  phone:"",           avatarColor:"#EFF6FF", textColor:"#1D4ED8" },
   { id:9,  name:"Operation Manager user 1",role:"Operations Manager",email:"opmanageruser1@mailinator.com",   initials:"OM", firstName:"Operation", lastName:"Mgr user 1",  phone:"",           avatarColor:"#FDF4FF", textColor:"#7E22CE" },
-  { id:10, name:"Support executive user 2",role:"Support Executive", email:"seuser2@mailinator.com",          initials:"SU", firstName:"Support",   lastName:"exec user 2", phone:"",           avatarColor:"#EFF6FF", textColor:"#E3ECFC" },
+  { id:10, name:"Support executive user 2",role:"Support Executive", email:"seuser2@mailinator.com",          initials:"SU", firstName:"Support",   lastName:"exec user 2", phone:"",           avatarColor:"#EFF6FF", textColor:"#1D4ED8" },
   { id:11, name:"VP Operation User 1",     role:"VP of Operations",  email:"vpoperationuser1@mailinator.com", initials:"VP", firstName:"VP Ops",   lastName:"User 1",      phone:"",           avatarColor:"#FEF3C7", textColor:"#B45309" },
 ];
 
 const ROLE_BADGE: Record<string, { bg: string; text: string; border: string }> = {
   "Super Admin":        { bg:"#FEF3C7", text:"#B45309", border:"#FDE68A" },
   "Administrator":      { bg:"#FEF3C7", text:"#B45309", border:"#FDE68A" },
-  "Support Executive":  { bg:"#EFF6FF", text:"#E3ECFC", border:"#BFDBFE" },
+  "Support Executive":  { bg:"#EFF6FF", text:"#1D4ED8", border:"#BFDBFE" },
   "Operations Manager": { bg:"#F0FDF4", text:"#166534", border:"#BBF7D0" },
   "VP of Operations":   { bg:"#EDE9FE", text:"#6D28D9", border:"#DDD6FE" },
   "Team Leader":        { bg:"#FEF2F2", text:"#DC2626", border:"#FECACA" },
@@ -135,7 +135,7 @@ const ROLE_ACTIVITIES: RoleActivity[] = [
 // ─────────────────────────────────────────────
 //  Shared UI primitives — NO <p> tags
 // ─────────────────────────────────────────────
-function SettingCard({ icon: Icon, title, color = "#E3ECFC", children, action }: {
+function SettingCard({ icon: Icon, title, color = "#3B82F6", children, action }: {
   icon: React.ElementType; title: string; color?: string;
   children: React.ReactNode; action?: React.ReactNode;
 }) {
@@ -410,20 +410,23 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
     });
   };
 
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
   const FX = {
     "& .MuiOutlinedInput-root": {
       borderRadius: "10px",
-      backgroundColor: "#EFF6FF",
+      ...(isDark ? {} : { backgroundColor: "#EFF6FF" }),
       fontSize: "0.82rem",
-      "& fieldset":             { borderColor: "#E3ECFC", borderWidth: 1.5 },
-      "&:hover fieldset":       { borderColor: "#E3ECFC" },
-      "&.Mui-focused fieldset": { borderColor: "#E3ECFC", borderWidth: 2 },
-      "&.Mui-focused":          { boxShadow: "0 0 0 2px #4A7AE8" },
+      "& fieldset":             { borderColor: isDark ? "#3F3F46" : "#E3ECFC", borderWidth: 1.5 },
+      "&:hover fieldset":       { borderColor: isDark ? "#52525B" : "#E3ECFC" },
+      "&.Mui-focused fieldset": { borderColor: isDark ? "#71717A" : "#E3ECFC", borderWidth: 2 },
+      "&.Mui-focused":          { boxShadow: isDark ? "none" : "0 0 0 2px #4A7AE8" },
       "& input":                { padding: "10px 14px" },
     },
-    "& .MuiInputLabel-root":             { fontSize: "0.79rem", color: "#6B7280" },
-    "& .MuiInputLabel-root.Mui-focused": { color: "inherit" },
-    "& .MuiSelect-select":               { fontSize: "0.82rem", padding: "10px 14px", backgroundColor: "#EFF6FF" },
+    "& .MuiInputLabel-root":             { fontSize: "0.79rem", ...(isDark ? {} : { color: "#6B7280" }) },
+    "& .MuiInputLabel-root.Mui-focused": { color: isDark ? "#A1A1AA" : "inherit" },
+    "& .MuiSelect-select":               { fontSize: "0.82rem", padding: "10px 14px", ...(isDark ? {} : { backgroundColor: "#EFF6FF" }) },
   };
 
   return (
@@ -436,23 +439,23 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
           width: { xs: "100%", sm: 520 },
           display: "flex",
           flexDirection: "column",
-          bgcolor: "#F8FAFF",
-          boxShadow: "-12px 0 48px rgba(12,36,114,0.12)",
+          bgcolor: isDark ? "#18181B" : "#F8FAFF",
+          boxShadow: isDark ? "-12px 0 48px rgba(0,0,0,0.5)" : "-12px 0 48px rgba(12,36,114,0.12)",
         },
       }}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 bg-[#f9fbff] border-b border-[#E3ECFC] flex-shrink-0">
+      <div className={`flex items-center justify-between px-6 py-4 border-b flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#1D4ED8] flex items-center justify-center shadow-sm">
-            <UsersThree size={18} color="#fff" weight="duotone" />
+          <div className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-sm ${isDark ? "bg-[#27272A]" : "bg-[#1D4ED8]"}`}>
+            <UsersThree size={18} color={isDark ? "#A1A1AA" : "#fff"} weight="duotone" />
           </div>
-          <h2 className="font-heading text-[16px] font-bold text-slate-900 tracking-tight">New User</h2>
+          <h2 className={`font-heading text-[16px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>New User</h2>
         </div>
         <Tooltip title="Close">
           <IconButton size="small" onClick={handleClose}
-            sx={{ borderRadius: "9px", border: "1.5px solid #E3ECFC", "&:hover": { bgcolor: "#EFF6FF" } }}>
-            <X size={17} color="#64748B" weight="duotone" />
+            sx={{ borderRadius: "9px", border: `1.5px solid ${isDark ? "#3F3F46" : "#E3ECFC"}`, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+            <X size={17} color={isDark ? "#71717A" : "#64748B"} weight="duotone" />
           </IconButton>
         </Tooltip>
       </div>
@@ -461,7 +464,7 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
         {/* User Information */}
         <div>
-          <h3 className="font-heading text-[13px] font-bold text-slate-800 mb-4 tracking-tight">User Information</h3>
+          <h3 className={`font-heading text-[13px] font-bold mb-4 tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>User Information</h3>
           <div className="space-y-3">
             <TextField
               label="First Name"
@@ -498,7 +501,7 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
 
         {/* More Information */}
         <div>
-          <h3 className="font-heading text-[13px] font-bold text-slate-800 mb-4 tracking-tight">More Information</h3>
+          <h3 className={`font-heading text-[13px] font-bold mb-4 tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>More Information</h3>
           <div className="space-y-3">
             <FormControl size="small" fullWidth sx={FX}>
               <InputLabel>Gender</InputLabel>
@@ -533,7 +536,7 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
 
         {/* Address Details */}
         <div>
-          <h3 className="font-heading text-[13px] font-bold text-slate-800 mb-4 tracking-tight">Address Details</h3>
+          <h3 className={`font-heading text-[13px] font-bold mb-4 tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Address Details</h3>
           <div className="space-y-3">
             <TextField
               label="Address"
@@ -596,14 +599,14 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-end gap-3 px-6 py-4 bg-[#f9fbff] border-t border-[#E3ECFC] flex-shrink-0">
+      <div className={`flex items-center justify-end gap-3 px-6 py-4 border-t flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <Button variant="text" onClick={handleClose}
-          sx={{ color: "#64748B", textTransform: "none", fontWeight: 600, fontSize: "0.82rem", borderRadius: "9px", px: 2.5, "&:hover": { bgcolor: "#EFF6FF" } }}>
+          sx={{ color: isDark ? "#A1A1AA" : "#64748B", textTransform: "none", fontWeight: 600, fontSize: "0.82rem", borderRadius: "9px", px: 2.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
           Cancel
         </Button>
         <Button variant="contained" onClick={handleSubmit}
           disabled={!formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim()}
-          sx={{ bgcolor: "inherit", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: "0 1px 8px #1D4ED833", "&:hover": { bgcolor: "inherit" }, "&:active": { bgcolor: "#0C2472" }, "&:disabled": { bgcolor: "#E2E8F0", color: "#F1F5F9" } }}>
+          sx={{ bgcolor: isDark ? "#27272A" : "inherit", color: isDark ? "#F4F4F5" : undefined, borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "inherit" }, "&:active": { bgcolor: isDark ? "#18181B" : "#0C2472" }, "&:disabled": { bgcolor: isDark ? "#27272A" : "#E2E8F0", color: isDark ? "#52525B" : "#F1F5F9" } }}>
           Create User
         </Button>
       </div>
@@ -717,13 +720,13 @@ function UsersPanel() {
   return (
     <div className="flex-1 flex overflow-hidden">
       {/* User list */}
-      <div className="w-[340px] flex-shrink-0 flex flex-col border-r border-[#E3ECFC] bg-[#f9fbff]">
+      <div className={`w-[340px] flex-shrink-0 flex flex-col border-r ${isDark ? "border-[#27272A] bg-[#111113]" : "border-[#E3ECFC] bg-[#f9fbff]"}`}>
         {/* Toolbar */}
-        <div className="px-4 py-3 border-b border-[#E3ECFC] flex items-center gap-2">
-          <div className="flex-1 flex items-center gap-1.5 bg-white border border-[#E3ECFC] rounded-xl px-3 py-1.5 focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all">
+        <div className={`px-4 py-3 border-b flex items-center gap-2 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+          <div className={`flex-1 flex items-center gap-1.5 border rounded-xl px-3 py-1.5 focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all ${isDark ? "bg-[#18181B] border-[#3F3F46]" : "bg-white border-[#E3ECFC]"}`}>
             <MagnifyingGlass size={13} color="#94A3B8" weight="duotone" />
             <InputBase placeholder="Search" value={search} onChange={e => setSearch(e.target.value)}
-              sx={{ flex:1, fontSize:"0.75rem", color:"#334155", "& input::placeholder":{color:"#94A3B8",opacity:1} }} />
+              sx={{ flex:1, fontSize:"0.75rem", color: isDark ? "#D4D4D8" : "#334155", "& input::placeholder":{color:"#94A3B8",opacity:1} }} />
           </div>
           <Button variant="contained" size="small" startIcon={<Plus size={12} weight="bold" />}
             onClick={() => setShowNewUserModal(true)}
@@ -744,7 +747,7 @@ function UsersPanel() {
                 }`}>
                 <div onClick={e => toggleCheck(user.id, e)}>
                   <Checkbox size="small" checked={isChecked}
-                    sx={{ p:0.3, color:"#E2E8F0", "&.Mui-checked":{color:"#E3ECFC"} }} />
+                    sx={{ p:0.3, color:"#E2E8F0", "&.Mui-checked":{color:"#1D4ED8"} }} />
                 </div>
                 <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-[13px] font-bold"
                   style={{ backgroundColor: user.avatarColor, color: user.textColor }}>
@@ -886,37 +889,40 @@ function NewRoleDrawer({ open, onClose }: { open: boolean; onClose: () => void }
     setFormData({ roleName: "", roleDescription: "", reportsTo: "", department: "", status: "Active" });
   };
 
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
   const FX = {
     "& .MuiOutlinedInput-root": {
       borderRadius: "10px",
-      backgroundColor: "#EFF6FF",
+      ...(isDark ? {} : { backgroundColor: "#EFF6FF" }),
       fontSize: "0.82rem",
-      "& fieldset":             { borderColor: "#E3ECFC", borderWidth: 1.5 },
-      "&:hover fieldset":       { borderColor: "#E3ECFC" },
-      "&.Mui-focused fieldset": { borderColor: "#E3ECFC", borderWidth: 2 },
-      "&.Mui-focused":          { boxShadow: "0 0 0 2px #4A7AE8" },
+      "& fieldset":             { borderColor: isDark ? "#3F3F46" : "#E3ECFC", borderWidth: 1.5 },
+      "&:hover fieldset":       { borderColor: isDark ? "#52525B" : "#E3ECFC" },
+      "&.Mui-focused fieldset": { borderColor: isDark ? "#71717A" : "#E3ECFC", borderWidth: 2 },
+      "&.Mui-focused":          { boxShadow: isDark ? "none" : "0 0 0 2px #4A7AE8" },
       "& input":                { padding: "10px 14px" },
     },
-    "& .MuiInputLabel-root":             { fontSize: "0.79rem", color: "#6B7280" },
-    "& .MuiInputLabel-root.Mui-focused": { color: "inherit" },
-    "& .MuiSelect-select":               { fontSize: "0.82rem", padding: "10px 14px", backgroundColor: "#EFF6FF" },
+    "& .MuiInputLabel-root":             { fontSize: "0.79rem", ...(isDark ? {} : { color: "#6B7280" }) },
+    "& .MuiInputLabel-root.Mui-focused": { color: isDark ? "#A1A1AA" : "inherit" },
+    "& .MuiSelect-select":               { fontSize: "0.82rem", padding: "10px 14px", ...(isDark ? {} : { backgroundColor: "#EFF6FF" }) },
   };
 
   return (
     <Drawer anchor="right" open={open} onClose={handleClose}
-      PaperProps={{ sx: { width: { xs: "100%", sm: 520 }, display: "flex", flexDirection: "column", bgcolor: "#F8FAFF", boxShadow: "-12px 0 48px rgba(12,36,114,0.12)" } }}>
+      PaperProps={{ sx: { width: { xs: "100%", sm: 520 }, display: "flex", flexDirection: "column", bgcolor: isDark ? "#18181B" : "#F8FAFF", boxShadow: isDark ? "-12px 0 48px rgba(0,0,0,0.5)" : "-12px 0 48px rgba(12,36,114,0.12)" } }}>
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 bg-[#f9fbff] border-b border-[#E3ECFC] flex-shrink-0">
+      <div className={`flex items-center justify-between px-6 py-4 border-b flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#8B5CF6] flex items-center justify-center shadow-sm">
-            <ShieldCheck size={18} color="#fff" weight="duotone" />
+          <div className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-sm ${isDark ? "bg-[#27272A]" : "bg-[#8B5CF6]"}`}>
+            <ShieldCheck size={18} color={isDark ? "#A1A1AA" : "#fff"} weight="duotone" />
           </div>
-          <h2 className="font-heading text-[16px] font-bold text-slate-900 tracking-tight">New Role</h2>
+          <h2 className={`font-heading text-[16px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>New Role</h2>
         </div>
         <Tooltip title="Close">
           <IconButton size="small" onClick={handleClose}
-            sx={{ borderRadius: "9px", border: "1.5px solid #E3ECFC", "&:hover": { bgcolor: "#EFF6FF" } }}>
-            <X size={17} color="#64748B" weight="duotone" />
+            sx={{ borderRadius: "9px", border: `1.5px solid ${isDark ? "#3F3F46" : "#E3ECFC"}`, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+            <X size={17} color={isDark ? "#71717A" : "#64748B"} weight="duotone" />
           </IconButton>
         </Tooltip>
       </div>
@@ -925,7 +931,7 @@ function NewRoleDrawer({ open, onClose }: { open: boolean; onClose: () => void }
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
         {/* Role Details */}
         <div>
-          <h3 className="font-heading text-[13px] font-bold text-slate-800 mb-4 tracking-tight">Role Details</h3>
+          <h3 className={`font-heading text-[13px] font-bold mb-4 tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Role Details</h3>
           <div className="space-y-3">
             <TextField label="Role Name" value={formData.roleName} onChange={e => handleChange("roleName", e.target.value)}
               size="small" fullWidth sx={FX} />
@@ -945,7 +951,7 @@ function NewRoleDrawer({ open, onClose }: { open: boolean; onClose: () => void }
 
         {/* Additional Information */}
         <div>
-          <h3 className="font-heading text-[13px] font-bold text-slate-800 mb-4 tracking-tight">Additional Information</h3>
+          <h3 className={`font-heading text-[13px] font-bold mb-4 tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Additional Information</h3>
           <div className="space-y-3">
             <TextField label="Department" value={formData.department} onChange={e => handleChange("department", e.target.value)}
               size="small" fullWidth sx={FX} />
@@ -961,13 +967,13 @@ function NewRoleDrawer({ open, onClose }: { open: boolean; onClose: () => void }
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-end gap-3 px-6 py-4 bg-[#f9fbff] border-t border-[#E3ECFC] flex-shrink-0">
+      <div className={`flex items-center justify-end gap-3 px-6 py-4 border-t flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <Button variant="text" onClick={handleClose}
-          sx={{ color: "#64748B", textTransform: "none", fontWeight: 600, fontSize: "0.82rem", borderRadius: "9px", px: 2.5, "&:hover": { bgcolor: "#EFF6FF" } }}>
+          sx={{ color: isDark ? "#A1A1AA" : "#64748B", textTransform: "none", fontWeight: 600, fontSize: "0.82rem", borderRadius: "9px", px: 2.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
           Cancel
         </Button>
         <Button variant="contained" onClick={handleSubmit}
-          sx={{ bgcolor: "inherit", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: "0 1px 8px #1D4ED833", "&:hover": { bgcolor: "inherit" }, "&:active": { bgcolor: "#0C2472" } }}>
+          sx={{ bgcolor: isDark ? "#27272A" : "inherit", color: isDark ? "#F4F4F5" : undefined, borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "inherit" }, "&:active": { bgcolor: isDark ? "#18181B" : "#0C2472" } }}>
           Create Role
         </Button>
       </div>
@@ -1157,11 +1163,11 @@ function RolesPanel() {
             };
           };
           const getIcon = (action: string) => {
-            if (action.toLowerCase().includes("created")) return { icon: Plus,          color:"#E3ECFC", bg:"#EFF6FF" };
-            if (action.toLowerCase().includes("updated")) return { icon: PencilSimple,  color:"#E3ECFC", bg:"#EFF6FF" };
-            if (action.toLowerCase().includes("modified"))return { icon: PencilSimple,  color:"#E3ECFC", bg:"#EFF6FF" };
-            if (action.toLowerCase().includes("changed")) return { icon: PencilSimple,  color:"#E3ECFC", bg:"#EFF6FF" };
-            return                                               { icon: PencilSimple,  color:"#E3ECFC", bg:"#EFF6FF" };
+            if (action.toLowerCase().includes("created")) return { icon: Plus,          color:"#1D4ED8", bg:"#EFF6FF" };
+            if (action.toLowerCase().includes("updated")) return { icon: PencilSimple,  color:"#1D4ED8", bg:"#EFF6FF" };
+            if (action.toLowerCase().includes("modified"))return { icon: PencilSimple,  color:"#1D4ED8", bg:"#EFF6FF" };
+            if (action.toLowerCase().includes("changed")) return { icon: PencilSimple,  color:"#1D4ED8", bg:"#EFF6FF" };
+            return                                               { icon: PencilSimple,  color:"#1D4ED8", bg:"#EFF6FF" };
           };
           // group by date
           const grouped: { date: string; items: typeof roleActivities }[] = [];
@@ -1177,7 +1183,7 @@ function RolesPanel() {
               {/* Header */}
               <div className="flex items-center gap-2 px-5 py-3.5 border-b border-[#EFF6FF]">
                 <div className="w-6 h-6 rounded-lg bg-[#EFF6FF] flex items-center justify-center">
-                  <ClockCounterClockwise size={13} color="#E3ECFC" weight="duotone" />
+                  <ClockCounterClockwise size={13} color="#1D4ED8" weight="duotone" />
                 </div>
                 <span className="font-heading text-[11px] font-bold uppercase tracking-[0.12em] text-[#1D4ED8]">History</span>
               </div>
@@ -1252,7 +1258,7 @@ const PERM_PAIRS: [PermKey, PermKey][] = [
 
 const PERM_META: Record<PermKey, { label: string; icon: React.ElementType; color: string }> = {
   fullAccess:        { label:"Full Access",           icon:Square,         color:"#10B981" },
-  create:            { label:"Create",                icon:Plus,           color:"#E3ECFC" },
+  create:            { label:"Create",                icon:Plus,           color:"#1D4ED8" },
   read:              { label:"Read",                  icon:Eye,            color:"#06B6D4" },
   update:            { label:"Update",                icon:PencilSimple,   color:"#F59E0B" },
   delete:            { label:"Delete",                icon:Trash,          color:"#EF4444" },
@@ -1629,7 +1635,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
         <button className="flex items-center gap-1.5 px-2.5 py-1 border border-[#E3ECFC] rounded-lg text-[12.5px] font-semibold text-slate-700 hover:border-[#1D4ED8] bg-white transition-colors">
           {layoutName} <CaretDown size={11} weight="bold" />
         </button>
-        <IconButton size="small" sx={{ p:0.5, color:"#94A3B8", "&:hover":{color:"#E3ECFC"}, borderRadius:"6px" }}>
+        <IconButton size="small" sx={{ p:0.5, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
           <Gear size={14} weight="duotone" />
         </IconButton>
         <div className="flex-1" />
@@ -1655,7 +1661,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                   return (
                     <div key={ft.label}
                       className="flex items-center gap-1.5 px-2 py-1.5 border border-[#E3ECFC] rounded-lg bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF] cursor-grab transition-colors text-[13px] font-medium text-slate-600">
-                      <Icon size={11} color="#E3ECFC" weight="duotone" />
+                      <Icon size={11} color="#94A3B8" weight="duotone" />
                       {ft.label}
                     </div>
                   );
@@ -1679,7 +1685,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
             <div>
               <div className="flex items-center justify-between px-4 py-3 border-b border-[#E3ECFC]">
                 <span className="text-[13px] font-bold text-slate-700">Available Fields</span>
-                <IconButton size="small" sx={{ p:0.4, color:"#94A3B8", "&:hover":{color:"#E3ECFC"}, borderRadius:"6px" }}>
+                <IconButton size="small" sx={{ p:0.4, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
                   <MagnifyingGlass size={13} weight="duotone"/>
                 </IconButton>
               </div>
@@ -1737,7 +1743,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                   <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#E3ECFC] bg-[#fafcff]">
                     <DotsSixVertical size={14} color="#E2E8F0"/>
                     <span className="text-[13px] font-bold text-slate-700 flex-1">{section.title}</span>
-                    <IconButton size="small" sx={{ p:0.3, color:"#94A3B8", "&:hover":{color:"#E3ECFC"}, borderRadius:"6px" }}>
+                    <IconButton size="small" sx={{ p:0.3, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
                       <Gear size={13} weight="duotone"/>
                     </IconButton>
                   </div>
@@ -2222,7 +2228,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
 }
 
 const MODULE_DEFS = [
-  { key:"leads",    label:"Leads",    icon:UserPlus,    color:"#E3ECFC", sharedTo:"Administrator, Operations Manager, Support Executive, VP of Operations", lastMod:"Feb 27, 2026" },
+  { key:"leads",    label:"Leads",    icon:UserPlus,    color:"#3B82F6", sharedTo:"Administrator, Operations Manager, Support Executive, VP of Operations", lastMod:"Feb 27, 2026" },
   { key:"deals",    label:"Deals",    icon:Lightning,   color:"#F59E0B", sharedTo:"Administrator, Operations Manager, Support Executive, VP of Operations", lastMod:"Feb 27, 2026" },
   { key:"contacts", label:"Contacts", icon:AddressBook, color:"#10B981", sharedTo:"Administrator, Operations Manager, Support Executive, VP of Operations", lastMod:"Feb 27, 2026" },
   { key:"accounts", label:"Accounts", icon:SquaresFour, color:"#8B5CF6", sharedTo:"Administrator, Operations Manager, Support Executive, VP of Operations", lastMod:"Feb 27, 2026" },
@@ -2271,7 +2277,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
             <ArrowLeft size={13} weight="bold" />
             Modules
           </button>
-          <IconButton size="small" sx={{ p:0.4, color:"#94A3B8", "&:hover":{color:"#E3ECFC",bgcolor:"#EFF6FF"}, borderRadius:"6px" }}>
+          <IconButton size="small" sx={{ p:0.4, color:"#94A3B8", "&:hover":{color:"#1D4ED8",bgcolor:"#EFF6FF"}, borderRadius:"6px" }}>
             <MagnifyingGlass size={13} weight="duotone" />
           </IconButton>
         </div>
@@ -2449,15 +2455,15 @@ function ModulesAndFieldsPanel() {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto bg-white">
+    <div className={`flex-1 overflow-y-auto ${isDark ? "bg-[#0A0A0A]" : "bg-white"}`}>
       {/* Toolbar */}
-      <div className="flex items-center gap-3 px-6 py-4 border-b border-[#E3ECFC]">
-        <div className="flex items-center gap-1.5 bg-[#f9fbff] border border-[#E3ECFC] rounded-xl px-3 py-1.5 w-56 focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all">
+      <div className={`flex items-center gap-3 px-6 py-4 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+        <div className={`flex items-center gap-1.5 border rounded-xl px-3 py-1.5 w-56 focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all ${isDark ? "bg-[#18181B] border-[#3F3F46]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
           <MagnifyingGlass size={13} color="#94A3B8" weight="duotone" />
           <InputBase placeholder="Search" value={search} onChange={e => setSearch(e.target.value)}
-            sx={{ flex:1, fontSize:"0.75rem", color:"#334155", "& input::placeholder":{color:"#94A3B8",opacity:1} }} />
+            sx={{ flex:1, fontSize:"0.75rem", color: isDark ? "#D4D4D8" : "#334155", "& input::placeholder":{color:"#94A3B8",opacity:1} }} />
         </div>
-        <button className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold text-slate-600 bg-[#f9fbff] border border-[#E3ECFC] rounded-xl hover:border-[#1D4ED8] transition-colors">
+        <button className={`flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold rounded-xl hover:border-[#1D4ED8] transition-colors ${isDark ? "text-[#D4D4D8] bg-[#18181B] border border-[#3F3F46]" : "text-slate-600 bg-[#f9fbff] border border-[#E3ECFC]"}`}>
           <Gear size={13} weight="duotone" />
           Custom Module
         </button>
@@ -2472,12 +2478,12 @@ function ModulesAndFieldsPanel() {
       {/* Table */}
       <table className="w-full border-collapse text-left">
         <thead>
-          <tr className="bg-[#f9fbff] border-b border-[#E3ECFC]">
-            <th className="px-6 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Displayed In Tabs As</th>
-            <th className="px-6 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Module Name</th>
-            <th className="px-6 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Shared To</th>
-            <th className="px-6 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Last Modified</th>
-            <th className="px-6 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center">Status</th>
+          <tr className={isDark ? "bg-[#111113] border-b border-[#27272A]" : "bg-[#f9fbff] border-b border-[#E3ECFC]"}>
+            <th className={`px-6 py-3 text-[11px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Displayed In Tabs As</th>
+            <th className={`px-6 py-3 text-[11px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Module Name</th>
+            <th className={`px-6 py-3 text-[11px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Shared To</th>
+            <th className={`px-6 py-3 text-[11px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Last Modified</th>
+            <th className={`px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-center ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Status</th>
           </tr>
         </thead>
         <tbody>
@@ -2485,20 +2491,20 @@ function ModulesAndFieldsPanel() {
             const Icon = mod.icon;
             const isOn = modStatuses[mod.key];
             return (
-              <tr key={mod.key} className="border-b border-[#EFF6FF] hover:bg-[#fafcff] transition-colors">
+              <tr key={mod.key} className={`border-b transition-colors ${isDark ? "border-[#18181B] hover:bg-[#111113]" : "border-[#EFF6FF] hover:bg-[#fafcff]"}`}>
                 <td className="px-6 py-4">
                   <button onClick={() => { setSelectedMod(mod.key); setView("detail"); }}
-                    className="flex items-center gap-2 text-[13px] font-semibold text-[#1D4ED8] hover:underline">
+                    className={`flex items-center gap-2 text-[13px] font-semibold hover:underline ${isDark ? "text-[#60A5FA]" : "text-[#1D4ED8]"}`}>
                     <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ backgroundColor: mod.color + "18" }}>
                       <Icon size={12} color={mod.color} weight="duotone" />
                     </div>
                     {mod.label}
                   </button>
                 </td>
-                <td className="px-6 py-4 text-[13px] text-slate-600">{mod.label}</td>
-                <td className="px-6 py-4 text-[12.5px] text-slate-500">{mod.sharedTo}</td>
+                <td className={`px-6 py-4 text-[13px] ${isDark ? "text-[#D4D4D8]" : "text-slate-600"}`}>{mod.label}</td>
+                <td className={`px-6 py-4 text-[12.5px] ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{mod.sharedTo}</td>
                 <td className="px-6 py-4">
-                  <div className="flex items-center gap-1.5 text-[12.5px] text-slate-500">
+                  <div className={`flex items-center gap-1.5 text-[12.5px] ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
                     <User size={12} weight="duotone" />
                     {mod.lastMod}
                   </div>
@@ -2507,7 +2513,7 @@ function ModulesAndFieldsPanel() {
                   <div className="flex items-center justify-center gap-2">
                     <GreenSwitch checked={isOn} onChange={() => setModStatuses(p => ({ ...p, [mod.key]: !p[mod.key] }))} />
                     <Tooltip title="Module info">
-                      <IconButton size="small" sx={{ p:0.3, color:"#E2E8F0", "&:hover":{color:"#E3ECFC",bgcolor:"#EFF6FF"}, borderRadius:"6px" }}>
+                      <IconButton size="small" sx={{ p:0.3, color: isDark ? "#52525B" : "#94A3B8", "&:hover":{color:"#1D4ED8",bgcolor: isDark ? "#27272A" : "#EFF6FF"}, borderRadius:"6px" }}>
                         <Info size={13} weight="duotone" />
                       </IconButton>
                     </Tooltip>
@@ -2526,14 +2532,16 @@ function ModulesAndFieldsPanel() {
 //  Placeholder
 // ─────────────────────────────────────────────
 function PlaceholderPanel({ label }: { label: string }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   return (
-    <div className="flex-1 flex items-center justify-center bg-[#EFF6FF]">
+    <div className={`flex-1 flex items-center justify-center ${isDark ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
       <div className="text-center">
-        <div className="w-12 h-12 rounded-2xl bg-[#EFF6FF] flex items-center justify-center mx-auto mb-3">
-          <Gear size={22} color="#E3ECFC" weight="duotone" />
+        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 ${isDark ? "bg-[#18181B]" : "bg-[#EFF6FF]"}`}>
+          <Gear size={22} color={isDark ? "#52525B" : "#94A3B8"} weight="duotone" />
         </div>
-        <div className="text-[15px] font-bold text-slate-700">{label}</div>
-        <div className="text-[12.5px] text-slate-400 mt-1">This section is coming soon.</div>
+        <div className={`text-[15px] font-bold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{label}</div>
+        <div className={`text-[12.5px] mt-1 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>This section is coming soon.</div>
       </div>
     </div>
   );
@@ -2588,7 +2596,7 @@ function SettingsSidebar({ activeItem, setActiveItem, isDark = false }: {
                             : isDark ? "text-[#737373] hover:bg-[#27272A] hover:text-[#FFFFFF]" : "text-slate-500 hover:bg-[#EFF6FF]/60 hover:text-slate-700"
                         }`}>
                         {isActive && <span className={`absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full ${isDark ? "bg-[#52525B]" : "bg-[#1D4ED8]"}`} />}
-                        <IIcon size={13} color={isActive ? (isDark ? "#6B8BA3" : "#E3ECFC") : "#94A3B8"} weight="duotone" />
+                        <IIcon size={13} color={isActive ? (isDark ? "#6B8BA3" : "#1D4ED8") : "#94A3B8"} weight="duotone" />
                         {item.label}
                       </button>
                     );
