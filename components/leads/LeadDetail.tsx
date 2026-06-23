@@ -15,14 +15,13 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InputBase from "@mui/material/InputBase";
 // Phosphor Duotone Icons
 import {
   House, CaretRight, PencilSimple, Phone, Envelope,
   DotsThreeVertical, Check, Note, ClipboardText, Paperclip,
   ClockCounterClockwise, User, AddressBook, TrendUp, Buildings,
   ArrowsLeftRight, Star, Clock, UserPlus, Copy, DownloadSimple,
-  Trash, Users, Plus, PaperPlaneTilt, CheckCircle,
+  Trash, Users,
 } from "@phosphor-icons/react";
 import { LEAD_AVATARS, OWNER_AVATARS } from "@/lib/avatars";
 import { useTheme } from "@/components/ThemeContext";
@@ -119,18 +118,11 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
   const lead = LEADS[leadId];
 
   // ── UI state ──
-  const [activeTab, setActiveTab]         = useState<"overview"|"activity"|"notes">("overview");
+  const [activeTab, setActiveTab]         = useState<"overview"|"activity">("overview");
   const [currentStatus, setCurrentStatus] = useState<LeadStatus>(lead?.status ?? "New");
   const [editOpen, setEditOpen]           = useState(false);
   const [convertOpen, setConvertOpen]     = useState(false);
   const [moreAnchor, setMoreAnchor]       = useState<null|HTMLElement>(null);
-  const [newNoteText, setNewNoteText]     = useState("");
-  const [addingNote, setAddingNote]       = useState(false);
-  const [notes, setNotes]                 = useState([
-    { id:1, text:"Initial contact made. Interested in residential properties.", author:"PM SDL", initials:"PM", color:"#1D4ED8", date:"27 May 2026, 3:54 PM" },
-    { id:2, text:"Sent property listings via email. Will follow up next week.", author:"PM SDL", initials:"PM", color:"#1D4ED8", date:"27 May 2026, 4:20 PM" },
-    { id:3, text:"Meeting tentatively scheduled for June.", author:"SE User 1", initials:"SU", color:"#3B82F6", date:"28 May 2026, 10:00 AM" },
-  ]);
 
   if (!lead) {
     return (
@@ -148,16 +140,6 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
   const avInit    = initials(fullName || "?");
   const pipelineIdx = PIPELINE.indexOf(currentStatus);
   const cfg       = isDark ? STATUS_CFG_DARK[currentStatus] : STATUS_CFG[currentStatus];
-
-  const addNote = () => {
-    if (!newNoteText.trim()) return;
-    setNotes(prev => [...prev, {
-      id: Date.now(), text: newNoteText,
-      author: "PM SDL", initials: "PM",
-      color: "#7C3AED", date: "Just now",
-    }]);
-    setNewNoteText(""); setAddingNote(false);
-  };
 
   // Activity timeline items
   const actBg = isDark ? "#27272A" : "#EFF6FF";
@@ -181,7 +163,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
 
   // Related list → tab mapping
   const relatedItems = [
-    { icon: Note,                label:"Notes",         count:notes.length, color:"#7C3AED", tab:"notes"    as const },
+    { icon: Note,                label:"Notes",         count:3,            color:"#7C3AED", tab:"activity" as const },
     { icon: ClipboardText,       label:"Tasks",         count:2,            color:"#3B82F6", tab:"activity" as const },
     { icon: Phone,               label:"Calls",         count:1,            color:"#DB5E8C", tab:"activity" as const },
     { icon: Envelope,            label:"Emails",        count:0,            color:"#E0883F", tab:"activity" as const },
@@ -307,19 +289,14 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
 
           {/* ══ Tab Bar ══ */}
           <div className={`flex items-center gap-1 border rounded-xl p-1 w-fit shadow-sm ${isDark ? "bg-[#000000] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
-            {(["overview","activity","notes"] as const).map(t => (
-              <button key={t} onClick={() => setActiveTab(t)}
-                className={`px-4 py-1.5 rounded-lg text-[13.5px] font-semibold capitalize transition-all ${
-                  activeTab===t ? "bg-[#1D4ED8] text-white shadow-sm"
+            {([{ key:"overview", label:"Overview" }, { key:"activity", label:"Timeline" }] as const).map(({ key, label }) => (
+              <button key={key} onClick={() => setActiveTab(key)}
+                className={`px-4 py-1.5 rounded-lg text-[14px] font-semibold transition-all ${
+                  activeTab===key ? "bg-[#1D4ED8] text-white shadow-sm"
                     : isDark ? "text-[#737373] bg-[#0A0A0A] hover:bg-[#27272A] hover:text-[#D4D4D8]"
                     : "text-[#0C2472] bg-[#E3ECFC] hover:bg-[#1D4ED8]/10"
                 }`}>
-                {t}
-                {t==="notes" && notes.length > 0 && (
-                  <span className={`ml-1.5 text-[10px] px-1 py-0.5 rounded-full font-bold ${activeTab===t ? "bg-white/20 text-white" : isDark ? "bg-[#27272A] text-[#D4D4D8]" : "bg-[#E3ECFC] text-[#1D4ED8]"}`}>
-                    {notes.length}
-                  </span>
-                )}
+                {label}
               </button>
             ))}
           </div>
@@ -335,11 +312,11 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                 <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm p-5">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <p className="font-heading text-[11px] font-bold text-slate-400 uppercase tracking-widest">Stage Progress</p>
+                      <p className="font-heading text-[12px] font-bold text-slate-400 uppercase tracking-widest">Stage Progress</p>
                       <p className="text-[12px] text-slate-500 mt-0.5">Click a stage to update · Started <span className="font-semibold text-slate-700">{lead.created}</span></p>
                     </div>
                     <div className="text-right">
-                      <p className="font-heading text-[11px] font-bold text-slate-400 uppercase tracking-widest">Last Updated</p>
+                      <p className="font-heading text-[12px] font-bold text-slate-400 uppercase tracking-widest">Last Updated</p>
                       <p className="text-[12px] font-semibold text-slate-700 mt-0.5">{lead.modified}</p>
                     </div>
                   </div>
@@ -413,8 +390,8 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                       <div className="w-7 h-7 rounded-lg flex items-center justify-center mb-2" style={{ backgroundColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(249,251,255,0.7)" }}>
                         <Icon size={15} color={deep} weight="duotone" />
                       </div>
-                      <p className="font-heading text-[11px] font-bold uppercase tracking-wider mb-0.5" style={{ color: isDark ? "#94A3B8" : "#475569" }}>{label}</p>
-                      <p className="text-[13.5px] font-bold truncate" style={{ color: isDark ? "#FFFFFF" : "#0C2472" }}>{value}</p>
+                      <p className="font-heading text-[12px] font-bold uppercase tracking-wider mb-0.5" style={{ color: isDark ? "#94A3B8" : "#475569" }}>{label}</p>
+                      <p className="text-[14px] font-bold truncate" style={{ color: isDark ? "#FFFFFF" : "#0C2472" }}>{value}</p>
                     </div>
                   ))}
                 </div>
@@ -473,7 +450,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                         <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor:color+"20" }}>
                           <Icon size={14} color={color} weight="duotone" />
                         </div>
-                        <span className="flex-1 text-left text-[13.5px] font-medium text-slate-700 transition-colors">{label}</span>
+                        <span className="flex-1 text-left text-[14px] font-medium text-slate-700 transition-colors">{label}</span>
                         {count > 0 && (
                           <span className="text-[11px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>
                         )}
@@ -491,8 +468,8 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                       {lead.ownerInitials}
                     </Avatar>
                     <div>
-                      <p className="text-[13.5px] font-semibold text-slate-800">{lead.owner}</p>
-                      <p className="text-[11.5px] text-slate-400">Lead Owner</p>
+                      <p className="text-[14px] font-semibold text-slate-800">{lead.owner}</p>
+                      <p className="text-[12px] text-slate-400">Lead Owner</p>
                     </div>
                   </div>
                   <Divider sx={{ borderColor:"#EFF6FF" }} />
@@ -516,8 +493,8 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
             <div className="grid grid-cols-3 gap-4">
               <div className="col-span-2 bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm">
                 <div className="flex items-center justify-between px-5 py-4 border-b border-[#EFF6FF]">
-                  <p className="font-heading text-[14px] font-bold text-slate-900">Activity Timeline</p>
-                  <span className="text-[11.5px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">{activityFeed.length} events</span>
+                  <p className="font-heading text-[12px] font-bold text-slate-500 uppercase tracking-wider">Timeline</p>
+                  <span className="text-[12px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">{activityFeed.length} events</span>
                 </div>
                 <div className="px-5 py-4 space-y-0">
                   {activityFeed.map((item, i) => {
@@ -533,8 +510,8 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                         </div>
                         {/* Content */}
                         <div className="flex-1 pb-4">
-                          <p className="text-[13.5px] font-medium text-slate-700 group-hover:text-slate-900 transition-colors mt-1">{item.text}</p>
-                          <p className="text-[11.5px] text-slate-400 mt-0.5 flex items-center gap-1">
+                          <p className="text-[14px] font-medium text-slate-700 group-hover:text-slate-900 transition-colors mt-1">{item.text}</p>
+                          <p className="text-[12px] text-slate-400 mt-0.5 flex items-center gap-1">
                             <Clock size={11} weight="duotone" />{item.time}
                           </p>
                         </div>
@@ -557,114 +534,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                         <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor:color+"20" }}>
                           <Icon size={14} color={color} weight="duotone" />
                         </div>
-                        <span className="flex-1 text-left text-[13.5px] font-medium text-slate-700">{label}</span>
-                        {count>0 && <span className="text-[11px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>}
-                        <CaretRight size={14} color="#E2E8F0" weight="duotone" />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ══════════════════════════ NOTES ══════════════════════════ */}
-          {activeTab === "notes" && (
-            <div className="grid grid-cols-3 gap-4">
-              <div className="col-span-2 space-y-3">
-
-                {/* Add note area */}
-                {addingNote ? (
-                  <div className="bg-[#f9fbff] rounded-2xl border border-[#1D4ED8] shadow-sm p-4 space-y-3">
-                    <div className="flex items-center gap-2.5">
-                      <Avatar sx={{ width:28, height:28, bgcolor:"#1D4ED8", fontSize:"0.68rem", fontWeight:800 }}>PM</Avatar>
-                      <p className="text-[13px] font-semibold text-slate-700">PM SDL · Just now</p>
-                    </div>
-                    <InputBase
-                      multiline
-                      minRows={3}
-                      fullWidth
-                      autoFocus
-                      placeholder="Write a note about this lead…"
-                      value={newNoteText}
-                      onChange={e => setNewNoteText(e.target.value)}
-                      sx={{ fontSize:"0.92rem", color: isDark?"#E2E8F0":"#334155", lineHeight:1.6, "& textarea::placeholder":{ color: isDark?"#52525B":"#E2E8F0" } }}
-                    />
-                    <div className="flex items-center gap-2 justify-end pt-1 border-t border-[#EFF6FF]">
-                      <button onClick={() => { setAddingNote(false); setNewNoteText(""); }}
-                        className="text-[13px] font-semibold text-slate-400 hover:text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-50 transition-colors">
-                        Cancel
-                      </button>
-                      <Button variant="contained" size="small" endIcon={<PaperPlaneTilt size={13} weight="duotone" />}
-                        onClick={addNote} disabled={!newNoteText.trim()}
-                        sx={{ bgcolor:"#1D4ED8", borderRadius:"8px", textTransform:"none", fontWeight:700, fontSize:"0.85rem", "&:hover":{ bgcolor:"#60A5FA" }, "&:active":{ bgcolor:"#0C2472" }, "&.Mui-disabled":{ bgcolor: isDark?"#27272A":"#E3ECFC", color: isDark?"#52525B":"#9CA3AF" } }}>
-                        Add Note
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <button onClick={() => setAddingNote(true)}
-                    className="w-full flex items-center gap-3 bg-[#f9fbff] border border-[#E3ECFC] hover:border-[#1D4ED8] rounded-2xl px-4 py-3.5 text-left shadow-sm group transition-all">
-                    <Avatar sx={{ width:28, height:28, bgcolor:"#1D4ED8", fontSize:"0.68rem", fontWeight:800 }}>PM</Avatar>
-                    <span className="text-[13.5px] text-slate-400 group-hover:text-slate-600 transition-colors">Write a note about this lead…</span>
-                    <Plus size={16} color="#E2E8F0" weight="bold" style={{ marginLeft:"auto" }} className="group-hover:text-[#1D4ED8]" />
-                  </button>
-                )}
-
-                {/* Existing notes */}
-                {notes.map(note => (
-                  <div key={note.id} className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm p-4 group hover:border-[#E3ECFC] transition-all">
-                    <div className="flex items-start justify-between mb-2.5">
-                      <div className="flex items-center gap-2.5">
-                        <Avatar sx={{ width:28, height:28, bgcolor:note.color, fontSize:"0.68rem", fontWeight:800 }}>
-                          {note.initials}
-                        </Avatar>
-                        <div>
-                          <p className="text-[13px] font-semibold text-slate-800">{note.author}</p>
-                          <p className="text-[11px] text-slate-400">{note.date}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Tooltip title="Edit note">
-                          <IconButton size="small" sx={{ borderRadius:"6px", p:0.5, "&:hover":{ bgcolor:"#EFF6FF" } }}>
-                            <PencilSimple size={13} color="#94A3B8" weight="duotone" />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Delete note">
-                          <IconButton size="small"
-                            onClick={() => setNotes(prev => prev.filter(n => n.id !== note.id))}
-                            sx={{ borderRadius:"6px", p:0.5, "&:hover":{ bgcolor:"#FEF2F2" } }}>
-                            <Trash size={13} color="#94A3B8" weight="duotone" />
-                          </IconButton>
-                        </Tooltip>
-                      </div>
-                    </div>
-                    <p className="text-[14px] text-slate-700 leading-relaxed">{note.text}</p>
-                  </div>
-                ))}
-
-                {notes.length === 0 && !addingNote && (
-                  <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] p-10 text-center shadow-sm">
-                    <Note size={28} color="#94A3B8" weight="duotone" style={{ marginBottom:4 }} />
-                    <p className="text-slate-400 text-[15px] font-medium">No notes yet. Add one above.</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Side: related */}
-              <div className="space-y-4">
-                <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
-                  <div className="px-4 py-3.5 border-b border-[#EFF6FF]">
-                    <p className="font-heading text-[12px] font-bold text-slate-500 uppercase tracking-wider">Related List</p>
-                  </div>
-                  <div className="p-2 space-y-0.5">
-                    {relatedItems.map(({ icon: Icon, label, count, color, tab }) => (
-                      <button key={label} onClick={() => setActiveTab(tab)}
-                        className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-xl hover:bg-[#EFF6FF] group transition-colors ${tab==="notes"&&label==="Notes"?"bg-[#EFF6FF]":""}`}>
-                        <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor:color+"20" }}>
-                          <Icon size={14} color={color} weight="duotone" />
-                        </div>
-                        <span className="flex-1 text-left text-[13.5px] font-medium text-slate-700">{label}</span>
+                        <span className="flex-1 text-left text-[14px] font-medium text-slate-700">{label}</span>
                         {count>0 && <span className="text-[11px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>}
                         <CaretRight size={14} color="#E2E8F0" weight="duotone" />
                       </button>

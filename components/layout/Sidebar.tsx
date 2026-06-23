@@ -93,7 +93,7 @@ export default function Sidebar() {
             <img
               src="/logo.png"
               alt="Social DNA Labs"
-              style={{ height: "22px", width: "auto", display: "block", flexShrink: 0 }}
+              style={{ height: "32px", width: "auto", display: "block", flexShrink: 0 }}
             />
           )}
         </div>
