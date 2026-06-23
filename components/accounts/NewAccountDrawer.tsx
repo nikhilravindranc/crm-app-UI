@@ -21,7 +21,7 @@ const COUNTRIES  = ["India", "United States", "United Kingdom", "Singapore", "Au
 const STATES     = ["Andhra Pradesh", "Delhi", "Gujarat", "Karnataka", "Kerala", "Maharashtra", "Tamil Nadu", "Telangana", "Other"];
 
 function SectionTitle({ children, isDark }: { children: React.ReactNode; isDark: boolean }) {
-  return <h3 className={`font-heading text-[13.5px] font-bold mb-4 ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>{children}</h3>;
+  return <h3 className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-4 ${isDark ? "text-[#D4D4D8]" : "text-slate-500"}`}>{children}</h3>;
 }
 
 const DEFAULT = {

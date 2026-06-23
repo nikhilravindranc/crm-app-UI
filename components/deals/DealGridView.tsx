@@ -71,7 +71,7 @@ export default function DealGridView({ deals }: Props) {
             <div className="p-4">
               {/* Deal name + menu */}
               <div className="flex items-start justify-between gap-2 mb-1">
-                <h3 className={`font-heading text-[13.5px] font-bold truncate transition-colors leading-tight flex-1 ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+                <h3 className={`font-heading text-[14px] font-bold truncate transition-colors leading-tight flex-1 ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>
                   {deal.name}
                 </h3>
                 <button onClick={e => e.stopPropagation()}

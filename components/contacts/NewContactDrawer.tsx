@@ -32,7 +32,7 @@ const STATES_IN     = ["Andhra Pradesh", "Delhi", "Gujarat", "Karnataka", "Keral
 function SectionTitle({ children }: { children: React.ReactNode }) {
   const { theme } = useTheme();
   return (
-    <h3 className={`font-heading text-[13.5px] font-bold mb-4 ${theme === "dark" ? "text-[#D4D4D8]" : "text-slate-800"}`}>{children}</h3>
+    <h3 className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-4 ${theme === "dark" ? "text-[#D4D4D8]" : "text-slate-500"}`}>{children}</h3>
   );
 }
 

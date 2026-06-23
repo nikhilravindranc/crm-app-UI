@@ -79,7 +79,7 @@ export default function AccountGridView({ accounts }: Props) {
                   {initials(acc.name)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className={`font-heading text-[13.5px] font-bold truncate transition-colors ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+                  <p className={`font-heading text-[14px] font-bold truncate transition-colors ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>
                     {acc.name}
                   </p>
                   {acc.accountType && (

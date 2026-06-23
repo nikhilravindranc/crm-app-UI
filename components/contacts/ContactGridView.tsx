@@ -83,7 +83,7 @@ export default function ContactGridView({ contacts }: Props) {
                   {avInit}
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <p className={`font-heading text-[13.5px] font-bold truncate transition-colors ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+                  <p className={`font-heading text-[14px] font-bold truncate transition-colors ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>
                     {fullName}
                   </p>
                   {contact.accountName && (

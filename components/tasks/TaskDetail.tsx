@@ -156,7 +156,7 @@ function SectionCard({ icon: Icon, title, children, action }: {
         <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
           <Icon size={13} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
         </div>
-        <span className={`font-heading text-[11px] font-bold uppercase tracking-[0.12em] flex-1 ${isDark ? "text-[#71717A]" : "text-[#1D4ED8]"}`}>{title}</span>
+        <span className={`font-heading text-[12px] font-bold uppercase tracking-wider flex-1 ${isDark ? "text-slate-500" : "text-slate-500"}`}>{title}</span>
         {action}
       </div>
       <div className="px-5 py-4">{children}</div>
@@ -171,8 +171,8 @@ function KV({ label, value, editable }: { label: string; value?: string | number
   return (
     <div className={`py-2.5 border-b last:border-0 flex items-start justify-between group ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
       <div className="flex-1">
-        <div className={`text-[10.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{label}</div>
-        <div className={`text-[13px] font-medium whitespace-pre-line ${display === "—" ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>{display}</div>
+        <div className={`text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{label}</div>
+        <div className={`text-[14px] font-medium whitespace-pre-line ${display === "—" ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>{display}</div>
       </div>
       {editable && (
         <IconButton size="small"
@@ -238,7 +238,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
     <div className="space-y-4">
       <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <div className={`px-4 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
-          <span className={`font-heading text-[11px] font-bold uppercase tracking-wider ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>Related List</span>
+          <span className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-500"}`}>Related List</span>
         </div>
         <div className="p-2 space-y-0.5">
           {relatedItems.map(({ label, icon: Icon, count, color }) => (
@@ -334,7 +334,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
                   ].map(({ label, value }) => (
                     <div key={label} className="flex items-center justify-between px-5 py-3">
                       <span className={`text-[12.5px] font-medium w-32 flex-shrink-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{label}:</span>
-                      <span className={`flex-1 text-[13px] font-semibold ${value ? (isDark ? "text-[#D4D4D8]" : "text-slate-700") : (isDark ? "text-[#3F3F46]" : "text-slate-300")}`}>
+                      <span className={`flex-1 text-[14px] font-semibold ${value ? (isDark ? "text-[#D4D4D8]" : "text-slate-700") : (isDark ? "text-[#3F3F46]" : "text-slate-300")}`}>
                         {label === "Status" && value && statusCfg ? (
                           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11.5px] font-bold"
                             style={{ backgroundColor: statusCfg.bg, color: statusCfg.text }}>
@@ -457,7 +457,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
                     <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
                       <ClipboardText size={13} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
                     </div>
-                    <span className={`font-heading text-[11px] font-bold uppercase tracking-[0.12em] flex-1 ${isDark ? "text-[#71717A]" : "text-[#1D4ED8]"}`}>Activity Timeline</span>
+                    <span className={`font-heading text-[12px] font-bold uppercase tracking-wider flex-1 ${isDark ? "text-slate-500" : "text-slate-500"}`}>Activity Timeline</span>
                   </div>
                   <div className="px-5 py-4">
                     {task.timeline.length === 0 ? (

@@ -147,7 +147,7 @@ function SettingCard({ icon: Icon, title, color = "#3B82F6", children, action }:
         <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ backgroundColor: color + (isDark ? "22" : "18") }}>
           <Icon size={13} color={color} weight="duotone" />
         </div>
-        <span className={`font-heading text-[11px] font-bold uppercase tracking-[0.12em] flex-1 ${isDark ? "text-[#71717A]" : ""}`} style={isDark ? undefined : { color }}>{title}</span>
+        <span className={`font-heading text-[12px] font-bold uppercase tracking-wider flex-1 text-slate-500`}>{title}</span>
         {action}
       </div>
       <div className="px-5 py-2">{children}</div>
@@ -201,7 +201,7 @@ function KV({ label, value, link, editable, onSave }: {
             </button>
           </div>
         ) : (
-          <div className={`text-[13px] font-medium leading-snug ${link ? (isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]") : empty ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>
+          <div className={`text-[14px] font-medium leading-snug ${link ? (isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]") : empty ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>
             {empty ? "—" : editValue}
           </div>
         )}
@@ -464,7 +464,7 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
         {/* User Information */}
         <div>
-          <h3 className={`font-heading text-[13px] font-bold mb-4 tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>User Information</h3>
+          <h3 className={`font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500`}>User Information</h3>
           <div className="space-y-3">
             <TextField
               label="First Name"
@@ -501,7 +501,7 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
 
         {/* More Information */}
         <div>
-          <h3 className={`font-heading text-[13px] font-bold mb-4 tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>More Information</h3>
+          <h3 className={`font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500`}>More Information</h3>
           <div className="space-y-3">
             <FormControl size="small" fullWidth sx={FX}>
               <InputLabel>Gender</InputLabel>
@@ -536,7 +536,7 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
 
         {/* Address Details */}
         <div>
-          <h3 className={`font-heading text-[13px] font-bold mb-4 tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Address Details</h3>
+          <h3 className={`font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500`}>Address Details</h3>
           <div className="space-y-3">
             <TextField
               label="Address"
@@ -755,7 +755,7 @@ function UsersPanel() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 mb-0.5">
-                    <span className={`text-[13px] font-semibold truncate ${isActive?"text-[#1D4ED8]":"text-slate-800"}`}>{user.name}</span>
+                    <span className={`text-[14px] font-semibold truncate ${isActive?"text-[#1D4ED8]":"text-slate-800"}`}>{user.name}</span>
                     <div className="flex-shrink-0">
                       <RoleBadge role={user.role} />
                     </div>
@@ -931,7 +931,7 @@ function NewRoleDrawer({ open, onClose }: { open: boolean; onClose: () => void }
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
         {/* Role Details */}
         <div>
-          <h3 className={`font-heading text-[13px] font-bold mb-4 tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Role Details</h3>
+          <h3 className={`font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500`}>Role Details</h3>
           <div className="space-y-3">
             <TextField label="Role Name" value={formData.roleName} onChange={e => handleChange("roleName", e.target.value)}
               size="small" fullWidth sx={FX} />
@@ -951,7 +951,7 @@ function NewRoleDrawer({ open, onClose }: { open: boolean; onClose: () => void }
 
         {/* Additional Information */}
         <div>
-          <h3 className={`font-heading text-[13px] font-bold mb-4 tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Additional Information</h3>
+          <h3 className={`font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500`}>Additional Information</h3>
           <div className="space-y-3">
             <TextField label="Department" value={formData.department} onChange={e => handleChange("department", e.target.value)}
               size="small" fullWidth sx={FX} />
@@ -1012,7 +1012,7 @@ function RoleTreeNode({ node, depth, selectedId, expandedIds, onSelect, onToggle
             : <span className={`w-1.5 h-1.5 rounded-full inline-block ${isDark ? "bg-[#3F3F46]" : "bg-[#CBD5E1]"}`} />
           }
         </button>
-        <div className={`text-[13px] font-medium flex-1 ${
+        <div className={`text-[14px] font-medium flex-1 ${
           isSelected
             ? isDark ? "text-[#D4D4D8] font-semibold" : "text-[#0C2472] font-semibold"
             : isDark ? "text-[#71717A]" : "text-slate-500"
@@ -1068,7 +1068,7 @@ function RolesPanel() {
               ? isDark ? "bg-[#27272A] border-[#3F3F46] shadow-sm" : "bg-[#EFF6FF] border-[#1D4ED8] shadow-sm"
               : isDark ? "border-[#27272A] hover:bg-[#1C1C1E]" : "border-[#E3ECFC] hover:bg-[#f9fbff]"
           }`}>
-          <div className={`text-[13px] font-semibold ${
+          <div className={`text-[14px] font-semibold ${
             selectedRole.id === role.id
               ? isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"
               : isDark ? "text-[#71717A]" : "text-slate-600"
@@ -1185,7 +1185,7 @@ function RolesPanel() {
                 <div className="w-6 h-6 rounded-lg bg-[#EFF6FF] flex items-center justify-center">
                   <ClockCounterClockwise size={13} color="#1D4ED8" weight="duotone" />
                 </div>
-                <span className="font-heading text-[11px] font-bold uppercase tracking-[0.12em] text-[#1D4ED8]">History</span>
+                <span className="font-heading text-[12px] font-bold uppercase tracking-wider text-slate-500">History</span>
               </div>
 
               {roleActivities.length > 0 ? (
@@ -1213,7 +1213,7 @@ function RolesPanel() {
                               </div>
                               {/* Text */}
                               <div className="flex-1 min-w-0">
-                                <div className="text-[13px] text-slate-700 leading-snug">
+                                <div className="text-[14px] text-slate-700 leading-snug">
                                   <span className="font-bold">{verb}:</span>{" "}
                                   <span className="font-medium">{rest.join(" ")}</span>
                                 </div>
@@ -1400,7 +1400,7 @@ function PermissionPanel() {
             <tbody>
               {PERM_MODULES.map((mod, i) => (
                 <tr key={mod} className={`border-b ${isDark ? `border-[#27272A] ${i % 2 === 0 ? "bg-[#1C1C1E]" : "bg-[#18181B]"}` : `border-[#E3ECFC] ${i % 2 === 0 ? "bg-white" : "bg-[#f9fbff]"}`}`}>
-                  <td className={`sticky left-0 z-10 px-5 py-2 border-r font-semibold text-[13px] bg-inherit align-middle whitespace-nowrap ${isDark ? "text-[#A1A1AA] border-[#27272A]" : "text-slate-700 border-[#E3ECFC]"}`}>
+                  <td className={`sticky left-0 z-10 px-5 py-2 border-r font-semibold text-[14px] bg-inherit align-middle whitespace-nowrap ${isDark ? "text-[#A1A1AA] border-[#27272A]" : "text-slate-700 border-[#E3ECFC]"}`}>
                     {mod}
                   </td>
                   {PERM_ROLES.map(role => (
@@ -1816,7 +1816,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                   {DV_BC_FIELDS.map((f,i) => (
                     <div key={i} className="flex items-center gap-3 px-4 py-2.5">
                       <DotsSixVertical size={13} color="#E2E8F0"/>
-                      <span className="text-[13px] text-slate-700 flex-1">{f.label}</span>
+                      <span className="text-[14px] text-slate-700 flex-1">{f.label}</span>
                       <span className="text-[12px] text-inherit">{f.type}</span>
                     </div>
                   ))}
@@ -1849,7 +1849,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                 ].map(item => (
                   <div key={item.name} className="px-4 py-3 border-b border-[#EFF6FF] last:border-0">
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[13px] font-bold text-slate-700">{item.name}</span>
+                      <span className="text-[14px] font-bold text-slate-700">{item.name}</span>
                       <div className="flex items-center gap-1">
                         {item.customize && <button className="text-[12.5px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>}
                         <IconButton size="small" sx={{ p:0.3, color:"#94A3B8", "&:hover":{color:"#EF4444"}, borderRadius:"6px" }}>
@@ -2106,7 +2106,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
                   )}
                 </div>
               </div>
-              <p className="text-[13px] text-slate-400 font-medium mt-3 text-center max-w-[420px]">
+              <p className="text-[14px] text-slate-400 font-medium mt-3 text-center max-w-[420px]">
                 Fields shown here appear in the Quick Create popup used to add a new {modDef?.label.toLowerCase().replace(/s$/, "") ?? "record"} from a list view.
               </p>
             </div>
@@ -2137,7 +2137,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
                         ))}
                       </div>
                       <div className="px-4 py-2.5 border-t border-[#EFF6FF]">
-                        <div className="flex items-center gap-1.5 text-[13px] text-slate-400">
+                        <div className="flex items-center gap-1.5 text-[14px] text-slate-400">
                           <Info size={11} weight="duotone"/>
                           You can add up to <span className="font-bold text-slate-600 mx-0.5">5 fields</span> to your Business Card.
                         </div>
@@ -2324,7 +2324,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
         <div className="px-6 border-b border-[#E3ECFC] flex items-center gap-1">
           {(["layouts","fields"] as const).map(t => (
             <button key={t} onClick={() => setTab(t)}
-              className={`px-4 py-2.5 text-[13px] font-semibold capitalize transition-all border-b-2 -mb-px ${
+              className={`px-4 py-2.5 text-[14px] font-semibold capitalize transition-all border-b-2 -mb-px ${
                 tab === t ? "border-[#1D4ED8] text-[#1D4ED8]" : "border-transparent text-slate-400 hover:text-slate-600"
               }`}>
               {t.charAt(0).toUpperCase() + t.slice(1)}
@@ -2360,7 +2360,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
                       <tr><td colSpan={4} className="px-4 py-8 text-center text-[12.5px] text-slate-300">No records found.</td></tr>
                     ) : layouts.map((l, i) => (
                       <tr key={i} className="border-b border-[#EFF6FF] last:border-0 hover:bg-[#fafcff] transition-colors">
-                        <td className="px-4 py-3 text-[13px] font-semibold text-[#1D4ED8] cursor-pointer hover:underline" onClick={() => onOpenLayout(l.name)}>{l.name}</td>
+                        <td className="px-4 py-3 text-[14px] font-semibold text-[#1D4ED8] cursor-pointer hover:underline" onClick={() => onOpenLayout(l.name)}>{l.name}</td>
                         <td className="px-4 py-3 text-[12.5px] text-slate-500">{l.sharedTo}</td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-1.5 text-[12.5px] text-slate-500">
@@ -2414,9 +2414,9 @@ function CreateLayoutModal({ existingLayouts, onClose, onContinue }: {
           </Select>
         </FormControl>
         <div className="flex justify-end gap-2">
-          <button onClick={onClose} className="px-4 py-2 text-[13px] font-semibold text-slate-500 hover:text-slate-700 transition-colors">Cancel</button>
+          <button onClick={onClose} className="px-4 py-2 text-[14px] font-semibold text-slate-500 hover:text-slate-700 transition-colors">Cancel</button>
           <button disabled={!cloneFrom} onClick={() => onContinue(cloneFrom === "__scratch__" ? null : cloneFrom)}
-            className="px-5 py-2 rounded-lg text-[13px] font-bold text-white bg-[#1D4ED8] hover:bg-[#2563EB] disabled:opacity-40 disabled:cursor-not-allowed transition-colors">Continue</button>
+            className="px-5 py-2 rounded-lg text-[14px] font-bold text-white bg-[#1D4ED8] hover:bg-[#2563EB] disabled:opacity-40 disabled:cursor-not-allowed transition-colors">Continue</button>
         </div>
       </div>
     </div>
@@ -2494,14 +2494,14 @@ function ModulesAndFieldsPanel() {
               <tr key={mod.key} className={`border-b transition-colors ${isDark ? "border-[#18181B] hover:bg-[#111113]" : "border-[#EFF6FF] hover:bg-[#fafcff]"}`}>
                 <td className="px-6 py-4">
                   <button onClick={() => { setSelectedMod(mod.key); setView("detail"); }}
-                    className={`flex items-center gap-2 text-[13px] font-semibold hover:underline ${isDark ? "text-[#60A5FA]" : "text-[#1D4ED8]"}`}>
+                    className={`flex items-center gap-2 text-[14px] font-semibold hover:underline ${isDark ? "text-[#60A5FA]" : "text-[#1D4ED8]"}`}>
                     <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ backgroundColor: mod.color + "18" }}>
                       <Icon size={12} color={mod.color} weight="duotone" />
                     </div>
                     {mod.label}
                   </button>
                 </td>
-                <td className={`px-6 py-4 text-[13px] ${isDark ? "text-[#D4D4D8]" : "text-slate-600"}`}>{mod.label}</td>
+                <td className={`px-6 py-4 text-[14px] ${isDark ? "text-[#D4D4D8]" : "text-slate-600"}`}>{mod.label}</td>
                 <td className={`px-6 py-4 text-[12.5px] ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{mod.sharedTo}</td>
                 <td className="px-6 py-4">
                   <div className={`flex items-center gap-1.5 text-[12.5px] ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>

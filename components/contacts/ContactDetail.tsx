@@ -320,7 +320,7 @@ function SectionCard({ icon: Icon, title, children, action, id }: {
         <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
           <Icon size={13} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
         </div>
-        <p className={`font-heading text-[11px] font-bold uppercase tracking-[0.12em] flex-1 ${isDark ? "text-[#71717A]" : "text-[#1D4ED8]"}`}>{title}</p>
+        <p className={`font-heading text-[12px] font-bold uppercase tracking-wider flex-1 ${isDark ? "text-slate-500" : "text-slate-500"}`}>{title}</p>
         {action}
       </div>
       <div className="px-5 py-4">{children}</div>
@@ -336,8 +336,8 @@ function KV({ label, value, fullWidth }: { label: string; value?: string | boole
     : (typeof value === "boolean" ? "No" : "—");
   return (
     <div className={`py-2.5 border-b last:border-0 ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"} ${fullWidth ? "col-span-2" : ""}`}>
-      <p className={`text-[10.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{label}</p>
-      <p className={`text-[13px] font-medium ${display === "—" ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>{display}</p>
+      <p className={`text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{label}</p>
+      <p className={`text-[14px] font-medium ${display === "—" ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>{display}</p>
     </div>
   );
 }
@@ -397,7 +397,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
     <div className="space-y-4">
       <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <div className={`px-4 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
-          <p className={`font-heading text-[11px] font-bold uppercase tracking-wider ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>Related List</p>
+          <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-500"}`}>Related List</p>
         </div>
         <div className="p-2 space-y-0.5">
           {relatedItems.map(({ label, icon: Icon, count, color }) => (
@@ -470,7 +470,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                   ].map(({ label, value }) => (
                     <div key={label} className="flex items-center px-5 py-3">
                       <span className={`text-[12.5px] font-medium w-40 flex-shrink-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{label}:</span>
-                      <span className={`flex-1 text-[13px] font-semibold ${value ? (isDark ? "text-[#D4D4D8]" : "text-slate-700") : (isDark ? "text-[#3F3F46]" : "text-slate-300")}`}>
+                      <span className={`flex-1 text-[14px] font-semibold ${value ? (isDark ? "text-[#D4D4D8]" : "text-slate-700") : (isDark ? "text-[#3F3F46]" : "text-slate-300")}`}>
                         {value || "—"}
                       </span>
                     </div>
@@ -672,7 +672,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                   <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
                     <ClockCounterClockwise size={13} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
                   </div>
-                  <p className={`font-heading text-[11px] font-bold uppercase tracking-[0.12em] ${isDark ? "text-[#71717A]" : "text-[#1D4ED8]"}`}>History</p>
+                  <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-500"}`}>History</p>
                 </div>
 
                 {contact.timeline.length === 0 ? (
