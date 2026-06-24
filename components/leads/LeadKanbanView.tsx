@@ -100,7 +100,7 @@ export default function LeadKanbanView({ leads }: Props) {
                           {lead.name}
                         </p>
                         {lead.company && (
-                          <p className={`text-[12px] truncate flex items-center gap-0.5 mt-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
+                          <p className={`text-[12px] truncate flex items-center gap-0.5 mt-0.5 ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>
                             <Buildings size={10} color={isDark ? "#3F3F46" : "#E2E8F0"} weight="duotone" />
                             {lead.company}
                           </p>
@@ -110,7 +110,7 @@ export default function LeadKanbanView({ leads }: Props) {
                         onClick={e => { e.stopPropagation(); }}
                         className={`opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}
                       >
-                        <DotsThreeVertical size={13} color={isDark ? "#9CA3AF" : "#94A3B8"} weight="duotone" />
+                        <DotsThreeVertical size={13} color={isDark ? "#E4E4E7" : "#94A3B8"} weight="duotone" />
                       </button>
                     </div>
 
@@ -137,7 +137,7 @@ export default function LeadKanbanView({ leads }: Props) {
                           {lead.ownerInitials}
                         </Avatar>
                       </Tooltip>
-                      <span className={`text-[12px] truncate ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{lead.owner}</span>
+                      <span className={`text-[12px] truncate ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>{lead.owner}</span>
                     </div>
                   </div>
                 );
@@ -148,7 +148,7 @@ export default function LeadKanbanView({ leads }: Props) {
             <button
               onClick={e => e.stopPropagation()}
               className={`flex items-center gap-1.5 mt-3 px-2 py-2 rounded-xl border border-dashed text-[14px] font-medium w-full transition-all ${
-                isDark ? "text-[#9CA3AF] hover:bg-[#1C1C1E] hover:text-[#A1A1AA]" : ""
+                isDark ? "text-[#E4E4E7] hover:bg-[#1C1C1E] hover:text-[#A1A1AA]" : ""
               }`}
               style={{ borderColor: col.dot + "60", color: isDark ? undefined : col.color + "99" }}
               onMouseEnter={e => { if (!isDark) (e.currentTarget as HTMLButtonElement).style.backgroundColor = col.bg; }}
