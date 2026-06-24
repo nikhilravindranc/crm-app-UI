@@ -64,9 +64,9 @@ const ALL_LEADS: Lead[] = [
 const STATUS_CFG: Record<LeadStatus, { bg: string; text: string; dot: string; bgDark: string; textDark: string }> = {
   "New":         { bg:"#EFF6FF", text:"#0C2472", dot:"#94A3B8", bgDark:"rgba(96, 165, 250, 0.15)", textDark:"#60A5FA" },
   "Contacted":   { bg:"#E3ECFC", text:"#0C2472", dot:"#3B82F6", bgDark:"rgba(52, 211, 153, 0.15)", textDark:"#34D399" },
-  "Qualified":   { bg:"#DCFCE7", text:"#166534", dot:"#16A34A", bgDark:"rgba(16, 185, 129, 0.15)", textDark:"#10B981" },
+  "Qualified":   { bg:"#DCFCE7", text:"#166534", dot:"#16A34A", bgDark:"rgba(16, 185, 129, 0.15)", textDark:"#E2E8F0" },
   "In Progress": { bg:"#E3ECFC", text:"#0C2472", dot:"#1D4ED8", bgDark:"rgba(251, 191, 36, 0.15)", textDark:"#FBBF24" },
-  "Lost":        { bg:"#FEF2F2", text:"#991B1B", dot:"#EF4444", bgDark:"rgba(244, 63, 94, 0.15)", textDark:"#F43F5E" },
+  "Lost":        { bg:"#FEF2F2", text:"#991B1B", dot:"#EF4444", bgDark:"rgba(244, 63, 94, 0.15)", textDark:"#E2E8F0" },
   "Unqualified": { bg:"#EFF6FF", text:"#475569", dot:"#94A3B8", bgDark:"rgba(168, 85, 247, 0.15)", textDark:"#A855F7" },
 };
 

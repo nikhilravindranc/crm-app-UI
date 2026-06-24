@@ -69,9 +69,9 @@ const STATUS_CFG_DARK: Record<LeadStatus, { bg: string; text: string; dot: strin
   "New":         { bg:"#18181B", text:"#D4D4D8", dot:"#D4D4D8" },
   "Contacted":   { bg:"#27272A", text:"#D4D4D8", dot:"#D4D4D8" },
   "In Progress": { bg:"#27272A", text:"#D4D4D8", dot:"#38BDF8" },
-  "Qualified":   { bg:"#064E3B", text:"#34D399", dot:"#10B981" },
-  "Lost":        { bg:"#450A0A", text:"#FCA5A5", dot:"#EF4444" },
-  "Unqualified": { bg:"#0F0F0F", text:"#737373", dot:"#52525B" },
+  "Qualified":   { bg:"#064E3B", text:"#E2E8F0", dot:"#10B981" },
+  "Lost":        { bg:"#450A0A", text:"#E2E8F0", dot:"#EF4444" },
+  "Unqualified": { bg:"#2D2D2D", text:"#D4D4D8", dot:"#9CA3AF" },
 };
 
 const PIPELINE: LeadStatus[] = ["New", "Contacted", "In Progress", "Qualified"];
@@ -226,13 +226,13 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
               <div className="flex items-center gap-2 flex-shrink-0">
                 {(lead.phone || lead.mobile) && (
                   <Button variant="outlined" size="small" startIcon={<Phone size={14} weight="duotone" />}
-                    sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#737373":"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.84rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#1D4ED8", color:"#1D4ED8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
+                    sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#B4B5B6":"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.84rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#1D4ED8", color:"#1D4ED8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
                     Call
                   </Button>
                 )}
                 {lead.email && (
                   <Button variant="outlined" size="small" startIcon={<Envelope size={14} weight="duotone" />}
-                    sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#737373":"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.84rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#1D4ED8", color:"#1D4ED8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
+                    sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#B4B5B6":"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.84rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#1D4ED8", color:"#1D4ED8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
                     Email
                   </Button>
                 )}
@@ -240,7 +240,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                 {/* Convert to Deal */}
                 <Button variant="outlined" size="small" startIcon={<ArrowsLeftRight size={14} weight="duotone" />}
                   onClick={() => setConvertOpen(true)}
-                  sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#737373":"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.84rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#1D4ED8", color:"#1D4ED8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
+                  sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#B4B5B6":"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.84rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#1D4ED8", color:"#1D4ED8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
                   Convert
                 </Button>
 
@@ -293,7 +293,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
               <button key={key} onClick={() => setActiveTab(key)}
                 className={`px-4 py-1.5 rounded-lg text-[14px] font-semibold transition-all ${
                   activeTab===key ? "bg-[#1D4ED8] text-white shadow-sm"
-                    : isDark ? "text-[#737373] bg-[#0A0A0A] hover:bg-[#27272A] hover:text-[#D4D4D8]"
+                    : isDark ? "text-[#B4B5B6] bg-[#0A0A0A] hover:bg-[#27272A] hover:text-[#D4D4D8]"
                     : "text-[#0C2472] bg-[#E3ECFC] hover:bg-[#1D4ED8]/10"
                 }`}>
                 {label}
@@ -334,7 +334,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                               className={`flex items-center justify-center gap-1.5 flex-1 py-2 px-2 rounded-xl text-[12.5px] font-bold transition-all
                                 ${isActive  ? "bg-[#1D4ED8] text-white shadow-md shadow-[#1D4ED8]/25 scale-[1.02]" : ""}
                                 ${isDone    ? isDark ? "bg-[#27272A] text-[#D4D4D8] hover:bg-[#3F3F46]" : "bg-[#E3ECFC] text-[#1D4ED8] hover:bg-[#DBEAFE]" : ""}
-                                ${isPending ? isDark ? "bg-[#0A0A0A] text-[#737373] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "bg-slate-50 text-slate-400 hover:bg-[#EFF6FF]" : ""}
+                                ${isPending ? isDark ? "bg-[#0A0A0A] text-[#B4B5B6] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "bg-slate-50 text-slate-400 hover:bg-[#EFF6FF]" : ""}
                               `}
                             >
                               {isDone && <Check size={12} weight="duotone" />}
