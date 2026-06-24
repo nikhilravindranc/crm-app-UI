@@ -116,8 +116,10 @@ const OWNERS: { name: string; initials: string }[] = [
 const ROWS_PER_PAGE_OPTIONS = [10, 20, 50, 100];
 
 function ColHeader({ label }: { label: string }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   return (
-    <div className="font-heading text-[14px]/[18px] font-semibold text-[#737373] uppercase tracking-wide select-none">
+    <div className={`font-heading text-[14px]/[18px] font-semibold uppercase tracking-wide select-none ${isDark ? "text-[#9CA3AF]" : "text-[#737373]"}`}>
       {label}
     </div>
   );
@@ -327,7 +329,7 @@ export default function LeadsPage() {
     creation: {
       field: "creation", headerName: "Created", flex: 1, minWidth: 100, sortable: false,
       renderHeader: () => <ColHeader label="Created" />,
-      renderCell: (params) => <div className={`text-[13px]/[16px] truncate ${isDark ? "text-[#737373]" : "text-slate-400"}`}>{params.row.created}</div>,
+      renderCell: (params) => <div className={`text-[13px]/[16px] truncate ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{params.row.created}</div>,
     },
   };
 
@@ -385,7 +387,7 @@ export default function LeadsPage() {
                     className={`flex items-center gap-1.5 px-2.5 py-[7px] rounded-lg text-[14px]/[18px] font-medium transition-all ${
                       view === k
                         ? isDark ? "bg-[#18181B] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]"
-                        : isDark ? "text-[#737373] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "bg-[#f9fbff] text-slate-400 hover:bg-[#E3ECFC]"
+                        : isDark ? "text-[#9CA3AF] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "bg-[#f9fbff] text-slate-400 hover:bg-[#E3ECFC]"
                     }`}>
                     <Icon size={14} weight="duotone" />{label}
                   </button>
@@ -445,7 +447,7 @@ export default function LeadsPage() {
               onClick={e => setFiltersAnchor(e.currentTarget)}
               sx={{
                 borderColor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#27272A" : "#E3ECFC",
-                color: activeFilters.length > 0 ? "#fff" : isDark ? "#737373" : "#0C2472",
+                color: activeFilters.length > 0 ? "#fff" : isDark ? "#9CA3AF" : "#0C2472",
                 bgcolor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#0F0F0F" : "#E3ECFC",
                 borderRadius:"9px", textTransform:"none", fontWeight:500, fontSize:"14px",
                 "&:hover":{
@@ -463,7 +465,7 @@ export default function LeadsPage() {
               onClick={() => setColumnsOpen(true)}
               sx={{
                 borderColor: isDark ? "#27272A" : "#E3ECFC",
-                color: isDark ? "#737373" : "#0C2472",
+                color: isDark ? "#9CA3AF" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
                 borderRadius:"9px", textTransform:"none", fontWeight:500, fontSize:"14px",
                 "&:hover":{ borderColor:"#1D4ED8", color:"#0C2472", bgcolor: isDark ? "#0A0A0A" : "#DCE6FB" },
@@ -478,7 +480,7 @@ export default function LeadsPage() {
               onClick={e => setSortAnchor(e.currentTarget)}
               sx={{
                 borderColor: isDark ? "#27272A" : "#E3ECFC",
-                color: isDark ? "#737373" : "#0C2472",
+                color: isDark ? "#9CA3AF" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
                 borderRadius:"9px", textTransform:"none", fontWeight:500, fontSize:"14px",
                 "&:hover":{ borderColor:"#1D4ED8", color:"#0C2472", bgcolor: isDark ? "#0A0A0A" : "#DCE6FB" },
@@ -486,7 +488,7 @@ export default function LeadsPage() {
               Sort{activeSorts.length > 0 ? ` (${activeSorts.length})` : ""}
             </Button>
 
-            <span className="ml-auto text-[13px]/[16px] text-slate-400 bg-[#f9fbff] px-3 py-1.5 rounded-lg">
+            <span className={`ml-auto text-[13px]/[16px] px-3 py-1.5 rounded-lg ${isDark ? "text-[#9CA3AF] bg-[#0A0A0A]" : "text-slate-400 bg-[#f9fbff]"}`}>
               {sorted.length} of {leads.length} records
             </span>
           </div>
@@ -505,7 +507,7 @@ export default function LeadsPage() {
               <button onClick={e => setStatusMenuAnchor(e.currentTarget)} className={`flex items-center gap-1.5 text-[14px]/[18px] font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>
                 <NotePencil size={14} weight="duotone" /> Update Status
               </button>
-              <button onClick={() => setSelected([])} className={`ml-auto text-[14px]/[18px] font-medium transition-colors ${isDark ? "text-[#52525B] hover:text-[#A1A1AA]" : "text-slate-400 hover:text-slate-600"}`}>Clear</button>
+              <button onClick={() => setSelected([])} className={`ml-auto text-[14px]/[18px] font-medium transition-colors ${isDark ? "text-[#9CA3AF] hover:text-[#A1A1AA]" : "text-slate-400 hover:text-slate-600"}`}>Clear</button>
               <button onClick={deleteSelected} className={`flex items-center gap-1.5 text-[14px]/[18px] font-medium transition-colors ${isDark ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"}`}>
                 <Trash size={14} weight="duotone" /> Delete
               </button>
@@ -557,10 +559,10 @@ export default function LeadsPage() {
                   noRowsOverlay: () => (
                     <div className="py-16 text-center">
                       <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
-                        <MagnifyingGlass size={22} color={isDark ? "#737373" : "#94A3B8"} weight="duotone" />
+                        <MagnifyingGlass size={22} color={isDark ? "#9CA3AF" : "#94A3B8"} weight="duotone" />
                       </div>
                       <p className={`font-heading text-[15px]/[20px] font-semibold ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>No leads found</p>
-                      <p className={`text-[13px]/[16px] mt-1 ${isDark ? "text-[#52525B]" : "text-slate-300"}`}>Try adjusting your search, filters or tab</p>
+                      <p className={`text-[13px]/[16px] mt-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-300"}`}>Try adjusting your search, filters or tab</p>
                     </div>
                   ),
                 }}

@@ -162,7 +162,7 @@ export default function ColumnsDrawer({ open, onClose, selected, onChange }: Pro
             sx={{ flex: 1, fontSize: "0.77rem", "& input::placeholder": { color: isDark ? "#52525B" : "#94A3B8", opacity: 1 } }}
           />
           {search && (
-            <button onClick={() => setSearch("")} className={`text-sm ${isDark ? "text-[#52525B] hover:text-[#A1A1AA]" : "text-slate-300 hover:text-slate-500"}`}>✕</button>
+            <button onClick={() => setSearch("")} className={`text-sm ${isDark ? "text-[#9CA3AF] hover:text-[#A1A1AA]" : "text-slate-300 hover:text-slate-500"}`}>✕</button>
           )}
         </div>
 
@@ -206,7 +206,7 @@ export default function ColumnsDrawer({ open, onClose, selected, onChange }: Pro
                   sx={{ p: 0.25, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked, &.MuiCheckbox-indeterminate": { color: "inherit" } }}
                 />
                 <span className={`font-heading text-nav-group-label uppercase ${isDark ? "text-[#71717A]" : "text-[#1D4ED8]"}`}>{group}</span>
-                <span className={`ml-auto text-caption ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+                <span className={`ml-auto text-caption ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
                   {unlocked.filter(k => local.has(k)).length} / {unlocked.length}
                 </span>
               </button>
@@ -244,7 +244,7 @@ export default function ColumnsDrawer({ open, onClose, selected, onChange }: Pro
         })}
 
         {filtered.length === 0 && (
-          <div className={`text-center py-10 text-sm ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>No columns match "{search}"</div>
+          <div className={`text-center py-10 text-sm ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>No columns match "{search}"</div>
         )}
       </div>
 

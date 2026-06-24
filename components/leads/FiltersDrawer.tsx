@@ -140,7 +140,7 @@ export default function FiltersDrawer({ anchor, onClose, filters, onChange, colu
             </span>
           )}
         </div>
-        {subtitle && <span className={`text-caption ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{subtitle}</span>}
+        {subtitle && <span className={`text-caption ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{subtitle}</span>}
       </div>
 
       {/* Body */}
@@ -211,7 +211,7 @@ export default function FiltersDrawer({ anchor, onClose, filters, onChange, colu
                       )}
                       {noValue && (
                         <div className={`flex items-center px-3 py-2 rounded-lg border ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-white border-slate-100"}`}>
-                          <p className={`m-0 text-caption italic ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>No value needed for this condition</p>
+                          <p className={`m-0 text-caption italic ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>No value needed for this condition</p>
                         </div>
                       )}
                     </div>
