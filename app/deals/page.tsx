@@ -349,7 +349,7 @@ export default function DealsPage() {
                 borderColor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#27272A" : "#E3ECFC",
                 color: activeFilters.length > 0 ? "#fff" : isDark ? "#737373" : "#0C2472",
                 bgcolor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#0F0F0F" : "#E3ECFC",
-                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "13px",
+                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px",
                 "&:hover": {
                   borderColor: activeFilters.length > 0 ? "#1640B8" : "#1D4ED8",
                   color: activeFilters.length > 0 ? "#fff" : "#0C2472",
@@ -367,7 +367,7 @@ export default function DealsPage() {
                 borderColor: isDark ? "#27272A" : "#E3ECFC",
                 color: isDark ? "#737373" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
-                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "13px",
+                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px",
                 "&:hover": { borderColor: isDark ? "#3F3F46" : "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
               }}>
               Columns
@@ -382,7 +382,7 @@ export default function DealsPage() {
                 borderColor: isDark ? "#27272A" : "#E3ECFC",
                 color: isDark ? "#737373" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
-                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "13px",
+                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px",
                 "&:hover": { borderColor: isDark ? "#3F3F46" : "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
               }}>
               Sort{activeSorts.length > 0 ? ` (${activeSorts.length})` : ""}

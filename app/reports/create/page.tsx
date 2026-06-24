@@ -35,8 +35,8 @@ function SectionRow({ title, subtitle, onEdit, children, isDark }: {
     <div className={`border-b last:border-0 ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
       <div className="flex items-start justify-between py-3 px-1">
         <div className="flex-1 min-w-0">
-          <p className={`font-heading text-[12.5px] font-bold ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>{title}</p>
-          {subtitle && <p className={`text-[11px] mt-0.5 leading-snug ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{subtitle}</p>}
+          <p className={`font-heading text-[14px] font-bold ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>{title}</p>
+          {subtitle && <p className={`text-[12px] mt-0.5 leading-snug ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{subtitle}</p>}
           {children}
         </div>
         {onEdit && (
@@ -115,7 +115,7 @@ export default function CreateReportPage() {
               </div>
             ) : (
               <button onClick={() => setEditingName(true)}
-                className={`text-[12px] font-medium hover:underline mt-0.5 block text-left ${isDark ? "text-[#71717A]" : "text-[#1D4ED8]"}`}>
+                className={`text-[14px] font-medium hover:underline mt-0.5 block text-left ${isDark ? "text-[#71717A]" : "text-[#1D4ED8]"}`}>
                 {reportName}
               </button>
             )}
@@ -151,7 +151,7 @@ export default function CreateReportPage() {
 
             {/* Step 1 */}
             <div>
-              <p className={`font-heading text-[11px] font-bold uppercase tracking-wider mb-2 ${isDark ? "text-[#52525B]" : "text-[#0C2472]"}`}>1. Primary Module</p>
+              <p className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-2 ${isDark ? "text-[#52525B]" : "text-[#0C2472]"}`}>1. Primary Module</p>
               <FormControl size="small" fullWidth>
                 <Select value={primaryModule} onChange={e => handleModuleChange(e.target.value)} displayEmpty
                   sx={{ borderRadius:"10px", bgcolor: isDark ? "#1C1C1E" : "#EFF6FF", fontSize:"0.82rem", color: isDark ? "#D4D4D8" : undefined, "& .MuiOutlinedInput-notchedOutline":{ borderColor: isDark ? "#3F3F46" : "#E3ECFC", borderWidth:1.5 }, "&:hover .MuiOutlinedInput-notchedOutline":{ borderColor: isDark ? "#52525B" : "#E3ECFC" }, "&.Mui-focused .MuiOutlinedInput-notchedOutline":{ borderColor: isDark ? "#71717A" : "#E3ECFC", borderWidth:2 }, "& .MuiSelect-select":{ py:"9px", px:"12px", color: primaryModule ? (isDark ? "#D4D4D8" : "#E3ECFC") : (isDark ? "#3F3F46" : "#9CA3AF") }, "& .MuiSvgIcon-root":{ color: isDark ? "#52525B" : undefined } }}
@@ -167,7 +167,7 @@ export default function CreateReportPage() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-1.5">
-                  <p className={`font-heading text-[11px] font-bold uppercase tracking-wider ${isDark ? "text-[#52525B]" : "text-[#0C2472]"}`}>2. Related Modules</p>
+                  <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-[#52525B]" : "text-[#0C2472]"}`}>2. Related Modules</p>
                   <Tooltip title="Add related modules to include data from connected CRM objects">
                     <Info size={13} color={isDark ? "#3F3F46" : "#94A3B8"} weight="duotone" className="cursor-pointer" />
                   </Tooltip>
@@ -182,20 +182,20 @@ export default function CreateReportPage() {
                 </Tooltip>
               </div>
               {!primaryModule && (
-                <p className={`text-[11px] leading-relaxed ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>Select a primary module above, then use + to add related modules.</p>
+                <p className={`text-[14px] leading-relaxed ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>Select a primary module above, then use + to add related modules.</p>
               )}
               {primaryModule && (
-                <p className={`text-[11px] ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>No related modules added yet.</p>
+                <p className={`text-[14px] ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>No related modules added yet.</p>
               )}
             </div>
 
             {/* Step 3 */}
             <div>
-              <p className={`font-heading text-[11px] font-bold uppercase tracking-wider mb-3 ${isDark ? "text-[#52525B]" : "text-[#0C2472]"}`}>3. Fields & Filters</p>
+              <p className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-3 ${isDark ? "text-[#52525B]" : "text-[#0C2472]"}`}>3. Fields & Filters</p>
               <div className={`flex border-b mb-4 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
                 {(["Columns", "Filters"] as FilterTabType[]).map(tab => (
                   <button key={tab} onClick={() => setFilterTab(tab)}
-                    className={`px-4 py-2 text-[12px] font-semibold transition-all border-b-2 -mb-px ${
+                    className={`px-4 py-2 text-[14px] font-semibold transition-all border-b-2 -mb-px ${
                       filterTab === tab
                         ? isDark ? "text-[#D4D4D8] border-[#52525B]" : "text-[#1D4ED8] border-[#1D4ED8]"
                         : isDark ? "text-[#3F3F46] border-transparent hover:text-[#71717A]" : "text-slate-400 border-transparent hover:text-slate-600"
@@ -222,7 +222,7 @@ export default function CreateReportPage() {
                             <label key={field} className={`flex items-center gap-2 px-1 py-1 rounded-lg cursor-pointer transition-colors ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#f9fbff]"}`}>
                               <Checkbox size="small" checked={selectedColumns.includes(field)} onChange={() => toggleColumn(field)}
                                 sx={{ p:0.25, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked":{ color: isDark ? "#52525B" : "#E3ECFC" } }} />
-                              <span className={`text-[12px] ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>{field}</span>
+                              <span className={`text-[14px] ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>{field}</span>
                             </label>
                           ))}
                         </div>
@@ -237,7 +237,7 @@ export default function CreateReportPage() {
                     {selectedColumns.length > 0 && !showColPicker && (
                       <div className="flex flex-wrap gap-1 mt-2">
                         {selectedColumns.map(col => (
-                          <span key={col} className={`flex items-center gap-1 text-[10.5px] font-semibold px-2 py-0.5 rounded-full ${isDark ? "bg-[#27272A] text-[#A1A1AA]" : "bg-[#E3ECFC] text-[#1D4ED8]"}`}>
+                          <span key={col} className={`flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${isDark ? "bg-[#27272A] text-[#A1A1AA]" : "bg-[#E3ECFC] text-[#1D4ED8]"}`}>
                             {col}
                             <button onClick={() => toggleColumn(col)} className={isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#0C2472]"}>
                               <X size={10} weight="bold" />
@@ -256,8 +256,8 @@ export default function CreateReportPage() {
               {filterTab === "Filters" && (
                 <div className="py-4 text-center">
                   <FunnelSimple size={24} color={isDark ? "#3F3F46" : "#E3ECFC"} weight="duotone" className="mx-auto mb-2" />
-                  <p className={`text-[12px] font-medium ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>No filters added</p>
-                  <p className={`text-[11px] mt-0.5 ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>Click + to add filter conditions</p>
+                  <p className={`text-[14px] font-medium ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>No filters added</p>
+                  <p className={`text-[12px] mt-0.5 ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>Click + to add filter conditions</p>
                   <Button size="small" startIcon={<Plus size={12} weight="bold" />} disabled={!primaryModule}
                     sx={{ mt:2, textTransform:"none", fontSize:"0.75rem", color: isDark ? "#71717A" : "#E3ECFC", fontWeight:600, borderRadius:"8px", "&:hover":{ bgcolor: isDark ? "#27272A" : "#EFF6FF" }, "&.Mui-disabled":{ color: isDark ? "#27272A" : "#E2E8F0" } }}>
                     Add Filter
@@ -270,14 +270,14 @@ export default function CreateReportPage() {
           {/* RIGHT: Results preview */}
           <div className={`flex-1 overflow-auto flex flex-col ${isDark ? "bg-[#0A0A0A]" : "bg-[#F8FAFF]"}`}>
             <div className={`flex items-center justify-between px-6 py-3 border-b ${panel}`}>
-              <p className={`font-heading text-[13px] font-bold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>Results</p>
+              <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-[#D4D4D8]" : "text-slate-500"}`}>Results</p>
               <div className="flex items-center gap-2">
                 {!hasResults && (
-                  <p className={`text-[11.5px] max-w-xs ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+                  <p className={`text-[12px] max-w-xs ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
                     Saving runs the query automatically. Use Run to refresh after you change the report.
                   </p>
                 )}
-                <button className={`flex items-center gap-1 text-[11.5px] font-semibold transition-colors ml-4 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+                <button className={`flex items-center gap-1 text-[12px] font-semibold transition-colors ml-4 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
                   Show Details <CaretDown size={11} weight="duotone" />
                 </button>
               </div>
@@ -288,7 +288,7 @@ export default function CreateReportPage() {
                 <div className="text-center max-w-xs">
                   <ChartBar size={40} color={isDark ? "#27272A" : "#E3ECFC"} weight="duotone" className="mx-auto mb-4" />
                   <p className={`font-heading text-[14px] font-semibold mb-1 ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>No module selected</p>
-                  <p className={`text-[12px] ${isDark ? "text-[#3F3F46]" : "text-slate-400"}`}>Select a primary module on the left to start building your report.</p>
+                  <p className={`text-[14px] ${isDark ? "text-[#3F3F46]" : "text-slate-400"}`}>Select a primary module on the left to start building your report.</p>
                 </div>
               )}
 
@@ -296,7 +296,7 @@ export default function CreateReportPage() {
                 <div className="text-center max-w-sm">
                   <ChartBar size={40} color={isDark ? "#27272A" : "#E3ECFC"} weight="duotone" className="mx-auto mb-4" />
                   <p className={`font-heading text-[14px] font-semibold mb-1 ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>Add columns, then save the report to see query results here.</p>
-                  <p className={`text-[12px] mt-1 ${isDark ? "text-[#3F3F46]" : "text-slate-400"}`}>
+                  <p className={`text-[14px] mt-1 ${isDark ? "text-[#3F3F46]" : "text-slate-400"}`}>
                     You&apos;ve selected <span className={`font-semibold ${isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]"}`}>{primaryModule}</span> as your primary module. Now select columns to include.
                   </p>
                 </div>
@@ -306,7 +306,7 @@ export default function CreateReportPage() {
                 <div className="text-center max-w-sm">
                   <Play size={40} color={isDark ? "#27272A" : "#E3ECFC"} weight="duotone" className="mx-auto mb-4" />
                   <p className={`font-heading text-[14px] font-semibold mb-2 ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>Ready to run</p>
-                  <p className={`text-[12px] mb-4 ${isDark ? "text-[#3F3F46]" : "text-slate-400"}`}>
+                  <p className={`text-[14px] mb-4 ${isDark ? "text-[#3F3F46]" : "text-slate-400"}`}>
                     {selectedColumns.length} column{selectedColumns.length > 1 ? "s" : ""} selected from <span className={`font-semibold ${isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]"}`}>{primaryModule}</span>
                   </p>
                   <Button variant="contained" size="small" onClick={handleRun} startIcon={<Play size={14} weight="duotone" />}
@@ -319,7 +319,7 @@ export default function CreateReportPage() {
               {isRunning && (
                 <div className="text-center">
                   <div className={`w-10 h-10 rounded-full animate-spin mx-auto mb-3 ${isDark ? "border-[#27272A] border-t-[#71717A]" : "border-[#E3ECFC] border-t-[#1D4ED8]"}`} style={{ borderWidth:3 }} />
-                  <p className={`text-[12px] font-medium ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>Running query…</p>
+                  <p className={`text-[14px] font-medium ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>Running query…</p>
                 </div>
               )}
 
@@ -327,10 +327,10 @@ export default function CreateReportPage() {
                 <div className="w-full max-w-2xl">
                   <div className={`rounded-2xl border shadow-sm overflow-hidden ${card}`}>
                     <div className={`flex items-center justify-between px-4 py-3 border-b ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#E3ECFC] border-[#E3ECFC]"}`}>
-                      <span className={`font-heading text-[11px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>
+                      <span className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>
                         {primaryModule} · {selectedColumns.length} columns
                       </span>
-                      <span className={`text-[11px] font-medium ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>{sampleRows.length} records</span>
+                      <span className={`text-[12px] font-medium ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>{sampleRows.length} records</span>
                     </div>
                     <div style={{ height: Math.min(sampleRows.length, 5) * 44 + 56 }}>
                       <DataGrid
@@ -350,7 +350,7 @@ export default function CreateReportPage() {
                       />
                     </div>
                   </div>
-                  <p className={`text-center text-[11px] mt-3 ${isDark ? "text-[#3F3F46]" : "text-slate-400"}`}>
+                  <p className={`text-center text-[12px] mt-3 ${isDark ? "text-[#3F3F46]" : "text-slate-400"}`}>
                     Preview · Save the report to see full results
                   </p>
                 </div>

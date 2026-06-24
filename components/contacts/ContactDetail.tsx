@@ -406,9 +406,9 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
               <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: color + "20" }}>
                 <Icon size={14} color={color} weight="duotone" />
               </div>
-              <span className={`flex-1 text-left text-[12.5px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>{label}</span>
+              <span className={`flex-1 text-left text-[14px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>{label}</span>
               {count > 0 && (
-                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${isDark ? "bg-[#27272A] text-[#A1A1AA]" : "bg-[#E3ECFC] text-[#1D4ED8]"}`}>{count}</span>
+                <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded-full ${isDark ? "bg-[#27272A] text-[#A1A1AA]" : "bg-[#E3ECFC] text-[#1D4ED8]"}`}>{count}</span>
               )}
               <CaretRight size={14} color={isDark ? "#3F3F46" : "#E2E8F0"} weight="duotone" />
             </button>
@@ -445,7 +445,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
           <div className="flex items-center gap-2 mb-5">
             {(["overview", "timeline"] as const).map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
-                className={`px-4 py-1.5 rounded-full text-[12.5px] font-semibold capitalize transition-all ${
+                className={`px-4 py-1.5 rounded-full text-[14px] font-semibold capitalize transition-all ${
                   activeTab === tab
                     ? isDark ? "bg-[#3F3F46] text-[#F4F4F5] shadow-sm" : "bg-[#1D4ED8] text-white shadow-sm"
                     : isDark ? "bg-[#1C1C1E] text-[#71717A] hover:bg-[#27272A]" : "bg-[#f9fbff] text-slate-500 hover:bg-[#E3ECFC]"
@@ -469,7 +469,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                     { label: "Department",    value: contact.department },
                   ].map(({ label, value }) => (
                     <div key={label} className="flex items-center px-5 py-3">
-                      <span className={`text-[12.5px] font-medium w-40 flex-shrink-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{label}:</span>
+                      <span className={`text-[12px] font-medium w-40 flex-shrink-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{label}:</span>
                       <span className={`flex-1 text-[14px] font-semibold ${value ? (isDark ? "text-[#D4D4D8]" : "text-slate-700") : (isDark ? "text-[#3F3F46]" : "text-slate-300")}`}>
                         {value || "—"}
                       </span>
@@ -537,16 +537,16 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                       </div>
                     }>
                     <div className="overflow-x-auto -mx-5 px-5">
-                      <table className="w-full text-[12px]">
+                      <table className="w-full text-[14px]">
                         <thead>
                           <tr className={`border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
-                            <th className={`text-left py-2 pr-4 text-[10.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>Subject</th>
-                            <th className={`text-left py-2 pr-4 text-[10.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>Status</th>
+                            <th className={`text-left py-2 pr-4 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>Subject</th>
+                            <th className={`text-left py-2 pr-4 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>Status</th>
                           </tr>
                         </thead>
                         <tbody>
                           <tr>
-                            <td colSpan={2} className={`py-8 text-center text-[12.5px] ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>No rows</td>
+                            <td colSpan={2} className={`py-8 text-center text-[14px] ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>No rows</td>
                           </tr>
                         </tbody>
                       </table>
@@ -577,8 +577,8 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                       </div>
                       {notes.map((n, i) => (
                         <div key={i} className={`rounded-xl px-4 py-3 border ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
-                          <p className={`text-[12.5px] ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{n.text}</p>
-                          <p className={`text-[10px] mt-1 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{n.at}</p>
+                          <p className={`text-[14px] ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{n.text}</p>
+                          <p className={`text-[12px] mt-1 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{n.at}</p>
                         </div>
                       ))}
                     </div>
@@ -604,7 +604,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                         </Button>
                       </div>
                     }>
-                    <div className={`flex items-center justify-center py-6 text-[12.5px] ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>
+                    <div className={`flex items-center justify-center py-6 text-[14px] ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>
                       No attachments yet
                     </div>
                   </SectionCard>
@@ -627,18 +627,18 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                       </div>
                     }>
                     <div className="overflow-x-auto -mx-5 px-5">
-                      <table className="w-full text-[12px] min-w-[500px]">
+                      <table className="w-full text-[14px] min-w-[500px]">
                         <thead>
                           <tr className={`border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
                             {["Deal Name", "Amount", "Stage", "Probability (%)", "Closing Date"].map(h => (
-                              <th key={h} className={`text-left py-2 pr-4 text-[10.5px] font-bold uppercase tracking-wider whitespace-nowrap ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>{h}</th>
+                              <th key={h} className={`text-left py-2 pr-4 text-[11.5px] font-bold uppercase tracking-wider whitespace-nowrap ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>{h}</th>
                             ))}
                           </tr>
                         </thead>
                         <tbody>
                           {contact.relatedDeals.length === 0 ? (
                             <tr>
-                              <td colSpan={5} className={`py-8 text-center text-[12.5px] ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>No rows</td>
+                              <td colSpan={5} className={`py-8 text-center text-[14px] ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>No rows</td>
                             </tr>
                           ) : contact.relatedDeals.map((d, i) => (
                             <tr key={i} className={`border-b transition-colors ${isDark ? "border-[#27272A] hover:bg-[#27272A]" : "border-[#EFF6FF] hover:bg-[rgba(29,78,216,0.03)]"}`}>
@@ -678,7 +678,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                 {contact.timeline.length === 0 ? (
                   <div className="py-12 flex flex-col items-center justify-center gap-2">
                     <ClockCounterClockwise size={28} color={isDark ? "#27272A" : "#E2E8F0"} weight="duotone" />
-                    <p className={`text-[12.5px] ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>No history yet</p>
+                    <p className={`text-[14px] ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>No history yet</p>
                   </div>
                 ) : (() => {
                   const grouped: Record<string, TimelineEntry[]> = {};
@@ -693,7 +693,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                       {sortedDates.map(date => (
                         <div key={date}>
                           <div className="flex items-center gap-3 mb-4">
-                            <span className={`text-[11px] font-semibold whitespace-nowrap ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+                            <span className={`text-[12px] font-semibold whitespace-nowrap ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
                               {new Date(date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
                             </span>
                             <div className={`flex-1 h-px ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
@@ -705,7 +705,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                               return (
                                 <div key={i} className="flex gap-4">
                                   <div className="w-16 flex-shrink-0 text-right">
-                                    <span className={`text-[11px] font-medium ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{entry.time}</span>
+                                    <span className={`text-[12px] font-medium ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{entry.time}</span>
                                   </div>
                                   <div className="flex flex-col items-center flex-shrink-0">
                                     <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center z-10 flex-shrink-0 ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
@@ -715,7 +715,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                                   </div>
                                   <div className="pb-5 flex-1 min-w-0 overflow-hidden">
                                     {entry.field && (
-                                      <p className={`text-[12.5px] leading-relaxed break-words ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>
+                                      <p className={`text-[14px] leading-relaxed break-words ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>
                                         <span className="font-bold">{entry.field}:</span>{" "}
                                         {entry.from
                                           ? <span className={isDark ? "text-[#71717A]" : "text-slate-500"}>{entry.from} → {entry.to}</span>
@@ -723,7 +723,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                                         }
                                       </p>
                                     )}
-                                    <p className={`text-[11px] mt-0.5 break-all ${isDark ? "text-[#52525B]" : "text-inherit"}`}>by {entry.by}</p>
+                                    <p className={`text-[12px] mt-0.5 break-all ${isDark ? "text-[#52525B]" : "text-inherit"}`}>by {entry.by}</p>
                                   </div>
                                 </div>
                               );

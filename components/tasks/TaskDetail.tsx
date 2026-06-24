@@ -247,9 +247,9 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
               <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: color + "20" }}>
                 <Icon size={14} color={color} weight="duotone" />
               </div>
-              <span className={`flex-1 text-left text-[12.5px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>{label}</span>
+              <span className={`flex-1 text-left text-[14px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>{label}</span>
               {count > 0 && (
-                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${isDark ? "bg-[#27272A] text-[#A1A1AA]" : "bg-[#E3ECFC] text-[#1D4ED8]"}`}>{count}</span>
+                <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded-full ${isDark ? "bg-[#27272A] text-[#A1A1AA]" : "bg-[#E3ECFC] text-[#1D4ED8]"}`}>{count}</span>
               )}
               <CaretRight size={14} color={isDark ? "#3F3F46" : "#E2E8F0"} weight="duotone" />
             </button>
@@ -309,7 +309,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
           <div className="flex items-center gap-2 mb-5">
             {(["overview", "timeline"] as const).map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
-                className={`px-4 py-1.5 rounded-full text-[12.5px] font-semibold capitalize transition-all ${
+                className={`px-4 py-1.5 rounded-full text-[14px] font-semibold capitalize transition-all ${
                   activeTab === tab
                     ? isDark ? "bg-[#3F3F46] text-[#F4F4F5] shadow-sm" : "bg-[#1D4ED8] text-white shadow-sm"
                     : isDark ? "bg-[#1C1C1E] text-[#71717A] hover:bg-[#27272A]" : "bg-[#f9fbff] text-slate-500 hover:bg-[#E3ECFC]"
@@ -333,16 +333,16 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
                     { label: "Status",   value: task.status },
                   ].map(({ label, value }) => (
                     <div key={label} className="flex items-center justify-between px-5 py-3">
-                      <span className={`text-[12.5px] font-medium w-32 flex-shrink-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{label}:</span>
+                      <span className={`text-[12px] font-medium w-32 flex-shrink-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{label}:</span>
                       <span className={`flex-1 text-[14px] font-semibold ${value ? (isDark ? "text-[#D4D4D8]" : "text-slate-700") : (isDark ? "text-[#3F3F46]" : "text-slate-300")}`}>
                         {label === "Status" && value && statusCfg ? (
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11.5px] font-bold"
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold"
                             style={{ backgroundColor: statusCfg.bg, color: statusCfg.text }}>
                             <span className="w-1.5 h-1.5 rounded-full inline-block flex-shrink-0" style={{ backgroundColor: statusCfg.dot }} />
                             {value}
                           </span>
                         ) : label === "Priority" && value && priorityCfg ? (
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11.5px] font-bold"
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold"
                             style={{ backgroundColor: priorityCfg.bg, color: priorityCfg.text }}>
                             {value}
                           </span>
@@ -405,8 +405,8 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
                       </div>
                       {notes.map((n, i) => (
                         <div key={i} className={`rounded-xl px-4 py-3 border ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
-                          <div className={`text-[12.5px] ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{n.text}</div>
-                          <div className={`text-[10px] mt-1 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{n.at}</div>
+                          <div className={`text-[14px] ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{n.text}</div>
+                          <div className={`text-[12px] mt-1 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{n.at}</div>
                         </div>
                       ))}
                     </div>
@@ -432,7 +432,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
                         </Button>
                       </div>
                     }>
-                    <div className={`flex items-center justify-center py-6 text-[12.5px] ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>
+                    <div className={`flex items-center justify-center py-6 text-[14px] ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>
                       No attachments yet
                     </div>
                   </SectionCard>
@@ -461,7 +461,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
                   </div>
                   <div className="px-5 py-4">
                     {task.timeline.length === 0 ? (
-                      <div className={`text-[12.5px] text-center py-6 ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>No activity yet</div>
+                      <div className={`text-[14px] text-center py-6 ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>No activity yet</div>
                     ) : (
                       <div className="relative">
                         <div className={`absolute left-[11px] top-2 bottom-2 w-px ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
@@ -472,14 +472,14 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
                                 <ClipboardText size={10} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
                               </div>
                               <div className="flex-1">
-                                <div className={`text-[12.5px] font-semibold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{entry.event}</div>
-                                <div className={`text-[11px] mt-0.5 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{entry.by}</div>
+                                <div className={`text-[14px] font-semibold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{entry.event}</div>
+                                <div className={`text-[12px] mt-0.5 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{entry.by}</div>
                               </div>
                               <div className="text-right flex-shrink-0">
-                                <div className={`text-[11px] font-medium ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
+                                <div className={`text-[12px] font-medium ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
                                   {new Date(entry.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }).toUpperCase()}
                                 </div>
-                                <div className={`text-[10.5px] ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{entry.time}</div>
+                                <div className={`text-[12px] ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{entry.time}</div>
                               </div>
                             </div>
                           ))}

@@ -54,7 +54,7 @@ function AddressPanel({
 }) {
   return (
     <div className={`flex-1 min-w-0 rounded-xl border p-4 space-y-2.5 ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF]/60 border-[#E3ECFC]"}`}>
-      <p className={`font-heading text-[11px] font-bold uppercase tracking-wider mb-3 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{title}</p>
+      <p className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-3 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{title}</p>
 
       <FormControl size="small" fullWidth sx={fx}>
         <InputLabel>Country / Region</InputLabel>
@@ -290,7 +290,7 @@ export default function NewContactDrawer({ open, onClose, mode = "create", initi
                   <Checkbox checked={form.emailOptOut} onChange={e => set("emailOptOut", e.target.checked)} size="small"
                     sx={{ color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked": { color: "inherit" }, p: 0.75 }} />
                 }
-                label={<span className={`text-[13px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>Email Opt Out</span>}
+                label={<span className={`text-[14px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>Email Opt Out</span>}
                 sx={{ m: 0 }}
               />
               <TextField label="Skype ID" value={form.skypeId} onChange={e => set("skypeId", e.target.value)} size="small" fullWidth sx={FX} />

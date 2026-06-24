@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -25,9 +25,9 @@ import {
 import { OWNER_AVATARS } from "@/lib/avatars";
 import { useTheme } from "@/components/ThemeContext";
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Data — exact from screenshot
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 interface Account {
   id: number; name: string;
   ownerName: string; ownerEmail: string; ownerInitials: string;
@@ -53,9 +53,9 @@ const ALL_ACCOUNTS: Account[] = [
   { id:14, name:"dd",           ownerName:"Admin",  ownerEmail:"admin@mailinator.com",    ownerInitials:"AD", phone:"",           accountType:"",            modifiedByName:"PM SDL", modifiedByEmail:"pm@socialdnalabs.com", creation:"28 Jul 2025, 10:14 AM", modified:"16 Mar 2026, 07:45 PM" },
 ];
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Account type config
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 const TYPE_CFG: Record<string, { bg: string; text: string; dot: string; bgDark: string; textDark: string }> = {
   "Individual": { bg: "#EFF6FF", text: "#0C2472", dot: "#94A3B8", bgDark: "rgba(96, 165, 250, 0.15)", textDark: "#60A5FA" },
   "Customer":   { bg: "#DCFCE7", text: "#166534", dot: "#10B981", bgDark: "rgba(16, 185, 129, 0.15)", textDark: "#10B981" },
@@ -66,9 +66,9 @@ const TYPE_CFG: Record<string, { bg: string; text: string; dot: string; bgDark: 
   "Competitor": { bg: "#FEF2F2", text: "#991B1B", dot: "#EF4444", bgDark: "rgba(244, 63, 94, 0.15)", textDark: "#F43F5E" },
 };
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Column defs — all fixed px (horizontal scroll)
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 const COL_DEFS = [
   { key: "accountName", label: "Account Name",  width: "200px" },
   { key: "accountOwner",label: "Account Owner", width: "175px" },
@@ -92,9 +92,9 @@ function ColHeader({ label, isDark = false }: { label: string; isDark?: boolean 
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Page
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 export default function AccountsPage() {
   const router = useRouter();
   const { theme } = useTheme();
@@ -116,7 +116,7 @@ export default function AccountsPage() {
     return !q || a.name.toLowerCase().includes(q) || a.ownerName.toLowerCase().includes(q);
   });
 
-  // ── DataGrid column builders, keyed by COL_DEFS.key
+  // -- DataGrid column builders, keyed by COL_DEFS.key
   const COLUMN_BUILDERS: Record<string, GridColDef<Account>> = {
     accountName: {
       field: "accountName", headerName: "Account Name", flex: 1.8, minWidth: 180, sortable: false,
@@ -226,7 +226,7 @@ export default function AccountsPage() {
 
         <main className="flex-1 px-4 md:px-8 py-3 md:py-4 space-y-3 animate-fade-in">
 
-          {/* ══ Breadcrumb + Header ══ */}
+          {/* -- Breadcrumb + Header -- */}
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-1 text-caption text-slate-400 mb-2">
@@ -269,7 +269,7 @@ export default function AccountsPage() {
             </div>
           </div>
 
-          {/* ══ Toolbar ══ */}
+          {/* -- Toolbar -- */}
           <div className="flex items-center gap-2.5">
             <div className={`flex items-center gap-2 border rounded-xl px-3 py-2 w-72 focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
               <MagnifyingGlass size={15} color="#94A3B8" weight="duotone" />
@@ -277,7 +277,7 @@ export default function AccountsPage() {
                 onChange={e => setSearch(e.target.value)}
                 sx={{ flex: 1, fontSize: "0.76rem", color: isDark ? "#D4D4D8" : "#334155", "& input::placeholder": { color: "#94A3B8", opacity: 1 } }}
               />
-              {search && <button onClick={() => setSearch("")} className="text-slate-300 hover:text-slate-500 text-sm">✕</button>}
+              {search && <button onClick={() => setSearch("")} className="text-slate-300 hover:text-slate-500 text-sm">?</button>}
             </div>
 
             <Button variant="outlined" size="small"
@@ -292,7 +292,7 @@ export default function AccountsPage() {
                 borderColor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#27272A" : "#E3ECFC",
                 color: activeFilters.length > 0 ? "#fff" : isDark ? "#737373" : "#0C2472",
                 bgcolor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#0F0F0F" : "#E3ECFC",
-                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "13px",
+                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px",
                 "&:hover": {
                   borderColor: activeFilters.length > 0 ? "#1640B8" : "#1D4ED8",
                   color: activeFilters.length > 0 ? "#fff" : "#0C2472",
@@ -309,7 +309,7 @@ export default function AccountsPage() {
                 borderColor: isDark ? "#27272A" : "#E3ECFC",
                 color: isDark ? "#737373" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
-                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "13px",
+                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px",
                 "&:hover": { borderColor: isDark ? "#3F3F46" : "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
               }}>
               Columns
@@ -323,7 +323,7 @@ export default function AccountsPage() {
                 borderColor: isDark ? "#27272A" : "#E3ECFC",
                 color: isDark ? "#737373" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
-                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "13px",
+                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px",
                 "&:hover": { borderColor: isDark ? "#3F3F46" : "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
               }}>
               Sort{activeSorts.length > 0 ? ` (${activeSorts.length})` : ""}
@@ -334,7 +334,7 @@ export default function AccountsPage() {
             </span>
           </div>
 
-          {/* ══ Bulk action bar ══ */}
+          {/* -- Bulk action bar -- */}
           {selected.length > 0 && (
             <div className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border animate-slide-up shadow-sm ${isDark ? "bg-[#18181B] border-[#27272A]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
               <div className="flex items-center gap-2">
@@ -351,7 +351,7 @@ export default function AccountsPage() {
             </div>
           )}
 
-          {/* ══ GRID VIEW ══ */}
+          {/* -- GRID VIEW -- */}
           {view === "grid" && (
             <AccountGridView accounts={filtered.map(a => ({
               id: a.id, name: a.name, ownerName: a.ownerName, ownerInitials: a.ownerInitials,
@@ -359,7 +359,7 @@ export default function AccountsPage() {
             }))} />
           )}
 
-          {/* ══ LIST VIEW (MUI DataGrid) ══ */}
+          {/* -- LIST VIEW (MUI DataGrid) -- */}
           {view === "list" && (
             <div className="rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden" style={{ height: 600 }}>
               <DataGrid<Account>
@@ -394,7 +394,7 @@ export default function AccountsPage() {
         </main>
       </div>
 
-      {/* ══ Panels ══ */}
+      {/* -- Panels -- */}
       <NewAccountDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
       <FiltersDrawer

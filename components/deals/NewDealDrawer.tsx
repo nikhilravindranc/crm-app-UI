@@ -146,7 +146,7 @@ export default function NewDealDrawer({ open, onClose, mode = "create", initialD
 
         {/* ── Section 1: Deal Information ── */}
         <div>
-          <h3 className={`font-heading text-[13px] font-bold mb-4 tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Deal Information</h3>
+          <h3 className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-4 ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Deal Information</h3>
 
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
@@ -236,7 +236,7 @@ export default function NewDealDrawer({ open, onClose, mode = "create", initialD
 
         {/* ── Section 2: Description Information ── */}
         <div>
-          <h3 className={`font-heading text-[13px] font-bold mb-4 tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Description Information</h3>
+          <h3 className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-4 ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Description Information</h3>
           <TextField
             label="Description"
             value={form.description}

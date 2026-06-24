@@ -87,12 +87,12 @@ export default function DealGridView({ deals }: Props) {
 
               {/* Stage + Probability */}
               <div className="flex items-center gap-2 mb-3 flex-wrap">
-                <span className={`inline-flex items-center gap-1.5 text-[10.5px] font-bold px-2 py-0.5 rounded-full flex-shrink-0 ${isDark ? "bg-white/10 text-[#A1A1AA]" : "bg-[#f9fbff]/70 text-[#0C2472]"}`}>
+                <span className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2 py-0.5 rounded-full flex-shrink-0 ${isDark ? "bg-white/10 text-[#A1A1AA]" : "bg-[#f9fbff]/70 text-[#0C2472]"}`}>
                   <span className="w-[5px] h-[5px] rounded-full" style={{ backgroundColor: deep }} />
                   {deal.stage}
                 </span>
                 {deal.probability > 0 && (
-                  <span className={`text-[10.5px] font-bold ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>{deal.probability}%</span>
+                  <span className={`text-[11px] font-bold ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>{deal.probability}%</span>
                 )}
               </div>
 
@@ -104,13 +104,13 @@ export default function DealGridView({ deals }: Props) {
               {/* Account + Contact */}
               <div className="space-y-1.5">
                 {deal.account && (
-                  <div className={`flex items-center gap-1.5 text-[11.5px] ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>
+                  <div className={`flex items-center gap-1.5 text-[12px] ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>
                     <Buildings size={11} color={deep} weight="duotone" className="flex-shrink-0" />
                     <span className="truncate">{deal.account}</span>
                   </div>
                 )}
                 {deal.contactName && (
-                  <div className={`flex items-center gap-1.5 text-[11.5px] ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>
+                  <div className={`flex items-center gap-1.5 text-[12px] ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>
                     <User size={11} color={deep} weight="duotone" className="flex-shrink-0" />
                     <span className="truncate">{deal.contactName}</span>
                   </div>
@@ -123,10 +123,10 @@ export default function DealGridView({ deals }: Props) {
               <Tooltip title={deal.owner}>
                 <div className="flex items-center gap-1.5">
                   <Avatar sx={{ width: 20, height: 20, bgcolor: owCol, fontSize: "0.48rem", fontWeight: 800 }}>{owInit}</Avatar>
-                  <span className={`text-[10.5px] font-medium ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>{deal.owner}</span>
+                  <span className={`text-[12px] font-medium ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>{deal.owner}</span>
                 </div>
               </Tooltip>
-              <span className={`flex items-center gap-1 text-[10px] ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>
+              <span className={`flex items-center gap-1 text-[12px] ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>
                 <TrendUp size={10} color={deep} weight="duotone" />
                 {deal.creation}
               </span>

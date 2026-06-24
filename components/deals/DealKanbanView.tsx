@@ -53,8 +53,8 @@ export default function DealKanbanView({ deals }: Props) {
             <div className="rounded-xl mb-3 overflow-hidden shadow-sm">
               <div className="px-3 py-2.5 flex items-center justify-between" style={{ backgroundColor: col.headerBg }}>
                 <div className="flex items-center gap-2 min-w-0">
-                  <span className="font-heading text-[11.5px] font-bold text-white truncate">{col.label}</span>
-                  <span className="text-[10px] font-bold bg-[#f9fbff]/20 text-white px-1.5 py-0.5 rounded-full flex-shrink-0">
+                  <span className="font-heading text-[12px] font-bold uppercase tracking-wider text-white truncate">{col.label}</span>
+                  <span className="text-[11px] font-bold bg-[#f9fbff]/20 text-white px-1.5 py-0.5 rounded-full flex-shrink-0">
                     {colDeals.length}
                   </span>
                 </div>
@@ -68,7 +68,7 @@ export default function DealKanbanView({ deals }: Props) {
                 className={`px-3 py-1.5 border-x border-b rounded-b-none ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}
                 style={{ borderTop: `2px solid ${col.dot}` }}
               >
-                <p className={`text-[10px] font-medium flex items-center gap-1 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+                <p className={`text-[12px] font-medium flex items-center gap-1 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
                   <CurrencyDollar size={10} color={isDark ? "#3F3F46" : "#94A3B8"} weight="duotone" />
                   Total: <span className={`font-bold ml-0.5 ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>{fmtTotal(total)}</span>
                 </p>
@@ -78,7 +78,7 @@ export default function DealKanbanView({ deals }: Props) {
             {/* Deal cards */}
             <div className="flex-1 space-y-2.5 overflow-y-auto" style={{ maxHeight: "calc(100vh - 360px)" }}>
               {colDeals.length === 0 ? (
-                <div className={`flex flex-col items-center justify-center py-8 rounded-xl border-2 border-dashed text-[11px] text-center ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}
+                <div className={`flex flex-col items-center justify-center py-8 rounded-xl border-2 border-dashed text-[12px] text-center ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}
                   style={{ borderColor: col.dot + "60" }}>
                   <Plus size={20} color={col.dot} weight="bold" className="mb-1 opacity-40" />
                   No deals
@@ -100,7 +100,7 @@ export default function DealKanbanView({ deals }: Props) {
                     <p className={`font-heading text-[14px] font-extrabold mb-1 ${isDark ? "text-[#A1A1AA]" : "text-[#0C2472]"}`}>{fmt(deal.amount)}</p>
 
                     {/* Deal name */}
-                    <p className={`font-heading text-[12px] font-bold truncate leading-tight mb-2 ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>
+                    <p className={`font-heading text-[14px] font-bold truncate leading-tight mb-2 ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>
                       {deal.name}
                     </p>
 
@@ -114,13 +114,13 @@ export default function DealKanbanView({ deals }: Props) {
                     {/* Account + Contact */}
                     <div className="space-y-1 mb-2.5">
                       {deal.account && (
-                        <div className={`flex items-center gap-1 text-[10.5px] truncate ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+                        <div className={`flex items-center gap-1 text-[12px] truncate ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
                           <Buildings size={10} color={isDark ? "#3F3F46" : "#94A3B8"} weight="duotone" className="flex-shrink-0" />
                           <span className="truncate">{deal.account}</span>
                         </div>
                       )}
                       {deal.contactName && (
-                        <div className={`flex items-center gap-1 text-[10.5px] truncate ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+                        <div className={`flex items-center gap-1 text-[12px] truncate ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
                           <User size={10} color={isDark ? "#3F3F46" : "#94A3B8"} weight="duotone" className="flex-shrink-0" />
                           <span className="truncate">{deal.contactName}</span>
                         </div>
@@ -132,8 +132,8 @@ export default function DealKanbanView({ deals }: Props) {
                       <Tooltip title={deal.owner}>
                         <Avatar sx={{ width: 16, height: 16, bgcolor: owCol, fontSize: "0.45rem", fontWeight: 800 }}>{owInit}</Avatar>
                       </Tooltip>
-                      <span className={`text-[10px] truncate ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{deal.owner}</span>
-                      <span className={`ml-auto text-[9.5px] ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>{deal.probability}%</span>
+                      <span className={`text-[12px] truncate ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{deal.owner}</span>
+                      <span className={`ml-auto text-[12px] ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>{deal.probability}%</span>
                     </div>
                   </div>
                 );
@@ -142,7 +142,7 @@ export default function DealKanbanView({ deals }: Props) {
 
             {/* Add deal */}
             <button
-              className={`flex items-center gap-1.5 mt-3 px-2 py-2 rounded-xl border border-dashed text-[11.5px] font-medium w-full transition-colors ${
+              className={`flex items-center gap-1.5 mt-3 px-2 py-2 rounded-xl border border-dashed text-[12px] font-medium w-full transition-colors ${
                 isDark ? "text-[#52525B] hover:bg-[#1C1C1E] hover:text-[#71717A]" : "text-slate-400 hover:bg-[#EFF6FF]"
               }`}
               style={{ borderColor: col.dot + "60" }}>

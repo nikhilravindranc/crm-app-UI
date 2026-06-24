@@ -35,7 +35,7 @@ export default function ActivityFeed({ isDark = false }: { isDark?: boolean }) {
       }}>
       <div className="mb-5">
         <h3 className={`text-[14px] font-bold ${isDark ? "text-[#FFFFFF]" : "text-[#0C2472]"}`}>Recent Activity</h3>
-        <p className="text-[11px] text-slate-400 mt-0.5">Live team updates</p>
+        <p className="text-[12px] text-slate-400 mt-0.5">Live team updates</p>
       </div>
 
       <div className="flex-1 space-y-4">
@@ -53,7 +53,7 @@ export default function ActivityFeed({ isDark = false }: { isDark?: boolean }) {
               </div>
 
               <div className="flex-1 min-w-0 pb-1">
-                <p className={`text-[12px] font-medium leading-snug transition-colors ${isDark ? "text-[#E2E8F0] group-hover:text-[#FFFFFF]" : "text-slate-700 group-hover:text-slate-900"}`}>
+                <p className={`text-[14px] font-medium leading-snug transition-colors ${isDark ? "text-[#E2E8F0] group-hover:text-[#FFFFFF]" : "text-slate-700 group-hover:text-slate-900"}`}>
                   {item.title}
                 </p>
                 <div className="flex items-center gap-1.5 mt-1">
@@ -63,9 +63,9 @@ export default function ActivityFeed({ isDark = false }: { isDark?: boolean }) {
                   >
                     {item.initials}
                   </Avatar>
-                  <span className="text-[10px] text-slate-400 font-medium">{item.user}</span>
-                  <span className={`text-[10px] ${isDark ? "text-slate-600" : "text-slate-300"}`}>·</span>
-                  <span className="text-[10px] text-slate-400">{item.time}</span>
+                  <span className="text-[12px] text-slate-400 font-medium">{item.user}</span>
+                  <span className={`text-[12px] ${isDark ? "text-slate-600" : "text-slate-300"}`}>·</span>
+                  <span className="text-[12px] text-slate-400">{item.time}</span>
                 </div>
               </div>
             </div>
