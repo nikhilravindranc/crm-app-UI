@@ -1,5 +1,5 @@
 ﻿"use client";
-import { useState, useRef } from "react";
+import { useState, useRef, type ElementType } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Sidebar from "@/components/layout/Sidebar";
@@ -25,6 +25,7 @@ import {
   DotsThreeVertical, List, GridFour, Kanban,
   CaretDown, House, CaretRight, Trash, UserCheck, NotePencil, Phone,
   FunnelSimple, PencilSimple, Eye,
+  IdentificationBadge, Buildings, Envelope, Pulse, UserCircle, CalendarBlank,
 } from "@phosphor-icons/react";
 import { LEAD_AVATARS, OWNER_AVATARS } from "@/lib/avatars";
 import { useTheme } from "@/components/ThemeContext";
@@ -115,11 +116,12 @@ const OWNERS: { name: string; initials: string }[] = [
 ];
 const ROWS_PER_PAGE_OPTIONS = [10, 20, 50, 100];
 
-function ColHeader({ label }: { label: string }) {
+function ColHeader({ label, icon: Icon }: { label: string; icon?: ElementType }) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   return (
-    <div className={`font-heading text-[14px]/[18px] font-semibold uppercase tracking-wide select-none ${isDark ? "text-[#E4E4E7]" : "text-[#737373]"}`}>
+    <div className={`flex items-center gap-1.5 font-heading text-[14px]/[18px] font-semibold uppercase tracking-wide select-none ${isDark ? "text-[#E4E4E7]" : "text-[#737373]"}`}>
+      {Icon && <Icon size={13} weight="duotone" />}
       {label}
     </div>
   );
@@ -253,7 +255,7 @@ export default function LeadsPage() {
   const COLUMN_BUILDERS: Record<string, GridColDef<Lead>> = {
     leadName: {
       field: "leadName", headerName: "Lead Name", flex: 2, minWidth: 180, sortable: false,
-      renderHeader: () => <ColHeader label="Lead Name" />,
+      renderHeader: () => <ColHeader label="Lead Name" icon={IdentificationBadge} />,
       renderCell: (params) => {
         const lead = params.row;
         return (
@@ -266,7 +268,7 @@ export default function LeadsPage() {
     },
     company: {
       field: "company", headerName: "Company", flex: 1.3, minWidth: 120, sortable: false,
-      renderHeader: () => <ColHeader label="Company" />,
+      renderHeader: () => <ColHeader label="Company" icon={Buildings} />,
       renderCell: (params) => (
         <div className={`text-[15px]/[20px] truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
           {params.row.company || <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>}
@@ -275,7 +277,7 @@ export default function LeadsPage() {
     },
     email: {
       field: "email", headerName: "Email", flex: 1.7, minWidth: 160, sortable: false,
-      renderHeader: () => <ColHeader label="Email" />,
+      renderHeader: () => <ColHeader label="Email" icon={Envelope} />,
       renderCell: (params) => (
         <Tooltip title={params.row.email} placement="top">
           <div className="text-[15px]/[20px] truncate w-full">
@@ -288,7 +290,7 @@ export default function LeadsPage() {
     },
     mobile: {
       field: "mobile", headerName: "Mobile", flex: 1.2, minWidth: 120, sortable: false,
-      renderHeader: () => <ColHeader label="Mobile" />,
+      renderHeader: () => <ColHeader label="Mobile" icon={Phone} />,
       renderCell: (params) => (
         <div className={`text-[15px]/[20px] font-mono truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
           {params.row.mobile
@@ -299,7 +301,7 @@ export default function LeadsPage() {
     },
     leadStatus: {
       field: "leadStatus", headerName: "Status", flex: 1.1, minWidth: 110, sortable: false,
-      renderHeader: () => <ColHeader label="Status" />,
+      renderHeader: () => <ColHeader label="Status" icon={Pulse} />,
       renderCell: (params) => {
         const cfg = STATUS_CFG[params.row.status];
         return (
@@ -313,7 +315,7 @@ export default function LeadsPage() {
     },
     leadOwner: {
       field: "leadOwner", headerName: "Lead Owner", flex: 1.3, minWidth: 130, sortable: false,
-      renderHeader: () => <ColHeader label="Lead Owner" />,
+      renderHeader: () => <ColHeader label="Lead Owner" icon={UserCircle} />,
       renderCell: (params) => {
         const lead = params.row;
         return (
@@ -328,7 +330,7 @@ export default function LeadsPage() {
     },
     creation: {
       field: "creation", headerName: "Created", flex: 1, minWidth: 100, sortable: false,
-      renderHeader: () => <ColHeader label="Created" />,
+      renderHeader: () => <ColHeader label="Created" icon={CalendarBlank} />,
       renderCell: (params) => <div className={`text-[13px]/[16px] truncate ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>{params.row.created}</div>,
     },
   };
@@ -362,9 +364,9 @@ export default function LeadsPage() {
           {/* ══ Page header ══ */}
           <div className="flex items-start justify-between">
             <div>
-              <div className={`flex items-center gap-1 text-[13px]/[16px] mb-1 ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>
-                <House size={12} weight="duotone" />
-                <CaretRight size={11} weight="duotone" />
+              <div className={`flex items-center gap-1.5 text-[13.5px]/[18px] mb-1 ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>
+                <House size={16} weight="duotone" />
+                <CaretRight size={12} weight="duotone" />
                 <Link href="/leads" className={`transition-colors font-medium ${isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#1D4ED8]"}`}>Leads</Link>
               </div>
               <div className="flex items-center gap-2.5">

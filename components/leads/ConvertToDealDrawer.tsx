@@ -165,7 +165,7 @@ export default function ConvertToDealDrawer({
       <div className={`flex items-center justify-between px-6 py-4 border-b flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <div className="flex items-center gap-3">
           <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
-            <ArrowsLeftRight size={18} color={isDark ? "#71717A" : "#E3ECFC"} weight="duotone" />
+            <ArrowsLeftRight size={18} color={isDark ? "#71717A" : "#1D4ED8"} weight="duotone" />
           </div>
           <div>
             <h2 className={`font-heading text-[15px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
@@ -196,7 +196,7 @@ export default function ConvertToDealDrawer({
             <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
               <div className={`flex items-center gap-2.5 px-4 py-3 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
                 <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
-                  <Buildings size={15} color={isDark ? "#71717A" : "#E3ECFC"} weight="duotone" />
+                  <Buildings size={15} color={isDark ? "#71717A" : "#1D4ED8"} weight="duotone" />
                 </div>
                 <span className={`font-heading text-[13px] font-bold ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Create New Account</span>
               </div>
@@ -210,7 +210,7 @@ export default function ConvertToDealDrawer({
             <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
               <div className={`flex items-center gap-2.5 px-4 py-3 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
                 <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
-                  <User size={15} color={isDark ? "#71717A" : "#E3ECFC"} weight="duotone" />
+                  <User size={15} color={isDark ? "#71717A" : "#1D4ED8"} weight="duotone" />
                 </div>
                 <span className={`font-heading text-[13px] font-bold ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Create New Contact</span>
               </div>
@@ -225,7 +225,7 @@ export default function ConvertToDealDrawer({
               checked={createDeal}
               onToggle={setCreateDeal}
               icon={Handshake}
-              iconColor={isDark ? "#E4E4E7" : "#E3ECFC"}
+              iconColor={isDark ? "#E4E4E7" : "#1D4ED8"}
               title="Create a new Deal for this Account"
               isDark={isDark}
             >
@@ -360,7 +360,7 @@ export default function ConvertToDealDrawer({
               boxShadow: "0 2px 12px rgba(5,150,105,0.25)",
               "&:hover":  { bgcolor: "#047857", boxShadow: "0 4px 16px rgba(5,150,105,0.35)" },
               "&:active": { bgcolor: "#065F46" },
-              "&.Mui-disabled": { bgcolor: isDark ? "#27272A" : "#E3ECFC", color: isDark ? "#52525B" : "#E4E4E7", boxShadow: "none" },
+              "&.Mui-disabled": { bgcolor: isDark ? "#27272A" : "#E3ECFC", color: isDark ? "#52525B" : "#94A3B8", boxShadow: "none" },
             }}
           >
             Convert

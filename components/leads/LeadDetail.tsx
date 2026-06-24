@@ -15,6 +15,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import InputBase from "@mui/material/InputBase";
 // Phosphor Duotone Icons
 import {
   House, CaretRight, PencilSimple, Phone, Envelope,
@@ -127,6 +128,10 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
   const [editOpen, setEditOpen]           = useState(false);
   const [convertOpen, setConvertOpen]     = useState(false);
   const [moreAnchor, setMoreAnchor]       = useState<null|HTMLElement>(null);
+  const [note, setNote]                   = useState("");
+  const [notes, setNotes]                 = useState<{ text: string; at: string }[]>([
+    { text: "Initial contact made…", at: lead?.modified ?? "" },
+  ]);
 
   if (!lead) {
     return (
@@ -165,15 +170,41 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
     { icon: Trash,          label:"Delete Lead",     color:"#EF4444" },
   ];
 
-  // Related list → tab mapping
-  const relatedItems = [
-    { icon: Note,                label:"Notes",         count:3,            color:"#7C3AED", tab:"activity" as const },
-    { icon: ClipboardText,       label:"Tasks",         count:2,            color:"#3B82F6", tab:"activity" as const },
-    { icon: Phone,               label:"Calls",         count:1,            color:"#DB5E8C", tab:"activity" as const },
-    { icon: Envelope,            label:"Emails",        count:0,            color:"#E0883F", tab:"activity" as const },
-    { icon: Paperclip,           label:"Attachments",   count:0,            color:"#94A3B8", tab:"activity" as const },
-    { icon: ClockCounterClockwise,label:"Stage History", count:1,           color: isDark?"#38BDF8":"#0C2472", tab:"activity" as const },
+  // Tasks & Calls (section content)
+  const tasksData = [
+    { subject:"Follow up call",        status:"To Do",  due:lead.modified },
+    { subject:"Send proposal document", status:"To Do",  due:lead.modified },
   ];
+  const callsData = [
+    { summary:"Call logged — 5 min, no answer", time:lead.modified },
+  ];
+
+  // Related list → section mapping (Stage History links to the Timeline tab)
+  const relatedItems = [
+    { icon: Note,                label:"Notes",         count:notes.length,        color:"#7C3AED" },
+    { icon: ClipboardText,       label:"Tasks",         count:tasksData.length,    color:"#3B82F6" },
+    { icon: Phone,               label:"Calls",         count:callsData.length,    color:"#DB5E8C" },
+    { icon: Envelope,            label:"Emails",        count:0,                   color:"#E0883F" },
+    { icon: Paperclip,           label:"Attachments",   count:0,                   color:"#94A3B8" },
+    { icon: ClockCounterClockwise,label:"Stage History", count:activityFeed.length, color: isDark?"#38BDF8":"#0C2472" },
+  ];
+
+  const addNote = () => {
+    if (!note.trim()) return;
+    setNotes(prev => [{ text: note.trim(), at: "Just now" }, ...prev]);
+    setNote("");
+  };
+
+  const handleRelatedClick = (label: string) => {
+    if (label === "Stage History") { setActiveTab("activity"); return; }
+    const id = `section-${label.toLowerCase()}`;
+    if (activeTab !== "overview") {
+      setActiveTab("overview");
+      setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior:"smooth", block:"start" }), 50);
+    } else {
+      document.getElementById(id)?.scrollIntoView({ behavior:"smooth", block:"start" });
+    }
+  };
 
   return (
     <div className="flex h-screen bg-transparent font-sans">
@@ -185,11 +216,11 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
         <main className="flex-1 px-6 py-5 space-y-4 animate-fade-in">
 
           {/* ══ Breadcrumb ══ */}
-          <div className={`flex items-center gap-1.5 text-[12px] ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>
-            <House size={12} weight="duotone" />
-            <CaretRight size={11} weight="duotone" />
+          <div className={`flex items-center gap-1.5 text-[13.5px] ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>
+            <House size={16} weight="duotone" />
+            <CaretRight size={12} weight="duotone" />
             <Link href="/leads" className="hover:text-[#1D4ED8] transition-colors font-medium">Leads</Link>
-            <CaretRight size={11} weight="duotone" />
+            <CaretRight size={12} weight="duotone" />
             <span className="text-[#1D4ED8] font-semibold truncate max-w-[240px]">{fullName}</span>
           </div>
 
@@ -313,7 +344,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
               <div className="col-span-2 space-y-4">
 
                 {/* ── Stage Pipeline (clickable) ── */}
-                <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm p-5">
+                <div className={`rounded-2xl border shadow-sm p-5 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <p className={`font-heading text-[12px] font-bold uppercase tracking-widest ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>Stage Progress</p>
@@ -337,8 +368,8 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                               onClick={() => setCurrentStatus(stage)}
                               className={`flex items-center justify-center gap-1.5 flex-1 py-2 px-2 rounded-xl text-[12.5px] font-bold transition-all
                                 ${isActive  ? "bg-[#1D4ED8] text-white shadow-md shadow-[#1D4ED8]/25 scale-[1.02]" : ""}
-                                ${isDone    ? isDark ? "bg-[#27272A] text-[#D4D4D8] hover:bg-[#3F3F46]" : "bg-[#E3ECFC] text-[#1D4ED8] hover:bg-[#DBEAFE]" : ""}
-                                ${isPending ? isDark ? "bg-[#0A0A0A] text-[#B4B5B6] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "bg-slate-50 text-slate-400 hover:bg-[#EFF6FF]" : ""}
+                                ${isDone    ? isDark ? "bg-[#27272A] text-[#D4D4D8] hover:bg-[#4B4B52]" : "bg-[#E3ECFC] text-[#1D4ED8] hover:bg-[#BFD3F5]" : ""}
+                                ${isPending ? isDark ? "bg-transparent text-[#ABABAD] border border-[#27272A] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "bg-transparent text-slate-400 border border-transparent hover:bg-[#E3ECFC] hover:text-[#1D4ED8]" : ""}
                               `}
                             >
                               {isDone && <Check size={12} weight="duotone" />}
@@ -435,6 +466,86 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                     <KV label="Annual Revenue"    value={lead.annualRevenue ? `₹${Number(lead.annualRevenue).toLocaleString("en-IN")}` : ""} />
                   </div>
                 </SectionCard>
+
+                {/* Notes */}
+                <div id="section-notes">
+                  <SectionCard icon={Note} title="Notes">
+                    <div className="space-y-3">
+                      <div className={`border rounded-xl overflow-hidden transition-all ${isDark ? "border-[#3F3F46] focus-within:border-[#9CA3AF]" : "border-[#E3ECFC] focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#4A7AE8]"}`}>
+                        <InputBase
+                          fullWidth multiline minRows={2}
+                          placeholder="Add a note…"
+                          value={note}
+                          onChange={e => setNote(e.target.value)}
+                          sx={{ px:2, py:1.5, fontSize:"0.8rem", color: isDark ? "#D4D4D8" : "#334155", "& textarea::placeholder":{ color: isDark ? "#71717A" : "#94A3B8", opacity:1 } }}
+                        />
+                        {note.trim() && (
+                          <div className="flex justify-end px-3 pb-2">
+                            <Button size="small" variant="contained" onClick={addNote}
+                              sx={{ bgcolor: isDark ? "#27272A" : "#E3ECFC", color: isDark ? "#F4F4F5" : undefined, borderRadius:"8px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", "&:hover":{ bgcolor: isDark ? "#3F3F46" : "#E3ECFC" } }}>
+                              Save Note
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                      {notes.map((n, i) => (
+                        <div key={i} className={`rounded-xl px-4 py-3 border ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
+                          <p className={`text-[14px] ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{n.text}</p>
+                          <p className={`text-[12px] mt-1 ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>{n.at}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </SectionCard>
+                </div>
+
+                {/* Tasks */}
+                <div id="section-tasks">
+                  <SectionCard icon={ClipboardText} title="Tasks">
+                    <div className="space-y-2">
+                      {tasksData.map((t, i) => (
+                        <div key={i} className={`flex items-center justify-between rounded-xl px-4 py-3 border ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
+                          <div>
+                            <p className={`text-[14px] font-medium ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{t.subject}</p>
+                            <p className={`text-[12px] mt-0.5 ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>Due {t.due}</p>
+                          </div>
+                          <span className={`text-[11.5px] font-bold px-2 py-0.5 rounded-full ${isDark ? "bg-[#3F3F46] text-[#D4D4D8]" : "bg-[#E3ECFC] text-[#1D4ED8]"}`}>{t.status}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </SectionCard>
+                </div>
+
+                {/* Calls */}
+                <div id="section-calls">
+                  <SectionCard icon={Phone} title="Calls">
+                    <div className="space-y-2">
+                      {callsData.map((c, i) => (
+                        <div key={i} className={`rounded-xl px-4 py-3 border ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
+                          <p className={`text-[14px] ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{c.summary}</p>
+                          <p className={`text-[12px] mt-1 ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>{c.time}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </SectionCard>
+                </div>
+
+                {/* Emails */}
+                <div id="section-emails">
+                  <SectionCard icon={Envelope} title="Emails">
+                    <div className={`flex items-center justify-center py-6 text-[14px] ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>
+                      No emails yet
+                    </div>
+                  </SectionCard>
+                </div>
+
+                {/* Attachments */}
+                <div id="section-attachments">
+                  <SectionCard icon={Paperclip} title="Attachments">
+                    <div className={`flex items-center justify-center py-6 text-[14px] ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>
+                      No attachments yet
+                    </div>
+                  </SectionCard>
+                </div>
               </div>
 
               {/* Right 1/3 */}
@@ -446,17 +557,17 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                     <p className="font-heading text-[12px] font-bold text-slate-500 uppercase tracking-wider">Related List</p>
                   </div>
                   <div className="p-2 space-y-0.5">
-                    {relatedItems.map(({ icon: Icon, label, count, color, tab }) => (
+                    {relatedItems.map(({ icon: Icon, label, count, color }) => (
                       <button key={label}
-                        onClick={() => setActiveTab(tab as any)}
-                        className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-xl group transition-colors ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"} ${activeTab===(tab as any) ? (isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]") : ""}`}
+                        onClick={() => handleRelatedClick(label)}
+                        className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-xl group transition-colors ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}
                       >
                         <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor:color+"20" }}>
                           <Icon size={14} color={color} weight="duotone" />
                         </div>
                         <span className="flex-1 text-left text-[14px] font-medium text-slate-700 transition-colors">{label}</span>
                         {count > 0 && (
-                          <span className="text-[11px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>
+                          <span className="text-[12px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>
                         )}
                         <CaretRight size={14} color="#E2E8F0" weight="duotone" className="group-hover:text-[#60A5FA] transition-colors" />
                       </button>
@@ -532,14 +643,14 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                     <p className="font-heading text-[12px] font-bold text-slate-500 uppercase tracking-wider">Related List</p>
                   </div>
                   <div className="p-2 space-y-0.5">
-                    {relatedItems.map(({ icon: Icon, label, count, color, tab }) => (
-                      <button key={label} onClick={() => setActiveTab(tab)}
-                        className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl hover:bg-[#EFF6FF] group transition-colors">
+                    {relatedItems.map(({ icon: Icon, label, count, color }) => (
+                      <button key={label} onClick={() => handleRelatedClick(label)}
+                        className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-xl group transition-colors ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}>
                         <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor:color+"20" }}>
                           <Icon size={14} color={color} weight="duotone" />
                         </div>
                         <span className="flex-1 text-left text-[14px] font-medium text-slate-700">{label}</span>
-                        {count>0 && <span className="text-[11px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>}
+                        {count>0 && <span className="text-[12px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>}
                         <CaretRight size={14} color="#E2E8F0" weight="duotone" />
                       </button>
                     ))}
