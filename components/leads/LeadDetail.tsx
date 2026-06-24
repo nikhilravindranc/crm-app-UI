@@ -102,7 +102,7 @@ function KV({ label, value, blue }: { label: string; value?: string; blue?: bool
   const isDark = theme === "dark";
   return (
     <div className="py-2 border-b border-[#EFF6FF] last:border-0">
-      <p className={`font-heading text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>{label}</p>
+      <p className={`font-heading text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>{label}</p>
       <p className={`text-[14px] font-medium ${blue?"text-inherit":"text-slate-800"} ${!value?"text-slate-300 italic":""}`}>
         {value || "—"}
       </p>
@@ -183,7 +183,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
         <main className="flex-1 px-6 py-5 space-y-4 animate-fade-in">
 
           {/* ══ Breadcrumb ══ */}
-          <div className={`flex items-center gap-1.5 text-[12px] ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>
+          <div className={`flex items-center gap-1.5 text-[12px] ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>
             <House size={12} weight="duotone" />
             <CaretRight size={11} weight="duotone" />
             <Link href="/leads" className="hover:text-[#1D4ED8] transition-colors font-medium">Leads</Link>
@@ -216,10 +216,10 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                   <p className="text-[14px] text-slate-500 font-medium flex items-center gap-1.5">
                     <Buildings size={13} color="#94A3B8" weight="duotone" />
                     {lead.company}
-                    {lead.industry && <><span className="text-slate-300">·</span><span className={isDark ? "text-[#E4E4E7]" : "text-slate-400"}>{lead.industry}</span></>}
+                    {lead.industry && <><span className="text-slate-300">·</span><span className={isDark ? "text-[#ABABAD]" : "text-slate-400"}>{lead.industry}</span></>}
                   </p>
                 )}
-                <p className={`text-[12px] mt-0.5 ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>
+                <p className={`text-[12px] mt-0.5 ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>
                   Lead ID: CRM-LEAD-{String(lead.id).padStart(4,"0")} · Created {lead.created}
                 </p>
               </div>
@@ -314,11 +314,11 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                 <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm p-5">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <p className={`font-heading text-[12px] font-bold uppercase tracking-widest ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>Stage Progress</p>
+                      <p className={`font-heading text-[12px] font-bold uppercase tracking-widest ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>Stage Progress</p>
                       <p className="text-[12px] text-slate-500 mt-0.5">Click a stage to update · Started <span className="font-semibold text-slate-700">{lead.created}</span></p>
                     </div>
                     <div className="text-right">
-                      <p className={`font-heading text-[12px] font-bold uppercase tracking-widest ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>Last Updated</p>
+                      <p className={`font-heading text-[12px] font-bold uppercase tracking-widest ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>Last Updated</p>
                       <p className="text-[12px] font-semibold text-slate-700 mt-0.5">{lead.modified}</p>
                     </div>
                   </div>
@@ -373,7 +373,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                   {currentStatus !== lead.status && (
                     <div className="mt-3 flex items-center gap-2 bg-[#EFF6FF] border border-[#E3ECFC] rounded-xl px-3 py-2 text-[12.5px] animate-slide-up">
                       <span className="text-[#1D4ED8] font-semibold">Stage updated to "{currentStatus}"</span>
-                      <span className={isDark ? "text-[#E4E4E7]" : "text-slate-400"}>— not saved yet</span>
+                      <span className={isDark ? "text-[#ABABAD]" : "text-slate-400"}>— not saved yet</span>
                       <button onClick={() => setCurrentStatus(lead.status)} className="ml-auto text-inherit font-bold hover:text-[#0C2472] transition-colors">Undo</button>
                     </div>
                   )}
@@ -471,17 +471,17 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                     </Avatar>
                     <div>
                       <p className="text-[14px] font-semibold text-slate-800">{lead.owner}</p>
-                      <p className={`text-[12px] ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>Lead Owner</p>
+                      <p className={`text-[12px] ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>Lead Owner</p>
                     </div>
                   </div>
                   <Divider sx={{ borderColor:"#EFF6FF" }} />
                   <div className="space-y-2">
                     <div className="flex justify-between text-[12px]">
-                      <span className={`font-medium ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>Created</span>
+                      <span className={`font-medium ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>Created</span>
                       <span className="text-slate-700 font-semibold">{lead.created}</span>
                     </div>
                     <div className="flex justify-between text-[12px]">
-                      <span className={`font-medium ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>Modified</span>
+                      <span className={`font-medium ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>Modified</span>
                       <span className="text-slate-700 font-semibold">{lead.modified}</span>
                     </div>
                   </div>
@@ -496,7 +496,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
               <div className="col-span-2 bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm">
                 <div className="flex items-center justify-between px-5 py-4 border-b border-[#EFF6FF]">
                   <p className="font-heading text-[12px] font-bold text-slate-500 uppercase tracking-wider">Timeline</p>
-                  <span className={`text-[12px] font-semibold bg-slate-100 px-2 py-0.5 rounded-full ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>{activityFeed.length} events</span>
+                  <span className={`text-[12px] font-semibold bg-slate-100 px-2 py-0.5 rounded-full ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>{activityFeed.length} events</span>
                 </div>
                 <div className="px-5 py-4 space-y-0">
                   {activityFeed.map((item, i) => {
@@ -513,7 +513,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                         {/* Content */}
                         <div className="flex-1 pb-4">
                           <p className="text-[14px] font-medium text-slate-700 group-hover:text-slate-900 transition-colors mt-1">{item.text}</p>
-                          <p className={`text-[12px] mt-0.5 flex items-center gap-1 ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>
+                          <p className={`text-[12px] mt-0.5 flex items-center gap-1 ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>
                             <Clock size={11} weight="duotone" />{item.time}
                           </p>
                         </div>
