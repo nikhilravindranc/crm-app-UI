@@ -54,9 +54,9 @@ html.dark {
   --text-secondary: #D4D4D8;
   --text-tertiary:  #A1A1AA;
   --text-body:      #D4D4D8;
-  --text-muted:     #737373;
+  --text-muted:     #9CA3AF;
   --text-faint:     #71717A;
-  --text-disabled:  #52525B;
+  --text-disabled:  #71717A;
 
   /* Interactive */
   --link-fg:        #D4D4D8;
@@ -98,7 +98,7 @@ html.dark {
   --chart-8: #EC4899;
 
   --chart-grid:  #27272A;
-  --chart-axis:  #737373;
+  --chart-axis:  #9CA3AF;
   --chart-label: #A1A1AA;
 
   /* Status */

@@ -36,7 +36,7 @@ function SectionRow({ title, subtitle, onEdit, children, isDark }: {
       <div className="flex items-start justify-between py-3 px-1">
         <div className="flex-1 min-w-0">
           <p className={`font-heading text-[14px] font-bold ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>{title}</p>
-          {subtitle && <p className={`text-[12px] mt-0.5 leading-snug ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{subtitle}</p>}
+          {subtitle && <p className={`text-[12px] mt-0.5 leading-snug ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{subtitle}</p>}
           {children}
         </div>
         {onEdit && (
@@ -107,7 +107,7 @@ export default function CreateReportPage() {
               <div className="flex items-center gap-2 mt-0.5">
                 <InputBase value={reportName} onChange={e => setReportName(e.target.value)}
                   autoFocus onBlur={() => setEditingName(false)}
-                  sx={{ fontSize:"0.78rem", color: isDark ? "#A1A1AA" : "#E3ECFC", fontWeight:600, borderBottom:`1.5px solid ${isDark ? "#52525B" : "#1D4ED8"}`, px:0.5 }}
+                  sx={{ fontSize:"0.78rem", color: isDark ? "#A1A1AA" : "#E3ECFC", fontWeight:600, borderBottom:`1.5px solid ${isDark ? "#9CA3AF" : "#1D4ED8"}`, px:0.5 }}
                 />
                 <IconButton size="small" onClick={() => setEditingName(false)} sx={{ p:0.25 }}>
                   <Check size={12} color={isDark ? "#71717A" : "#E3ECFC"} weight="duotone" />
@@ -123,14 +123,14 @@ export default function CreateReportPage() {
 
           <div className="flex items-center gap-2 mt-1">
             <Button variant="outlined" size="small" onClick={() => router.push("/reports")}
-              sx={{ borderColor: isDark ? "#3F3F46" : "#E3ECFC", color: isDark ? "#A1A1AA" : "#475569", bgcolor: isDark ? "#1C1C1E" : "transparent", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.78rem", px:2, "&:hover":{ borderColor: isDark ? "#52525B" : "#E3ECFC", bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+              sx={{ borderColor: isDark ? "#3F3F46" : "#E3ECFC", color: isDark ? "#A1A1AA" : "#475569", bgcolor: isDark ? "#1C1C1E" : "transparent", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.78rem", px:2, "&:hover":{ borderColor: isDark ? "#9CA3AF" : "#E3ECFC", bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
               Cancel
             </Button>
             <Button variant="outlined" size="small"
               startIcon={isRunning ? undefined : <Play size={13} weight="duotone" />}
               onClick={handleRun}
               disabled={!primaryModule || selectedColumns.length === 0}
-              sx={{ borderColor: isDark ? "#3F3F46" : "#E3ECFC", color: isDark ? "#A1A1AA" : "#475569", bgcolor: isDark ? "#1C1C1E" : "transparent", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.78rem", px:2, "&:hover":{ borderColor: isDark ? "#52525B" : "#E3ECFC", bgcolor: isDark ? "#27272A" : "#EFF6FF" }, "&.Mui-disabled":{ borderColor: isDark ? "#27272A" : "#E3ECFC", color: isDark ? "#3F3F46" : "#9CA3AF" } }}>
+              sx={{ borderColor: isDark ? "#3F3F46" : "#E3ECFC", color: isDark ? "#A1A1AA" : "#475569", bgcolor: isDark ? "#1C1C1E" : "transparent", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.78rem", px:2, "&:hover":{ borderColor: isDark ? "#9CA3AF" : "#E3ECFC", bgcolor: isDark ? "#27272A" : "#EFF6FF" }, "&.Mui-disabled":{ borderColor: isDark ? "#27272A" : "#E3ECFC", color: isDark ? "#3F3F46" : "#9CA3AF" } }}>
               {isRunning ? "Running…" : "Run"}
             </Button>
             <Button variant="contained" size="small"
@@ -151,10 +151,10 @@ export default function CreateReportPage() {
 
             {/* Step 1 */}
             <div>
-              <p className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-2 ${isDark ? "text-[#52525B]" : "text-[#0C2472]"}`}>1. Primary Module</p>
+              <p className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-2 ${isDark ? "text-[#9CA3AF]" : "text-[#0C2472]"}`}>1. Primary Module</p>
               <FormControl size="small" fullWidth>
                 <Select value={primaryModule} onChange={e => handleModuleChange(e.target.value)} displayEmpty
-                  sx={{ borderRadius:"10px", bgcolor: isDark ? "#1C1C1E" : "#EFF6FF", fontSize:"0.82rem", color: isDark ? "#D4D4D8" : undefined, "& .MuiOutlinedInput-notchedOutline":{ borderColor: isDark ? "#3F3F46" : "#E3ECFC", borderWidth:1.5 }, "&:hover .MuiOutlinedInput-notchedOutline":{ borderColor: isDark ? "#52525B" : "#E3ECFC" }, "&.Mui-focused .MuiOutlinedInput-notchedOutline":{ borderColor: isDark ? "#71717A" : "#E3ECFC", borderWidth:2 }, "& .MuiSelect-select":{ py:"9px", px:"12px", color: primaryModule ? (isDark ? "#D4D4D8" : "#E3ECFC") : (isDark ? "#3F3F46" : "#9CA3AF") }, "& .MuiSvgIcon-root":{ color: isDark ? "#52525B" : undefined } }}
+                  sx={{ borderRadius:"10px", bgcolor: isDark ? "#1C1C1E" : "#EFF6FF", fontSize:"0.82rem", color: isDark ? "#D4D4D8" : undefined, "& .MuiOutlinedInput-notchedOutline":{ borderColor: isDark ? "#3F3F46" : "#E3ECFC", borderWidth:1.5 }, "&:hover .MuiOutlinedInput-notchedOutline":{ borderColor: isDark ? "#9CA3AF" : "#E3ECFC" }, "&.Mui-focused .MuiOutlinedInput-notchedOutline":{ borderColor: isDark ? "#71717A" : "#E3ECFC", borderWidth:2 }, "& .MuiSelect-select":{ py:"9px", px:"12px", color: primaryModule ? (isDark ? "#D4D4D8" : "#E3ECFC") : (isDark ? "#3F3F46" : "#9CA3AF") }, "& .MuiSvgIcon-root":{ color: isDark ? "#9CA3AF" : undefined } }}
                   renderValue={v => v || "Select primary module"}>
                   {Object.keys(MODULE_FIELDS).map(m => (
                     <MenuItem key={m} value={m} sx={{ fontSize:"0.82rem" }}>{m}</MenuItem>
@@ -167,7 +167,7 @@ export default function CreateReportPage() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-1.5">
-                  <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-[#52525B]" : "text-[#0C2472]"}`}>2. Related Modules</p>
+                  <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-[#9CA3AF]" : "text-[#0C2472]"}`}>2. Related Modules</p>
                   <Tooltip title="Add related modules to include data from connected CRM objects">
                     <Info size={13} color={isDark ? "#3F3F46" : "#94A3B8"} weight="duotone" className="cursor-pointer" />
                   </Tooltip>
@@ -175,29 +175,29 @@ export default function CreateReportPage() {
                 <Tooltip title={primaryModule ? "Add related module" : "Select a primary module first"}>
                   <span>
                     <IconButton size="small" disabled={!primaryModule}
-                      sx={{ border:`1.5px solid ${isDark ? "#3F3F46" : "#E3ECFC"}`, borderRadius:"7px", p:0.4, color: isDark ? "#52525B" : "#E3ECFC", bgcolor: isDark ? "#1C1C1E" : "transparent", "&:hover":{ bgcolor: isDark ? "#27272A" : "#EFF6FF" }, "&.Mui-disabled":{ color: isDark ? "#27272A" : "#E2E8F0", borderColor: isDark ? "#27272A" : "#E3ECFC" } }}>
+                      sx={{ border:`1.5px solid ${isDark ? "#3F3F46" : "#E3ECFC"}`, borderRadius:"7px", p:0.4, color: isDark ? "#9CA3AF" : "#E3ECFC", bgcolor: isDark ? "#1C1C1E" : "transparent", "&:hover":{ bgcolor: isDark ? "#27272A" : "#EFF6FF" }, "&.Mui-disabled":{ color: isDark ? "#27272A" : "#E2E8F0", borderColor: isDark ? "#27272A" : "#E3ECFC" } }}>
                       <Plus size={13} weight="bold" />
                     </IconButton>
                   </span>
                 </Tooltip>
               </div>
               {!primaryModule && (
-                <p className={`text-[14px] leading-relaxed ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>Select a primary module above, then use + to add related modules.</p>
+                <p className={`text-[14px] leading-relaxed ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>Select a primary module above, then use + to add related modules.</p>
               )}
               {primaryModule && (
-                <p className={`text-[14px] ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>No related modules added yet.</p>
+                <p className={`text-[14px] ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>No related modules added yet.</p>
               )}
             </div>
 
             {/* Step 3 */}
             <div>
-              <p className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-3 ${isDark ? "text-[#52525B]" : "text-[#0C2472]"}`}>3. Fields & Filters</p>
+              <p className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-3 ${isDark ? "text-[#9CA3AF]" : "text-[#0C2472]"}`}>3. Fields & Filters</p>
               <div className={`flex border-b mb-4 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
                 {(["Columns", "Filters"] as FilterTabType[]).map(tab => (
                   <button key={tab} onClick={() => setFilterTab(tab)}
                     className={`px-4 py-2 text-[14px] font-semibold transition-all border-b-2 -mb-px ${
                       filterTab === tab
-                        ? isDark ? "text-[#D4D4D8] border-[#52525B]" : "text-[#1D4ED8] border-[#1D4ED8]"
+                        ? isDark ? "text-[#D4D4D8] border-[#9CA3AF]" : "text-[#1D4ED8] border-[#1D4ED8]"
                         : isDark ? "text-[#3F3F46] border-transparent hover:text-[#71717A]" : "text-slate-400 border-transparent hover:text-slate-600"
                     }`}>
                     {tab}
@@ -212,7 +212,7 @@ export default function CreateReportPage() {
                     onEdit={primaryModule ? () => setShowColPicker(v => !v) : undefined}>
                     {showColPicker && primaryModule && (
                       <div className={`mt-2 rounded-xl border p-3 space-y-2 ${card}`}>
-                        <div className={`flex items-center gap-2 border rounded-lg px-2 py-1 ${isDark ? "bg-[#111113] border-[#3F3F46] focus-within:border-[#52525B]" : "bg-[#f9fbff] border-[#E3ECFC] focus-within:border-[#1D4ED8]"}`}>
+                        <div className={`flex items-center gap-2 border rounded-lg px-2 py-1 ${isDark ? "bg-[#111113] border-[#3F3F46] focus-within:border-[#9CA3AF]" : "bg-[#f9fbff] border-[#E3ECFC] focus-within:border-[#1D4ED8]"}`}>
                           <MagnifyingGlass size={12} color="#94A3B8" weight="duotone" />
                           <InputBase placeholder="Search fields…" value={colSearch} onChange={e => setColSearch(e.target.value)}
                             sx={{ flex:1, fontSize:"0.75rem", color: isDark ? "#A1A1AA" : "inherit", "& input::placeholder":{ color:"#94A3B8", opacity:1 } }} />
@@ -221,7 +221,7 @@ export default function CreateReportPage() {
                           {filteredFields.map(field => (
                             <label key={field} className={`flex items-center gap-2 px-1 py-1 rounded-lg cursor-pointer transition-colors ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#f9fbff]"}`}>
                               <Checkbox size="small" checked={selectedColumns.includes(field)} onChange={() => toggleColumn(field)}
-                                sx={{ p:0.25, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked":{ color: isDark ? "#52525B" : "#E3ECFC" } }} />
+                                sx={{ p:0.25, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked":{ color: isDark ? "#9CA3AF" : "#E3ECFC" } }} />
                               <span className={`text-[14px] ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>{field}</span>
                             </label>
                           ))}
@@ -273,11 +273,11 @@ export default function CreateReportPage() {
               <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-[#D4D4D8]" : "text-slate-500"}`}>Results</p>
               <div className="flex items-center gap-2">
                 {!hasResults && (
-                  <p className={`text-[12px] max-w-xs ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+                  <p className={`text-[12px] max-w-xs ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
                     Saving runs the query automatically. Use Run to refresh after you change the report.
                   </p>
                 )}
-                <button className={`flex items-center gap-1 text-[12px] font-semibold transition-colors ml-4 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+                <button className={`flex items-center gap-1 text-[12px] font-semibold transition-colors ml-4 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
                   Show Details <CaretDown size={11} weight="duotone" />
                 </button>
               </div>
@@ -287,7 +287,7 @@ export default function CreateReportPage() {
               {!primaryModule && (
                 <div className="text-center max-w-xs">
                   <ChartBar size={40} color={isDark ? "#27272A" : "#E3ECFC"} weight="duotone" className="mx-auto mb-4" />
-                  <p className={`font-heading text-[14px] font-semibold mb-1 ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>No module selected</p>
+                  <p className={`font-heading text-[14px] font-semibold mb-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>No module selected</p>
                   <p className={`text-[14px] ${isDark ? "text-[#3F3F46]" : "text-slate-400"}`}>Select a primary module on the left to start building your report.</p>
                 </div>
               )}
@@ -295,7 +295,7 @@ export default function CreateReportPage() {
               {primaryModule && selectedColumns.length === 0 && !hasResults && (
                 <div className="text-center max-w-sm">
                   <ChartBar size={40} color={isDark ? "#27272A" : "#E3ECFC"} weight="duotone" className="mx-auto mb-4" />
-                  <p className={`font-heading text-[14px] font-semibold mb-1 ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>Add columns, then save the report to see query results here.</p>
+                  <p className={`font-heading text-[14px] font-semibold mb-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Add columns, then save the report to see query results here.</p>
                   <p className={`text-[14px] mt-1 ${isDark ? "text-[#3F3F46]" : "text-slate-400"}`}>
                     You&apos;ve selected <span className={`font-semibold ${isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]"}`}>{primaryModule}</span> as your primary module. Now select columns to include.
                   </p>
@@ -305,7 +305,7 @@ export default function CreateReportPage() {
               {primaryModule && selectedColumns.length > 0 && !hasResults && !isRunning && (
                 <div className="text-center max-w-sm">
                   <Play size={40} color={isDark ? "#27272A" : "#E3ECFC"} weight="duotone" className="mx-auto mb-4" />
-                  <p className={`font-heading text-[14px] font-semibold mb-2 ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>Ready to run</p>
+                  <p className={`font-heading text-[14px] font-semibold mb-2 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Ready to run</p>
                   <p className={`text-[14px] mb-4 ${isDark ? "text-[#3F3F46]" : "text-slate-400"}`}>
                     {selectedColumns.length} column{selectedColumns.length > 1 ? "s" : ""} selected from <span className={`font-semibold ${isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]"}`}>{primaryModule}</span>
                   </p>
@@ -319,7 +319,7 @@ export default function CreateReportPage() {
               {isRunning && (
                 <div className="text-center">
                   <div className={`w-10 h-10 rounded-full animate-spin mx-auto mb-3 ${isDark ? "border-[#27272A] border-t-[#71717A]" : "border-[#E3ECFC] border-t-[#1D4ED8]"}`} style={{ borderWidth:3 }} />
-                  <p className={`text-[14px] font-medium ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>Running query…</p>
+                  <p className={`text-[14px] font-medium ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>Running query…</p>
                 </div>
               )}
 
@@ -330,7 +330,7 @@ export default function CreateReportPage() {
                       <span className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>
                         {primaryModule} · {selectedColumns.length} columns
                       </span>
-                      <span className={`text-[12px] font-medium ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>{sampleRows.length} records</span>
+                      <span className={`text-[12px] font-medium ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{sampleRows.length} records</span>
                     </div>
                     <div style={{ height: Math.min(sampleRows.length, 5) * 44 + 56 }}>
                       <DataGrid

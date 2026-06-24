@@ -52,7 +52,7 @@ export default function RecentDeals({ isDark = false }: { isDark?: boolean }) {
         <Button
           size="small"
           endIcon={<ArrowSquareOut size={12} weight="duotone" />}
-          sx={{ textTransform:"none", fontSize:"0.72rem", color: isDark ? "#737373" : "#1D4ED8", fontWeight:700, borderRadius:"8px", "&:hover":{ bgcolor: isDark ? "rgba(255,255,255,0.05)" : "rgba(96, 165, 250, 0.1)" } }}
+          sx={{ textTransform:"none", fontSize:"0.72rem", color: isDark ? "#9CA3AF" : "#1D4ED8", fontWeight:700, borderRadius:"8px", "&:hover":{ bgcolor: isDark ? "rgba(255,255,255,0.05)" : "rgba(96, 165, 250, 0.1)" } }}
         >
           View All
         </Button>
@@ -63,7 +63,7 @@ export default function RecentDeals({ isDark = false }: { isDark?: boolean }) {
           <TableHead>
             <TableRow>
               {["Deal", "Amount", "Stage", "Owner", "Close Date"].map(h => (
-                <TableCell key={h} sx={{ backgroundColor: isDark ? "#111111" : "#EFF6FF", color: isDark ? "#52525B" : "#0C2472", borderBottom: `1px solid ${isDark ? "#27272A" : "#E3ECFC"}`, fontWeight: 700, fontSize: "11.5px", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</TableCell>
+                <TableCell key={h} sx={{ backgroundColor: isDark ? "#111111" : "#EFF6FF", color: isDark ? "#9CA3AF" : "#0C2472", borderBottom: `1px solid ${isDark ? "#27272A" : "#E3ECFC"}`, fontWeight: 700, fontSize: "11.5px", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</TableCell>
               ))}
             </TableRow>
           </TableHead>

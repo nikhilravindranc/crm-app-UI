@@ -70,7 +70,7 @@ export default function TopBar({ title }: { title?: string }) {
 
       {/* Search - hidden on mobile, visible md+ */}
       <div className={`hidden md:flex items-center gap-2 border rounded-xl px-3 py-1.5 w-60 group transition-all ${isDark ? "bg-[#0A0A0A] border-[#27272A] focus-within:border-[#D4D4D8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_rgba(212,212,216,0.2)]" : "bg-[#f9fbff] border-[#E3ECFC] focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#4A7AE8]"}`}>
-        <MagnifyingGlass size={15} color="#737373" weight="duotone" />
+        <MagnifyingGlass size={15} color={isDark ? "#9CA3AF" : "#737373"} weight="duotone" />
         <InputBase
           placeholder="Search leads, deals..."
           value={search}
@@ -115,7 +115,7 @@ export default function TopBar({ title }: { title?: string }) {
             color="error"
             sx={{ "& .MuiBadge-badge": { fontSize: "0.58rem", height: 15, minWidth: 15, padding: "0 3px" } }}
           >
-            <Bell size={20} color={isDark ? "#737373" : "#64748B"} weight="duotone" />
+            <Bell size={20} color={isDark ? "#9CA3AF" : "#64748B"} weight="duotone" />
           </Badge>
         </IconButton>
       </Tooltip>

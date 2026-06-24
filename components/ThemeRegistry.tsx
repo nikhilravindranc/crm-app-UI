@@ -20,7 +20,7 @@ function buildTheme(isDark: boolean) {
   const border  = isDark ? "#27272A" : "#E3ECFC";
   const textPri = isDark ? "#FFFFFF" : C.depth;
   const textBod = isDark ? "#D4D4D8" : "#334155";
-  const textMut = isDark ? "#737373" : "#6B7280";
+  const textMut = isDark ? "#9CA3AF" : "#6B7280";
 
   return createTheme({
     palette: {
@@ -167,7 +167,7 @@ function buildTheme(isDark: boolean) {
             fontWeight: 600,
             fontSize: "0.75rem",
             backgroundColor: isDark ? "#27272A" : "#F0F1F3",
-            color: isDark ? "#737373" : C.depth,
+            color: isDark ? "#9CA3AF" : C.depth,
             borderRadius: "6px",
             padding: "4px 8px",
           },

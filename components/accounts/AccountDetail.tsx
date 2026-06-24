@@ -89,7 +89,7 @@ function SectionCard({ icon: Icon, title, children, action, id }: {
     <div id={id} className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
       <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
         <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
-          <Icon size={13} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
+          <Icon size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
         </div>
         <p className={`font-heading text-[12px] font-bold uppercase tracking-wider flex-1 ${isDark ? "text-slate-500" : "text-slate-500"}`}>{title}</p>
         {action}
@@ -105,7 +105,7 @@ function KV({ label, value, fullWidth }: { label: string; value?: string; fullWi
   const display = value !== undefined && value !== "" ? value : "—";
   return (
     <div className={`py-2.5 border-b last:border-0 ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"} ${fullWidth ? "col-span-2" : ""}`}>
-      <p className={`text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{label}</p>
+      <p className={`text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{label}</p>
       <p className={`text-[14px] font-medium ${display === "—" ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>{display}</p>
     </div>
   );
@@ -198,11 +198,11 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
 
         {/* ── Breadcrumb ── */}
         <div className={`flex items-center gap-1.5 px-8 py-3 border-b text-[12px] ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#E3ECFC] border-[#E3ECFC]"}`}>
-          <Link href="/" className={`transition-colors ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+          <Link href="/" className={`transition-colors ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
             <House size={13} weight="duotone" />
           </Link>
           <CaretRight size={11} color={isDark ? "#3F3F46" : "#E2E8F0"} />
-          <Link href="/accounts" className={`font-medium transition-colors ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+          <Link href="/accounts" className={`font-medium transition-colors ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
             Accounts
           </Link>
           <CaretRight size={11} color={isDark ? "#3F3F46" : "#E2E8F0"} />
@@ -326,7 +326,7 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
                 <div id="section-notes">
                   <SectionCard icon={Note} title="Notes">
                     <div className="space-y-3">
-                      <div className={`border rounded-xl overflow-hidden transition-all ${isDark ? "border-[#3F3F46] focus-within:border-[#52525B]" : "border-[#E3ECFC] focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#4A7AE8]"}`}>
+                      <div className={`border rounded-xl overflow-hidden transition-all ${isDark ? "border-[#3F3F46] focus-within:border-[#9CA3AF]" : "border-[#E3ECFC] focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#4A7AE8]"}`}>
                         <InputBase
                           fullWidth multiline minRows={2}
                           placeholder="Add a note…"
@@ -346,7 +346,7 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
                       {notes.map((n, i) => (
                         <div key={i} className={`rounded-xl px-4 py-3 border ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
                           <p className={`text-[14px] ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{n.text}</p>
-                          <p className={`text-[12px] mt-1 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{n.at}</p>
+                          <p className={`text-[12px] mt-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{n.at}</p>
                         </div>
                       ))}
                     </div>
@@ -361,13 +361,13 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
                         <div className={`flex items-center rounded-lg p-0.5 gap-0.5 ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
                           {[{ k: "grid", Icon: GridFour }, { k: "list", Icon: List }].map(({ k, Icon }) => (
                             <button key={k} onClick={() => setAttachView(k as "grid" | "list")}
-                              className={`p-1 rounded-md transition-colors ${attachView === k ? (isDark ? "bg-[#3F3F46] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]") : (isDark ? "text-[#52525B]" : "text-slate-400")}`}>
+                              className={`p-1 rounded-md transition-colors ${attachView === k ? (isDark ? "bg-[#3F3F46] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]") : (isDark ? "text-[#9CA3AF]" : "text-slate-400")}`}>
                               <Icon size={13} weight="duotone" />
                             </button>
                           ))}
                         </div>
                         <Button size="small" variant="outlined"
-                          sx={{ borderColor: isDark ? "#3F3F46" : "#E3ECFC", color: isDark ? "#A1A1AA" : "#0C2472", bgcolor: isDark ? "#27272A" : "#E3ECFC", borderRadius: "8px", textTransform: "none", fontWeight: 600, fontSize: "0.73rem", "&:hover": { borderColor: isDark ? "#52525B" : "#E3ECFC", bgcolor: isDark ? "#3F3F46" : "#f9fbff" } }}>
+                          sx={{ borderColor: isDark ? "#3F3F46" : "#E3ECFC", color: isDark ? "#A1A1AA" : "#0C2472", bgcolor: isDark ? "#27272A" : "#E3ECFC", borderRadius: "8px", textTransform: "none", fontWeight: 600, fontSize: "0.73rem", "&:hover": { borderColor: isDark ? "#9CA3AF" : "#E3ECFC", bgcolor: isDark ? "#3F3F46" : "#f9fbff" } }}>
                           Attach
                         </Button>
                       </div>
@@ -527,7 +527,7 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
             <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
                 <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
                   <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
-                    <ClockCounterClockwise size={13} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
+                    <ClockCounterClockwise size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
                   </div>
                   <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-500"}`}>History</p>
                 </div>
@@ -535,7 +535,7 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
                 {account.timeline.length === 0 ? (
                   <div className="py-12 flex flex-col items-center justify-center gap-2">
                     <ClockCounterClockwise size={28} color={isDark ? "#27272A" : "#E2E8F0"} weight="duotone" />
-                    <p className={`text-[14px] ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>No history yet</p>
+                    <p className={`text-[14px] ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>No history yet</p>
                   </div>
                 ) : (() => {
                   const grouped: Record<string, TimelineEntry[]> = {};
@@ -550,7 +550,7 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
                       {sortedDates.map(date => (
                         <div key={date}>
                           <div className="flex items-center gap-3 mb-4">
-                            <span className={`text-[12px] font-semibold whitespace-nowrap ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+                            <span className={`text-[12px] font-semibold whitespace-nowrap ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
                               {new Date(date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
                             </span>
                             <div className={`flex-1 h-px ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
@@ -561,11 +561,11 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
                               return (
                                 <div key={i} className="flex gap-4">
                                   <div className="w-16 flex-shrink-0 text-right">
-                                    <span className={`text-[12px] font-medium ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{entry.time}</span>
+                                    <span className={`text-[12px] font-medium ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{entry.time}</span>
                                   </div>
                                   <div className="flex flex-col items-center flex-shrink-0">
                                     <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center z-10 flex-shrink-0 ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
-                                      <PencilSimple size={13} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
+                                      <PencilSimple size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
                                     </div>
                                     {!isLast && <div className={`w-px flex-1 my-1 min-h-[24px] ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />}
                                   </div>
@@ -579,7 +579,7 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
                                         }
                                       </p>
                                     )}
-                                    <p className={`text-[12px] mt-0.5 break-all ${isDark ? "text-[#52525B]" : "text-inherit"}`}>by {entry.by}</p>
+                                    <p className={`text-[12px] mt-0.5 break-all ${isDark ? "text-[#9CA3AF]" : "text-inherit"}`}>by {entry.by}</p>
                                   </div>
                                 </div>
                               );

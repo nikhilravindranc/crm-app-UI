@@ -66,7 +66,7 @@ function AddressBlock({ title, prefix, form, set, isDark, fx }: {
         <TextField label="Longitude" value={form[k("lng")] || ""} onChange={e => set(k("lng"), e.target.value)} size="small" fullWidth sx={fx} />
       </div>
       <div className="flex justify-end pt-0.5">
-        <button onClick={clearAll} className={`text-[11.5px] font-semibold transition-colors ${isDark ? "text-[#52525B] hover:text-[#A1A1AA]" : "text-[#475569] hover:underline"}`}>Clear All</button>
+        <button onClick={clearAll} className={`text-[11.5px] font-semibold transition-colors ${isDark ? "text-[#9CA3AF] hover:text-[#A1A1AA]" : "text-[#475569] hover:underline"}`}>Clear All</button>
       </div>
     </div>
   );

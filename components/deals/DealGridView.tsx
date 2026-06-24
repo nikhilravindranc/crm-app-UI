@@ -40,7 +40,7 @@ export default function DealGridView({ deals }: Props) {
 
   if (deals.length === 0) {
     return (
-      <div className={`flex flex-col items-center justify-center py-20 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+      <div className={`flex flex-col items-center justify-center py-20 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
         <p className="font-heading text-sm font-semibold">No deals found</p>
         <p className="text-xs mt-1">Adjust filters or create a new deal</p>
       </div>
@@ -126,7 +126,7 @@ export default function DealGridView({ deals }: Props) {
                   <span className={`text-[12px] font-medium ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>{deal.owner}</span>
                 </div>
               </Tooltip>
-              <span className={`flex items-center gap-1 text-[12px] ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>
+              <span className={`flex items-center gap-1 text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>
                 <TrendUp size={10} color={deep} weight="duotone" />
                 {deal.creation}
               </span>

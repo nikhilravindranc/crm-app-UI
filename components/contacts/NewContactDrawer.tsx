@@ -88,7 +88,7 @@ function AddressPanel({
       </div>
 
       <div className="flex justify-end pt-0.5">
-        <button onClick={onClear} className={`text-[11.5px] font-semibold transition-colors ${isDark ? "text-[#52525B] hover:text-[#A1A1AA]" : "text-[#475569] hover:underline"}`}>
+        <button onClick={onClear} className={`text-[11.5px] font-semibold transition-colors ${isDark ? "text-[#9CA3AF] hover:text-[#A1A1AA]" : "text-[#475569] hover:underline"}`}>
           Clear All
         </button>
       </div>

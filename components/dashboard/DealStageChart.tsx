@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import {
   BarChart,
   Bar,
@@ -68,7 +68,7 @@ export default function DealStageChart({ isDark = false }: { isDark?: boolean })
           <YAxis
             type="category"
             dataKey="name"
-            tick={{ fontSize: 11, fill: isDark ? "#737373" : "#6B7280", fontWeight: 500 }}
+            tick={{ fontSize: 11, fill: isDark ? "#9CA3AF" : "#6B7280", fontWeight: 500 }}
             axisLine={false}
             tickLine={false}
             width={82}

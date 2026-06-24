@@ -225,7 +225,7 @@ export default function ConvertToDealDrawer({
               checked={createDeal}
               onToggle={setCreateDeal}
               icon={Handshake}
-              iconColor={isDark ? "#52525B" : "#E3ECFC"}
+              iconColor={isDark ? "#9CA3AF" : "#E3ECFC"}
               title="Create a new Deal for this Account"
               isDark={isDark}
             >
@@ -280,7 +280,7 @@ export default function ConvertToDealDrawer({
                   size="small"
                   sx={{ p: 0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked": { color: "inherit" }, flexShrink: 0 }}
                 />
-                <Bell size={15} color={isDark ? "#52525B" : "#64748B"} weight="duotone" className="flex-shrink-0" />
+                <Bell size={15} color={isDark ? "#9CA3AF" : "#64748B"} weight="duotone" className="flex-shrink-0" />
                 <span className={`text-[13px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>
                   Notify record owner (Account and Contact).
                 </span>

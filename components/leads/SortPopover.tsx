@@ -85,7 +85,7 @@ export default function SortPopover({ anchor, onClose, sorts, onChange }: Props)
       <div className="w-[380px]">
         {/* Popover header */}
         <div className={`flex items-center gap-2.5 px-4 py-3 border-b ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
-          <SortAscending size={16} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
+          <SortAscending size={16} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
           <p className={`m-0 font-heading text-h2 ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Sort Records</p>
           <span className={`ml-auto text-caption ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{local.length} sort{local.length !== 1 ? "s" : ""}</span>
         </div>

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useRef } from "react";
 import Sidebar from "@/components/layout/Sidebar";
 import TopBar from "@/components/layout/TopBar";
@@ -27,9 +27,9 @@ import {
 } from "@phosphor-icons/react";
 import { useTheme } from "@/components/ThemeContext";
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Nav structure
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 const SECTIONS = [
   {
     key: "general", label: "General", icon: Gear,
@@ -67,9 +67,9 @@ const SECTIONS = [
   },
 ];
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Data
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 interface UserRecord {
   id: number; name: string; role: string; email: string;
   initials: string; firstName: string; lastName: string; phone: string;
@@ -132,9 +132,9 @@ const ROLE_ACTIVITIES: RoleActivity[] = [
   { id:"11",roleId:"sa",    action:"Role created",                    user:"PM SDL", userEmail:"pm@socialdnalabs.com",    timestamp:"2026-05-27 14:38" },
 ];
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Shared UI primitives — NO <p> tags
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function SettingCard({ icon: Icon, title, color = "#3B82F6", children, action }: {
   icon: React.ElementType; title: string; color?: string;
   children: React.ReactNode; action?: React.ReactNode;
@@ -179,7 +179,7 @@ function KV({ label, value, link, editable, onSave }: {
   return (
     <div className={`py-2.5 border-b last:border-0 flex items-start justify-between group ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
       <div className="flex-1 min-w-0">
-        <div className={`text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{label}</div>
+        <div className={`text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{label}</div>
         {isEditing ? (
           <div className="flex items-center gap-1.5 -mx-2">
             <input
@@ -191,9 +191,9 @@ function KV({ label, value, link, editable, onSave }: {
                 if (e.key === "Escape") handleCancel();
               }}
               autoFocus
-              className={`flex-1 px-2 py-1 text-[14px] font-medium border rounded-lg focus:outline-none ${isDark ? "border-[#52525B] bg-[#27272A] text-[#D4D4D8] focus:border-[#71717A]" : "border-[#4A7AE8] bg-white focus:border-[#1D4ED8] focus:ring-1 focus:ring-[#4A7AE8] text-slate-700"}`}
+              className={`flex-1 px-2 py-1 text-[14px] font-medium border rounded-lg focus:outline-none ${isDark ? "border-[#9CA3AF] bg-[#27272A] text-[#D4D4D8] focus:border-[#71717A]" : "border-[#4A7AE8] bg-white focus:border-[#1D4ED8] focus:ring-1 focus:ring-[#4A7AE8] text-slate-700"}`}
             />
-            <button onClick={handleSave} className={`px-2 py-1 text-[11px] font-bold rounded whitespace-nowrap transition-colors ${isDark ? "bg-[#3F3F46] text-[#D4D4D8] hover:bg-[#52525B]" : "bg-[#1D4ED8] text-white hover:bg-[#60A5FA]"}`}>
+            <button onClick={handleSave} className={`px-2 py-1 text-[11px] font-bold rounded whitespace-nowrap transition-colors ${isDark ? "bg-[#3F3F46] text-[#D4D4D8] hover:bg-[#9CA3AF]" : "bg-[#1D4ED8] text-white hover:bg-[#60A5FA]"}`}>
               Save
             </button>
             <button onClick={handleCancel} className={`px-2 py-1 text-[11px] font-semibold border rounded whitespace-nowrap transition-colors ${isDark ? "border-[#3F3F46] text-[#71717A] hover:bg-[#27272A]" : "border-[#E3ECFC] text-slate-500 hover:bg-slate-50"}`}>
@@ -261,7 +261,7 @@ function ProfileHero({ initials, name, role, subtitle, contacts, avatarBg, avata
             <span className={`text-[16px] font-extrabold tracking-tight leading-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>{name}</span>
             <RoleBadge role={role} />
           </div>
-          {subtitle && <div className={`text-[12px] mb-1.5 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{subtitle}</div>}
+          {subtitle && <div className={`text-[12px] mb-1.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{subtitle}</div>}
           <div className="flex items-center gap-3 flex-wrap">
             {contacts.map(({ icon: Icon, value, link }, i) => (
               <div key={i} className={`flex items-center gap-1.5 text-[12px] ${link ? (isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]") : (isDark ? "text-[#71717A]" : "text-slate-500")}`}>
@@ -276,9 +276,9 @@ function ProfileHero({ initials, name, role, subtitle, contacts, avatarBg, avata
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Personal Settings panel
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function PersonalSettingsPanel() {
   const [data, setData] = useState({
     firstName: "PM",
@@ -332,9 +332,9 @@ function PersonalSettingsPanel() {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  New User Drawer
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function NewUserDrawer({ open, onClose, onSubmit }: {
   open: boolean;
   onClose: () => void;
@@ -419,7 +419,7 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
       ...(isDark ? {} : { backgroundColor: "#EFF6FF" }),
       fontSize: "0.82rem",
       "& fieldset":             { borderColor: isDark ? "#3F3F46" : "#E3ECFC", borderWidth: 1.5 },
-      "&:hover fieldset":       { borderColor: isDark ? "#52525B" : "#E3ECFC" },
+      "&:hover fieldset":       { borderColor: isDark ? "#9CA3AF" : "#E3ECFC" },
       "&.Mui-focused fieldset": { borderColor: isDark ? "#71717A" : "#E3ECFC", borderWidth: 2 },
       "&.Mui-focused":          { boxShadow: isDark ? "none" : "0 0 0 2px #4A7AE8" },
       "& input":                { padding: "10px 14px" },
@@ -606,7 +606,7 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
         </Button>
         <Button variant="contained" onClick={handleSubmit}
           disabled={!formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim()}
-          sx={{ bgcolor: isDark ? "#27272A" : "inherit", color: isDark ? "#F4F4F5" : undefined, borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "inherit" }, "&:active": { bgcolor: isDark ? "#18181B" : "#0C2472" }, "&:disabled": { bgcolor: isDark ? "#27272A" : "#E2E8F0", color: isDark ? "#52525B" : "#F1F5F9" } }}>
+          sx={{ bgcolor: isDark ? "#27272A" : "inherit", color: isDark ? "#F4F4F5" : undefined, borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "inherit" }, "&:active": { bgcolor: isDark ? "#18181B" : "#0C2472" }, "&:disabled": { bgcolor: isDark ? "#27272A" : "#E2E8F0", color: isDark ? "#9CA3AF" : "#F1F5F9" } }}>
           Create User
         </Button>
       </div>
@@ -614,9 +614,9 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Users panel
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function UserDetailPanel({ user, onUpdate }: { user: UserRecord; onUpdate: (updates: Partial<UserRecord>) => void }) {
   const [data, setData] = useState<Record<string, string>>({
     firstName: user.firstName,
@@ -789,9 +789,9 @@ function UsersPanel() {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Organization panel
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function OrganizationPanel() {
   const [orgData, setOrgData] = useState({
     companyName: "Social DNA Labs",
@@ -860,9 +860,9 @@ function OrganizationPanel() {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  New Role Drawer
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function NewRoleDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [formData, setFormData] = useState({
     roleName: "",
@@ -898,7 +898,7 @@ function NewRoleDrawer({ open, onClose }: { open: boolean; onClose: () => void }
       ...(isDark ? {} : { backgroundColor: "#EFF6FF" }),
       fontSize: "0.82rem",
       "& fieldset":             { borderColor: isDark ? "#3F3F46" : "#E3ECFC", borderWidth: 1.5 },
-      "&:hover fieldset":       { borderColor: isDark ? "#52525B" : "#E3ECFC" },
+      "&:hover fieldset":       { borderColor: isDark ? "#9CA3AF" : "#E3ECFC" },
       "&.Mui-focused fieldset": { borderColor: isDark ? "#71717A" : "#E3ECFC", borderWidth: 2 },
       "&.Mui-focused":          { boxShadow: isDark ? "none" : "0 0 0 2px #4A7AE8" },
       "& input":                { padding: "10px 14px" },
@@ -981,9 +981,9 @@ function NewRoleDrawer({ open, onClose }: { open: boolean; onClose: () => void }
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Roles panel
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function RoleTreeNode({ node, depth, selectedId, expandedIds, onSelect, onToggle, isDark }: {
   node: RoleNode; depth: number; selectedId: string;
   expandedIds: Set<string>; onSelect: (n: RoleNode) => void; onToggle: (id: string) => void;
@@ -1019,7 +1019,7 @@ function RoleTreeNode({ node, depth, selectedId, expandedIds, onSelect, onToggle
         }`}>
           {node.name}
         </div>
-        {isSelected && <CheckCircle size={14} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />}
+        {isSelected && <CheckCircle size={14} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />}
       </div>
 
       {hasChildren && isExpanded && node.children!.map(child => (
@@ -1075,7 +1075,7 @@ function RolesPanel() {
           }`}>
             {role.name}
           </div>
-          <div className={`text-[12px] mt-0.5 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{role.description}</div>
+          <div className={`text-[12px] mt-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{role.description}</div>
         </button>
       ))}
     </div>
@@ -1092,7 +1092,7 @@ function RolesPanel() {
               className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
                 viewMode === "tree"
                   ? isDark ? "bg-[#27272A] text-[#D4D4D8]" : "bg-[#E3ECFC] text-[#0C2472]"
-                  : isDark ? "text-[#52525B]" : "text-slate-400"
+                  : isDark ? "text-[#9CA3AF]" : "text-slate-400"
               }`}>
               <Tree size={12} weight="duotone" />
               Tree
@@ -1101,7 +1101,7 @@ function RolesPanel() {
               className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
                 viewMode === "list"
                   ? isDark ? "bg-[#27272A] text-[#D4D4D8]" : "bg-[#E3ECFC] text-[#0C2472]"
-                  : isDark ? "text-[#52525B]" : "text-slate-400"
+                  : isDark ? "text-[#9CA3AF]" : "text-slate-400"
               }`}>
               <ListBullets size={12} weight="duotone" />
               List
@@ -1137,7 +1137,7 @@ function RolesPanel() {
               className={`px-4 py-1.5 rounded-full text-[14px] font-semibold capitalize transition-all ${
                 activeTab === tab
                   ? isDark ? "bg-[#27272A] text-[#D4D4D8] shadow-sm" : "bg-[#1D4ED8] text-white shadow-sm"
-                  : isDark ? "bg-[#1C1C1E] text-[#52525B] hover:bg-[#27272A] hover:text-[#A1A1AA]" : "bg-white text-slate-500 hover:bg-[#E3ECFC] hover:text-[#0C2472]"
+                  : isDark ? "bg-[#1C1C1E] text-[#9CA3AF] hover:bg-[#27272A] hover:text-[#A1A1AA]" : "bg-white text-slate-500 hover:bg-[#E3ECFC] hover:text-[#0C2472]"
               }`}>
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
@@ -1242,9 +1242,9 @@ function RolesPanel() {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Permissions panel
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 type PermKey = "fullAccess"|"create"|"read"|"update"|"delete"|"print"|"import"|"export"|"email"|"dataSharingPublic";
 type PermState = Record<string, Record<string, Record<PermKey, boolean>>>;
 
@@ -1372,7 +1372,7 @@ function PermissionPanel() {
             className={`px-4 py-1.5 rounded-t-xl text-[14px] font-semibold transition-all border border-b-0 ${
               tab === t
                 ? isDark ? "bg-[#1C1C1E] border-[#27272A] text-[#D4D4D8]" : "bg-white border-[#E3ECFC] text-slate-900"
-                : isDark ? "bg-transparent border-transparent text-[#52525B] hover:text-[#A1A1AA]" : "bg-transparent border-transparent text-slate-400 hover:text-slate-600"
+                : isDark ? "bg-transparent border-transparent text-[#9CA3AF] hover:text-[#A1A1AA]" : "bg-transparent border-transparent text-slate-400 hover:text-slate-600"
             }`}>
             {t === "matrix" ? "Permission Matrix" : "Summary View"}
           </button>
@@ -1385,7 +1385,7 @@ function PermissionPanel() {
           <table className="w-full border-collapse text-left" style={{ minWidth: 900 }}>
             <thead>
               <tr className={`border-b ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
-                <th className={`sticky left-0 z-10 px-5 py-3 text-[11px] font-bold uppercase tracking-wider w-[160px] border-r ${isDark ? "bg-[#111113] text-[#52525B] border-[#27272A]" : "bg-[#f9fbff] text-slate-600 border-[#E3ECFC]"}`}>
+                <th className={`sticky left-0 z-10 px-5 py-3 text-[11px] font-bold uppercase tracking-wider w-[160px] border-r ${isDark ? "bg-[#111113] text-[#9CA3AF] border-[#27272A]" : "bg-[#f9fbff] text-slate-600 border-[#E3ECFC]"}`}>
                   Module
                 </th>
                 {PERM_ROLES.map(role => (
@@ -1492,7 +1492,7 @@ function PermissionPanel() {
       {/* Legend */}
       {tab === "matrix" && (
         <div className={`mx-6 mb-5 rounded-2xl border px-5 py-3 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
-          <div className={`text-[11px] font-bold uppercase tracking-wider mb-2 ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>Permission Legend</div>
+          <div className={`text-[11px] font-bold uppercase tracking-wider mb-2 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Permission Legend</div>
           <div className="grid grid-cols-4 gap-x-6 gap-y-1.5">
             {(Object.entries(PERM_META) as [PermKey, typeof PERM_META[PermKey]][]).map(([key, meta]) => {
               const Icon = meta.icon;
@@ -1510,12 +1510,12 @@ function PermissionPanel() {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Modules and Fields panel
-// ─────────────────────────────────────────────
-// ─────────────────────────────────────────────
+// ---------------------------------------------
+// ---------------------------------------------
 //  Layout Editor (full-screen overlay)
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 const NEW_FIELD_TYPES = [
   { label:"Single Line",  icon:TextT           },
   { label:"Multi-Line",   icon:TextAlignLeft   },
@@ -2513,7 +2513,7 @@ function ModulesAndFieldsPanel() {
                   <div className="flex items-center justify-center gap-2">
                     <GreenSwitch checked={isOn} onChange={() => setModStatuses(p => ({ ...p, [mod.key]: !p[mod.key] }))} />
                     <Tooltip title="Module info">
-                      <IconButton size="small" sx={{ p:0.3, color: isDark ? "#52525B" : "#94A3B8", "&:hover":{color:"#1D4ED8",bgcolor: isDark ? "#27272A" : "#EFF6FF"}, borderRadius:"6px" }}>
+                      <IconButton size="small" sx={{ p:0.3, color: isDark ? "#9CA3AF" : "#94A3B8", "&:hover":{color:"#1D4ED8",bgcolor: isDark ? "#27272A" : "#EFF6FF"}, borderRadius:"6px" }}>
                         <Info size={13} weight="duotone" />
                       </IconButton>
                     </Tooltip>
@@ -2528,9 +2528,9 @@ function ModulesAndFieldsPanel() {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Placeholder
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function PlaceholderPanel({ label }: { label: string }) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -2538,18 +2538,18 @@ function PlaceholderPanel({ label }: { label: string }) {
     <div className={`flex-1 flex items-center justify-center ${isDark ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
       <div className="text-center">
         <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 ${isDark ? "bg-[#18181B]" : "bg-[#EFF6FF]"}`}>
-          <Gear size={22} color={isDark ? "#52525B" : "#94A3B8"} weight="duotone" />
+          <Gear size={22} color={isDark ? "#9CA3AF" : "#94A3B8"} weight="duotone" />
         </div>
         <div className={`text-[15px] font-bold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{label}</div>
-        <div className={`text-[12px] mt-1 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>This section is coming soon.</div>
+        <div className={`text-[12px] mt-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>This section is coming soon.</div>
       </div>
     </div>
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Settings sub-sidebar
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function SettingsSidebar({ activeItem, setActiveItem, isDark = false }: {
   activeItem: string; setActiveItem: (k: string) => void; isDark?: boolean;
 }) {
@@ -2593,9 +2593,9 @@ function SettingsSidebar({ activeItem, setActiveItem, isDark = false }: {
                         className={`relative flex items-center gap-2 w-full px-3 py-2 rounded-xl text-[14px] font-medium transition-all ${
                           isActive
                             ? isDark ? "bg-[#27272A] text-[#D4D4D8] font-semibold" : "bg-[#EFF6FF] text-[#1D4ED8] font-semibold"
-                            : isDark ? "text-[#737373] hover:bg-[#27272A] hover:text-[#FFFFFF]" : "text-slate-500 hover:bg-[#EFF6FF]/60 hover:text-slate-700"
+                            : isDark ? "text-[#9CA3AF] hover:bg-[#27272A] hover:text-[#FFFFFF]" : "text-slate-500 hover:bg-[#EFF6FF]/60 hover:text-slate-700"
                         }`}>
-                        {isActive && <span className={`absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full ${isDark ? "bg-[#52525B]" : "bg-[#1D4ED8]"}`} />}
+                        {isActive && <span className={`absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full ${isDark ? "bg-[#9CA3AF]" : "bg-[#1D4ED8]"}`} />}
                         <IIcon size={13} color={isActive ? (isDark ? "#6B8BA3" : "#1D4ED8") : "#94A3B8"} weight="duotone" />
                         {item.label}
                       </button>
@@ -2611,9 +2611,9 @@ function SettingsSidebar({ activeItem, setActiveItem, isDark = false }: {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Page
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 export default function SettingsPage() {
   const { theme } = useTheme();
   const isDark = theme === "dark";

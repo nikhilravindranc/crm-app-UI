@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useRouter } from "next/navigation";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
@@ -42,7 +42,7 @@ export default function ContactGridView({ contacts }: Props) {
 
   if (contacts.length === 0) {
     return (
-      <div className={`flex flex-col items-center justify-center py-20 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+      <div className={`flex flex-col items-center justify-center py-20 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
         <p className="font-heading text-sm font-semibold">No contacts found</p>
         <p className="text-xs mt-1">Adjust filters or add a new contact</p>
       </div>
@@ -120,7 +120,7 @@ export default function ContactGridView({ contacts }: Props) {
                   </div>
                 ) : null}
                 {!contact.email && !contact.phone && !contact.mobile && (
-                  <p className={`text-[14px] italic ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>No contact info</p>
+                  <p className={`text-[14px] italic ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>No contact info</p>
                 )}
               </div>
             </div>

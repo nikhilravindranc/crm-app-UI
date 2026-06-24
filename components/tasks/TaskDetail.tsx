@@ -127,7 +127,7 @@ const STATUS_CFG: Record<string, { bg: string; text: string; dot: string }> = {
 const STATUS_CFG_DARK: Record<string, { bg: string; text: string; dot: string }> = {
   "Todo":        { bg: "#18181B", text: "#D4D4D8", dot: "#3B82F6" },
   "In Progress": { bg: "#451A00", text: "#FCD34D", dot: "#F59E0B" },
-  "Backlog":     { bg: "#27272A", text: "#737373", dot: "#52525B" },
+  "Backlog":     { bg: "#27272A", text: "#D4D4D8", dot: "#94A3B8" },
   "Completed":   { bg: "#064E3B", text: "#34D399", dot: "#10B981" },
 };
 
@@ -154,7 +154,7 @@ function SectionCard({ icon: Icon, title, children, action }: {
     <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
       <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
         <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
-          <Icon size={13} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
+          <Icon size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
         </div>
         <span className={`font-heading text-[12px] font-bold uppercase tracking-wider flex-1 ${isDark ? "text-slate-500" : "text-slate-500"}`}>{title}</span>
         {action}
@@ -171,7 +171,7 @@ function KV({ label, value, editable }: { label: string; value?: string | number
   return (
     <div className={`py-2.5 border-b last:border-0 flex items-start justify-between group ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
       <div className="flex-1">
-        <div className={`text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{label}</div>
+        <div className={`text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{label}</div>
         <div className={`text-[14px] font-medium whitespace-pre-line ${display === "—" ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>{display}</div>
       </div>
       {editable && (
@@ -268,11 +268,11 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
 
         {/* ── Breadcrumb ── */}
         <div className={`flex items-center gap-1.5 px-8 py-3 border-b text-[12px] ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#E3ECFC] border-[#E3ECFC]"}`}>
-          <Link href="/" className={`transition-colors ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+          <Link href="/" className={`transition-colors ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
             <House size={13} weight="duotone" />
           </Link>
           <CaretRight size={11} color={isDark ? "#3F3F46" : "#E2E8F0"} />
-          <Link href="/tasks" className={`font-medium transition-colors ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>Tasks</Link>
+          <Link href="/tasks" className={`font-medium transition-colors ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>Tasks</Link>
           <CaretRight size={11} color={isDark ? "#3F3F46" : "#E2E8F0"} />
           <span className={`font-semibold ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>{task.refId}</span>
         </div>
@@ -293,7 +293,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
             </div>
             <div className="flex items-center gap-2">
               <Button size="small" variant="outlined" startIcon={<PencilSimple size={13} weight="duotone" />}
-                sx={{ borderColor: isDark ? "#3F3F46" : "#E3ECFC", color: isDark ? "#A1A1AA" : "#0C2472", bgcolor: isDark ? "#27272A" : "#f9fbff", borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.78rem", "&:hover": { borderColor: isDark ? "#52525B" : "#E3ECFC", bgcolor: isDark ? "#3F3F46" : "#EFF6FF" } }}>
+                sx={{ borderColor: isDark ? "#3F3F46" : "#E3ECFC", color: isDark ? "#A1A1AA" : "#0C2472", bgcolor: isDark ? "#27272A" : "#f9fbff", borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.78rem", "&:hover": { borderColor: isDark ? "#9CA3AF" : "#E3ECFC", bgcolor: isDark ? "#3F3F46" : "#EFF6FF" } }}>
                 Edit
               </Button>
               <Tooltip title="More actions">
@@ -386,7 +386,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
                 <div id="section-notes">
                   <SectionCard icon={Note} title="Notes">
                     <div className="space-y-3">
-                      <div className={`border rounded-xl overflow-hidden transition-all ${isDark ? "border-[#3F3F46] focus-within:border-[#52525B]" : "border-[#E3ECFC] focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#4A7AE8]"}`}>
+                      <div className={`border rounded-xl overflow-hidden transition-all ${isDark ? "border-[#3F3F46] focus-within:border-[#9CA3AF]" : "border-[#E3ECFC] focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#4A7AE8]"}`}>
                         <InputBase
                           fullWidth multiline minRows={2}
                           placeholder="Add a note…"
@@ -406,7 +406,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
                       {notes.map((n, i) => (
                         <div key={i} className={`rounded-xl px-4 py-3 border ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
                           <div className={`text-[14px] ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{n.text}</div>
-                          <div className={`text-[12px] mt-1 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{n.at}</div>
+                          <div className={`text-[12px] mt-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{n.at}</div>
                         </div>
                       ))}
                     </div>
@@ -421,13 +421,13 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
                         <div className={`flex items-center rounded-lg p-0.5 gap-0.5 ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
                           {[{ k: "grid", Icon: GridFour }, { k: "list", Icon: List }].map(({ k, Icon }) => (
                             <button key={k} onClick={() => setAttachView(k as "grid" | "list")}
-                              className={`p-1 rounded-md transition-colors ${attachView === k ? (isDark ? "bg-[#3F3F46] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]") : (isDark ? "text-[#52525B]" : "text-slate-400")}`}>
+                              className={`p-1 rounded-md transition-colors ${attachView === k ? (isDark ? "bg-[#3F3F46] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]") : (isDark ? "text-[#9CA3AF]" : "text-slate-400")}`}>
                               <Icon size={13} weight="duotone" />
                             </button>
                           ))}
                         </div>
                         <Button size="small" variant="outlined"
-                          sx={{ borderColor: isDark ? "#3F3F46" : "#E3ECFC", color: isDark ? "#A1A1AA" : "#0C2472", bgcolor: isDark ? "#27272A" : "#E3ECFC", borderRadius: "8px", textTransform: "none", fontWeight: 600, fontSize: "0.73rem", "&:hover": { borderColor: isDark ? "#52525B" : "#E3ECFC", bgcolor: isDark ? "#3F3F46" : "#f9fbff" } }}>
+                          sx={{ borderColor: isDark ? "#3F3F46" : "#E3ECFC", color: isDark ? "#A1A1AA" : "#0C2472", bgcolor: isDark ? "#27272A" : "#E3ECFC", borderRadius: "8px", textTransform: "none", fontWeight: 600, fontSize: "0.73rem", "&:hover": { borderColor: isDark ? "#9CA3AF" : "#E3ECFC", bgcolor: isDark ? "#3F3F46" : "#f9fbff" } }}>
                           Attach
                         </Button>
                       </div>
@@ -455,7 +455,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
                 <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
                   <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
                     <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
-                      <ClipboardText size={13} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
+                      <ClipboardText size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
                     </div>
                     <span className={`font-heading text-[12px] font-bold uppercase tracking-wider flex-1 ${isDark ? "text-slate-500" : "text-slate-500"}`}>Activity Timeline</span>
                   </div>
@@ -469,17 +469,17 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
                           {task.timeline.map((entry, i) => (
                             <div key={i} className="flex items-start gap-4 pl-7 relative">
                               <div className={`absolute left-0 top-1 w-[22px] h-[22px] rounded-full border-2 flex items-center justify-center flex-shrink-0 ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
-                                <ClipboardText size={10} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
+                                <ClipboardText size={10} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
                               </div>
                               <div className="flex-1">
                                 <div className={`text-[14px] font-semibold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{entry.event}</div>
-                                <div className={`text-[12px] mt-0.5 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{entry.by}</div>
+                                <div className={`text-[12px] mt-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{entry.by}</div>
                               </div>
                               <div className="text-right flex-shrink-0">
                                 <div className={`text-[12px] font-medium ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
                                   {new Date(entry.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }).toUpperCase()}
                                 </div>
-                                <div className={`text-[12px] ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{entry.time}</div>
+                                <div className={`text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{entry.time}</div>
                               </div>
                             </div>
                           ))}
