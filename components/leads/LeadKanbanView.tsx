@@ -15,7 +15,7 @@ interface Lead {
 
 const STATUSES: { key: LeadStatus; label: string; color: string; bg: string; dot: string; headerBg: string }[] = [
   { key: "New",         label: "New",          color: "#0C2472", bg: "#EFF6FF", dot: "#E3ECFC", headerBg: "#0C2472" },
-  { key: "Contacted",   label: "Contacted",    color: "inherit", bg: "#E3ECFC", dot: "#3B82F6", headerBg: "#E3ECFC" },
+  { key: "Contacted",   label: "Contacted",    color: "inherit", bg: "#E3ECFC", dot: "#3B82F6", headerBg: "#3B82F6" },
   { key: "In Progress", label: "In Progress",  color: "#0C2472", bg: "#E3ECFC", dot: "#E3ECFC", headerBg: "#3B82F6" },
   { key: "Qualified",   label: "Qualified",    color: "#166534", bg: "#DCFCE7", dot: "#16A34A", headerBg: "#16A34A" },
   { key: "Lost",        label: "Lost",         color: "#991B1B", bg: "#FEF2F2", dot: "#EF4444", headerBg: "#EF4444" },
