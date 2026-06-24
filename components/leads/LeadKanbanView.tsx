@@ -47,7 +47,7 @@ export default function LeadKanbanView({ leads }: Props) {
               style={{ backgroundColor: col.headerBg }}
             >
               <div className="flex items-center gap-2">
-                <span className="font-heading text-[13px] font-bold">{col.label}</span>
+                <span className="font-heading text-[14px] font-bold">{col.label}</span>
                 <span className="text-[11px] font-bold bg-[#f9fbff]/20 px-1.5 py-0.5 rounded-full leading-none">
                   {colLeads.length}
                 </span>
@@ -96,11 +96,11 @@ export default function LeadKanbanView({ leads }: Props) {
                         {avInit}
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <p className={`font-heading text-[13px] font-bold truncate leading-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>
+                        <p className={`font-heading text-[14px] font-bold truncate leading-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>
                           {lead.name}
                         </p>
                         {lead.company && (
-                          <p className={`text-[11.5px] truncate flex items-center gap-0.5 mt-0.5 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+                          <p className={`text-[12px] truncate flex items-center gap-0.5 mt-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
                             <Buildings size={10} color={isDark ? "#3F3F46" : "#E2E8F0"} weight="duotone" />
                             {lead.company}
                           </p>
@@ -110,20 +110,20 @@ export default function LeadKanbanView({ leads }: Props) {
                         onClick={e => { e.stopPropagation(); }}
                         className={`opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}
                       >
-                        <DotsThreeVertical size={13} color={isDark ? "#52525B" : "#94A3B8"} weight="duotone" />
+                        <DotsThreeVertical size={13} color={isDark ? "#9CA3AF" : "#94A3B8"} weight="duotone" />
                       </button>
                     </div>
 
                     {/* Contact */}
                     <div className="space-y-1 mb-2.5">
                       {lead.email && (
-                        <div className={`flex items-center gap-1.5 text-[11.5px] truncate ${isDark ? "text-[#71717A]" : "text-inherit"}`}>
+                        <div className={`flex items-center gap-1.5 text-[14px] truncate ${isDark ? "text-[#A1A1AA]" : "text-inherit"}`}>
                           <Envelope size={10} color={isDark ? "#3F3F46" : "#E3ECFC"} weight="duotone" className="flex-shrink-0" />
                           <span className="truncate">{lead.email}</span>
                         </div>
                       )}
                       {lead.mobile && (
-                        <div className={`flex items-center gap-1.5 text-[11.5px] font-mono ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
+                        <div className={`flex items-center gap-1.5 text-[14px] font-mono ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
                           <Phone size={10} color={isDark ? "#3F3F46" : "#E3ECFC"} weight="duotone" className="flex-shrink-0" />
                           <span>{lead.mobile}</span>
                         </div>
@@ -137,7 +137,7 @@ export default function LeadKanbanView({ leads }: Props) {
                           {lead.ownerInitials}
                         </Avatar>
                       </Tooltip>
-                      <span className={`text-[11px] truncate ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{lead.owner}</span>
+                      <span className={`text-[12px] truncate ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{lead.owner}</span>
                     </div>
                   </div>
                 );
@@ -147,8 +147,8 @@ export default function LeadKanbanView({ leads }: Props) {
             {/* Column footer — add lead */}
             <button
               onClick={e => e.stopPropagation()}
-              className={`flex items-center gap-1.5 mt-3 px-2 py-2 rounded-xl border border-dashed text-[12.5px] font-medium w-full transition-all ${
-                isDark ? "text-[#52525B] hover:bg-[#1C1C1E] hover:text-[#71717A]" : ""
+              className={`flex items-center gap-1.5 mt-3 px-2 py-2 rounded-xl border border-dashed text-[14px] font-medium w-full transition-all ${
+                isDark ? "text-[#9CA3AF] hover:bg-[#1C1C1E] hover:text-[#A1A1AA]" : ""
               }`}
               style={{ borderColor: col.dot + "60", color: isDark ? undefined : col.color + "99" }}
               onMouseEnter={e => { if (!isDark) (e.currentTarget as HTMLButtonElement).style.backgroundColor = col.bg; }}
