@@ -21,7 +21,9 @@ import {
   Plus, MagnifyingGlass, SlidersHorizontal, SortAscending, Columns,
   ArrowsDownUp, List, GridFour, House, CaretRight, Trash,
   DotsThreeVertical, Phone, DeviceMobile, Envelope, FunnelSimple, CaretDown,
+  User, IdentificationBadge, UserCircle, CalendarBlank,
 } from "@phosphor-icons/react";
+import type { ElementType } from "react";
 import { OWNER_AVATARS } from "@/lib/avatars";
 import { useTheme } from "@/components/ThemeContext";
 
@@ -79,9 +81,10 @@ const DEFAULT_VISIBLE = new Set(["firstName", "lastName", "contactOwner", "email
 const AVATAR_PAL = ["#7C3AED", "#10B981", "#F59E0B", "#DB2777"];
 const avatarColor = (n: string) => AVATAR_PAL[n.split("").reduce((a, c) => a + c.charCodeAt(0), 0) % AVATAR_PAL.length];
 
-function ColHeader({ label, isDark = false }: { label: string; isDark?: boolean }) {
+function ColHeader({ label, icon: Icon, isDark = false }: { label: string; icon?: ElementType; isDark?: boolean }) {
   return (
-    <div className={`font-heading flex items-center gap-0.5 text-table-header uppercase tracking-wide cursor-pointer transition-colors group select-none ${isDark ? "text-[#9CA3AF] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+    <div className={`font-heading flex items-center gap-1.5 text-table-header uppercase tracking-wide cursor-pointer transition-colors group select-none ${isDark ? "text-[#9CA3AF] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+      {Icon && <Icon size={13} weight="duotone" />}
       {label}
       <ArrowsDownUp size={12} weight="duotone" className={`opacity-30 group-hover:opacity-100 transition-opacity ${isDark ? "text-[#9CA3AF]" : "text-[#60A5FA]"}`} />
     </div>
@@ -120,19 +123,19 @@ export default function ContactsPage() {
   const COLUMN_BUILDERS: Record<string, GridColDef<Contact>> = {
     firstName: {
       field: "firstName", headerName: "First Name", flex: 1.3, minWidth: 140, sortable: false,
-      renderHeader: () => <ColHeader label="First Name" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="First Name" icon={User} isDark={isDark} />,
       renderCell: (params) => (
         <p className="m-0 font-heading text-table-cell font-medium text-[#1D4ED8] truncate hover:underline cursor-pointer">{params.row.firstName}</p>
       ),
     },
     lastName: {
       field: "lastName", headerName: "Last Name", flex: 1.1, minWidth: 110, sortable: false,
-      renderHeader: () => <ColHeader label="Last Name" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Last Name" icon={IdentificationBadge} isDark={isDark} />,
       renderCell: (params) => <p className="m-0 text-table-cell text-slate-700 truncate">{params.row.lastName}</p>,
     },
     contactOwner: {
       field: "contactOwner", headerName: "Contact Owner", flex: 1.4, minWidth: 150, sortable: false,
-      renderHeader: () => <ColHeader label="Contact Owner" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Contact Owner" icon={UserCircle} isDark={isDark} />,
       renderCell: (params) => {
         const contact = params.row;
         return (
@@ -147,7 +150,7 @@ export default function ContactsPage() {
     },
     email: {
       field: "email", headerName: "Email", flex: 1.7, minWidth: 180, sortable: false,
-      renderHeader: () => <ColHeader label="Email" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Email" icon={Envelope} isDark={isDark} />,
       renderCell: (params) => (
         <Tooltip title={params.row.email} placement="top">
           <div className="text-table-cell truncate w-full">
@@ -160,7 +163,7 @@ export default function ContactsPage() {
     },
     phone: {
       field: "phone", headerName: "Phone", flex: 1.1, minWidth: 110, sortable: false,
-      renderHeader: () => <ColHeader label="Phone" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Phone" icon={Phone} isDark={isDark} />,
       renderCell: (params) => (
         <div className="text-table-cell text-slate-500 font-mono truncate">
           {params.row.phone
@@ -171,7 +174,7 @@ export default function ContactsPage() {
     },
     mobile: {
       field: "mobile", headerName: "Mobile", flex: 1.1, minWidth: 110, sortable: false,
-      renderHeader: () => <ColHeader label="Mobile" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Mobile" icon={DeviceMobile} isDark={isDark} />,
       renderCell: (params) => (
         <div className="text-table-cell text-slate-500 font-mono truncate">
           {params.row.mobile
@@ -182,12 +185,12 @@ export default function ContactsPage() {
     },
     creation: {
       field: "creation", headerName: "Creation", flex: 1.4, minWidth: 140, sortable: false,
-      renderHeader: () => <ColHeader label="Creation" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Creation" icon={CalendarBlank} isDark={isDark} />,
       renderCell: (params) => <p className="m-0 text-table-cell-secondary text-slate-400 truncate">{params.row.creation}</p>,
     },
     modified: {
       field: "modified", headerName: "Modified", flex: 1.4, minWidth: 140, sortable: false,
-      renderHeader: () => <ColHeader label="Modified" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Modified" icon={CalendarBlank} isDark={isDark} />,
       renderCell: (params) => <p className="m-0 text-table-cell-secondary text-slate-400 truncate">{params.row.modified}</p>,
     },
   };
@@ -221,8 +224,8 @@ export default function ContactsPage() {
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-1 text-caption text-slate-400 mb-2">
-                <House size={12} weight="duotone" />
-                <CaretRight size={11} weight="duotone" />
+                <House size={16} weight="duotone" />
+                <CaretRight size={12} weight="duotone" />
                 <Link href="/contacts" className={`transition-colors font-medium ${isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#1D4ED8]"}`}>Contacts</Link>
               </div>
               <div className="flex items-center gap-2.5">

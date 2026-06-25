@@ -268,11 +268,11 @@ export default function NewDealDrawer({ open, onClose, mode = "create", initialD
         </Button>
         <Button variant="contained" size="small" onClick={handleSubmit}
           sx={{
-            bgcolor: isDark ? "#27272A" : "inherit",
-            color: isDark ? "#F4F4F5" : undefined,
+            bgcolor: isDark ? "#27272A" : "#1D4ED8",
+            color: isDark ? "#F4F4F5" : "#fff",
             borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.8rem", px: 3, py: 0.9,
             boxShadow: isDark ? "none" : "0 2px 12px #1D4ED833",
-            "&:hover":  { bgcolor: isDark ? "#3F3F46" : "inherit", boxShadow: isDark ? "none" : "0 4px 18px #60A5FA55" },
+            "&:hover":  { bgcolor: isDark ? "#3F3F46" : "#60A5FA", boxShadow: isDark ? "none" : "0 4px 18px #60A5FA55" },
             "&:active": { bgcolor: isDark ? "#18181B" : "#0C2472" },
           }}>
           Submit

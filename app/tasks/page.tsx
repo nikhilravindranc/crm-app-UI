@@ -18,7 +18,9 @@ import {
   House, CaretRight, Plus, MagnifyingGlass, FunnelSimple,
   ArrowsDownUp, DotsThreeVertical, Trash, CaretDown, List,
   ClipboardText, CheckCircle, PencilSimple, Copy,
+  Tag, CalendarBlank, Pulse, Flag, User, LinkSimple, UserCircle,
 } from "@phosphor-icons/react";
+import type { ElementType } from "react";
 import NewTaskDrawer from "@/components/tasks/NewTaskDrawer";
 import FiltersDrawer, { type FilterRow } from "@/components/leads/FiltersDrawer";
 import { useTheme } from "@/components/ThemeContext";
@@ -76,9 +78,10 @@ const PRIORITY_CFG: Record<string, { bg: string; text: string }> = {
 // ---------------------------------------------
 //  Helpers
 // ---------------------------------------------
-function ColHeader({ label, isDark = false }: { label: string; isDark?: boolean }) {
+function ColHeader({ label, icon: Icon, isDark = false }: { label: string; icon?: ElementType; isDark?: boolean }) {
   return (
-    <div className={`font-heading flex items-center gap-0.5 text-table-header uppercase tracking-wide cursor-pointer transition-colors group select-none ${isDark ? "text-[#9CA3AF] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+    <div className={`font-heading flex items-center gap-1.5 text-table-header uppercase tracking-wide cursor-pointer transition-colors group select-none ${isDark ? "text-[#9CA3AF] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+      {Icon && <Icon size={13} weight="duotone" />}
       {label}
       <ArrowsDownUp size={12} weight="duotone" className={`opacity-30 group-hover:opacity-100 transition-opacity ${isDark ? "text-[#9CA3AF]" : "text-[#60A5FA]"}`} />
     </div>
@@ -146,7 +149,7 @@ export default function TasksPage() {
   const gridColumns: GridColDef<TaskRecord>[] = [
     {
       field: "type", headerName: "Type", flex: 0.8, minWidth: 80, sortable: false,
-      renderHeader: () => <ColHeader label="Type" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Type" icon={Tag} isDark={isDark} />,
       renderCell: (params) => (
         <p className={`text-table-cell font-medium truncate mb-0 ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>
           {params.row.type || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
@@ -155,7 +158,7 @@ export default function TasksPage() {
     },
     {
       field: "subject", headerName: "Subject", flex: 1.8, minWidth: 200, sortable: false,
-      renderHeader: () => <ColHeader label="Subject" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Subject" icon={ClipboardText} isDark={isDark} />,
       renderCell: (params) => (
         <Link href={`/tasks/${params.row.id}`} className={`font-heading text-table-cell font-medium truncate hover:underline ${isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]"}`} onClick={e => e.stopPropagation()}>
           {params.row.subject}
@@ -164,7 +167,7 @@ export default function TasksPage() {
     },
     {
       field: "dueDate", headerName: "Due Date", flex: 1, minWidth: 100, sortable: false,
-      renderHeader: () => <ColHeader label="Due Date" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Due Date" icon={CalendarBlank} isDark={isDark} />,
       renderCell: (params) => (
         <p className={`text-table-cell truncate mb-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
           {params.row.dueDate || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
@@ -173,7 +176,7 @@ export default function TasksPage() {
     },
     {
       field: "status", headerName: "Status", flex: 1.2, minWidth: 120, sortable: false,
-      renderHeader: () => <ColHeader label="Status" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Status" icon={Pulse} isDark={isDark} />,
       renderCell: (params) => {
         const rawCfg    = params.row.status ? STATUS_CFG[params.row.status] : null;
         const statusCfg = isDark && params.row.status ? STATUS_CFG_DARK[params.row.status] : rawCfg;
@@ -188,7 +191,7 @@ export default function TasksPage() {
     },
     {
       field: "priority", headerName: "Priority", flex: 0.9, minWidth: 90, sortable: false,
-      renderHeader: () => <ColHeader label="Priority" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Priority" icon={Flag} isDark={isDark} />,
       renderCell: (params) => {
         const priCfg = params.row.priority ? PRIORITY_CFG[params.row.priority] : null;
         return priCfg ? (
@@ -201,7 +204,7 @@ export default function TasksPage() {
     },
     {
       field: "contact", headerName: "Contact", flex: 1.5, minWidth: 150, sortable: false,
-      renderHeader: () => <ColHeader label="Contact" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Contact" icon={User} isDark={isDark} />,
       renderCell: (params) => (
         <p className={`text-table-cell truncate mb-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
           {params.row.contact || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
@@ -210,7 +213,7 @@ export default function TasksPage() {
     },
     {
       field: "relatedTo", headerName: "Related To", flex: 1.7, minWidth: 170, sortable: false,
-      renderHeader: () => <ColHeader label="Related To" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Related To" icon={LinkSimple} isDark={isDark} />,
       renderCell: (params) => (
         <p className={`text-table-cell truncate mb-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
           {params.row.relatedTo || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
@@ -219,7 +222,7 @@ export default function TasksPage() {
     },
     {
       field: "taskOwner", headerName: "Task Owner", flex: 2, minWidth: 200, sortable: false,
-      renderHeader: () => <ColHeader label="Task Owner" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Task Owner" icon={UserCircle} isDark={isDark} />,
       renderCell: (params) => <p className={`text-table-cell-secondary truncate mb-0 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{params.row.taskOwner}</p>,
     },
     {
@@ -250,8 +253,8 @@ export default function TasksPage() {
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-1 text-caption text-slate-400 mb-2">
-                <House size={12} weight="duotone" />
-                <CaretRight size={11} weight="duotone" />
+                <House size={16} weight="duotone" />
+                <CaretRight size={12} weight="duotone" />
                 <Link href="/tasks" className={`transition-colors font-medium ${isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#1D4ED8]"}`}>Tasks</Link>
               </div>
               <div className="flex items-center gap-2.5">

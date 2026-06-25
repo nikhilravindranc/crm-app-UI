@@ -21,7 +21,10 @@ import {
   Plus, MagnifyingGlass, SlidersHorizontal, SortAscending, Columns,
   ArrowsDownUp, List, GridFour, Kanban, CaretDown, House, CaretRight,
   Trash, DotsThreeVertical, FunnelSimple, TrendUp,
+  Handshake, CurrencyCircleDollar, Buildings, Pulse, ChartLineUp, User,
+  UserCircle, CalendarBlank,
 } from "@phosphor-icons/react";
+import type { ElementType } from "react";
 import { useTheme } from "@/components/ThemeContext";
 
 // ---------------------------------------------
@@ -103,9 +106,10 @@ const DEFAULT_VISIBLE_COLS = new Set([
 // ---------------------------------------------
 const fmt = (n: number) => n === 0 ? "₹0" : `₹${n.toLocaleString("en-IN")}`;
 
-function ColHeader({ label, isDark = false }: { label: string; isDark?: boolean }) {
+function ColHeader({ label, icon: Icon, isDark = false }: { label: string; icon?: ElementType; isDark?: boolean }) {
   return (
-    <div className={`font-heading flex items-center gap-0.5 text-table-header uppercase tracking-wide cursor-pointer transition-colors group select-none ${isDark ? "text-[#9CA3AF] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+    <div className={`font-heading flex items-center gap-1.5 text-table-header uppercase tracking-wide cursor-pointer transition-colors group select-none ${isDark ? "text-[#9CA3AF] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+      {Icon && <Icon size={13} weight="duotone" />}
       {label}
       <ArrowsDownUp size={12} weight="duotone" className={`opacity-30 group-hover:opacity-100 transition-opacity ${isDark ? "text-[#9CA3AF]" : "text-[#60A5FA]"}`} />
     </div>
@@ -150,19 +154,19 @@ export default function DealsPage() {
   const COLUMN_BUILDERS: Record<string, GridColDef<Deal>> = {
     dealName: {
       field: "dealName", headerName: "Deal Name", flex: 1.8, minWidth: 160, sortable: false,
-      renderHeader: () => <ColHeader label="Deal Name" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Deal Name" icon={Handshake} isDark={isDark} />,
       renderCell: (params) => (
         <p className={`m-0 font-heading text-table-cell font-medium truncate ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}>{params.row.name}</p>
       ),
     },
     amount: {
       field: "amount", headerName: "Amount", flex: 1, minWidth: 100, sortable: false,
-      renderHeader: () => <ColHeader label="Amount" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Amount" icon={CurrencyCircleDollar} isDark={isDark} />,
       renderCell: (params) => <p className={`m-0 text-table-cell font-medium truncate ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}>{fmt(params.row.amount)}</p>,
     },
     accountName: {
       field: "accountName", headerName: "Account Name", flex: 1.3, minWidth: 120, sortable: false,
-      renderHeader: () => <ColHeader label="Account Name" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Account Name" icon={Buildings} isDark={isDark} />,
       renderCell: (params) => (
         <p className={`m-0 text-table-cell truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
           {params.row.account || <span className={isDark ? "text-[#9CA3AF]" : "text-slate-200"}>—</span>}
@@ -171,7 +175,7 @@ export default function DealsPage() {
     },
     stage: {
       field: "stage", headerName: "Stage", flex: 1.7, minWidth: 160, sortable: false,
-      renderHeader: () => <ColHeader label="Stage" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Stage" icon={Pulse} isDark={isDark} />,
       renderCell: (params) => {
         const cfg = STAGE_CFG[params.row.stage] ?? STAGE_CFG["Qualification"];
         return (
@@ -185,7 +189,7 @@ export default function DealsPage() {
     },
     probability: {
       field: "probability", headerName: "Probability (%)", flex: 1, minWidth: 100, sortable: false,
-      renderHeader: () => <ColHeader label="Probability (%)" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Probability (%)" icon={ChartLineUp} isDark={isDark} />,
       renderCell: (params) => {
         const cfg = STAGE_CFG[params.row.stage] ?? STAGE_CFG["Qualification"];
         return (
@@ -200,7 +204,7 @@ export default function DealsPage() {
     },
     contactName: {
       field: "contactName", headerName: "Contact Name", flex: 1.3, minWidth: 120, sortable: false,
-      renderHeader: () => <ColHeader label="Contact Name" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Contact Name" icon={User} isDark={isDark} />,
       renderCell: (params) => (
         <p className={`m-0 text-table-cell truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
           {params.row.contactName || <span className={isDark ? "text-[#9CA3AF]" : "text-slate-200"}>—</span>}
@@ -209,22 +213,22 @@ export default function DealsPage() {
     },
     createdBy: {
       field: "createdBy", headerName: "Created By", flex: 1.2, minWidth: 110, sortable: false,
-      renderHeader: () => <ColHeader label="Created By" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Created By" icon={UserCircle} isDark={isDark} />,
       renderCell: (params) => <p className={`m-0 text-table-cell-secondary truncate ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{params.row.createdBy}</p>,
     },
     modifiedBy: {
       field: "modifiedBy", headerName: "Modified By", flex: 1.2, minWidth: 110, sortable: false,
-      renderHeader: () => <ColHeader label="Modified By" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Modified By" icon={UserCircle} isDark={isDark} />,
       renderCell: (params) => <p className={`m-0 text-table-cell-secondary truncate ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{params.row.modifiedBy}</p>,
     },
     creation: {
       field: "creation", headerName: "Creation", flex: 1.5, minWidth: 150, sortable: false,
-      renderHeader: () => <ColHeader label="Creation" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Creation" icon={CalendarBlank} isDark={isDark} />,
       renderCell: (params) => <p className={`m-0 text-table-cell-secondary truncate ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{params.row.creation}</p>,
     },
     modified: {
       field: "modified", headerName: "Modified", flex: 1.5, minWidth: 150, sortable: false,
-      renderHeader: () => <ColHeader label="Modified" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Modified" icon={CalendarBlank} isDark={isDark} />,
       renderCell: (params) => <p className={`m-0 text-table-cell-secondary truncate ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{params.row.modified}</p>,
     },
   };
@@ -258,8 +262,8 @@ export default function DealsPage() {
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-1 text-caption text-slate-400 mb-2">
-                <House size={12} weight="duotone" />
-                <CaretRight size={11} weight="duotone" />
+                <House size={16} weight="duotone" />
+                <CaretRight size={12} weight="duotone" />
                 <Link href="/deals" className={`transition-colors font-medium ${isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#1D4ED8]"}`}>Deals</Link>
               </div>
               <div className="flex items-center gap-2.5">

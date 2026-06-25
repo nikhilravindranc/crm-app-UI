@@ -21,7 +21,9 @@ import {
   Plus, MagnifyingGlass, SlidersHorizontal, SortAscending, Columns,
   ArrowsDownUp, List, GridFour, House, CaretRight, Trash,
   DotsThreeVertical, Phone, FunnelSimple, CaretDown, Buildings,
+  UserCircle, Briefcase, PencilSimple, CalendarBlank,
 } from "@phosphor-icons/react";
+import type { ElementType } from "react";
 import { OWNER_AVATARS } from "@/lib/avatars";
 import { useTheme } from "@/components/ThemeContext";
 
@@ -83,9 +85,10 @@ const DEFAULT_VISIBLE = new Set(["accountName", "accountOwner", "phone", "accoun
 const AVATAR_PAL = ["#7C3AED", "#10B981", "#F59E0B", "#DB2777"];
 const avatarColor = (n: string) => AVATAR_PAL[n.split("").reduce((a, c) => a + c.charCodeAt(0), 0) % AVATAR_PAL.length];
 
-function ColHeader({ label, isDark = false }: { label: string; isDark?: boolean }) {
+function ColHeader({ label, icon: Icon, isDark = false }: { label: string; icon?: ElementType; isDark?: boolean }) {
   return (
-    <div className={`font-heading flex items-center gap-0.5 text-table-header uppercase tracking-wide cursor-pointer transition-colors group select-none ${isDark ? "text-[#9CA3AF] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+    <div className={`font-heading flex items-center gap-1.5 text-table-header uppercase tracking-wide cursor-pointer transition-colors group select-none ${isDark ? "text-[#9CA3AF] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+      {Icon && <Icon size={13} weight="duotone" />}
       {label}
       <ArrowsDownUp size={12} weight="duotone" className={`opacity-30 group-hover:opacity-100 transition-opacity ${isDark ? "text-[#9CA3AF]" : "text-[#60A5FA]"}`} />
     </div>
@@ -120,7 +123,7 @@ export default function AccountsPage() {
   const COLUMN_BUILDERS: Record<string, GridColDef<Account>> = {
     accountName: {
       field: "accountName", headerName: "Account Name", flex: 1.8, minWidth: 180, sortable: false,
-      renderHeader: () => <ColHeader label="Account Name" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Account Name" icon={Buildings} isDark={isDark} />,
       renderCell: (params) => {
         const acc = params.row;
         return (
@@ -136,7 +139,7 @@ export default function AccountsPage() {
     },
     accountOwner: {
       field: "accountOwner", headerName: "Account Owner", flex: 1.5, minWidth: 150, sortable: false,
-      renderHeader: () => <ColHeader label="Account Owner" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Account Owner" icon={UserCircle} isDark={isDark} />,
       renderCell: (params) => {
         const acc = params.row;
         return (
@@ -151,7 +154,7 @@ export default function AccountsPage() {
     },
     phone: {
       field: "phone", headerName: "Phone", flex: 1.1, minWidth: 110, sortable: false,
-      renderHeader: () => <ColHeader label="Phone" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Phone" icon={Phone} isDark={isDark} />,
       renderCell: (params) => (
         <div className="text-table-cell text-slate-500 font-mono truncate">
           {params.row.phone
@@ -162,7 +165,7 @@ export default function AccountsPage() {
     },
     accountType: {
       field: "accountType", headerName: "Account Type", flex: 1.1, minWidth: 110, sortable: false,
-      renderHeader: () => <ColHeader label="Account Type" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Account Type" icon={Briefcase} isDark={isDark} />,
       renderCell: (params) => {
         const typCfg = TYPE_CFG[params.row.accountType] || { bg: "#EFF6FF", text: "#475569", dot: "#94A3B8" };
         return params.row.accountType ? (
@@ -176,7 +179,7 @@ export default function AccountsPage() {
     },
     modifiedBy: {
       field: "modifiedBy", headerName: "Modified by", flex: 1.5, minWidth: 150, sortable: false,
-      renderHeader: () => <ColHeader label="Modified by" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Modified by" icon={PencilSimple} isDark={isDark} />,
       renderCell: (params) => {
         const acc = params.row;
         return (
@@ -191,12 +194,12 @@ export default function AccountsPage() {
     },
     creation: {
       field: "creation", headerName: "Creation", flex: 1.4, minWidth: 140, sortable: false,
-      renderHeader: () => <ColHeader label="Creation" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Creation" icon={CalendarBlank} isDark={isDark} />,
       renderCell: (params) => <p className="m-0 text-table-cell-secondary text-slate-400 truncate">{params.row.creation}</p>,
     },
     modified: {
       field: "modified", headerName: "Modified", flex: 1.4, minWidth: 140, sortable: false,
-      renderHeader: () => <ColHeader label="Modified" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Modified" icon={CalendarBlank} isDark={isDark} />,
       renderCell: (params) => <p className="m-0 text-table-cell-secondary text-slate-400 truncate">{params.row.modified}</p>,
     },
   };
@@ -230,8 +233,8 @@ export default function AccountsPage() {
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-1 text-caption text-slate-400 mb-2">
-                <House size={12} weight="duotone" />
-                <CaretRight size={11} weight="duotone" />
+                <House size={16} weight="duotone" />
+                <CaretRight size={12} weight="duotone" />
                 <Link href="/accounts" className={`transition-colors font-medium ${isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#1D4ED8]"}`}>Accounts</Link>
               </div>
               <div className="flex items-center gap-2.5">

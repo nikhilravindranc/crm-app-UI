@@ -280,11 +280,11 @@ export default function NewTaskDrawer({ open, onClose }: Props) {
         </Button>
         <Button variant="contained" onClick={handleSubmit}
           sx={{
-            bgcolor: isDark ? "#27272A" : "inherit",
-            color: isDark ? "#F4F4F5" : undefined,
+            bgcolor: isDark ? "#27272A" : "#1D4ED8",
+            color: isDark ? "#F4F4F5" : "#fff",
             borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3,
             boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833",
-            "&:hover":  { bgcolor: isDark ? "#3F3F46" : "inherit" },
+            "&:hover":  { bgcolor: isDark ? "#3F3F46" : "#60A5FA" },
             "&:active": { bgcolor: isDark ? "#18181B" : "#0C2472" },
           }}>
           Submit
