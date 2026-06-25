@@ -29,7 +29,7 @@ function SectionHeader({
   return (
     <div className="flex items-center gap-2.5 mb-5">
       <div className={`w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0 ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
-        <Icon size={13} color={isDark ? "#71717A" : "#E3ECFC"} weight="duotone" />
+        <Icon size={13} color={isDark ? "#71717A" : "#1D4ED8"} weight="duotone" />
       </div>
       <p className={`font-heading text-[10.5px] font-bold uppercase tracking-[0.13em] whitespace-nowrap ${isDark ? "text-[#71717A]" : "text-[#1D4ED8]"}`}>
         {title}
@@ -320,14 +320,7 @@ export default function NewLeadDrawer({
       </div>
 
       {/* ══ Sticky Footer ══ */}
-      <div className={`flex items-center justify-between px-6 py-4 border-t flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
-        <button
-          onClick={handleCancel}
-          className={`text-[13px] font-semibold transition-colors px-3 py-2 rounded-xl ${isDark ? "text-[#71717A] hover:text-[#A1A1AA] hover:bg-[#27272A]" : "text-slate-400 hover:text-slate-600 hover:bg-[#EFF6FF]"}`}
-        >
-          Cancel
-        </button>
-
+      <div className={`flex items-center justify-end px-6 py-4 border-t flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <div className="flex items-center gap-2">
           <Button
             variant="outlined"
@@ -340,7 +333,7 @@ export default function NewLeadDrawer({
               "&:hover": { borderColor: isDark ? "#52525B" : "#E3ECFC", bgcolor: isDark ? "#27272A" : "#EFF6FF" },
             }}
           >
-            Save as Draft
+            Cancel
           </Button>
 
           <Button
@@ -349,11 +342,11 @@ export default function NewLeadDrawer({
             startIcon={<FloppyDisk size={15} weight="duotone" />}
             onClick={handleSubmit}
             sx={{
-              bgcolor: isDark ? "#27272A" : "inherit",
-              color: isDark ? "#F4F4F5" : undefined,
+              bgcolor: isDark ? "#27272A" : "#1D4ED8",
+              color: isDark ? "#F4F4F5" : "#fff",
               borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.78rem", px: 2.5, py: 0.9,
               boxShadow: isDark ? "none" : "0 2px 12px 0 #1D4ED833",
-              "&:hover":  { bgcolor: isDark ? "#3F3F46" : "inherit", boxShadow: isDark ? "none" : "0 4px 18px 0 #60A5FA55" },
+              "&:hover":  { bgcolor: isDark ? "#3F3F46" : "#60A5FA", boxShadow: isDark ? "none" : "0 4px 18px 0 #60A5FA55" },
               "&:active": { bgcolor: isDark ? "#18181B" : "#0C2472" },
             }}
           >

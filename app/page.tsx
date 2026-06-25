@@ -78,7 +78,7 @@ export default function DashboardPage() {
             <div className="relative z-10 px-4 md:px-6 pt-4 md:pt-5 pb-3 md:pb-4">
               <p className="text-[#C5D8F7] text-[12px] font-semibold tracking-wide mb-0.5">👋 Good morning</p>
               <h2 className="text-white text-[20px] font-extrabold tracking-tight mb-1">Welcome back, PM SDL</h2>
-              <p className="text-[#C5D8F7] text-[12.5px] mb-4">
+              <p className="text-[#C5D8F7] text-[12px] mb-4">
                 Here&apos;s your CRM snapshot for{" "}
                 <span className="text-white font-semibold">Saturday, 30 May 2026</span>
               </p>

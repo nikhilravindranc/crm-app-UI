@@ -32,7 +32,7 @@ const STATES_IN     = ["Andhra Pradesh", "Delhi", "Gujarat", "Karnataka", "Keral
 function SectionTitle({ children }: { children: React.ReactNode }) {
   const { theme } = useTheme();
   return (
-    <h3 className={`font-heading text-[13.5px] font-bold mb-4 ${theme === "dark" ? "text-[#D4D4D8]" : "text-slate-800"}`}>{children}</h3>
+    <h3 className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-4 ${theme === "dark" ? "text-[#D4D4D8]" : "text-slate-500"}`}>{children}</h3>
   );
 }
 
@@ -54,7 +54,7 @@ function AddressPanel({
 }) {
   return (
     <div className={`flex-1 min-w-0 rounded-xl border p-4 space-y-2.5 ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF]/60 border-[#E3ECFC]"}`}>
-      <p className={`font-heading text-[11px] font-bold uppercase tracking-wider mb-3 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{title}</p>
+      <p className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-3 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{title}</p>
 
       <FormControl size="small" fullWidth sx={fx}>
         <InputLabel>Country / Region</InputLabel>
@@ -88,7 +88,7 @@ function AddressPanel({
       </div>
 
       <div className="flex justify-end pt-0.5">
-        <button onClick={onClear} className={`text-[11.5px] font-semibold transition-colors ${isDark ? "text-[#52525B] hover:text-[#A1A1AA]" : "text-[#475569] hover:underline"}`}>
+        <button onClick={onClear} className={`text-[11.5px] font-semibold transition-colors ${isDark ? "text-[#9CA3AF] hover:text-[#A1A1AA]" : "text-[#475569] hover:underline"}`}>
           Clear All
         </button>
       </div>
@@ -290,7 +290,7 @@ export default function NewContactDrawer({ open, onClose, mode = "create", initi
                   <Checkbox checked={form.emailOptOut} onChange={e => set("emailOptOut", e.target.checked)} size="small"
                     sx={{ color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked": { color: "inherit" }, p: 0.75 }} />
                 }
-                label={<span className={`text-[13px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>Email Opt Out</span>}
+                label={<span className={`text-[14px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>Email Opt Out</span>}
                 sx={{ m: 0 }}
               />
               <TextField label="Skype ID" value={form.skypeId} onChange={e => set("skypeId", e.target.value)} size="small" fullWidth sx={FX} />
@@ -354,11 +354,11 @@ export default function NewContactDrawer({ open, onClose, mode = "create", initi
         </Button>
         <Button variant="contained" size="small" onClick={handleSubmit}
           sx={{
-            bgcolor: isDark ? "#27272A" : "inherit",
-            color: isDark ? "#F4F4F5" : undefined,
+            bgcolor: isDark ? "#27272A" : "#1D4ED8",
+            color: isDark ? "#F4F4F5" : "#fff",
             borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.8rem", px: 3, py: 0.9,
             boxShadow: isDark ? "none" : "0 2px 12px #1D4ED833",
-            "&:hover": { bgcolor: isDark ? "#3F3F46" : "inherit", boxShadow: isDark ? "none" : "0 4px 18px #60A5FA55" },
+            "&:hover": { bgcolor: isDark ? "#3F3F46" : "#60A5FA", boxShadow: isDark ? "none" : "0 4px 18px #60A5FA55" },
             "&:active": { bgcolor: isDark ? "#18181B" : "#0C2472" },
           }}>
           Submit

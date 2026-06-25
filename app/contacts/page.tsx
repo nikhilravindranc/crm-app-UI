@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -21,13 +21,15 @@ import {
   Plus, MagnifyingGlass, SlidersHorizontal, SortAscending, Columns,
   ArrowsDownUp, List, GridFour, House, CaretRight, Trash,
   DotsThreeVertical, Phone, DeviceMobile, Envelope, FunnelSimple, CaretDown,
+  User, IdentificationBadge, UserCircle, CalendarBlank,
 } from "@phosphor-icons/react";
+import type { ElementType } from "react";
 import { OWNER_AVATARS } from "@/lib/avatars";
 import { useTheme } from "@/components/ThemeContext";
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Data — exact from screenshot (13 visible of 25)
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 interface Contact {
   id: number; firstName: string; lastName: string;
   ownerName: string; ownerEmail: string; ownerInitials: string;
@@ -51,9 +53,9 @@ const ALL_CONTACTS: Contact[] = [
   { id:13, firstName:"Test",         lastName:"user001", ownerName:"Admin",     ownerEmail:"admin@mailinator.com",  ownerInitials:"AD", email:"",                        phone:"9978654311", mobile:"",           accountName:"",            creation:"20 Aug 2025, 11:57 AM", modified:"05 Feb 2026, 06:50 PM" },
 ];
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Column definitions
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 // Fixed px widths — table scrolls horizontally on narrow viewports
 const COL_DEFS = [
   { key: "firstName",    label: "First Name",     width: "200px" },
@@ -73,24 +75,25 @@ const COL_DEFS = [
 // At 1440px viewport (1162px table): firstName → 1162−796 = 366px ✓
 const DEFAULT_VISIBLE = new Set(["firstName", "lastName", "contactOwner", "email", "phone", "creation"]);
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Helpers
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 const AVATAR_PAL = ["#7C3AED", "#10B981", "#F59E0B", "#DB2777"];
 const avatarColor = (n: string) => AVATAR_PAL[n.split("").reduce((a, c) => a + c.charCodeAt(0), 0) % AVATAR_PAL.length];
 
-function ColHeader({ label, isDark = false }: { label: string; isDark?: boolean }) {
+function ColHeader({ label, icon: Icon, isDark = false }: { label: string; icon?: ElementType; isDark?: boolean }) {
   return (
-    <div className={`font-heading flex items-center gap-0.5 text-table-header uppercase tracking-wide cursor-pointer transition-colors group select-none ${isDark ? "text-[#737373] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+    <div className={`font-heading flex items-center gap-1.5 text-table-header uppercase tracking-wide cursor-pointer transition-colors group select-none ${isDark ? "text-[#9CA3AF] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+      {Icon && <Icon size={13} weight="duotone" />}
       {label}
-      <ArrowsDownUp size={12} weight="duotone" className={`opacity-30 group-hover:opacity-100 transition-opacity ${isDark ? "text-[#52525B]" : "text-[#60A5FA]"}`} />
+      <ArrowsDownUp size={12} weight="duotone" className={`opacity-30 group-hover:opacity-100 transition-opacity ${isDark ? "text-[#9CA3AF]" : "text-[#60A5FA]"}`} />
     </div>
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Page
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 export default function ContactsPage() {
   const router = useRouter();
   const { theme } = useTheme();
@@ -116,23 +119,23 @@ export default function ContactsPage() {
       c.ownerName.toLowerCase().includes(q);
   });
 
-  // ── DataGrid column builders, keyed by COL_DEFS.key
+  // -- DataGrid column builders, keyed by COL_DEFS.key
   const COLUMN_BUILDERS: Record<string, GridColDef<Contact>> = {
     firstName: {
       field: "firstName", headerName: "First Name", flex: 1.3, minWidth: 140, sortable: false,
-      renderHeader: () => <ColHeader label="First Name" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="First Name" icon={User} isDark={isDark} />,
       renderCell: (params) => (
         <p className="m-0 font-heading text-table-cell font-medium text-[#1D4ED8] truncate hover:underline cursor-pointer">{params.row.firstName}</p>
       ),
     },
     lastName: {
       field: "lastName", headerName: "Last Name", flex: 1.1, minWidth: 110, sortable: false,
-      renderHeader: () => <ColHeader label="Last Name" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Last Name" icon={IdentificationBadge} isDark={isDark} />,
       renderCell: (params) => <p className="m-0 text-table-cell text-slate-700 truncate">{params.row.lastName}</p>,
     },
     contactOwner: {
       field: "contactOwner", headerName: "Contact Owner", flex: 1.4, minWidth: 150, sortable: false,
-      renderHeader: () => <ColHeader label="Contact Owner" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Contact Owner" icon={UserCircle} isDark={isDark} />,
       renderCell: (params) => {
         const contact = params.row;
         return (
@@ -147,7 +150,7 @@ export default function ContactsPage() {
     },
     email: {
       field: "email", headerName: "Email", flex: 1.7, minWidth: 180, sortable: false,
-      renderHeader: () => <ColHeader label="Email" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Email" icon={Envelope} isDark={isDark} />,
       renderCell: (params) => (
         <Tooltip title={params.row.email} placement="top">
           <div className="text-table-cell truncate w-full">
@@ -160,7 +163,7 @@ export default function ContactsPage() {
     },
     phone: {
       field: "phone", headerName: "Phone", flex: 1.1, minWidth: 110, sortable: false,
-      renderHeader: () => <ColHeader label="Phone" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Phone" icon={Phone} isDark={isDark} />,
       renderCell: (params) => (
         <div className="text-table-cell text-slate-500 font-mono truncate">
           {params.row.phone
@@ -171,7 +174,7 @@ export default function ContactsPage() {
     },
     mobile: {
       field: "mobile", headerName: "Mobile", flex: 1.1, minWidth: 110, sortable: false,
-      renderHeader: () => <ColHeader label="Mobile" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Mobile" icon={DeviceMobile} isDark={isDark} />,
       renderCell: (params) => (
         <div className="text-table-cell text-slate-500 font-mono truncate">
           {params.row.mobile
@@ -182,12 +185,12 @@ export default function ContactsPage() {
     },
     creation: {
       field: "creation", headerName: "Creation", flex: 1.4, minWidth: 140, sortable: false,
-      renderHeader: () => <ColHeader label="Creation" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Creation" icon={CalendarBlank} isDark={isDark} />,
       renderCell: (params) => <p className="m-0 text-table-cell-secondary text-slate-400 truncate">{params.row.creation}</p>,
     },
     modified: {
       field: "modified", headerName: "Modified", flex: 1.4, minWidth: 140, sortable: false,
-      renderHeader: () => <ColHeader label="Modified" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Modified" icon={CalendarBlank} isDark={isDark} />,
       renderCell: (params) => <p className="m-0 text-table-cell-secondary text-slate-400 truncate">{params.row.modified}</p>,
     },
   };
@@ -217,12 +220,12 @@ export default function ContactsPage() {
 
         <main className="flex-1 px-4 md:px-8 py-3 md:py-4 space-y-3 animate-fade-in">
 
-          {/* ══ Breadcrumb + Header ══ */}
+          {/* -- Breadcrumb + Header -- */}
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-1 text-caption text-slate-400 mb-2">
-                <House size={12} weight="duotone" />
-                <CaretRight size={11} weight="duotone" />
+                <House size={16} weight="duotone" />
+                <CaretRight size={12} weight="duotone" />
                 <Link href="/contacts" className={`transition-colors font-medium ${isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#1D4ED8]"}`}>Contacts</Link>
               </div>
               <div className="flex items-center gap-2.5">
@@ -244,7 +247,7 @@ export default function ContactsPage() {
                     className={`flex items-center gap-1.5 px-2.5 py-[7px] rounded-lg text-button-sm transition-all ${
                       view === k
                         ? isDark ? "bg-[#18181B] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]"
-                        : isDark ? "text-[#737373] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "text-slate-400 hover:text-slate-600"
+                        : isDark ? "text-[#9CA3AF] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "text-slate-400 hover:text-slate-600"
                     }`}>
                     <Icon size={14} weight="duotone" />{label}
                   </button>
@@ -254,13 +257,13 @@ export default function ContactsPage() {
               <Button variant="contained"
                 startIcon={<Plus size={16} weight="bold" />}
                 onClick={() => setDrawerOpen(true)}
-                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px", px: 2, py: 0.85, boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB", boxShadow: isDark ? "none" : "0 2px 14px #60A5FA55" }, "&:active": { bgcolor: isDark ? "#52525B" : "#0C2472" } }}>
+                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px", px: 2, py: 0.85, boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB", boxShadow: isDark ? "none" : "0 2px 14px #60A5FA55" }, "&:active": { bgcolor: isDark ? "#9CA3AF" : "#0C2472" } }}>
                 New Contact
               </Button>
             </div>
           </div>
 
-          {/* ══ Toolbar ══ */}
+          {/* -- Toolbar -- */}
           <div className="flex items-center gap-2.5">
             <div className={`flex items-center gap-2 border rounded-xl px-3 py-2 w-72 focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
               <MagnifyingGlass size={15} color="#94A3B8" weight="duotone" />
@@ -281,7 +284,7 @@ export default function ContactsPage() {
               onClick={e => setFiltersAnchor(e.currentTarget)}
               sx={{
                 borderColor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#27272A" : "#E3ECFC",
-                color: activeFilters.length > 0 ? "#fff" : isDark ? "#737373" : "#0C2472",
+                color: activeFilters.length > 0 ? "#fff" : isDark ? "#9CA3AF" : "#0C2472",
                 bgcolor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#0F0F0F" : "#E3ECFC",
                 borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "13px",
                 "&:hover": {
@@ -298,7 +301,7 @@ export default function ContactsPage() {
               onClick={() => setColumnsOpen(true)}
               sx={{
                 borderColor: isDark ? "#27272A" : "#E3ECFC",
-                color: isDark ? "#737373" : "#0C2472",
+                color: isDark ? "#9CA3AF" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
                 borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "13px",
                 "&:hover": { borderColor: isDark ? "#3F3F46" : "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
@@ -312,7 +315,7 @@ export default function ContactsPage() {
               onClick={e => setSortAnchor(e.currentTarget)}
               sx={{
                 borderColor: isDark ? "#27272A" : "#E3ECFC",
-                color: isDark ? "#737373" : "#0C2472",
+                color: isDark ? "#9CA3AF" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
                 borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "13px",
                 "&:hover": { borderColor: isDark ? "#3F3F46" : "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
@@ -325,7 +328,7 @@ export default function ContactsPage() {
             </span>
           </div>
 
-          {/* ══ Bulk action bar ══ */}
+          {/* -- Bulk action bar -- */}
           {selected.length > 0 && (
             <div className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border animate-slide-up shadow-sm ${isDark ? "bg-[#18181B] border-[#27272A]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
               <div className="flex items-center gap-2">
@@ -335,14 +338,14 @@ export default function ContactsPage() {
               <div className={`w-px h-4 ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
               <button className={`text-button-sm font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Send Email</button>
               <button className={`text-button-sm font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Assign Owner</button>
-              <button onClick={() => setSelected([])} className={`ml-auto text-button-sm font-medium transition-colors ${isDark ? "text-[#52525B] hover:text-[#A1A1AA]" : "text-slate-400 hover:text-slate-600"}`}>Clear</button>
+              <button onClick={() => setSelected([])} className={`ml-auto text-button-sm font-medium transition-colors ${isDark ? "text-[#9CA3AF] hover:text-[#A1A1AA]" : "text-slate-400 hover:text-slate-600"}`}>Clear</button>
               <button className={`flex items-center gap-1.5 text-button-sm font-medium transition-colors ${isDark ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"}`}>
                 <Trash size={14} weight="duotone" /> Delete
               </button>
             </div>
           )}
 
-          {/* ══ GRID VIEW ══ */}
+          {/* -- GRID VIEW -- */}
           {view === "grid" && (
             <ContactGridView contacts={filtered.map(c => ({
               id: c.id, firstName: c.firstName, lastName: c.lastName,
@@ -352,7 +355,7 @@ export default function ContactsPage() {
             }))} />
           )}
 
-          {/* ══ LIST VIEW (MUI DataGrid) ══ */}
+          {/* -- LIST VIEW (MUI DataGrid) -- */}
           {view === "list" && (
             <div className="rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden" style={{ height: 600 }}>
               <DataGrid<Contact>
@@ -387,7 +390,7 @@ export default function ContactsPage() {
         </main>
       </div>
 
-      {/* ══ Panels ══ */}
+      {/* -- Panels -- */}
       <NewContactDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
       <FiltersDrawer

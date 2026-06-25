@@ -132,7 +132,7 @@ export default function FiltersDrawer({ anchor, onClose, filters, onChange, colu
       {/* Header */}
       <div className={`flex items-center justify-between gap-2.5 px-4 py-3 border-b flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
         <div className="flex items-center gap-2">
-          <FunnelSimple size={16} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
+          <FunnelSimple size={16} color={isDark ? "#E4E4E7" : "#1D4ED8"} weight="duotone" />
           <p className={`m-0 font-heading text-h2 ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Filters</p>
           {activeCount > 0 && (
             <span className={`text-badge-text px-2 py-0.5 rounded-full ${isDark ? "bg-[#27272A] text-[#A1A1AA]" : "bg-white text-[#1D4ED8]"}`}>
@@ -140,7 +140,7 @@ export default function FiltersDrawer({ anchor, onClose, filters, onChange, colu
             </span>
           )}
         </div>
-        {subtitle && <span className={`text-caption ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{subtitle}</span>}
+        {subtitle && <span className={`text-caption ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>{subtitle}</span>}
       </div>
 
       {/* Body */}
@@ -211,7 +211,7 @@ export default function FiltersDrawer({ anchor, onClose, filters, onChange, colu
                       )}
                       {noValue && (
                         <div className={`flex items-center px-3 py-2 rounded-lg border ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-white border-slate-100"}`}>
-                          <p className={`m-0 text-caption italic ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>No value needed for this condition</p>
+                          <p className={`m-0 text-caption italic ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>No value needed for this condition</p>
                         </div>
                       )}
                     </div>

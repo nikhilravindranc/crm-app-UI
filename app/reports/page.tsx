@@ -83,7 +83,7 @@ export default function ReportsPage() {
         <div className="flex items-center gap-2 min-w-0">
           <span className={`font-heading text-table-cell font-medium hover:underline truncate ${isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]"}`}>{params.row.name}</span>
           <button onClick={e => e.stopPropagation()} className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-            <DotsThree size={16} color={isDark ? "#52525B" : "#94A3B8"} weight="bold" />
+            <DotsThree size={16} color={isDark ? "#9CA3AF" : "#94A3B8"} weight="bold" />
           </button>
         </div>
       ),
@@ -119,7 +119,7 @@ export default function ReportsPage() {
           <Tooltip title="More actions">
             <IconButton size="small" onClick={e => e.stopPropagation()}
               sx={{ borderRadius: "6px", p: 0.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#E3ECFC" } }}>
-              <DotsThree size={15} color={isDark ? "#52525B" : "#94A3B8"} weight="bold" />
+              <DotsThree size={15} color={isDark ? "#9CA3AF" : "#94A3B8"} weight="bold" />
             </IconButton>
           </Tooltip>
         </div>
@@ -139,7 +139,7 @@ export default function ReportsPage() {
           {/* ── Breadcrumb + Header ── */}
           <div className="flex items-start justify-between">
             <div>
-              <div className={`flex items-center gap-1 text-caption mb-2 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+              <div className={`flex items-center gap-1 text-caption mb-2 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
                 <House size={12} weight="duotone" />
                 <CaretRight size={11} weight="duotone" />
                 <Link href="/reports" className={`font-medium transition-colors ${isDark ? "hover:text-[#A1A1AA]" : "hover:text-[#1D4ED8]"}`}>Reports</Link>
@@ -163,7 +163,7 @@ export default function ReportsPage() {
           <div className="flex items-center gap-2.5">
             <FormControl size="small" sx={{ minWidth: 180 }}>
               <Select value={collection} onChange={e => setCollection(e.target.value)}
-                sx={{ borderRadius:"10px", bgcolor: isDark ? "#111113" : "#f9fbff", fontSize:"14px", border: `1.5px solid ${isDark ? "#27272A" : "#E3ECFC"}`, color: isDark ? "#D4D4D8" : "#334155", "& .MuiOutlinedInput-notchedOutline":{ border:"none" }, "& .MuiSelect-select":{ py:"7px", px:"12px" }, "& .MuiSvgIcon-root":{ color: isDark ? "#52525B" : undefined } }}>
+                sx={{ borderRadius:"10px", bgcolor: isDark ? "#111113" : "#f9fbff", fontSize:"14px", border: `1.5px solid ${isDark ? "#27272A" : "#E3ECFC"}`, color: isDark ? "#D4D4D8" : "#334155", "& .MuiOutlinedInput-notchedOutline":{ border:"none" }, "& .MuiSelect-select":{ py:"7px", px:"12px" }, "& .MuiSvgIcon-root":{ color: isDark ? "#9CA3AF" : undefined } }}>
                 {COLLECTIONS.map(c => <MenuItem key={c} value={c} sx={{ fontSize:"14px" }}>{c}</MenuItem>)}
               </Select>
             </FormControl>
@@ -173,10 +173,10 @@ export default function ReportsPage() {
               <InputBase placeholder="Search All Reports" value={search} onChange={e => setSearch(e.target.value)}
                 sx={{ flex:1, fontSize:"14px", color: isDark ? "#A1A1AA" : "#334155", "& input::placeholder":{ color:"#94A3B8", opacity:1 } }}
               />
-              {search && <button onClick={() => setSearch("")} className={isDark ? "text-[#52525B] hover:text-[#A1A1AA]" : "text-slate-300 hover:text-slate-500"}>✕</button>}
+              {search && <button onClick={() => setSearch("")} className={isDark ? "text-[#9CA3AF] hover:text-[#A1A1AA]" : "text-slate-300 hover:text-slate-500"}>✕</button>}
             </div>
 
-            <span className={`ml-auto text-caption px-3 py-1.5 rounded-lg ${isDark ? "text-[#52525B] bg-[#1C1C1E]" : "text-slate-400 bg-[#f9fbff]"}`}>{filtered.length} of {ALL_REPORTS.length} reports</span>
+            <span className={`ml-auto text-caption px-3 py-1.5 rounded-lg ${isDark ? "text-[#9CA3AF] bg-[#1C1C1E]" : "text-slate-400 bg-[#f9fbff]"}`}>{filtered.length} of {ALL_REPORTS.length} reports</span>
           </div>
 
           {/* ── Table (MUI DataGrid) ── */}

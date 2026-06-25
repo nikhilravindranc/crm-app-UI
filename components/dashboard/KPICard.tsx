@@ -54,7 +54,7 @@ export default function KPICard({
       <div className="flex items-start justify-between gap-3">
         {/* ── Left: label + value + badge ── */}
         <div className="flex-1 min-w-0">
-          <p className={`font-heading text-[11px] font-semibold uppercase tracking-[0.1em] mb-2 truncate ${isDark ? "text-[#94A3B8]" : "text-[#4A5675]"}`}>
+          <p className={`font-heading text-[11.5px] font-semibold uppercase tracking-[0.1em] mb-2 truncate ${isDark ? "text-[#94A3B8]" : "text-[#4A5675]"}`}>
             {title}
           </p>
           <p className={`text-[28px] font-extrabold tracking-tight leading-none mb-3 ${isDark ? "text-[#FFFFFF]" : "text-[#0C2472]"}`}>

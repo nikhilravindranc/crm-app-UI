@@ -85,9 +85,9 @@ export default function SortPopover({ anchor, onClose, sorts, onChange }: Props)
       <div className="w-[380px]">
         {/* Popover header */}
         <div className={`flex items-center gap-2.5 px-4 py-3 border-b ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
-          <SortAscending size={16} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
+          <SortAscending size={16} color={isDark ? "#E4E4E7" : "#1D4ED8"} weight="duotone" />
           <p className={`m-0 font-heading text-h2 ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Sort Records</p>
-          <span className={`ml-auto text-caption ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{local.length} sort{local.length !== 1 ? "s" : ""}</span>
+          <span className={`ml-auto text-caption ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>{local.length} sort{local.length !== 1 ? "s" : ""}</span>
         </div>
 
         {/* Sort rows */}
@@ -95,7 +95,7 @@ export default function SortPopover({ anchor, onClose, sorts, onChange }: Props)
           {local.map((row, idx) => (
             <div key={row.id} className="flex items-center gap-2">
               {/* Priority label */}
-              <span className={`font-heading text-nav-group-label uppercase w-10 flex-shrink-0 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+              <span className={`font-heading text-nav-group-label uppercase w-10 flex-shrink-0 ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>
                 {idx === 0 ? "By" : "Then"}
               </span>
 

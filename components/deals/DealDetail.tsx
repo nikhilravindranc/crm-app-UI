@@ -127,9 +127,9 @@ function SectionCard({ icon: Icon, title, children, action }: {
     <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
       <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
         <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
-          <Icon size={13} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
+          <Icon size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
         </div>
-        <p className={`font-heading text-[11px] font-bold uppercase tracking-[0.12em] flex-1 ${isDark ? "text-[#71717A]" : "text-[#1D4ED8]"}`}>{title}</p>
+        <p className={`font-heading text-[12px] font-bold uppercase tracking-wider flex-1 ${isDark ? "text-slate-500" : "text-slate-500"}`}>{title}</p>
         {action}
       </div>
       <div className="px-5 py-4">{children}</div>
@@ -147,8 +147,8 @@ function KV({ label, value }: { label: string; value?: string | number }) {
   const display = value !== undefined && value !== "" && value !== 0 ? String(value) : "—";
   return (
     <div className={`py-2.5 border-b last:border-0 ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
-      <p className={`text-[10.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{label}</p>
-      <p className={`text-[13px] font-medium ${display === "—" ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>{display}</p>
+      <p className={`text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{label}</p>
+      <p className={`text-[14px] font-medium ${display === "—" ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>{display}</p>
     </div>
   );
 }
@@ -204,7 +204,7 @@ export default function DealDetail({ dealId }: { dealId: number }) {
     <div className="space-y-4">
       <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <div className={`px-4 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
-          <p className={`font-heading text-[11px] font-bold uppercase tracking-wider ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>Related List</p>
+          <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-500"}`}>Related List</p>
         </div>
         <div className="p-2 space-y-0.5">
           {relatedItems.map(({ label, icon: Icon, count, color }) => (
@@ -213,9 +213,9 @@ export default function DealDetail({ dealId }: { dealId: number }) {
               <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: color + "20" }}>
                 <Icon size={14} color={color} weight="duotone" />
               </div>
-              <span className={`flex-1 text-left text-[12.5px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>{label}</span>
+              <span className={`flex-1 text-left text-[14px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>{label}</span>
               {count > 0 && (
-                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${isDark ? "bg-[#27272A] text-[#A1A1AA]" : "bg-[#E3ECFC] text-[#1D4ED8]"}`}>{count}</span>
+                <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded-full ${isDark ? "bg-[#27272A] text-[#A1A1AA]" : "bg-[#E3ECFC] text-[#1D4ED8]"}`}>{count}</span>
               )}
               <CaretRight size={14} color={isDark ? "#3F3F46" : "#E2E8F0"} weight="duotone" />
             </button>
@@ -234,11 +234,11 @@ export default function DealDetail({ dealId }: { dealId: number }) {
 
         {/* ── Breadcrumb ── */}
         <div className={`flex items-center gap-1.5 px-8 py-3 border-b text-[12px] ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#E3ECFC] border-[#E3ECFC]"}`}>
-          <Link href="/" className={`transition-colors ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+          <Link href="/" className={`transition-colors ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
             <House size={13} weight="duotone" />
           </Link>
           <CaretRight size={11} color={isDark ? "#3F3F46" : "#E2E8F0"} />
-          <Link href="/deals" className={`font-medium transition-colors ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>Deals</Link>
+          <Link href="/deals" className={`font-medium transition-colors ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>Deals</Link>
           <CaretRight size={11} color={isDark ? "#3F3F46" : "#E2E8F0"} />
           <span className={`font-semibold ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>{deal.refId}</span>
         </div>
@@ -250,7 +250,7 @@ export default function DealDetail({ dealId }: { dealId: number }) {
           <div className="flex items-center gap-2 mb-5">
             {(["overview", "timeline"] as const).map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
-                className={`px-4 py-1.5 rounded-full text-[12.5px] font-semibold capitalize transition-all ${
+                className={`px-4 py-1.5 rounded-full text-[14px] font-semibold capitalize transition-all ${
                   activeTab === tab
                     ? isDark ? "bg-[#3F3F46] text-[#F4F4F5] shadow-sm" : "bg-[#1D4ED8] text-white shadow-sm"
                     : isDark ? "bg-[#1C1C1E] text-[#71717A] hover:bg-[#27272A]" : "bg-[#f9fbff] text-slate-500 hover:bg-[#E3ECFC]"
@@ -267,14 +267,14 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                 <div className={`rounded-2xl border shadow-sm p-4 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                      <p className={`text-[9px] font-bold uppercase tracking-widest ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>Start</p>
-                      <p className={`text-[11px] font-semibold ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>
+                      <p className={`text-[12px] font-bold uppercase tracking-widest ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>Start</p>
+                      <p className={`text-[12px] font-semibold ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>
                         {new Date(deal.startDate).toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" }).toUpperCase()}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className={`text-[9px] font-bold uppercase tracking-widest ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>Closing</p>
-                      <p className={`text-[11px] font-semibold ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>
+                      <p className={`text-[12px] font-bold uppercase tracking-widest ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>Closing</p>
+                      <p className={`text-[12px] font-semibold ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>
                         {new Date(deal.closingDate).toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" }).toUpperCase()}
                       </p>
                     </div>
@@ -288,7 +288,7 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                       return (
                         <div key={stage} className="flex items-center flex-shrink-0">
                           <div className={`
-                            relative px-3 py-1.5 text-[11px] font-semibold flex items-center gap-1.5 transition-all
+                            relative px-3 py-1.5 text-[12.5px] font-bold flex items-center gap-1.5 transition-all
                             ${i === 0 ? "rounded-l-lg" : ""} ${isLast ? "rounded-r-lg" : ""}
                             ${isActive
                               ? isDark ? "bg-[#3F3F46] text-[#F4F4F5] z-10 shadow-md" : "bg-[#1D4ED8] text-white z-10 shadow-md shadow-[#1D4ED8]/20"
@@ -334,8 +334,8 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                     { label: "Closing Date", value: deal.closingDate },
                   ].map(({ label, value }) => (
                     <div key={label} className="flex items-center justify-between px-5 py-3">
-                      <span className={`text-[12.5px] font-medium w-40 flex-shrink-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{label}:</span>
-                      <span className={`flex-1 text-[13px] font-semibold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{value}</span>
+                      <span className={`text-[12px] font-medium w-40 flex-shrink-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{label}:</span>
+                      <span className={`flex-1 text-[14px] font-semibold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{value}</span>
                       <IconButton size="small" sx={{ p:0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&:hover":{color:"#1D4ED8", bgcolor: isDark ? "#27272A" : "#EFF6FF"}, borderRadius:"6px" }}>
                         <PencilSimple size={14} weight="duotone" />
                       </IconButton>
@@ -379,7 +379,7 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                 <div id="section-notes">
                   <SectionCard icon={Note} title="Notes">
                     <div className="space-y-3">
-                      <div className={`border rounded-xl overflow-hidden transition-all ${isDark ? "border-[#3F3F46] focus-within:border-[#52525B]" : "border-[#E3ECFC] focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#4A7AE8]"}`}>
+                      <div className={`border rounded-xl overflow-hidden transition-all ${isDark ? "border-[#3F3F46] focus-within:border-[#9CA3AF]" : "border-[#E3ECFC] focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#4A7AE8]"}`}>
                         <InputBase
                           fullWidth multiline minRows={2}
                           placeholder="Add a note…"
@@ -398,8 +398,8 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                       </div>
                       {notes.map((n, i) => (
                         <div key={i} className={`rounded-xl px-4 py-3 border ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
-                          <p className={`text-[12.5px] ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{n.text}</p>
-                          <p className={`text-[10px] mt-1 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{n.at}</p>
+                          <p className={`text-[14px] ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{n.text}</p>
+                          <p className={`text-[12px] mt-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{n.at}</p>
                         </div>
                       ))}
                     </div>
@@ -414,18 +414,18 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                         <div className={`flex items-center rounded-lg p-0.5 gap-0.5 ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
                           {[{ k:"grid", Icon:GridFour }, { k:"list", Icon:List }].map(({ k, Icon }) => (
                             <button key={k} onClick={() => setAttachView(k as "grid" | "list")}
-                              className={`p-1 rounded-md transition-colors ${attachView===k ? (isDark ? "bg-[#3F3F46] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]") : (isDark ? "text-[#52525B]" : "text-slate-400")}`}>
+                              className={`p-1 rounded-md transition-colors ${attachView===k ? (isDark ? "bg-[#3F3F46] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]") : (isDark ? "text-[#9CA3AF]" : "text-slate-400")}`}>
                               <Icon size={13} weight="duotone" />
                             </button>
                           ))}
                         </div>
                         <Button size="small" variant="outlined"
-                          sx={{ borderColor: isDark ? "#3F3F46" : "#E3ECFC", color: isDark ? "#A1A1AA" : "#0C2472", bgcolor: isDark ? "#27272A" : "#E3ECFC", borderRadius:"8px", textTransform:"none", fontWeight:600, fontSize:"0.73rem", "&:hover":{borderColor: isDark ? "#52525B" : "#E3ECFC", bgcolor: isDark ? "#3F3F46" : "#f9fbff"} }}>
+                          sx={{ borderColor: isDark ? "#3F3F46" : "#E3ECFC", color: isDark ? "#A1A1AA" : "#0C2472", bgcolor: isDark ? "#27272A" : "#E3ECFC", borderRadius:"8px", textTransform:"none", fontWeight:600, fontSize:"0.73rem", "&:hover":{borderColor: isDark ? "#9CA3AF" : "#E3ECFC", bgcolor: isDark ? "#3F3F46" : "#f9fbff"} }}>
                           Attach
                         </Button>
                       </div>
                     }>
-                    <div className={`flex items-center justify-center py-6 text-[12.5px] ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>
+                    <div className={`flex items-center justify-center py-6 text-[14px] ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>
                       No attachments yet
                     </div>
                   </SectionCard>
@@ -440,23 +440,23 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                       </IconButton>
                     }>
                     <div className="overflow-x-auto -mx-5 px-5">
-                      <table className="w-full text-[12px] min-w-[600px]">
+                      <table className="w-full min-w-[600px]">
                         <thead>
                           <tr className={`border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
                             {["Stage","Amount","Probability (%)","Expected Revenue","Stage Duration (Days)","Moved From","Is Current"].map(h => (
-                              <th key={h} className={`text-left py-2 pr-4 text-[10.5px] font-bold uppercase tracking-wider whitespace-nowrap ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>{h}</th>
+                              <th key={h} className={`text-left py-2 pr-4 text-[11.5px] font-bold uppercase tracking-wider whitespace-nowrap ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>{h}</th>
                             ))}
                           </tr>
                         </thead>
                         <tbody className={`divide-y ${isDark ? "divide-[#27272A]" : "divide-[#EFF6FF]"}`}>
                           {deal.stageHistory.map((row, i) => (
                             <tr key={i} className={`transition-colors ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[rgba(29,78,216,0.03)]"}`}>
-                              <td className={`py-3 pr-4 font-medium ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{row.stage}</td>
-                              <td className={`py-3 pr-4 ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>₹{row.amount.toLocaleString()}</td>
-                              <td className={`py-3 pr-4 ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>{row.probability}</td>
-                              <td className={`py-3 pr-4 ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>₹{row.expectedRevenue.toLocaleString()}</td>
-                              <td className={`py-3 pr-4 ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>{row.stageDurationDays}</td>
-                              <td className={`py-3 pr-4 ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>{row.movedFrom || "—"}</td>
+                              <td className={`py-3 pr-4 text-[14px] font-medium ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{row.stage}</td>
+                              <td className={`py-3 pr-4 text-[14px] ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>₹{row.amount.toLocaleString()}</td>
+                              <td className={`py-3 pr-4 text-[14px] ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>{row.probability}</td>
+                              <td className={`py-3 pr-4 text-[14px] ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>₹{row.expectedRevenue.toLocaleString()}</td>
+                              <td className={`py-3 pr-4 text-[14px] ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>{row.stageDurationDays}</td>
+                              <td className={`py-3 pr-4 text-[14px] ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>{row.movedFrom || "—"}</td>
                               <td className="py-3 pr-4">
                                 {row.isCurrent === 1 && (
                                   <span className="text-[11px] font-bold bg-[#DCFCE7] text-[#166534] px-2 py-0.5 rounded-full">1</span>
@@ -485,22 +485,22 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                       </div>
                     }>
                     <div className="overflow-x-auto -mx-5 px-5">
-                      <table className="w-full text-[12px]">
+                      <table className="w-full">
                         <thead>
                           <tr className={`border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
-                            <th className={`text-left py-2 pr-4 text-[10.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>Subject</th>
-                            <th className={`text-left py-2 pr-4 text-[10.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>Status</th>
+                            <th className={`text-left py-2 pr-4 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>Subject</th>
+                            <th className={`text-left py-2 pr-4 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>Status</th>
                           </tr>
                         </thead>
                         <tbody>
                           {deal.tasks.length === 0 ? (
                             <tr>
-                              <td colSpan={2} className={`py-8 text-center text-[12.5px] ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>No rows</td>
+                              <td colSpan={2} className={`py-8 text-center text-[14px] ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>No rows</td>
                             </tr>
                           ) : deal.tasks.map((t, i) => (
                             <tr key={i} className={`border-b transition-colors ${isDark ? "border-[#27272A] hover:bg-[#27272A]" : "border-[#EFF6FF] hover:bg-[rgba(29,78,216,0.03)]"}`}>
-                              <td className={`py-3 pr-4 font-medium ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{t.subject}</td>
-                              <td className={`py-3 pr-4 ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>{t.status}</td>
+                              <td className={`py-3 pr-4 text-[14px] font-medium ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{t.subject}</td>
+                              <td className={`py-3 pr-4 text-[14px] ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>{t.status}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -523,15 +523,15 @@ export default function DealDetail({ dealId }: { dealId: number }) {
               <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
                 <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
                   <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
-                    <ClockCounterClockwise size={13} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
+                    <ClockCounterClockwise size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
                   </div>
-                  <p className={`font-heading text-[11px] font-bold uppercase tracking-[0.12em] ${isDark ? "text-[#71717A]" : "text-[#1D4ED8]"}`}>History</p>
+                  <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-500"}`}>History</p>
                 </div>
 
                 {deal.timeline.length === 0 ? (
                   <div className="py-12 flex flex-col items-center justify-center gap-2">
                     <ClockCounterClockwise size={28} color={isDark ? "#27272A" : "#E2E8F0"} weight="duotone" />
-                    <p className={`text-[12.5px] ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>No history yet</p>
+                    <p className={`text-[14px] ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>No history yet</p>
                   </div>
                 ) : (() => {
                   const grouped: Record<string, TimelineEntry[]> = {};
@@ -546,7 +546,7 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                       {sortedDates.map(date => (
                         <div key={date}>
                           <div className="flex items-center gap-3 mb-4">
-                            <span className={`text-[11px] font-semibold ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+                            <span className={`text-[12px] font-semibold ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
                               {new Date(date).toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" })}
                             </span>
                             <div className={`flex-1 h-px ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
@@ -558,25 +558,25 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                               return (
                                 <div key={i} className="flex gap-4">
                                   <div className="w-16 flex-shrink-0 text-right">
-                                    <span className={`text-[11px] font-medium ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{entry.time}</span>
+                                    <span className={`text-[12px] font-medium ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{entry.time}</span>
                                   </div>
 
                                   <div className="flex flex-col items-center flex-shrink-0">
                                     <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center z-10 flex-shrink-0 ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
-                                      <PencilSimple size={13} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />
+                                      <PencilSimple size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
                                     </div>
                                     {!isLast && <div className={`w-px flex-1 my-1 min-h-[24px] ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />}
                                   </div>
 
                                   <div className="pb-5 flex-1 min-w-0 overflow-hidden">
                                     {entry.probability && (
-                                      <p className={`text-[12.5px] leading-relaxed break-words ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>
+                                      <p className={`text-[14px] leading-relaxed break-words ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>
                                         <span className="font-bold">Probability:</span>{" "}
                                         <span className={isDark ? "text-[#71717A]" : "text-slate-500"}>{entry.probability.from}.0 → {entry.probability.to}.0</span>
                                       </p>
                                     )}
                                     {entry.stage && entry.stage.to && (
-                                      <p className={`text-[12.5px] leading-relaxed break-words ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>
+                                      <p className={`text-[14px] leading-relaxed break-words ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>
                                         <span className="font-bold">Stage:</span>{" "}
                                         {entry.stage.from
                                           ? <span className={isDark ? "text-[#71717A]" : "text-slate-500"}>{entry.stage.from} → {entry.stage.to}</span>
@@ -584,7 +584,7 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                                         }
                                       </p>
                                     )}
-                                    <p className={`text-[11px] mt-0.5 break-all ${isDark ? "text-[#52525B]" : "text-inherit"}`}>by {entry.by}</p>
+                                    <p className={`text-[12px] mt-0.5 break-all ${isDark ? "text-[#9CA3AF]" : "text-inherit"}`}>by {entry.by}</p>
                                   </div>
                                 </div>
                               );

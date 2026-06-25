@@ -75,7 +75,7 @@ export default function Sidebar() {
           {/* Desktop collapse toggle */}
           <button
             onClick={toggle}
-            className={`hidden lg:flex flex-shrink-0 w-8 h-8 items-center justify-center rounded-lg transition-all duration-150 ${isDark ? "text-[#737373] hover:text-[#FAFAFA] hover:bg-[#262626]" : "text-slate-500 hover:bg-[#EFF6FF]"}`}
+            className={`hidden lg:flex flex-shrink-0 w-8 h-8 items-center justify-center rounded-lg transition-all duration-150 ${isDark ? "text-[#9CA3AF] hover:text-[#FAFAFA] hover:bg-[#262626]" : "text-slate-500 hover:bg-[#EFF6FF]"}`}
             title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             <List size={18} weight="bold" />
@@ -84,7 +84,7 @@ export default function Sidebar() {
           {/* Mobile close button */}
           <button
             onClick={closeMobile}
-            className={`flex lg:hidden flex-shrink-0 w-8 h-8 items-center justify-center rounded-lg transition-all duration-150 ${isDark ? "text-[#737373] hover:text-[#FAFAFA] hover:bg-[#262626]" : "text-slate-500 hover:bg-[#EFF6FF]"}`}
+            className={`flex lg:hidden flex-shrink-0 w-8 h-8 items-center justify-center rounded-lg transition-all duration-150 ${isDark ? "text-[#9CA3AF] hover:text-[#FAFAFA] hover:bg-[#262626]" : "text-slate-500 hover:bg-[#EFF6FF]"}`}
           >
             <X size={18} weight="bold" />
           </button>
@@ -93,7 +93,7 @@ export default function Sidebar() {
             <img
               src="/logo.png"
               alt="Social DNA Labs"
-              style={{ height: "22px", width: "auto", display: "block", flexShrink: 0 }}
+              style={{ height: "32px", width: "auto", display: "block", flexShrink: 0 }}
             />
           )}
         </div>
@@ -113,14 +113,14 @@ export default function Sidebar() {
                   ${collapsed ? "justify-center w-12 h-12 mx-auto" : "gap-3 px-3 py-2.5 w-full"}
                   ${active
                     ? isDark ? "bg-[#18181B] text-[#FAFAFA]" : "bg-[#EFF6FF] text-[#1D4ED8]"
-                    : isDark ? "text-[#737373] hover:bg-[#262626] hover:text-[#FAFAFA]" : "text-slate-600 hover:bg-[#EFF6FF]"
+                    : isDark ? "text-[#9CA3AF] hover:bg-[#262626] hover:text-[#FAFAFA]" : "text-slate-600 hover:bg-[#EFF6FF]"
                   }
                 `}
               >
                 <Icon
                   size={18}
                   weight="duotone"
-                  className={`flex-shrink-0 transition-colors ${active ? isDark ? "text-[#FAFAFA]" : "text-[#1D4ED8]" : isDark ? "text-[#52525B] group-hover:text-[#FAFAFA]" : "text-slate-400"}`}
+                  className={`flex-shrink-0 transition-colors ${active ? isDark ? "text-[#FAFAFA]" : "text-[#1D4ED8]" : isDark ? "text-[#9CA3AF] group-hover:text-[#FAFAFA]" : "text-slate-400"}`}
                 />
 
                 {!collapsed && (
@@ -163,7 +163,7 @@ export default function Sidebar() {
               <span className="flex justify-center">
                 <Link
                   href="/settings"
-                  className={`flex items-center justify-center w-12 h-12 mx-auto rounded-lg transition-all duration-150 ${isDark ? "text-[#737373] hover:text-[#FAFAFA] hover:bg-[#262626]" : "text-slate-400 hover:bg-[#EFF6FF]"}`}
+                  className={`flex items-center justify-center w-12 h-12 mx-auto rounded-lg transition-all duration-150 ${isDark ? "text-[#9CA3AF] hover:text-[#FAFAFA] hover:bg-[#262626]" : "text-slate-400 hover:bg-[#EFF6FF]"}`}
                 >
                   <Gear size={18} weight="duotone" />
                 </Link>
@@ -172,9 +172,9 @@ export default function Sidebar() {
           ) : (
             <Link
               href="/settings"
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-nav-item transition-all duration-150 ${isDark ? "text-[#737373] hover:bg-[#262626] hover:text-[#FAFAFA]" : "text-slate-600 hover:bg-[#EFF6FF]"}`}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-nav-item transition-all duration-150 ${isDark ? "text-[#9CA3AF] hover:bg-[#262626] hover:text-[#FAFAFA]" : "text-slate-600 hover:bg-[#EFF6FF]"}`}
             >
-              <Gear size={18} weight="duotone" className={`flex-shrink-0 ${isDark ? "text-[#52525B]" : "text-slate-400"}`} />
+              <Gear size={18} weight="duotone" className={`flex-shrink-0 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`} />
               Settings
             </Link>
           )}

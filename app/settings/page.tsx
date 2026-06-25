@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useRef } from "react";
 import Sidebar from "@/components/layout/Sidebar";
 import TopBar from "@/components/layout/TopBar";
@@ -27,9 +27,9 @@ import {
 } from "@phosphor-icons/react";
 import { useTheme } from "@/components/ThemeContext";
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Nav structure
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 const SECTIONS = [
   {
     key: "general", label: "General", icon: Gear,
@@ -67,9 +67,9 @@ const SECTIONS = [
   },
 ];
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Data
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 interface UserRecord {
   id: number; name: string; role: string; email: string;
   initials: string; firstName: string; lastName: string; phone: string;
@@ -132,9 +132,9 @@ const ROLE_ACTIVITIES: RoleActivity[] = [
   { id:"11",roleId:"sa",    action:"Role created",                    user:"PM SDL", userEmail:"pm@socialdnalabs.com",    timestamp:"2026-05-27 14:38" },
 ];
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Shared UI primitives — NO <p> tags
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function SettingCard({ icon: Icon, title, color = "#3B82F6", children, action }: {
   icon: React.ElementType; title: string; color?: string;
   children: React.ReactNode; action?: React.ReactNode;
@@ -147,7 +147,7 @@ function SettingCard({ icon: Icon, title, color = "#3B82F6", children, action }:
         <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ backgroundColor: color + (isDark ? "22" : "18") }}>
           <Icon size={13} color={color} weight="duotone" />
         </div>
-        <span className={`font-heading text-[11px] font-bold uppercase tracking-[0.12em] flex-1 ${isDark ? "text-[#71717A]" : ""}`} style={isDark ? undefined : { color }}>{title}</span>
+        <span className={`font-heading text-[12px] font-bold uppercase tracking-wider flex-1 text-slate-500`}>{title}</span>
         {action}
       </div>
       <div className="px-5 py-2">{children}</div>
@@ -179,7 +179,7 @@ function KV({ label, value, link, editable, onSave }: {
   return (
     <div className={`py-2.5 border-b last:border-0 flex items-start justify-between group ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
       <div className="flex-1 min-w-0">
-        <div className={`text-[10.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{label}</div>
+        <div className={`text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{label}</div>
         {isEditing ? (
           <div className="flex items-center gap-1.5 -mx-2">
             <input
@@ -191,9 +191,9 @@ function KV({ label, value, link, editable, onSave }: {
                 if (e.key === "Escape") handleCancel();
               }}
               autoFocus
-              className={`flex-1 px-2 py-1 text-[13px] font-medium border rounded-lg focus:outline-none ${isDark ? "border-[#52525B] bg-[#27272A] text-[#D4D4D8] focus:border-[#71717A]" : "border-[#4A7AE8] bg-white focus:border-[#1D4ED8] focus:ring-1 focus:ring-[#4A7AE8] text-slate-700"}`}
+              className={`flex-1 px-2 py-1 text-[14px] font-medium border rounded-lg focus:outline-none ${isDark ? "border-[#9CA3AF] bg-[#27272A] text-[#D4D4D8] focus:border-[#71717A]" : "border-[#4A7AE8] bg-white focus:border-[#1D4ED8] focus:ring-1 focus:ring-[#4A7AE8] text-slate-700"}`}
             />
-            <button onClick={handleSave} className={`px-2 py-1 text-[11px] font-bold rounded whitespace-nowrap transition-colors ${isDark ? "bg-[#3F3F46] text-[#D4D4D8] hover:bg-[#52525B]" : "bg-[#1D4ED8] text-white hover:bg-[#60A5FA]"}`}>
+            <button onClick={handleSave} className={`px-2 py-1 text-[11px] font-bold rounded whitespace-nowrap transition-colors ${isDark ? "bg-[#3F3F46] text-[#D4D4D8] hover:bg-[#9CA3AF]" : "bg-[#1D4ED8] text-white hover:bg-[#60A5FA]"}`}>
               Save
             </button>
             <button onClick={handleCancel} className={`px-2 py-1 text-[11px] font-semibold border rounded whitespace-nowrap transition-colors ${isDark ? "border-[#3F3F46] text-[#71717A] hover:bg-[#27272A]" : "border-[#E3ECFC] text-slate-500 hover:bg-slate-50"}`}>
@@ -201,7 +201,7 @@ function KV({ label, value, link, editable, onSave }: {
             </button>
           </div>
         ) : (
-          <div className={`text-[13px] font-medium leading-snug ${link ? (isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]") : empty ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>
+          <div className={`text-[14px] font-medium leading-snug ${link ? (isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]") : empty ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>
             {empty ? "—" : editValue}
           </div>
         )}
@@ -227,7 +227,7 @@ function KVGrid({ children }: { children: React.ReactNode }) {
 function RoleBadge({ role }: { role: string }) {
   const cfg = ROLE_BADGE[role] ?? { bg:"#F1F5F9", text:"#475569", border:"#E2E8F0" };
   return (
-    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border" style={{ backgroundColor:cfg.bg, color:cfg.text, borderColor:cfg.border }}>
+    <span className="text-[11px] font-bold px-2 py-0.5 rounded-full border" style={{ backgroundColor:cfg.bg, color:cfg.text, borderColor:cfg.border }}>
       {role}
     </span>
   );
@@ -261,10 +261,10 @@ function ProfileHero({ initials, name, role, subtitle, contacts, avatarBg, avata
             <span className={`text-[16px] font-extrabold tracking-tight leading-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>{name}</span>
             <RoleBadge role={role} />
           </div>
-          {subtitle && <div className={`text-[11.5px] mb-1.5 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{subtitle}</div>}
+          {subtitle && <div className={`text-[12px] mb-1.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{subtitle}</div>}
           <div className="flex items-center gap-3 flex-wrap">
             {contacts.map(({ icon: Icon, value, link }, i) => (
-              <div key={i} className={`flex items-center gap-1.5 text-[11.5px] ${link ? (isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]") : (isDark ? "text-[#71717A]" : "text-slate-500")}`}>
+              <div key={i} className={`flex items-center gap-1.5 text-[12px] ${link ? (isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]") : (isDark ? "text-[#71717A]" : "text-slate-500")}`}>
                 <Icon size={11} weight="duotone" />
                 <span>{value}</span>
               </div>
@@ -276,9 +276,9 @@ function ProfileHero({ initials, name, role, subtitle, contacts, avatarBg, avata
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Personal Settings panel
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function PersonalSettingsPanel() {
   const [data, setData] = useState({
     firstName: "PM",
@@ -332,9 +332,9 @@ function PersonalSettingsPanel() {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  New User Drawer
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function NewUserDrawer({ open, onClose, onSubmit }: {
   open: boolean;
   onClose: () => void;
@@ -419,7 +419,7 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
       ...(isDark ? {} : { backgroundColor: "#EFF6FF" }),
       fontSize: "0.82rem",
       "& fieldset":             { borderColor: isDark ? "#3F3F46" : "#E3ECFC", borderWidth: 1.5 },
-      "&:hover fieldset":       { borderColor: isDark ? "#52525B" : "#E3ECFC" },
+      "&:hover fieldset":       { borderColor: isDark ? "#9CA3AF" : "#E3ECFC" },
       "&.Mui-focused fieldset": { borderColor: isDark ? "#71717A" : "#E3ECFC", borderWidth: 2 },
       "&.Mui-focused":          { boxShadow: isDark ? "none" : "0 0 0 2px #4A7AE8" },
       "& input":                { padding: "10px 14px" },
@@ -464,7 +464,7 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
         {/* User Information */}
         <div>
-          <h3 className={`font-heading text-[13px] font-bold mb-4 tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>User Information</h3>
+          <h3 className={`font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500`}>User Information</h3>
           <div className="space-y-3">
             <TextField
               label="First Name"
@@ -501,7 +501,7 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
 
         {/* More Information */}
         <div>
-          <h3 className={`font-heading text-[13px] font-bold mb-4 tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>More Information</h3>
+          <h3 className={`font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500`}>More Information</h3>
           <div className="space-y-3">
             <FormControl size="small" fullWidth sx={FX}>
               <InputLabel>Gender</InputLabel>
@@ -536,7 +536,7 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
 
         {/* Address Details */}
         <div>
-          <h3 className={`font-heading text-[13px] font-bold mb-4 tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Address Details</h3>
+          <h3 className={`font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500`}>Address Details</h3>
           <div className="space-y-3">
             <TextField
               label="Address"
@@ -606,7 +606,7 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
         </Button>
         <Button variant="contained" onClick={handleSubmit}
           disabled={!formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim()}
-          sx={{ bgcolor: isDark ? "#27272A" : "inherit", color: isDark ? "#F4F4F5" : undefined, borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "inherit" }, "&:active": { bgcolor: isDark ? "#18181B" : "#0C2472" }, "&:disabled": { bgcolor: isDark ? "#27272A" : "#E2E8F0", color: isDark ? "#52525B" : "#F1F5F9" } }}>
+          sx={{ bgcolor: isDark ? "#27272A" : "inherit", color: isDark ? "#F4F4F5" : undefined, borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "inherit" }, "&:active": { bgcolor: isDark ? "#18181B" : "#0C2472" }, "&:disabled": { bgcolor: isDark ? "#27272A" : "#E2E8F0", color: isDark ? "#9CA3AF" : "#F1F5F9" } }}>
           Create User
         </Button>
       </div>
@@ -614,9 +614,9 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Users panel
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function UserDetailPanel({ user, onUpdate }: { user: UserRecord; onUpdate: (updates: Partial<UserRecord>) => void }) {
   const [data, setData] = useState<Record<string, string>>({
     firstName: user.firstName,
@@ -755,12 +755,12 @@ function UsersPanel() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 mb-0.5">
-                    <span className={`text-[13px] font-semibold truncate ${isActive?"text-[#1D4ED8]":"text-slate-800"}`}>{user.name}</span>
+                    <span className={`text-[14px] font-semibold truncate ${isActive?"text-[#1D4ED8]":"text-slate-800"}`}>{user.name}</span>
                     <div className="flex-shrink-0">
                       <RoleBadge role={user.role} />
                     </div>
                   </div>
-                  <div className="text-[11px] text-slate-400 truncate">{user.email}</div>
+                  <div className="text-[12px] text-slate-400 truncate">{user.email}</div>
                 </div>
                 {/* Online dot */}
                 <div className={`w-2 h-2 rounded-full flex-shrink-0 ${user.id <= 2 ? "bg-[#10B981]" : "bg-slate-200"}`} />
@@ -771,8 +771,8 @@ function UsersPanel() {
 
         {/* Pagination */}
         <div className="px-4 py-2.5 border-t border-[#E3ECFC] flex items-center justify-between">
-          <span className="text-[11px] text-slate-400">Rows per page: <span className="font-semibold text-slate-600">25</span></span>
-          <span className="text-[11px] text-slate-500 font-medium">1–{filtered.length} of {filtered.length}</span>
+          <span className="text-[12px] text-slate-400">Rows per page: <span className="font-semibold text-slate-600">25</span></span>
+          <span className="text-[12px] text-slate-500 font-medium">1–{filtered.length} of {filtered.length}</span>
         </div>
       </div>
 
@@ -789,9 +789,9 @@ function UsersPanel() {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Organization panel
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function OrganizationPanel() {
   const [orgData, setOrgData] = useState({
     companyName: "Social DNA Labs",
@@ -860,9 +860,9 @@ function OrganizationPanel() {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  New Role Drawer
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function NewRoleDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [formData, setFormData] = useState({
     roleName: "",
@@ -898,7 +898,7 @@ function NewRoleDrawer({ open, onClose }: { open: boolean; onClose: () => void }
       ...(isDark ? {} : { backgroundColor: "#EFF6FF" }),
       fontSize: "0.82rem",
       "& fieldset":             { borderColor: isDark ? "#3F3F46" : "#E3ECFC", borderWidth: 1.5 },
-      "&:hover fieldset":       { borderColor: isDark ? "#52525B" : "#E3ECFC" },
+      "&:hover fieldset":       { borderColor: isDark ? "#9CA3AF" : "#E3ECFC" },
       "&.Mui-focused fieldset": { borderColor: isDark ? "#71717A" : "#E3ECFC", borderWidth: 2 },
       "&.Mui-focused":          { boxShadow: isDark ? "none" : "0 0 0 2px #4A7AE8" },
       "& input":                { padding: "10px 14px" },
@@ -931,7 +931,7 @@ function NewRoleDrawer({ open, onClose }: { open: boolean; onClose: () => void }
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
         {/* Role Details */}
         <div>
-          <h3 className={`font-heading text-[13px] font-bold mb-4 tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Role Details</h3>
+          <h3 className={`font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500`}>Role Details</h3>
           <div className="space-y-3">
             <TextField label="Role Name" value={formData.roleName} onChange={e => handleChange("roleName", e.target.value)}
               size="small" fullWidth sx={FX} />
@@ -951,7 +951,7 @@ function NewRoleDrawer({ open, onClose }: { open: boolean; onClose: () => void }
 
         {/* Additional Information */}
         <div>
-          <h3 className={`font-heading text-[13px] font-bold mb-4 tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Additional Information</h3>
+          <h3 className={`font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500`}>Additional Information</h3>
           <div className="space-y-3">
             <TextField label="Department" value={formData.department} onChange={e => handleChange("department", e.target.value)}
               size="small" fullWidth sx={FX} />
@@ -981,9 +981,9 @@ function NewRoleDrawer({ open, onClose }: { open: boolean; onClose: () => void }
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Roles panel
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function RoleTreeNode({ node, depth, selectedId, expandedIds, onSelect, onToggle, isDark }: {
   node: RoleNode; depth: number; selectedId: string;
   expandedIds: Set<string>; onSelect: (n: RoleNode) => void; onToggle: (id: string) => void;
@@ -1012,14 +1012,14 @@ function RoleTreeNode({ node, depth, selectedId, expandedIds, onSelect, onToggle
             : <span className={`w-1.5 h-1.5 rounded-full inline-block ${isDark ? "bg-[#3F3F46]" : "bg-[#CBD5E1]"}`} />
           }
         </button>
-        <div className={`text-[13px] font-medium flex-1 ${
+        <div className={`text-[14px] font-medium flex-1 ${
           isSelected
             ? isDark ? "text-[#D4D4D8] font-semibold" : "text-[#0C2472] font-semibold"
             : isDark ? "text-[#71717A]" : "text-slate-500"
         }`}>
           {node.name}
         </div>
-        {isSelected && <CheckCircle size={14} color={isDark ? "#52525B" : "#1D4ED8"} weight="duotone" />}
+        {isSelected && <CheckCircle size={14} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />}
       </div>
 
       {hasChildren && isExpanded && node.children!.map(child => (
@@ -1068,14 +1068,14 @@ function RolesPanel() {
               ? isDark ? "bg-[#27272A] border-[#3F3F46] shadow-sm" : "bg-[#EFF6FF] border-[#1D4ED8] shadow-sm"
               : isDark ? "border-[#27272A] hover:bg-[#1C1C1E]" : "border-[#E3ECFC] hover:bg-[#f9fbff]"
           }`}>
-          <div className={`text-[13px] font-semibold ${
+          <div className={`text-[14px] font-semibold ${
             selectedRole.id === role.id
               ? isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"
               : isDark ? "text-[#71717A]" : "text-slate-600"
           }`}>
             {role.name}
           </div>
-          <div className={`text-[11px] mt-0.5 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{role.description}</div>
+          <div className={`text-[12px] mt-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{role.description}</div>
         </button>
       ))}
     </div>
@@ -1092,7 +1092,7 @@ function RolesPanel() {
               className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
                 viewMode === "tree"
                   ? isDark ? "bg-[#27272A] text-[#D4D4D8]" : "bg-[#E3ECFC] text-[#0C2472]"
-                  : isDark ? "text-[#52525B]" : "text-slate-400"
+                  : isDark ? "text-[#9CA3AF]" : "text-slate-400"
               }`}>
               <Tree size={12} weight="duotone" />
               Tree
@@ -1101,7 +1101,7 @@ function RolesPanel() {
               className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
                 viewMode === "list"
                   ? isDark ? "bg-[#27272A] text-[#D4D4D8]" : "bg-[#E3ECFC] text-[#0C2472]"
-                  : isDark ? "text-[#52525B]" : "text-slate-400"
+                  : isDark ? "text-[#9CA3AF]" : "text-slate-400"
               }`}>
               <ListBullets size={12} weight="duotone" />
               List
@@ -1134,10 +1134,10 @@ function RolesPanel() {
         <div className="flex items-center gap-2 mb-5">
           {(["overview","timeline"] as const).map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
-              className={`px-4 py-1.5 rounded-full text-[12.5px] font-semibold capitalize transition-all ${
+              className={`px-4 py-1.5 rounded-full text-[14px] font-semibold capitalize transition-all ${
                 activeTab === tab
                   ? isDark ? "bg-[#27272A] text-[#D4D4D8] shadow-sm" : "bg-[#1D4ED8] text-white shadow-sm"
-                  : isDark ? "bg-[#1C1C1E] text-[#52525B] hover:bg-[#27272A] hover:text-[#A1A1AA]" : "bg-white text-slate-500 hover:bg-[#E3ECFC] hover:text-[#0C2472]"
+                  : isDark ? "bg-[#1C1C1E] text-[#9CA3AF] hover:bg-[#27272A] hover:text-[#A1A1AA]" : "bg-white text-slate-500 hover:bg-[#E3ECFC] hover:text-[#0C2472]"
               }`}>
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
@@ -1185,7 +1185,7 @@ function RolesPanel() {
                 <div className="w-6 h-6 rounded-lg bg-[#EFF6FF] flex items-center justify-center">
                   <ClockCounterClockwise size={13} color="#1D4ED8" weight="duotone" />
                 </div>
-                <span className="font-heading text-[11px] font-bold uppercase tracking-[0.12em] text-[#1D4ED8]">History</span>
+                <span className="font-heading text-[12px] font-bold uppercase tracking-wider text-slate-500">History</span>
               </div>
 
               {roleActivities.length > 0 ? (
@@ -1194,7 +1194,7 @@ function RolesPanel() {
                     <div key={date}>
                       {/* Date divider */}
                       <div className="flex items-center gap-3 mb-4">
-                        <span className="text-[11px] font-semibold text-slate-400 whitespace-nowrap">{date}</span>
+                        <span className="text-[12px] font-semibold text-slate-400 whitespace-nowrap">{date}</span>
                         <div className="flex-1 h-px bg-[#E3ECFC]" />
                       </div>
                       {/* Items for this date */}
@@ -1206,14 +1206,14 @@ function RolesPanel() {
                           return (
                             <div key={activity.id} className="flex items-start gap-4">
                               {/* Time */}
-                              <span className="text-[11px] text-slate-400 font-medium w-[60px] flex-shrink-0 pt-0.5">{time}</span>
+                              <span className="text-[12px] text-slate-400 font-medium w-[60px] flex-shrink-0 pt-0.5">{time}</span>
                               {/* Icon */}
                               <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: bg }}>
                                 <Icon size={13} color={color} weight="duotone" />
                               </div>
                               {/* Text */}
                               <div className="flex-1 min-w-0">
-                                <div className="text-[13px] text-slate-700 leading-snug">
+                                <div className="text-[14px] text-slate-700 leading-snug">
                                   <span className="font-bold">{verb}:</span>{" "}
                                   <span className="font-medium">{rest.join(" ")}</span>
                                 </div>
@@ -1227,7 +1227,7 @@ function RolesPanel() {
                   ))}
                 </div>
               ) : (
-                <div className="px-5 py-8 text-center text-slate-400 text-[12.5px]">
+                <div className="px-5 py-8 text-center text-slate-400 text-[14px]">
                   No activity recorded for this role.
                 </div>
               )}
@@ -1242,9 +1242,9 @@ function RolesPanel() {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Permissions panel
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 type PermKey = "fullAccess"|"create"|"read"|"update"|"delete"|"print"|"import"|"export"|"email"|"dataSharingPublic";
 type PermState = Record<string, Record<string, Record<PermKey, boolean>>>;
 
@@ -1369,10 +1369,10 @@ function PermissionPanel() {
       <div className="flex items-center gap-1 px-6 pt-4 pb-0">
         {(["matrix","summary"] as const).map(t => (
           <button key={t} onClick={() => setTab(t)}
-            className={`px-4 py-1.5 rounded-t-xl text-[12.5px] font-semibold transition-all border border-b-0 ${
+            className={`px-4 py-1.5 rounded-t-xl text-[14px] font-semibold transition-all border border-b-0 ${
               tab === t
                 ? isDark ? "bg-[#1C1C1E] border-[#27272A] text-[#D4D4D8]" : "bg-white border-[#E3ECFC] text-slate-900"
-                : isDark ? "bg-transparent border-transparent text-[#52525B] hover:text-[#A1A1AA]" : "bg-transparent border-transparent text-slate-400 hover:text-slate-600"
+                : isDark ? "bg-transparent border-transparent text-[#9CA3AF] hover:text-[#A1A1AA]" : "bg-transparent border-transparent text-slate-400 hover:text-slate-600"
             }`}>
             {t === "matrix" ? "Permission Matrix" : "Summary View"}
           </button>
@@ -1385,7 +1385,7 @@ function PermissionPanel() {
           <table className="w-full border-collapse text-left" style={{ minWidth: 900 }}>
             <thead>
               <tr className={`border-b ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
-                <th className={`sticky left-0 z-10 px-5 py-3 text-[11px] font-bold uppercase tracking-wider w-[160px] border-r ${isDark ? "bg-[#111113] text-[#52525B] border-[#27272A]" : "bg-[#f9fbff] text-slate-600 border-[#E3ECFC]"}`}>
+                <th className={`sticky left-0 z-10 px-5 py-3 text-[11px] font-bold uppercase tracking-wider w-[160px] border-r ${isDark ? "bg-[#111113] text-[#9CA3AF] border-[#27272A]" : "bg-[#f9fbff] text-slate-600 border-[#E3ECFC]"}`}>
                   Module
                 </th>
                 {PERM_ROLES.map(role => (
@@ -1400,7 +1400,7 @@ function PermissionPanel() {
             <tbody>
               {PERM_MODULES.map((mod, i) => (
                 <tr key={mod} className={`border-b ${isDark ? `border-[#27272A] ${i % 2 === 0 ? "bg-[#1C1C1E]" : "bg-[#18181B]"}` : `border-[#E3ECFC] ${i % 2 === 0 ? "bg-white" : "bg-[#f9fbff]"}`}`}>
-                  <td className={`sticky left-0 z-10 px-5 py-2 border-r font-semibold text-[13px] bg-inherit align-middle whitespace-nowrap ${isDark ? "text-[#A1A1AA] border-[#27272A]" : "text-slate-700 border-[#E3ECFC]"}`}>
+                  <td className={`sticky left-0 z-10 px-5 py-2 border-r font-semibold text-[14px] bg-inherit align-middle whitespace-nowrap ${isDark ? "text-[#A1A1AA] border-[#27272A]" : "text-slate-700 border-[#E3ECFC]"}`}>
                     {mod}
                   </td>
                   {PERM_ROLES.map(role => (
@@ -1439,7 +1439,7 @@ function PermissionPanel() {
                       const hasAny = activePerms.length > 0;
                       return (
                         <div key={mod} className="flex items-center justify-between px-4 py-2 hover:bg-[#fafcff] transition-colors">
-                          <span className="text-[12.5px] text-slate-600 font-medium">{mod}</span>
+                          <span className="text-[14px] text-slate-600 font-medium">{mod}</span>
                           {hasAny ? (
                             <div className="flex items-center gap-0.5">
                               {activePerms.map(perm => {
@@ -1492,7 +1492,7 @@ function PermissionPanel() {
       {/* Legend */}
       {tab === "matrix" && (
         <div className={`mx-6 mb-5 rounded-2xl border px-5 py-3 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
-          <div className={`text-[11px] font-bold uppercase tracking-wider mb-2 ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>Permission Legend</div>
+          <div className={`text-[11px] font-bold uppercase tracking-wider mb-2 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Permission Legend</div>
           <div className="grid grid-cols-4 gap-x-6 gap-y-1.5">
             {(Object.entries(PERM_META) as [PermKey, typeof PERM_META[PermKey]][]).map(([key, meta]) => {
               const Icon = meta.icon;
@@ -1510,12 +1510,12 @@ function PermissionPanel() {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Modules and Fields panel
-// ─────────────────────────────────────────────
-// ─────────────────────────────────────────────
+// ---------------------------------------------
+// ---------------------------------------------
 //  Layout Editor (full-screen overlay)
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 const NEW_FIELD_TYPES = [
   { label:"Single Line",  icon:TextT           },
   { label:"Multi-Line",   icon:TextAlignLeft   },
@@ -1603,12 +1603,12 @@ function FieldCell({ field }: { field: LField }) {
   return (
     <div className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-white hover:border-[#4A7AE8] transition-colors cursor-pointer group">
       <div className="flex items-center gap-0.5 min-w-0">
-        <span className="text-[12px] font-medium text-slate-700 truncate">{field.label}</span>
-        {field.required && <span className="text-red-500 text-[10px] ml-0.5">*</span>}
+        <span className="text-[14px] font-medium text-slate-700 truncate">{field.label}</span>
+        {field.required && <span className="text-red-500 text-[12px] ml-0.5">*</span>}
       </div>
       <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
-        {field.prefix && <span className="text-[11px] text-slate-400">{field.prefix} ·</span>}
-        {field.type && <span className="text-[11px] text-inherit">{field.type}</span>}
+        {field.prefix && <span className="text-[12px] text-slate-400">{field.prefix} ·</span>}
+        {field.type && <span className="text-[12px] text-inherit">{field.type}</span>}
         <span className="text-slate-300 group-hover:text-slate-500 text-[11px] font-bold">···</span>
       </div>
     </div>
@@ -1628,20 +1628,20 @@ function LayoutEditor({ module, layoutName, onClose }: {
     <div className="absolute inset-0 z-30 bg-white flex flex-col overflow-hidden">
       {/* Top bar */}
       <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#E3ECFC] flex-shrink-0">
-        <button onClick={onClose} className="flex items-center gap-1.5 text-[12.5px] font-semibold text-slate-600 transition-colors">
+        <button onClick={onClose} className="flex items-center gap-1.5 text-[14px] font-semibold text-slate-600 transition-colors">
           <ArrowLeft size={14} weight="bold" />
           {modDef?.label ?? module}
         </button>
-        <button className="flex items-center gap-1.5 px-2.5 py-1 border border-[#E3ECFC] rounded-lg text-[12.5px] font-semibold text-slate-700 hover:border-[#1D4ED8] bg-white transition-colors">
+        <button className="flex items-center gap-1.5 px-2.5 py-1 border border-[#E3ECFC] rounded-lg text-[14px] font-semibold text-slate-700 hover:border-[#1D4ED8] bg-white transition-colors">
           {layoutName} <CaretDown size={11} weight="bold" />
         </button>
         <IconButton size="small" sx={{ p:0.5, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
           <Gear size={14} weight="duotone" />
         </IconButton>
         <div className="flex-1" />
-        <button onClick={onClose} className="px-3 py-1.5 text-[12.5px] font-semibold text-slate-500 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">Cancel</button>
-        <button className="px-3 py-1.5 text-[12.5px] font-semibold text-slate-500 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">Save and Close</button>
-        <button className="px-4 py-1.5 text-[12.5px] font-bold text-white bg-[#1D4ED8] rounded-lg hover:bg-[#60A5FA] transition-colors">Save</button>
+        <button onClick={onClose} className="px-3 py-1.5 text-[14px] font-semibold text-slate-500 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">Cancel</button>
+        <button className="px-3 py-1.5 text-[14px] font-semibold text-slate-500 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">Save and Close</button>
+        <button className="px-4 py-1.5 text-[14px] font-bold text-white bg-[#1D4ED8] rounded-lg hover:bg-[#60A5FA] transition-colors">Save</button>
       </div>
 
       {/* Body */}
@@ -1650,7 +1650,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
         <div className="w-[260px] flex-shrink-0 border-r border-[#E3ECFC] bg-[#f9fbff] overflow-y-auto">
           {tab === "create" && (<>
             <button onClick={() => setNfOpen(p=>!p)}
-              className="flex items-center justify-between w-full px-4 py-2.5 text-[10.5px] font-bold text-slate-400 uppercase tracking-wider hover:bg-[#EFF6FF]">
+              className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold text-slate-400 uppercase tracking-wider hover:bg-[#EFF6FF]">
               <span>New Fields</span>
               {nfOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
             </button>
@@ -1660,7 +1660,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                   const Icon = ft.icon;
                   return (
                     <div key={ft.label}
-                      className="flex items-center gap-1.5 px-2 py-1.5 border border-[#E3ECFC] rounded-lg bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF] cursor-grab transition-colors text-[13px] font-medium text-slate-600">
+                      className="flex items-center gap-1.5 px-2 py-1.5 border border-[#E3ECFC] rounded-lg bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF] cursor-grab transition-colors text-[14px] font-medium text-slate-600">
                       <Icon size={11} color="#94A3B8" weight="duotone" />
                       {ft.label}
                     </div>
@@ -1674,7 +1674,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
               </button>
             </div>
             <button onClick={() => setUnusedOpen(p=>!p)}
-              className="flex items-center justify-between w-full px-4 py-2.5 text-[10.5px] font-bold text-slate-400 uppercase tracking-wider hover:bg-[#EFF6FF]">
+              className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold text-slate-400 uppercase tracking-wider hover:bg-[#EFF6FF]">
               <span>Unused Items</span>
               {unusedOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
             </button>
@@ -1684,14 +1684,14 @@ function LayoutEditor({ module, layoutName, onClose }: {
           {tab === "quickCreate" && (
             <div>
               <div className="flex items-center justify-between px-4 py-3 border-b border-[#E3ECFC]">
-                <span className="text-[13px] font-bold text-slate-700">Available Fields</span>
+                <span className="text-[14px] font-bold text-slate-700">Available Fields</span>
                 <IconButton size="small" sx={{ p:0.4, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
                   <MagnifyingGlass size={13} weight="duotone"/>
                 </IconButton>
               </div>
               {Object.entries(QC_AVAILABLE).map(([sec, flds]) => (
                 <div key={sec} className="px-3 pt-3">
-                  <div className="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 px-1">{sec}</div>
+                  <div className="text-[12px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 px-1">{sec}</div>
                   {flds.map(f => (
                     <div key={f} className="flex items-center gap-2 px-2 py-1.5 mb-0.5 border border-[#E3ECFC] rounded-lg bg-white text-[12px] text-slate-600 cursor-grab hover:border-[#1D4ED8] hover:bg-[#EFF6FF] transition-colors">
                       <DotsSixVertical size={11} color="#E2E8F0"/>
@@ -1706,7 +1706,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
           {tab === "detailView" && (
             <div>
               <button onClick={() => setUnusedOpen(p=>!p)}
-                className="flex items-center justify-between w-full px-4 py-2.5 text-[10.5px] font-bold text-slate-400 uppercase tracking-wider hover:bg-[#EFF6FF] border-b border-[#E3ECFC]">
+                className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold text-slate-400 uppercase tracking-wider hover:bg-[#EFF6FF] border-b border-[#E3ECFC]">
                 <span>Unused Related List</span>
                 {unusedOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
               </button>
@@ -1724,7 +1724,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                 const labels = { create:"Create", quickCreate:"Quick Create", detailView:"Detail View" };
                 return (
                   <button key={t} onClick={() => setTab(t)}
-                    className={`px-5 py-2.5 text-[13px] font-semibold transition-all border-b-2 -mb-px ${
+                    className={`px-5 py-2.5 text-[14px] font-semibold transition-all border-b-2 -mb-px ${
                       tab===t ? "border-[#1D4ED8] text-[#1D4ED8]" : "border-transparent text-slate-400 hover:text-slate-600"
                     }`}>
                     {labels[t]}
@@ -1732,7 +1732,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                 );
               })}
             </div>
-            <button className="text-[12.5px] font-semibold text-[#1D4ED8] hover:underline pb-2.5">Preview</button>
+            <button className="text-[14px] font-semibold text-[#1D4ED8] hover:underline pb-2.5">Preview</button>
           </div>
 
           {/* CREATE */}
@@ -1742,7 +1742,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                 <div key={section.title} className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
                   <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#E3ECFC] bg-[#fafcff]">
                     <DotsSixVertical size={14} color="#E2E8F0"/>
-                    <span className="text-[13px] font-bold text-slate-700 flex-1">{section.title}</span>
+                    <span className="text-[12px] font-bold text-slate-700 flex-1">{section.title}</span>
                     <IconButton size="small" sx={{ p:0.3, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
                       <Gear size={13} weight="duotone"/>
                     </IconButton>
@@ -1751,9 +1751,9 @@ function LayoutEditor({ module, layoutName, onClose }: {
                     <div className="p-3 space-y-1.5">
                       {section.fields.slice(0,-2).map((f,i) => (
                         <div key={i} className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-[#fafcff] hover:border-[#4A7AE8] transition-colors cursor-pointer group">
-                          <span className="text-[12px] font-medium text-slate-700">{f.label}</span>
+                          <span className="text-[14px] font-medium text-slate-700">{f.label}</span>
                           <div className="flex items-center gap-1.5">
-                            {f.type && <span className="text-[11px] text-inherit">{f.type}</span>}
+                            {f.type && <span className="text-[12px] text-inherit">{f.type}</span>}
                             <span className="text-slate-300 group-hover:text-slate-500 text-[11px] font-bold">···</span>
                           </div>
                         </div>
@@ -1761,7 +1761,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                       <div className="grid grid-cols-2 gap-1.5">
                         {section.fields.slice(-2).map((f,i) => (
                           <div key={i} className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-[#fafcff] hover:border-[#4A7AE8] transition-colors cursor-pointer group">
-                            <span className="text-[12px] font-medium text-slate-700">{f.label}</span>
+                            <span className="text-[14px] font-medium text-slate-700">{f.label}</span>
                             <span className="text-slate-300 group-hover:text-slate-500 text-[11px] font-bold">···</span>
                           </div>
                         ))}
@@ -1787,8 +1787,8 @@ function LayoutEditor({ module, layoutName, onClose }: {
               <div className="w-[500px] bg-white rounded-xl border border-[#E3ECFC] overflow-hidden shadow-sm">
                 {QC_ACTIVE.map((f,i) => (
                   <div key={i} className="flex items-center px-4 py-2.5 border-b border-[#EFF6FF] last:border-0 group">
-                    <span className="text-[13px] text-slate-700 w-36 flex-shrink-0">{f.label}</span>
-                    <span className="flex-1 text-[13px] text-inherit">{f.type}</span>
+                    <span className="text-[14px] text-slate-700 w-36 flex-shrink-0">{f.label}</span>
+                    <span className="flex-1 text-[14px] text-inherit">{f.type}</span>
                     {f.removable && (
                       <button className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors opacity-60 hover:opacity-100">
                         <X size={11} color="#94A3B8" weight="bold"/>
@@ -1806,23 +1806,23 @@ function LayoutEditor({ module, layoutName, onClose }: {
               {/* Business Card */}
               <div className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 border-b border-[#E3ECFC]">
-                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Business Card</span>
+                  <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Business Card</span>
                   <div className="flex items-center gap-3">
                     <GreenSwitch checked={bcEnabled} onChange={() => setBcEnabled(p=>!p)}/>
-                    <button className="text-[12.5px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>
+                    <button className="text-[14px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>
                   </div>
                 </div>
                 <div className="divide-y divide-[#EFF6FF]">
                   {DV_BC_FIELDS.map((f,i) => (
                     <div key={i} className="flex items-center gap-3 px-4 py-2.5">
                       <DotsSixVertical size={13} color="#E2E8F0"/>
-                      <span className="text-[13px] text-slate-700 flex-1">{f.label}</span>
+                      <span className="text-[14px] text-slate-700 flex-1">{f.label}</span>
                       <span className="text-[12px] text-inherit">{f.type}</span>
                     </div>
                   ))}
                 </div>
                 <div className="px-4 py-2.5 border-t border-[#EFF6FF]">
-                  <div className="flex items-center gap-1.5 text-[11.5px] text-slate-400">
+                  <div className="flex items-center gap-1.5 text-[12px] text-slate-400">
                     <Info size={11} weight="duotone"/>
                     You can add up to <span className="font-bold text-slate-600 mx-0.5">5 fields</span> to your Business Card.
                   </div>
@@ -1831,16 +1831,16 @@ function LayoutEditor({ module, layoutName, onClose }: {
               {/* Details */}
               <div className="bg-white rounded-xl border border-[#E3ECFC]">
                 <div className="px-4 py-2.5 border-b border-[#E3ECFC]">
-                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Details</span>
+                  <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Details</span>
                 </div>
-                <div className="mx-3 my-3 px-4 py-3 text-[12.5px] text-slate-400 bg-[#fafcff] rounded-lg border border-[#E3ECFC]">
+                <div className="mx-3 my-3 px-4 py-3 text-[14px] text-slate-400 bg-[#fafcff] rounded-lg border border-[#E3ECFC]">
                   Fields customized in the Create page will appear here.
                 </div>
               </div>
               {/* Related List */}
               <div className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
                 <div className="px-4 py-2.5 border-b border-[#E3ECFC]">
-                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Related List</span>
+                  <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Related List</span>
                 </div>
                 {[
                   { name:"Notes",       standard:true,  customize:false },
@@ -1849,9 +1849,9 @@ function LayoutEditor({ module, layoutName, onClose }: {
                 ].map(item => (
                   <div key={item.name} className="px-4 py-3 border-b border-[#EFF6FF] last:border-0">
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[13px] font-bold text-slate-700">{item.name}</span>
+                      <span className="text-[14px] font-bold text-slate-700">{item.name}</span>
                       <div className="flex items-center gap-1">
-                        {item.customize && <button className="text-[12.5px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>}
+                        {item.customize && <button className="text-[14px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>}
                         <IconButton size="small" sx={{ p:0.3, color:"#94A3B8", "&:hover":{color:"#EF4444"}, borderRadius:"6px" }}>
                           <Trash size={13} weight="duotone"/>
                         </IconButton>
@@ -1864,8 +1864,8 @@ function LayoutEditor({ module, layoutName, onClose }: {
                     ) : (
                       <div className="border border-[#E3ECFC] rounded-lg overflow-hidden">
                         <div className="grid grid-cols-2 bg-[#fafcff] border-b border-[#E3ECFC]">
-                          <div className="px-4 py-2 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Title</div>
-                          <div className="px-4 py-2 text-[10px] font-bold text-slate-500 uppercase tracking-wider border-l border-[#E3ECFC]">Status</div>
+                          <div className="px-4 py-2 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">Title</div>
+                          <div className="px-4 py-2 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider border-l border-[#E3ECFC]">Status</div>
                         </div>
                       </div>
                     )}
@@ -1973,7 +1973,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
                 <span>Unused Related List</span>
                 {unusedOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
               </button>
-              {unusedOpen && <div className="px-4 py-3 text-[13.5px] text-slate-400">No more related lists available.</div>}
+              {unusedOpen && <div className="px-4 py-3 text-[14px] text-slate-400">No more related lists available.</div>}
             </>
           ) : (
             <>
@@ -1985,7 +1985,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
               {nfOpen && (
                 <>
                   {!canDragFields && (
-                    <div className="px-3 pb-2 text-[12.5px] font-medium text-amber-600 bg-amber-50 border border-amber-200 rounded-lg mx-3 px-2.5 py-1.5">
+                    <div className="px-3 pb-2 text-[14px] font-medium text-amber-600 bg-amber-50 border border-amber-200 rounded-lg mx-3 px-2.5 py-1.5">
                       {tab === "create" ? "Add a section before dragging in fields." : "Switch to a tab with a drop target to add fields."}
                     </div>
                   )}
@@ -1998,7 +1998,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
                           onDragStart={() => canDragFields && setDragField(ft.label)}
                           onDragEnd={() => setDragField(null)}
                           title={canDragFields ? undefined : "Add a section first"}
-                          className={`flex items-center gap-1.5 px-2 py-1.5 border rounded-lg transition-colors text-[13px] font-medium ${
+                          className={`flex items-center gap-1.5 px-2 py-1.5 border rounded-lg transition-colors text-[14px] font-medium ${
                             canDragFields
                               ? "border-[#E3ECFC] bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF] cursor-grab active:cursor-grabbing text-slate-600"
                               : "border-[#EFF6FF] bg-slate-50 text-slate-300 cursor-not-allowed"
@@ -2013,7 +2013,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
               )}
               <div className="px-3 pb-3">
                 <button onClick={addSection}
-                  className="flex items-center gap-1.5 w-full px-3 py-2 border border-dashed border-[#4A7AE8] rounded-lg text-[13px] font-bold text-[#1D4ED8] hover:bg-[#EFF6FF] transition-colors justify-center">
+                  className="flex items-center gap-1.5 w-full px-3 py-2 border border-dashed border-[#4A7AE8] rounded-lg text-[14px] font-bold text-[#1D4ED8] hover:bg-[#EFF6FF] transition-colors justify-center">
                   <Plus size={11} weight="bold"/> NEW SECTION
                 </button>
               </div>
@@ -2029,7 +2029,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
                 const labels = { create:"Create", quickCreate:"Quick Create", detailView:"Detail View" };
                 return (
                   <button key={t} onClick={() => setTab(t)}
-                    className={`px-5 py-2.5 text-[14.5px] font-semibold transition-all border-b-2 -mb-px ${
+                    className={`px-5 py-2.5 text-[14px] font-semibold transition-all border-b-2 -mb-px ${
                       tab===t ? "border-[#1D4ED8] text-[#1D4ED8]" : "border-transparent text-slate-400 hover:text-slate-600"
                     }`}>
                     {labels[t]}
@@ -2045,13 +2045,13 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
               {sections.length === 0 ? (
                 <div className="border-2 border-dashed border-[#CBD5E1] rounded-xl py-16 flex flex-col items-center justify-center gap-2 text-slate-300">
                   <SquaresFour size={28} weight="duotone"/>
-                  <span className="text-[14.5px] font-semibold text-slate-400">Click &quot;New Section&quot; to start building this layout</span>
+                  <span className="text-[14px] font-semibold text-slate-400">Click &quot;New Section&quot; to start building this layout</span>
                 </div>
               ) : sections.map(section => (
                 <div key={section.id} className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
                   <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#E3ECFC] bg-[#fafcff]">
                     <DotsSixVertical size={14} color="#E2E8F0"/>
-                    <span className="text-[14.5px] font-bold text-slate-700 flex-1">{section.title}</span>
+                    <span className="text-[14px] font-bold text-slate-700 flex-1">{section.title}</span>
                     <IconButton size="small" onClick={() => removeSection(section.id)} sx={{ p:0.3, color:"#94A3B8", "&:hover":{color:"#EF4444"}, borderRadius:"6px" }}>
                       <Trash size={13} weight="duotone"/>
                     </IconButton>
@@ -2062,12 +2062,12 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
                     onDrop={() => handleDrop(section.id)}
                     className={`p-3 grid grid-cols-2 gap-1.5 min-h-[64px] rounded-b-xl transition-colors ${dragOverSection === section.id ? "bg-[#EFF6FF]" : ""}`}>
                     {section.fields.length === 0 ? (
-                      <div className="col-span-2 flex items-center justify-center py-6 text-[13.5px] text-slate-300 border border-dashed border-[#E3ECFC] rounded-lg">
+                      <div className="col-span-2 flex items-center justify-center py-6 text-[14px] text-slate-300 border border-dashed border-[#E3ECFC] rounded-lg">
                         Drag fields here
                       </div>
                     ) : section.fields.map(f => (
                       <div key={f.id} className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-[#fafcff] hover:border-[#4A7AE8] transition-colors group">
-                        <span className="text-[13.5px] font-medium text-slate-700">{f.label}</span>
+                        <span className="text-[14px] font-medium text-slate-700">{f.label}</span>
                         <button onClick={() => removeField(section.id, f.id)} className="opacity-0 group-hover:opacity-100 transition-opacity">
                           <X size={11} color="#94A3B8" weight="bold"/>
                         </button>
@@ -2081,7 +2081,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
             <div className="px-6 py-5 flex flex-col items-center">
               <div className="w-[420px] bg-white rounded-xl border border-[#E3ECFC] overflow-hidden shadow-sm">
                 <div className="px-4 py-2.5 border-b border-[#E3ECFC] bg-[#fafcff]">
-                  <span className="text-[14.5px] font-bold text-slate-700">Quick Create</span>
+                  <span className="text-[14px] font-bold text-slate-700">Quick Create</span>
                 </div>
                 <div
                   onDragOver={e => { e.preventDefault(); setQcDragOver(true); }}
@@ -2089,14 +2089,14 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
                   onDrop={handleQcDrop}
                   className={`transition-colors ${qcDragOver ? "bg-[#EFF6FF]" : ""}`}>
                   {qcFields.length === 0 ? (
-                    <div className="flex items-center justify-center py-10 text-[13.5px] text-slate-300 m-3 border border-dashed border-[#E3ECFC] rounded-lg">
+                    <div className="flex items-center justify-center py-10 text-[14px] text-slate-300 m-3 border border-dashed border-[#E3ECFC] rounded-lg">
                       Drag fields here
                     </div>
                   ) : (
                     <div className="divide-y divide-[#EFF6FF]">
                       {qcFields.map(f => (
                         <div key={f.id} className="flex items-center px-4 py-2.5 group">
-                          <span className="text-[14.5px] text-slate-700 flex-1">{f.label}</span>
+                          <span className="text-[14px] text-slate-700 flex-1">{f.label}</span>
                           <button onClick={() => removeQcField(f.id)} className="opacity-0 group-hover:opacity-100 transition-opacity">
                             <X size={11} color="#94A3B8" weight="bold"/>
                           </button>
@@ -2106,7 +2106,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
                   )}
                 </div>
               </div>
-              <p className="text-[13px] text-slate-400 font-medium mt-3 text-center max-w-[420px]">
+              <p className="text-[14px] text-slate-400 font-medium mt-3 text-center max-w-[420px]">
                 Fields shown here appear in the Quick Create popup used to add a new {modDef?.label.toLowerCase().replace(/s$/, "") ?? "record"} from a list view.
               </p>
             </div>
@@ -2115,7 +2115,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
               {/* Business Card */}
               <div className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 border-b border-[#E3ECFC]">
-                  <span className="text-[12.5px] font-bold text-slate-500 uppercase tracking-wider">Business Card</span>
+                  <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Business Card</span>
                   <div className="flex items-center gap-3">
                     <GreenSwitch checked={dvBcEnabled} onChange={() => setDvBcEnabled(p=>!p)}/>
                     {dvBcEnabled && <button className="text-[14px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>}
@@ -2132,12 +2132,12 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
                         {allFields.slice(0,5).map(f => (
                           <div key={f.id} className="flex items-center gap-3 px-4 py-2.5">
                             <DotsSixVertical size={13} color="#E2E8F0"/>
-                            <span className="text-[14.5px] text-slate-700 flex-1">{f.label}</span>
+                            <span className="text-[14px] text-slate-700 flex-1">{f.label}</span>
                           </div>
                         ))}
                       </div>
                       <div className="px-4 py-2.5 border-t border-[#EFF6FF]">
-                        <div className="flex items-center gap-1.5 text-[13px] text-slate-400">
+                        <div className="flex items-center gap-1.5 text-[14px] text-slate-400">
                           <Info size={11} weight="duotone"/>
                           You can add up to <span className="font-bold text-slate-600 mx-0.5">5 fields</span> to your Business Card.
                         </div>
@@ -2154,7 +2154,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
               {/* Details */}
               <div className="bg-white rounded-xl border border-[#E3ECFC]">
                 <div className="px-4 py-2.5 border-b border-[#E3ECFC]">
-                  <span className="text-[12.5px] font-bold text-slate-500 uppercase tracking-wider">Details</span>
+                  <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Details</span>
                 </div>
                 {allFields.length === 0 ? (
                   <div className="mx-3 my-3 px-4 py-3 text-[14px] text-slate-400 bg-[#fafcff] rounded-lg border border-[#E3ECFC]">
@@ -2165,7 +2165,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
                     {allFields.map(f => (
                       <div key={f.id} className="flex items-center gap-3 px-4 py-2.5">
                         <DotsSixVertical size={13} color="#E2E8F0"/>
-                        <span className="text-[14.5px] text-slate-700 flex-1">{f.label}</span>
+                        <span className="text-[14px] text-slate-700 flex-1">{f.label}</span>
                       </div>
                     ))}
                   </div>
@@ -2174,7 +2174,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
               {/* Related List */}
               <div className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
                 <div className="px-4 py-2.5 border-b border-[#E3ECFC]">
-                  <span className="text-[12.5px] font-bold text-slate-500 uppercase tracking-wider">Related List</span>
+                  <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Related List</span>
                 </div>
                 <div className="px-4 py-3 text-[14px] text-slate-400">No related lists added yet.</div>
               </div>
@@ -2202,15 +2202,15 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
                 </div>
               ) : sections.map(section => (
                 <div key={section.id}>
-                  <div className="text-[12.5px] font-bold text-slate-500 uppercase tracking-wider mb-2">{section.title}</div>
+                  <div className="text-[12px] font-bold text-slate-500 uppercase tracking-wider mb-2">{section.title}</div>
                   {section.fields.length === 0 ? (
-                    <div className="text-[13.5px] text-slate-300 italic">No fields in this section.</div>
+                    <div className="text-[14px] text-slate-300 italic">No fields in this section.</div>
                   ) : (
                     <div className="grid grid-cols-2 gap-3">
                       {section.fields.map(f => (
                         <div key={f.id}>
-                          <label className="block text-[12.5px] font-semibold text-slate-500 mb-1">{f.label}</label>
-                          <div className="px-3 py-2 rounded-lg border border-[#E3ECFC] bg-white text-[13.5px] text-slate-300">
+                          <label className="block text-[11.5px] font-semibold text-slate-500 mb-1">{f.label}</label>
+                          <div className="px-3 py-2 rounded-lg border border-[#E3ECFC] bg-white text-[14px] text-slate-300">
                             {f.label.toLowerCase()}
                           </div>
                         </div>
@@ -2287,7 +2287,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
             const isActive = modKey === m.key;
             return (
               <button key={m.key} onClick={() => onSelect(m.key)}
-                className={`flex items-center gap-2.5 w-full px-3 py-2.5 text-[12.5px] font-medium transition-colors ${
+                className={`flex items-center gap-2.5 w-full px-3 py-2.5 text-[14px] font-medium transition-colors ${
                   isActive ? "bg-[#1D4ED8] text-white" : "text-slate-600 hover:bg-[#EFF6FF]"
                 }`}>
                 <Icon size={13} color={isActive ? "#fff" : m.color} weight="duotone" />
@@ -2301,7 +2301,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
       {/* Main content */}
       <div className="flex-1 overflow-y-auto flex flex-col">
         {/* Breadcrumb */}
-        <div className="px-6 pt-5 pb-1 flex items-center gap-1.5 text-[11.5px] text-slate-400">
+        <div className="px-6 pt-5 pb-1 flex items-center gap-1.5 text-[12px] text-slate-400">
           <House size={11} weight="duotone" />
           {["Setup","Customization","Modules"].map(crumb => (
             <span key={crumb} className="flex items-center gap-1.5">
@@ -2324,7 +2324,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
         <div className="px-6 border-b border-[#E3ECFC] flex items-center gap-1">
           {(["layouts","fields"] as const).map(t => (
             <button key={t} onClick={() => setTab(t)}
-              className={`px-4 py-2.5 text-[13px] font-semibold capitalize transition-all border-b-2 -mb-px ${
+              className={`px-4 py-2.5 text-[14px] font-semibold capitalize transition-all border-b-2 -mb-px ${
                 tab === t ? "border-[#1D4ED8] text-[#1D4ED8]" : "border-transparent text-slate-400 hover:text-slate-600"
               }`}>
               {t.charAt(0).toUpperCase() + t.slice(1)}
@@ -2336,7 +2336,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
         <div className="flex-1 px-6 py-5">
           {tab === "layouts" && (
             <>
-              <div className="text-[12.5px] text-[#1D4ED8] mb-4 leading-relaxed">
+              <div className="text-[14px] text-[#1D4ED8] mb-4 leading-relaxed">
                 Design your own layouts to fit your business processes, then assign them to your user accounts based on permission profiles.
               </div>
               <div className="flex justify-end mb-4">
@@ -2349,21 +2349,21 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
                 <table className="w-full border-collapse text-left">
                   <thead>
                     <tr className="bg-[#f9fbff] border-b border-[#E3ECFC]">
-                      <th className="px-4 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Name</th>
-                      <th className="px-4 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Shared To</th>
-                      <th className="px-4 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Last Modified</th>
-                      <th className="px-4 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider text-right">Status</th>
+                      <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">Name</th>
+                      <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">Shared To</th>
+                      <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">Last Modified</th>
+                      <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider text-right">Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     {layouts.length === 0 ? (
-                      <tr><td colSpan={4} className="px-4 py-8 text-center text-[12.5px] text-slate-300">No records found.</td></tr>
+                      <tr><td colSpan={4} className="px-4 py-8 text-center text-[14px] text-slate-300">No records found.</td></tr>
                     ) : layouts.map((l, i) => (
                       <tr key={i} className="border-b border-[#EFF6FF] last:border-0 hover:bg-[#fafcff] transition-colors">
-                        <td className="px-4 py-3 text-[13px] font-semibold text-[#1D4ED8] cursor-pointer hover:underline" onClick={() => onOpenLayout(l.name)}>{l.name}</td>
-                        <td className="px-4 py-3 text-[12.5px] text-slate-500">{l.sharedTo}</td>
+                        <td className="px-4 py-3 text-[14px] font-semibold text-[#1D4ED8] cursor-pointer hover:underline" onClick={() => onOpenLayout(l.name)}>{l.name}</td>
+                        <td className="px-4 py-3 text-[12px] text-slate-500">{l.sharedTo}</td>
                         <td className="px-4 py-3">
-                          <div className="flex items-center gap-1.5 text-[12.5px] text-slate-500">
+                          <div className="flex items-center gap-1.5 text-[12px] text-slate-500">
                             <User size={12} weight="duotone" />
                             {l.lastMod}
                           </div>
@@ -2379,7 +2379,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
             </>
           )}
           {tab === "fields" && (
-            <div className="text-center py-12 text-slate-300 text-[12.5px]">No fields configured yet.</div>
+            <div className="text-center py-12 text-slate-300 text-[14px]">No fields configured yet.</div>
           )}
         </div>
       </div>
@@ -2414,9 +2414,9 @@ function CreateLayoutModal({ existingLayouts, onClose, onContinue }: {
           </Select>
         </FormControl>
         <div className="flex justify-end gap-2">
-          <button onClick={onClose} className="px-4 py-2 text-[13px] font-semibold text-slate-500 hover:text-slate-700 transition-colors">Cancel</button>
+          <button onClick={onClose} className="px-4 py-2 text-[14px] font-semibold text-slate-500 hover:text-slate-700 transition-colors">Cancel</button>
           <button disabled={!cloneFrom} onClick={() => onContinue(cloneFrom === "__scratch__" ? null : cloneFrom)}
-            className="px-5 py-2 rounded-lg text-[13px] font-bold text-white bg-[#1D4ED8] hover:bg-[#2563EB] disabled:opacity-40 disabled:cursor-not-allowed transition-colors">Continue</button>
+            className="px-5 py-2 rounded-lg text-[14px] font-bold text-white bg-[#1D4ED8] hover:bg-[#2563EB] disabled:opacity-40 disabled:cursor-not-allowed transition-colors">Continue</button>
         </div>
       </div>
     </div>
@@ -2463,7 +2463,7 @@ function ModulesAndFieldsPanel() {
           <InputBase placeholder="Search" value={search} onChange={e => setSearch(e.target.value)}
             sx={{ flex:1, fontSize:"0.75rem", color: isDark ? "#D4D4D8" : "#334155", "& input::placeholder":{color:"#94A3B8",opacity:1} }} />
         </div>
-        <button className={`flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold rounded-xl hover:border-[#1D4ED8] transition-colors ${isDark ? "text-[#D4D4D8] bg-[#18181B] border border-[#3F3F46]" : "text-slate-600 bg-[#f9fbff] border border-[#E3ECFC]"}`}>
+        <button className={`flex items-center gap-1.5 px-3 py-1.5 text-[14px] font-semibold rounded-xl hover:border-[#1D4ED8] transition-colors ${isDark ? "text-[#D4D4D8] bg-[#18181B] border border-[#3F3F46]" : "text-slate-600 bg-[#f9fbff] border border-[#E3ECFC]"}`}>
           <Gear size={13} weight="duotone" />
           Custom Module
         </button>
@@ -2479,11 +2479,11 @@ function ModulesAndFieldsPanel() {
       <table className="w-full border-collapse text-left">
         <thead>
           <tr className={isDark ? "bg-[#111113] border-b border-[#27272A]" : "bg-[#f9fbff] border-b border-[#E3ECFC]"}>
-            <th className={`px-6 py-3 text-[11px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Displayed In Tabs As</th>
-            <th className={`px-6 py-3 text-[11px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Module Name</th>
-            <th className={`px-6 py-3 text-[11px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Shared To</th>
-            <th className={`px-6 py-3 text-[11px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Last Modified</th>
-            <th className={`px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-center ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Status</th>
+            <th className={`px-6 py-3 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Displayed In Tabs As</th>
+            <th className={`px-6 py-3 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Module Name</th>
+            <th className={`px-6 py-3 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Shared To</th>
+            <th className={`px-6 py-3 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Last Modified</th>
+            <th className={`px-6 py-3 text-[11.5px] font-bold uppercase tracking-wider text-center ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Status</th>
           </tr>
         </thead>
         <tbody>
@@ -2494,17 +2494,17 @@ function ModulesAndFieldsPanel() {
               <tr key={mod.key} className={`border-b transition-colors ${isDark ? "border-[#18181B] hover:bg-[#111113]" : "border-[#EFF6FF] hover:bg-[#fafcff]"}`}>
                 <td className="px-6 py-4">
                   <button onClick={() => { setSelectedMod(mod.key); setView("detail"); }}
-                    className={`flex items-center gap-2 text-[13px] font-semibold hover:underline ${isDark ? "text-[#60A5FA]" : "text-[#1D4ED8]"}`}>
+                    className={`flex items-center gap-2 text-[14px] font-semibold hover:underline ${isDark ? "text-[#60A5FA]" : "text-[#1D4ED8]"}`}>
                     <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ backgroundColor: mod.color + "18" }}>
                       <Icon size={12} color={mod.color} weight="duotone" />
                     </div>
                     {mod.label}
                   </button>
                 </td>
-                <td className={`px-6 py-4 text-[13px] ${isDark ? "text-[#D4D4D8]" : "text-slate-600"}`}>{mod.label}</td>
-                <td className={`px-6 py-4 text-[12.5px] ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{mod.sharedTo}</td>
+                <td className={`px-6 py-4 text-[14px] ${isDark ? "text-[#D4D4D8]" : "text-slate-600"}`}>{mod.label}</td>
+                <td className={`px-6 py-4 text-[12px] ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{mod.sharedTo}</td>
                 <td className="px-6 py-4">
-                  <div className={`flex items-center gap-1.5 text-[12.5px] ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
+                  <div className={`flex items-center gap-1.5 text-[12px] ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
                     <User size={12} weight="duotone" />
                     {mod.lastMod}
                   </div>
@@ -2513,7 +2513,7 @@ function ModulesAndFieldsPanel() {
                   <div className="flex items-center justify-center gap-2">
                     <GreenSwitch checked={isOn} onChange={() => setModStatuses(p => ({ ...p, [mod.key]: !p[mod.key] }))} />
                     <Tooltip title="Module info">
-                      <IconButton size="small" sx={{ p:0.3, color: isDark ? "#52525B" : "#94A3B8", "&:hover":{color:"#1D4ED8",bgcolor: isDark ? "#27272A" : "#EFF6FF"}, borderRadius:"6px" }}>
+                      <IconButton size="small" sx={{ p:0.3, color: isDark ? "#9CA3AF" : "#94A3B8", "&:hover":{color:"#1D4ED8",bgcolor: isDark ? "#27272A" : "#EFF6FF"}, borderRadius:"6px" }}>
                         <Info size={13} weight="duotone" />
                       </IconButton>
                     </Tooltip>
@@ -2528,9 +2528,9 @@ function ModulesAndFieldsPanel() {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Placeholder
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function PlaceholderPanel({ label }: { label: string }) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -2538,18 +2538,18 @@ function PlaceholderPanel({ label }: { label: string }) {
     <div className={`flex-1 flex items-center justify-center ${isDark ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
       <div className="text-center">
         <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 ${isDark ? "bg-[#18181B]" : "bg-[#EFF6FF]"}`}>
-          <Gear size={22} color={isDark ? "#52525B" : "#94A3B8"} weight="duotone" />
+          <Gear size={22} color={isDark ? "#9CA3AF" : "#94A3B8"} weight="duotone" />
         </div>
         <div className={`text-[15px] font-bold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{label}</div>
-        <div className={`text-[12.5px] mt-1 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>This section is coming soon.</div>
+        <div className={`text-[12px] mt-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>This section is coming soon.</div>
       </div>
     </div>
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Settings sub-sidebar
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function SettingsSidebar({ activeItem, setActiveItem, isDark = false }: {
   activeItem: string; setActiveItem: (k: string) => void; isDark?: boolean;
 }) {
@@ -2565,7 +2565,7 @@ function SettingsSidebar({ activeItem, setActiveItem, isDark = false }: {
           </div>
           <div>
             <div className={`font-heading text-[14px] font-bold leading-tight ${isDark ? "text-[#FFFFFF]" : "text-slate-900"}`}>Settings</div>
-            <div className="text-[10.5px] text-slate-400 leading-tight">Manage workspace</div>
+            <div className="text-[12px] text-slate-400 leading-tight">Manage workspace</div>
           </div>
         </div>
       </div>
@@ -2593,9 +2593,9 @@ function SettingsSidebar({ activeItem, setActiveItem, isDark = false }: {
                         className={`relative flex items-center gap-2 w-full px-3 py-2 rounded-xl text-[14px] font-medium transition-all ${
                           isActive
                             ? isDark ? "bg-[#27272A] text-[#D4D4D8] font-semibold" : "bg-[#EFF6FF] text-[#1D4ED8] font-semibold"
-                            : isDark ? "text-[#737373] hover:bg-[#27272A] hover:text-[#FFFFFF]" : "text-slate-500 hover:bg-[#EFF6FF]/60 hover:text-slate-700"
+                            : isDark ? "text-[#9CA3AF] hover:bg-[#27272A] hover:text-[#FFFFFF]" : "text-slate-500 hover:bg-[#EFF6FF]/60 hover:text-slate-700"
                         }`}>
-                        {isActive && <span className={`absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full ${isDark ? "bg-[#52525B]" : "bg-[#1D4ED8]"}`} />}
+                        {isActive && <span className={`absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full ${isDark ? "bg-[#9CA3AF]" : "bg-[#1D4ED8]"}`} />}
                         <IIcon size={13} color={isActive ? (isDark ? "#6B8BA3" : "#1D4ED8") : "#94A3B8"} weight="duotone" />
                         {item.label}
                       </button>
@@ -2611,9 +2611,9 @@ function SettingsSidebar({ activeItem, setActiveItem, isDark = false }: {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Page
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 export default function SettingsPage() {
   const { theme } = useTheme();
   const isDark = theme === "dark";

@@ -1,5 +1,5 @@
 ﻿"use client";
-import { useState, useRef } from "react";
+import { useState, useRef, type ElementType } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Sidebar from "@/components/layout/Sidebar";
@@ -25,6 +25,7 @@ import {
   DotsThreeVertical, List, GridFour, Kanban,
   CaretDown, House, CaretRight, Trash, UserCheck, NotePencil, Phone,
   FunnelSimple, PencilSimple, Eye,
+  IdentificationBadge, Buildings, Envelope, Pulse, UserCircle, CalendarBlank,
 } from "@phosphor-icons/react";
 import { LEAD_AVATARS, OWNER_AVATARS } from "@/lib/avatars";
 import { useTheme } from "@/components/ThemeContext";
@@ -64,9 +65,9 @@ const ALL_LEADS: Lead[] = [
 const STATUS_CFG: Record<LeadStatus, { bg: string; text: string; dot: string; bgDark: string; textDark: string }> = {
   "New":         { bg:"#EFF6FF", text:"#0C2472", dot:"#94A3B8", bgDark:"rgba(96, 165, 250, 0.15)", textDark:"#60A5FA" },
   "Contacted":   { bg:"#E3ECFC", text:"#0C2472", dot:"#3B82F6", bgDark:"rgba(52, 211, 153, 0.15)", textDark:"#34D399" },
-  "Qualified":   { bg:"#DCFCE7", text:"#166534", dot:"#16A34A", bgDark:"rgba(16, 185, 129, 0.15)", textDark:"#10B981" },
+  "Qualified":   { bg:"#DCFCE7", text:"#166534", dot:"#16A34A", bgDark:"rgba(16, 185, 129, 0.15)", textDark:"#E2E8F0" },
   "In Progress": { bg:"#E3ECFC", text:"#0C2472", dot:"#1D4ED8", bgDark:"rgba(251, 191, 36, 0.15)", textDark:"#FBBF24" },
-  "Lost":        { bg:"#FEF2F2", text:"#991B1B", dot:"#EF4444", bgDark:"rgba(244, 63, 94, 0.15)", textDark:"#F43F5E" },
+  "Lost":        { bg:"#FEF2F2", text:"#991B1B", dot:"#EF4444", bgDark:"rgba(244, 63, 94, 0.15)", textDark:"#E2E8F0" },
   "Unqualified": { bg:"#EFF6FF", text:"#475569", dot:"#94A3B8", bgDark:"rgba(168, 85, 247, 0.15)", textDark:"#A855F7" },
 };
 
@@ -115,9 +116,12 @@ const OWNERS: { name: string; initials: string }[] = [
 ];
 const ROWS_PER_PAGE_OPTIONS = [10, 20, 50, 100];
 
-function ColHeader({ label }: { label: string }) {
+function ColHeader({ label, icon: Icon }: { label: string; icon?: ElementType }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   return (
-    <div className="font-heading text-[14px]/[18px] font-semibold text-[#737373] uppercase tracking-wide select-none">
+    <div className={`flex items-center gap-1.5 font-heading text-[14px]/[18px] font-semibold uppercase tracking-wide select-none ${isDark ? "text-[#E4E4E7]" : "text-[#737373]"}`}>
+      {Icon && <Icon size={13} weight="duotone" />}
       {label}
     </div>
   );
@@ -251,7 +255,7 @@ export default function LeadsPage() {
   const COLUMN_BUILDERS: Record<string, GridColDef<Lead>> = {
     leadName: {
       field: "leadName", headerName: "Lead Name", flex: 2, minWidth: 180, sortable: false,
-      renderHeader: () => <ColHeader label="Lead Name" />,
+      renderHeader: () => <ColHeader label="Lead Name" icon={IdentificationBadge} />,
       renderCell: (params) => {
         const lead = params.row;
         return (
@@ -264,7 +268,7 @@ export default function LeadsPage() {
     },
     company: {
       field: "company", headerName: "Company", flex: 1.3, minWidth: 120, sortable: false,
-      renderHeader: () => <ColHeader label="Company" />,
+      renderHeader: () => <ColHeader label="Company" icon={Buildings} />,
       renderCell: (params) => (
         <div className={`text-[15px]/[20px] truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
           {params.row.company || <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>}
@@ -273,7 +277,7 @@ export default function LeadsPage() {
     },
     email: {
       field: "email", headerName: "Email", flex: 1.7, minWidth: 160, sortable: false,
-      renderHeader: () => <ColHeader label="Email" />,
+      renderHeader: () => <ColHeader label="Email" icon={Envelope} />,
       renderCell: (params) => (
         <Tooltip title={params.row.email} placement="top">
           <div className="text-[15px]/[20px] truncate w-full">
@@ -286,7 +290,7 @@ export default function LeadsPage() {
     },
     mobile: {
       field: "mobile", headerName: "Mobile", flex: 1.2, minWidth: 120, sortable: false,
-      renderHeader: () => <ColHeader label="Mobile" />,
+      renderHeader: () => <ColHeader label="Mobile" icon={Phone} />,
       renderCell: (params) => (
         <div className={`text-[15px]/[20px] font-mono truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
           {params.row.mobile
@@ -297,7 +301,7 @@ export default function LeadsPage() {
     },
     leadStatus: {
       field: "leadStatus", headerName: "Status", flex: 1.1, minWidth: 110, sortable: false,
-      renderHeader: () => <ColHeader label="Status" />,
+      renderHeader: () => <ColHeader label="Status" icon={Pulse} />,
       renderCell: (params) => {
         const cfg = STATUS_CFG[params.row.status];
         return (
@@ -311,7 +315,7 @@ export default function LeadsPage() {
     },
     leadOwner: {
       field: "leadOwner", headerName: "Lead Owner", flex: 1.3, minWidth: 130, sortable: false,
-      renderHeader: () => <ColHeader label="Lead Owner" />,
+      renderHeader: () => <ColHeader label="Lead Owner" icon={UserCircle} />,
       renderCell: (params) => {
         const lead = params.row;
         return (
@@ -326,8 +330,8 @@ export default function LeadsPage() {
     },
     creation: {
       field: "creation", headerName: "Created", flex: 1, minWidth: 100, sortable: false,
-      renderHeader: () => <ColHeader label="Created" />,
-      renderCell: (params) => <div className={`text-[13px]/[16px] truncate ${isDark ? "text-[#737373]" : "text-slate-400"}`}>{params.row.created}</div>,
+      renderHeader: () => <ColHeader label="Created" icon={CalendarBlank} />,
+      renderCell: (params) => <div className={`text-[13px]/[16px] truncate ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>{params.row.created}</div>,
     },
   };
 
@@ -360,14 +364,14 @@ export default function LeadsPage() {
           {/* ══ Page header ══ */}
           <div className="flex items-start justify-between">
             <div>
-              <div className="flex items-center gap-1 text-[13px]/[16px] text-slate-400 mb-1">
-                <House size={12} weight="duotone" />
-                <CaretRight size={11} weight="duotone" />
+              <div className={`flex items-center gap-1.5 text-[13.5px]/[18px] mb-1 ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>
+                <House size={16} weight="duotone" />
+                <CaretRight size={12} weight="duotone" />
                 <Link href="/leads" className={`transition-colors font-medium ${isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#1D4ED8]"}`}>Leads</Link>
               </div>
               <div className="flex items-center gap-2.5">
                 <h1 className="font-heading text-[22px]/[28px] font-semibold text-slate-900 tracking-tight m-0">Leads</h1>
-                <span className={`text-[13px]/[16px] font-medium text-slate-400 border px-2.5 py-1 rounded-full shadow-sm flex items-center ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+                <span className={`text-[13px]/[16px] font-medium border px-2.5 py-1 rounded-full shadow-sm flex items-center ${isDark ? "bg-[#0A0A0A] border-[#27272A] text-[#E4E4E7]" : "bg-[#f9fbff] border-[#E3ECFC] text-slate-400"}`}>
                   {leads.length} total
                 </span>
               </div>
@@ -385,7 +389,7 @@ export default function LeadsPage() {
                     className={`flex items-center gap-1.5 px-2.5 py-[7px] rounded-lg text-[14px]/[18px] font-medium transition-all ${
                       view === k
                         ? isDark ? "bg-[#18181B] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]"
-                        : isDark ? "text-[#737373] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "bg-[#f9fbff] text-slate-400 hover:bg-[#E3ECFC]"
+                        : isDark ? "text-[#E4E4E7] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "bg-[#f9fbff] text-slate-400 hover:bg-[#E3ECFC]"
                     }`}>
                     <Icon size={14} weight="duotone" />{label}
                   </button>
@@ -445,7 +449,7 @@ export default function LeadsPage() {
               onClick={e => setFiltersAnchor(e.currentTarget)}
               sx={{
                 borderColor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#27272A" : "#E3ECFC",
-                color: activeFilters.length > 0 ? "#fff" : isDark ? "#737373" : "#0C2472",
+                color: activeFilters.length > 0 ? "#fff" : isDark ? "#E4E4E7" : "#0C2472",
                 bgcolor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#0F0F0F" : "#E3ECFC",
                 borderRadius:"9px", textTransform:"none", fontWeight:500, fontSize:"14px",
                 "&:hover":{
@@ -463,7 +467,7 @@ export default function LeadsPage() {
               onClick={() => setColumnsOpen(true)}
               sx={{
                 borderColor: isDark ? "#27272A" : "#E3ECFC",
-                color: isDark ? "#737373" : "#0C2472",
+                color: isDark ? "#E4E4E7" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
                 borderRadius:"9px", textTransform:"none", fontWeight:500, fontSize:"14px",
                 "&:hover":{ borderColor:"#1D4ED8", color:"#0C2472", bgcolor: isDark ? "#0A0A0A" : "#DCE6FB" },
@@ -478,7 +482,7 @@ export default function LeadsPage() {
               onClick={e => setSortAnchor(e.currentTarget)}
               sx={{
                 borderColor: isDark ? "#27272A" : "#E3ECFC",
-                color: isDark ? "#737373" : "#0C2472",
+                color: isDark ? "#E4E4E7" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
                 borderRadius:"9px", textTransform:"none", fontWeight:500, fontSize:"14px",
                 "&:hover":{ borderColor:"#1D4ED8", color:"#0C2472", bgcolor: isDark ? "#0A0A0A" : "#DCE6FB" },
@@ -486,7 +490,7 @@ export default function LeadsPage() {
               Sort{activeSorts.length > 0 ? ` (${activeSorts.length})` : ""}
             </Button>
 
-            <span className="ml-auto text-[13px]/[16px] text-slate-400 bg-[#f9fbff] px-3 py-1.5 rounded-lg">
+            <span className={`ml-auto text-[13px]/[16px] px-3 py-1.5 rounded-lg ${isDark ? "text-[#E4E4E7] bg-[#0A0A0A]" : "text-slate-400 bg-[#f9fbff]"}`}>
               {sorted.length} of {leads.length} records
             </span>
           </div>
@@ -505,7 +509,7 @@ export default function LeadsPage() {
               <button onClick={e => setStatusMenuAnchor(e.currentTarget)} className={`flex items-center gap-1.5 text-[14px]/[18px] font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>
                 <NotePencil size={14} weight="duotone" /> Update Status
               </button>
-              <button onClick={() => setSelected([])} className={`ml-auto text-[14px]/[18px] font-medium transition-colors ${isDark ? "text-[#52525B] hover:text-[#A1A1AA]" : "text-slate-400 hover:text-slate-600"}`}>Clear</button>
+              <button onClick={() => setSelected([])} className={`ml-auto text-[14px]/[18px] font-medium transition-colors ${isDark ? "text-[#E4E4E7] hover:text-[#A1A1AA]" : "text-slate-400 hover:text-slate-600"}`}>Clear</button>
               <button onClick={deleteSelected} className={`flex items-center gap-1.5 text-[14px]/[18px] font-medium transition-colors ${isDark ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"}`}>
                 <Trash size={14} weight="duotone" /> Delete
               </button>
@@ -557,10 +561,10 @@ export default function LeadsPage() {
                   noRowsOverlay: () => (
                     <div className="py-16 text-center">
                       <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
-                        <MagnifyingGlass size={22} color={isDark ? "#737373" : "#94A3B8"} weight="duotone" />
+                        <MagnifyingGlass size={22} color={isDark ? "#E4E4E7" : "#94A3B8"} weight="duotone" />
                       </div>
                       <p className={`font-heading text-[15px]/[20px] font-semibold ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>No leads found</p>
-                      <p className={`text-[13px]/[16px] mt-1 ${isDark ? "text-[#52525B]" : "text-slate-300"}`}>Try adjusting your search, filters or tab</p>
+                      <p className={`text-[13px]/[16px] mt-1 ${isDark ? "text-[#E4E4E7]" : "text-slate-300"}`}>Try adjusting your search, filters or tab</p>
                     </div>
                   ),
                 }}

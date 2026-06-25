@@ -54,9 +54,9 @@ html.dark {
   --text-secondary: #D4D4D8;
   --text-tertiary:  #A1A1AA;
   --text-body:      #D4D4D8;
-  --text-muted:     #737373;
+  --text-muted:     #9CA3AF;
   --text-faint:     #71717A;
-  --text-disabled:  #52525B;
+  --text-disabled:  #71717A;
 
   /* Interactive */
   --link-fg:        #D4D4D8;
@@ -98,7 +98,7 @@ html.dark {
   --chart-8: #EC4899;
 
   --chart-grid:  #27272A;
-  --chart-axis:  #737373;
+  --chart-axis:  #9CA3AF;
   --chart-label: #A1A1AA;
 
   /* Status */
@@ -223,8 +223,8 @@ html.dark .text-slate-800            { color: #D4D4D8 !important; }
 html.dark .text-slate-700            { color: #D4D4D8 !important; }
 html.dark .text-slate-600            { color: #A1A1AA !important; }
 html.dark .text-slate-500            { color: #A1A1AA !important; }
-html.dark .text-slate-400            { color: #737373 !important; }
-html.dark .text-slate-300            { color: #52525B !important; }
+html.dark .text-slate-400            { color: #9CA3AF !important; }
+html.dark .text-slate-300            { color: #71717A !important; }
 html.dark .text-slate-200            { color: #3F3F46 !important; }
 
 html.dark .text-\[\#4A7AE8\]              { color: #D4D4D8 !important; }

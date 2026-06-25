@@ -21,7 +21,7 @@ const COUNTRIES  = ["India", "United States", "United Kingdom", "Singapore", "Au
 const STATES     = ["Andhra Pradesh", "Delhi", "Gujarat", "Karnataka", "Kerala", "Maharashtra", "Tamil Nadu", "Telangana", "Other"];
 
 function SectionTitle({ children, isDark }: { children: React.ReactNode; isDark: boolean }) {
-  return <h3 className={`font-heading text-[13.5px] font-bold mb-4 ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>{children}</h3>;
+  return <h3 className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-4 ${isDark ? "text-[#D4D4D8]" : "text-slate-500"}`}>{children}</h3>;
 }
 
 const DEFAULT = {
@@ -42,7 +42,7 @@ function AddressBlock({ title, prefix, form, set, isDark, fx }: {
   const clearAll = () => ["Country","Building","Street","City","State","Zip","Lat","Lng"].forEach(f => set(k(f.toLowerCase()), ""));
   return (
     <div className={`flex-1 min-w-0 rounded-xl border p-4 space-y-2.5 ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF]/60 border-[#E3ECFC]"}`}>
-      <p className={`font-heading text-[11px] font-bold uppercase tracking-wider mb-3 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{title}</p>
+      <p className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-3 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{title}</p>
       <FormControl size="small" fullWidth sx={fx}>
         <InputLabel>Country / Region</InputLabel>
         <Select label="Country / Region" value={form[k("country")] || ""} onChange={e => set(k("country"), e.target.value)}>
@@ -66,7 +66,7 @@ function AddressBlock({ title, prefix, form, set, isDark, fx }: {
         <TextField label="Longitude" value={form[k("lng")] || ""} onChange={e => set(k("lng"), e.target.value)} size="small" fullWidth sx={fx} />
       </div>
       <div className="flex justify-end pt-0.5">
-        <button onClick={clearAll} className={`text-[11.5px] font-semibold transition-colors ${isDark ? "text-[#52525B] hover:text-[#A1A1AA]" : "text-[#475569] hover:underline"}`}>Clear All</button>
+        <button onClick={clearAll} className={`text-[11.5px] font-semibold transition-colors ${isDark ? "text-[#9CA3AF] hover:text-[#A1A1AA]" : "text-[#475569] hover:underline"}`}>Clear All</button>
       </div>
     </div>
   );
@@ -212,11 +212,11 @@ export default function NewAccountDrawer({ open, onClose, mode = "create", initi
           onClick={handleSubmit}
           disabled={!form.accountName}
           sx={{
-            bgcolor: isDark ? "#27272A" : "inherit",
-            color: isDark ? "#F4F4F5" : undefined,
+            bgcolor: isDark ? "#27272A" : "#1D4ED8",
+            color: isDark ? "#F4F4F5" : "#fff",
             borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.8rem", px: 3, py: 0.9,
             boxShadow: isDark ? "none" : "0 2px 12px #1D4ED833",
-            "&:hover": { bgcolor: isDark ? "#3F3F46" : "inherit", boxShadow: isDark ? "none" : "0 4px 18px #60A5FA55" },
+            "&:hover": { bgcolor: isDark ? "#3F3F46" : "#60A5FA", boxShadow: isDark ? "none" : "0 4px 18px #60A5FA55" },
             "&:active": { bgcolor: isDark ? "#18181B" : "#0C2472" },
             "&.Mui-disabled": { bgcolor: isDark ? "#1C1C1E" : "#E3ECFC", color: isDark ? "#3F3F46" : "#9CA3AF" },
           }}>

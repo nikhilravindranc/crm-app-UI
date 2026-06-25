@@ -127,7 +127,7 @@ export default function NewTaskDrawer({ open, onClose }: Props) {
 
         {/* ── Task Information ── */}
         <div>
-          <h3 className={`font-heading text-[13px] font-bold mb-4 tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Task Information</h3>
+          <h3 className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-4 ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Task Information</h3>
 
           <div className="space-y-3">
             <FormControl size="small" fullWidth sx={FX}>
@@ -220,7 +220,7 @@ export default function NewTaskDrawer({ open, onClose }: Props) {
 
             {/* Reminder toggle */}
             <div className="flex items-center gap-3 py-1">
-              <span className={`text-[13px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>Reminder</span>
+              <span className={`text-[14px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>Reminder</span>
               <Switch
                 checked={form.reminder}
                 onChange={e => setB("reminder", e.target.checked)}
@@ -234,7 +234,7 @@ export default function NewTaskDrawer({ open, onClose }: Props) {
 
             {/* Task Owner — fieldset-style */}
             <fieldset className={`rounded-[10px] border px-3 pb-3 pt-1 ${isDark ? "border-[#3F3F46] bg-[#1C1C1E]" : "border-[#E3ECFC] bg-[#EFF6FF]"}`}>
-              <legend className={`text-[11px] font-semibold px-1 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Task Owner</legend>
+              <legend className={`text-[11.5px] font-semibold uppercase tracking-wider px-1 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Task Owner</legend>
               <FormControl size="small" fullWidth sx={{
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "8px", fontSize: "0.82rem",
@@ -256,7 +256,7 @@ export default function NewTaskDrawer({ open, onClose }: Props) {
 
         {/* ── Description Information ── */}
         <div>
-          <h3 className={`font-heading text-[13px] font-bold mb-4 tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Description Information</h3>
+          <h3 className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-4 ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Description Information</h3>
           <TextField
             label="Description"
             value={form.description}
@@ -280,11 +280,11 @@ export default function NewTaskDrawer({ open, onClose }: Props) {
         </Button>
         <Button variant="contained" onClick={handleSubmit}
           sx={{
-            bgcolor: isDark ? "#27272A" : "inherit",
-            color: isDark ? "#F4F4F5" : undefined,
+            bgcolor: isDark ? "#27272A" : "#1D4ED8",
+            color: isDark ? "#F4F4F5" : "#fff",
             borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3,
             boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833",
-            "&:hover":  { bgcolor: isDark ? "#3F3F46" : "inherit" },
+            "&:hover":  { bgcolor: isDark ? "#3F3F46" : "#60A5FA" },
             "&:active": { bgcolor: isDark ? "#18181B" : "#0C2472" },
           }}>
           Submit

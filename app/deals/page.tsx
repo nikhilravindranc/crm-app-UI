@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -21,12 +21,15 @@ import {
   Plus, MagnifyingGlass, SlidersHorizontal, SortAscending, Columns,
   ArrowsDownUp, List, GridFour, Kanban, CaretDown, House, CaretRight,
   Trash, DotsThreeVertical, FunnelSimple, TrendUp,
+  Handshake, CurrencyCircleDollar, Buildings, Pulse, ChartLineUp, User,
+  UserCircle, CalendarBlank,
 } from "@phosphor-icons/react";
+import type { ElementType } from "react";
 import { useTheme } from "@/components/ThemeContext";
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Types
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 type DealStage = "Qualification" | "Needs Analysis" | "Value Proposition" |
   "Identify Decision Makers" | "Proposal/Price Quote" | "Negotiation/Review" | "Closed Won";
 
@@ -37,9 +40,9 @@ interface Deal {
   owner: string; ownerInitials: string;
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Data — exact from screenshot
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 const ALL_DEALS: Deal[] = [
   { id:1,  name:"New",                         amount:29999,  account:"Sweany Inc",    stage:"Proposal/Price Quote",      probability:75, contactName:"",                 createdBy:"PM SDL", modifiedBy:"PM SDL", creation:"27 May 2026, 03:14 PM", modified:"30 May 2026, 02:10 PM", owner:"PM SDL",    ownerInitials:"PM" },
   { id:2,  name:"Deal SDL 11",                 amount:500000, account:"SDL LEAD1",     stage:"Identify Decision Makers",  probability:60, contactName:"Lead SDL 11",      createdBy:"PM SDL", modifiedBy:"PM SDL", creation:"15 Apr 2026, 11:13 AM", modified:"05 May 2026, 04:55 PM", owner:"PM SDL",    ownerInitials:"PM" },
@@ -56,9 +59,9 @@ const ALL_DEALS: Deal[] = [
   { id:13, name:"Test",                        amount:10000,  account:"SDL",           stage:"Proposal/Price Quote",      probability:75, contactName:"",                 createdBy:"PM SDL", modifiedBy:"PM SDL", creation:"25 Mar 2026, 08:10 PM", modified:"07 Apr 2026, 04:53 PM", owner:"PM SDL",    ownerInitials:"PM" },
 ];
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Stage config
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 const STAGE_CFG: Record<DealStage, { bg: string; text: string; dot: string; bgDark: string; textDark: string }> = {
   "Qualification":            { bg: "#EFF6FF", text: "#0C2472", dot: "#94A3B8", bgDark: "rgba(96, 165, 250, 0.15)", textDark: "#60A5FA" },
   "Needs Analysis":           { bg: "#E3ECFC", text: "#0C2472", dot: "#3B82F6", bgDark: "rgba(52, 211, 153, 0.15)", textDark: "#34D399" },
@@ -69,17 +72,17 @@ const STAGE_CFG: Record<DealStage, { bg: string; text: string; dot: string; bgDa
   "Closed Won":               { bg: "#DCFCE7", text: "#166534", dot: "#10B981", bgDark: "rgba(16, 185, 129, 0.15)", textDark: "#10B981" },
 };
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Stage tabs
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 const STAGE_TABS = [
   "All", "Qualification", "Needs Analysis", "Value Proposition",
   "Identify Decision Makers", "Proposal/Price Quote", "Negotiation/Review", "Closed Won",
 ];
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Column definitions
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 const COL_DEFS: { key: string; label: string; width: string }[] = [
   { key: "dealName",    label: "Deal Name",       width: "1fr"   },
   { key: "amount",      label: "Amount",          width: "110px" },
@@ -98,23 +101,24 @@ const DEFAULT_VISIBLE_COLS = new Set([
   "contactName", "creation", "modified",
 ]);
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Helpers
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 const fmt = (n: number) => n === 0 ? "₹0" : `₹${n.toLocaleString("en-IN")}`;
 
-function ColHeader({ label, isDark = false }: { label: string; isDark?: boolean }) {
+function ColHeader({ label, icon: Icon, isDark = false }: { label: string; icon?: ElementType; isDark?: boolean }) {
   return (
-    <div className={`font-heading flex items-center gap-0.5 text-table-header uppercase tracking-wide cursor-pointer transition-colors group select-none ${isDark ? "text-[#737373] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+    <div className={`font-heading flex items-center gap-1.5 text-table-header uppercase tracking-wide cursor-pointer transition-colors group select-none ${isDark ? "text-[#9CA3AF] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+      {Icon && <Icon size={13} weight="duotone" />}
       {label}
-      <ArrowsDownUp size={12} weight="duotone" className={`opacity-30 group-hover:opacity-100 transition-opacity ${isDark ? "text-[#52525B]" : "text-[#60A5FA]"}`} />
+      <ArrowsDownUp size={12} weight="duotone" className={`opacity-30 group-hover:opacity-100 transition-opacity ${isDark ? "text-[#9CA3AF]" : "text-[#60A5FA]"}`} />
     </div>
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Page
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 export default function DealsPage() {
   const router = useRouter();
   const { theme } = useTheme();
@@ -146,32 +150,32 @@ export default function DealsPage() {
 
   const totalValue = filtered.reduce((s, d) => s + d.amount, 0);
 
-  // ── DataGrid column builders, keyed by COL_DEFS.key
+  // -- DataGrid column builders, keyed by COL_DEFS.key
   const COLUMN_BUILDERS: Record<string, GridColDef<Deal>> = {
     dealName: {
       field: "dealName", headerName: "Deal Name", flex: 1.8, minWidth: 160, sortable: false,
-      renderHeader: () => <ColHeader label="Deal Name" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Deal Name" icon={Handshake} isDark={isDark} />,
       renderCell: (params) => (
         <p className={`m-0 font-heading text-table-cell font-medium truncate ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}>{params.row.name}</p>
       ),
     },
     amount: {
       field: "amount", headerName: "Amount", flex: 1, minWidth: 100, sortable: false,
-      renderHeader: () => <ColHeader label="Amount" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Amount" icon={CurrencyCircleDollar} isDark={isDark} />,
       renderCell: (params) => <p className={`m-0 text-table-cell font-medium truncate ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}>{fmt(params.row.amount)}</p>,
     },
     accountName: {
       field: "accountName", headerName: "Account Name", flex: 1.3, minWidth: 120, sortable: false,
-      renderHeader: () => <ColHeader label="Account Name" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Account Name" icon={Buildings} isDark={isDark} />,
       renderCell: (params) => (
         <p className={`m-0 text-table-cell truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
-          {params.row.account || <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>}
+          {params.row.account || <span className={isDark ? "text-[#9CA3AF]" : "text-slate-200"}>—</span>}
         </p>
       ),
     },
     stage: {
       field: "stage", headerName: "Stage", flex: 1.7, minWidth: 160, sortable: false,
-      renderHeader: () => <ColHeader label="Stage" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Stage" icon={Pulse} isDark={isDark} />,
       renderCell: (params) => {
         const cfg = STAGE_CFG[params.row.stage] ?? STAGE_CFG["Qualification"];
         return (
@@ -185,7 +189,7 @@ export default function DealsPage() {
     },
     probability: {
       field: "probability", headerName: "Probability (%)", flex: 1, minWidth: 100, sortable: false,
-      renderHeader: () => <ColHeader label="Probability (%)" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Probability (%)" icon={ChartLineUp} isDark={isDark} />,
       renderCell: (params) => {
         const cfg = STAGE_CFG[params.row.stage] ?? STAGE_CFG["Qualification"];
         return (
@@ -200,32 +204,32 @@ export default function DealsPage() {
     },
     contactName: {
       field: "contactName", headerName: "Contact Name", flex: 1.3, minWidth: 120, sortable: false,
-      renderHeader: () => <ColHeader label="Contact Name" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Contact Name" icon={User} isDark={isDark} />,
       renderCell: (params) => (
         <p className={`m-0 text-table-cell truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
-          {params.row.contactName || <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>}
+          {params.row.contactName || <span className={isDark ? "text-[#9CA3AF]" : "text-slate-200"}>—</span>}
         </p>
       ),
     },
     createdBy: {
       field: "createdBy", headerName: "Created By", flex: 1.2, minWidth: 110, sortable: false,
-      renderHeader: () => <ColHeader label="Created By" isDark={isDark} />,
-      renderCell: (params) => <p className={`m-0 text-table-cell-secondary truncate ${isDark ? "text-[#737373]" : "text-slate-400"}`}>{params.row.createdBy}</p>,
+      renderHeader: () => <ColHeader label="Created By" icon={UserCircle} isDark={isDark} />,
+      renderCell: (params) => <p className={`m-0 text-table-cell-secondary truncate ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{params.row.createdBy}</p>,
     },
     modifiedBy: {
       field: "modifiedBy", headerName: "Modified By", flex: 1.2, minWidth: 110, sortable: false,
-      renderHeader: () => <ColHeader label="Modified By" isDark={isDark} />,
-      renderCell: (params) => <p className={`m-0 text-table-cell-secondary truncate ${isDark ? "text-[#737373]" : "text-slate-400"}`}>{params.row.modifiedBy}</p>,
+      renderHeader: () => <ColHeader label="Modified By" icon={UserCircle} isDark={isDark} />,
+      renderCell: (params) => <p className={`m-0 text-table-cell-secondary truncate ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{params.row.modifiedBy}</p>,
     },
     creation: {
       field: "creation", headerName: "Creation", flex: 1.5, minWidth: 150, sortable: false,
-      renderHeader: () => <ColHeader label="Creation" isDark={isDark} />,
-      renderCell: (params) => <p className={`m-0 text-table-cell-secondary truncate ${isDark ? "text-[#737373]" : "text-slate-400"}`}>{params.row.creation}</p>,
+      renderHeader: () => <ColHeader label="Creation" icon={CalendarBlank} isDark={isDark} />,
+      renderCell: (params) => <p className={`m-0 text-table-cell-secondary truncate ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{params.row.creation}</p>,
     },
     modified: {
       field: "modified", headerName: "Modified", flex: 1.5, minWidth: 150, sortable: false,
-      renderHeader: () => <ColHeader label="Modified" isDark={isDark} />,
-      renderCell: (params) => <p className={`m-0 text-table-cell-secondary truncate ${isDark ? "text-[#737373]" : "text-slate-400"}`}>{params.row.modified}</p>,
+      renderHeader: () => <ColHeader label="Modified" icon={CalendarBlank} isDark={isDark} />,
+      renderCell: (params) => <p className={`m-0 text-table-cell-secondary truncate ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{params.row.modified}</p>,
     },
   };
 
@@ -254,12 +258,12 @@ export default function DealsPage() {
 
         <main className="flex-1 px-4 md:px-8 py-3 md:py-4 space-y-3 animate-fade-in">
 
-          {/* ══ Breadcrumb + Header ══ */}
+          {/* -- Breadcrumb + Header -- */}
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-1 text-caption text-slate-400 mb-2">
-                <House size={12} weight="duotone" />
-                <CaretRight size={11} weight="duotone" />
+                <House size={16} weight="duotone" />
+                <CaretRight size={12} weight="duotone" />
                 <Link href="/deals" className={`transition-colors font-medium ${isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#1D4ED8]"}`}>Deals</Link>
               </div>
               <div className="flex items-center gap-2.5">
@@ -287,7 +291,7 @@ export default function DealsPage() {
                     className={`flex items-center gap-1.5 px-2.5 py-[7px] rounded-lg text-button-sm transition-all ${
                       view === k
                         ? isDark ? "bg-[#18181B] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]"
-                        : isDark ? "text-[#737373] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "text-slate-400 hover:text-slate-600"
+                        : isDark ? "text-[#9CA3AF] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "text-slate-400 hover:text-slate-600"
                     }`}>
                     <Icon size={14} weight="duotone" />{label}
                   </button>
@@ -297,13 +301,13 @@ export default function DealsPage() {
               <Button variant="contained"
                 startIcon={<Plus size={16} weight="bold" />}
                 onClick={() => setDrawerOpen(true)}
-                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px", px: 2, py: 0.85, boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB", boxShadow: isDark ? "none" : "0 2px 14px #60A5FA55" }, "&:active": { bgcolor: isDark ? "#52525B" : "#0C2472" } }}>
+                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px", px: 2, py: 0.85, boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB", boxShadow: isDark ? "none" : "0 2px 14px #60A5FA55" }, "&:active": { bgcolor: isDark ? "#9CA3AF" : "#0C2472" } }}>
                 New Deal
               </Button>
             </div>
           </div>
 
-          {/* ══ Stage filter tabs ══ */}
+          {/* -- Stage filter tabs -- */}
           <div className="flex items-center gap-1 overflow-x-auto pb-1">
             {STAGE_TABS.map(stage => {
               const cnt    = stageCounts[stage] ?? 0;
@@ -324,7 +328,7 @@ export default function DealsPage() {
             })}
           </div>
 
-          {/* ══ Toolbar ══ */}
+          {/* -- Toolbar -- */}
           <div className="flex items-center gap-2.5">
             {/* Search */}
             <div className={`flex items-center gap-2 border rounded-xl px-3 py-2 w-72 focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
@@ -347,9 +351,9 @@ export default function DealsPage() {
               onClick={e => setFiltersAnchor(e.currentTarget)}
               sx={{
                 borderColor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#27272A" : "#E3ECFC",
-                color: activeFilters.length > 0 ? "#fff" : isDark ? "#737373" : "#0C2472",
+                color: activeFilters.length > 0 ? "#fff" : isDark ? "#9CA3AF" : "#0C2472",
                 bgcolor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#0F0F0F" : "#E3ECFC",
-                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "13px",
+                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px",
                 "&:hover": {
                   borderColor: activeFilters.length > 0 ? "#1640B8" : "#1D4ED8",
                   color: activeFilters.length > 0 ? "#fff" : "#0C2472",
@@ -365,9 +369,9 @@ export default function DealsPage() {
               onClick={() => setColumnsOpen(true)}
               sx={{
                 borderColor: isDark ? "#27272A" : "#E3ECFC",
-                color: isDark ? "#737373" : "#0C2472",
+                color: isDark ? "#9CA3AF" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
-                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "13px",
+                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px",
                 "&:hover": { borderColor: isDark ? "#3F3F46" : "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
               }}>
               Columns
@@ -380,9 +384,9 @@ export default function DealsPage() {
               onClick={e => setSortAnchor(e.currentTarget)}
               sx={{
                 borderColor: isDark ? "#27272A" : "#E3ECFC",
-                color: isDark ? "#737373" : "#0C2472",
+                color: isDark ? "#9CA3AF" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
-                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "13px",
+                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px",
                 "&:hover": { borderColor: isDark ? "#3F3F46" : "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
               }}>
               Sort{activeSorts.length > 0 ? ` (${activeSorts.length})` : ""}
@@ -401,7 +405,7 @@ export default function DealsPage() {
             </div>
           </div>
 
-          {/* ══ Bulk action bar ══ */}
+          {/* -- Bulk action bar -- */}
           {selected.length > 0 && (
             <div className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border animate-slide-up shadow-sm ${isDark ? "bg-[#18181B] border-[#27272A]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
               <div className="flex items-center gap-2">
@@ -411,20 +415,20 @@ export default function DealsPage() {
               <div className={`w-px h-4 ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
               <button className={`text-button-sm font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Update Stage</button>
               <button className={`text-button-sm font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Assign Owner</button>
-              <button onClick={() => setSelected([])} className={`ml-auto text-button-sm font-medium transition-colors ${isDark ? "text-[#52525B] hover:text-[#A1A1AA]" : "text-slate-400 hover:text-slate-600"}`}>Clear</button>
+              <button onClick={() => setSelected([])} className={`ml-auto text-button-sm font-medium transition-colors ${isDark ? "text-[#9CA3AF] hover:text-[#A1A1AA]" : "text-slate-400 hover:text-slate-600"}`}>Clear</button>
               <button className={`flex items-center gap-1.5 text-button-sm font-medium transition-colors ${isDark ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"}`}>
                 <Trash size={14} weight="duotone" /> Delete
               </button>
             </div>
           )}
 
-          {/* ══ GRID ══ */}
+          {/* -- GRID -- */}
           {view === "grid" && <DealGridView deals={filtered} />}
 
-          {/* ══ KANBAN ══ */}
+          {/* -- KANBAN -- */}
           {view === "kanban" && <DealKanbanView deals={filtered} />}
 
-          {/* ══ LIST (MUI DataGrid) ══ */}
+          {/* -- LIST (MUI DataGrid) -- */}
           {view === "list" && (
             <div className="rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden" style={{ height: 600 }}>
               <DataGrid<Deal>
@@ -459,7 +463,7 @@ export default function DealsPage() {
         </main>
       </div>
 
-      {/* ══ Panels ══ */}
+      {/* -- Panels -- */}
       <NewDealDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
       <FiltersDrawer

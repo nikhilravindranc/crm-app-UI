@@ -146,7 +146,7 @@ export default function NewDealDrawer({ open, onClose, mode = "create", initialD
 
         {/* ── Section 1: Deal Information ── */}
         <div>
-          <h3 className={`font-heading text-[13px] font-bold mb-4 tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Deal Information</h3>
+          <h3 className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-4 ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Deal Information</h3>
 
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
@@ -236,7 +236,7 @@ export default function NewDealDrawer({ open, onClose, mode = "create", initialD
 
         {/* ── Section 2: Description Information ── */}
         <div>
-          <h3 className={`font-heading text-[13px] font-bold mb-4 tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Description Information</h3>
+          <h3 className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-4 ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Description Information</h3>
           <TextField
             label="Description"
             value={form.description}
@@ -268,11 +268,11 @@ export default function NewDealDrawer({ open, onClose, mode = "create", initialD
         </Button>
         <Button variant="contained" size="small" onClick={handleSubmit}
           sx={{
-            bgcolor: isDark ? "#27272A" : "inherit",
-            color: isDark ? "#F4F4F5" : undefined,
+            bgcolor: isDark ? "#27272A" : "#1D4ED8",
+            color: isDark ? "#F4F4F5" : "#fff",
             borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.8rem", px: 3, py: 0.9,
             boxShadow: isDark ? "none" : "0 2px 12px #1D4ED833",
-            "&:hover":  { bgcolor: isDark ? "#3F3F46" : "inherit", boxShadow: isDark ? "none" : "0 4px 18px #60A5FA55" },
+            "&:hover":  { bgcolor: isDark ? "#3F3F46" : "#60A5FA", boxShadow: isDark ? "none" : "0 4px 18px #60A5FA55" },
             "&:active": { bgcolor: isDark ? "#18181B" : "#0C2472" },
           }}>
           Submit

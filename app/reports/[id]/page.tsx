@@ -61,7 +61,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
             </div>
 
             <div className="flex items-center gap-3">
-              <span className={`text-[11.5px] font-medium ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{report.updatedAt}</span>
+              <span className={`text-[11.5px] font-medium ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{report.updatedAt}</span>
               <Tooltip title="Refresh">
                 <IconButton size="small" sx={{ borderRadius:"8px", bgcolor: isDark ? "#27272A" : "transparent", "&:hover":{ bgcolor: isDark ? "#3F3F46" : "#EFF6FF" } }}>
                   <ArrowsClockwise size={16} color={isDark ? "#71717A" : "#64748B"} weight="duotone" />
@@ -111,7 +111,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
             {report.rows.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-64">
                 <ChartBar size={32} color={isDark ? "#3F3F46" : "#E3ECFC"} weight="duotone" className="mb-3" />
-                <p className={`font-heading text-sm font-semibold ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>No data to display</p>
+                <p className={`font-heading text-sm font-semibold ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>No data to display</p>
                 <p className={`text-xs mt-1 ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>Run the report to see results</p>
               </div>
             ) : (

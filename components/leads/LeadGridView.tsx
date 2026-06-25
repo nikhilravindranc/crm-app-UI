@@ -43,7 +43,7 @@ export default function LeadGridView({ leads }: Props) {
 
   if (leads.length === 0) {
     return (
-      <div className={`flex flex-col items-center justify-center py-20 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>
+      <div className={`flex flex-col items-center justify-center py-20 ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>
         <p className="font-heading text-[15px]/[20px] font-semibold">No leads found</p>
         <p className="text-[13px]/[16px] mt-1">Adjust filters or add a new lead</p>
       </div>
@@ -90,7 +90,7 @@ export default function LeadGridView({ leads }: Props) {
                     {lead.name}
                   </p>
                   {lead.company && (
-                    <p className={`text-[12.5px] truncate flex items-center gap-1 mt-0.5 ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>
+                    <p className={`text-[12.5px] truncate flex items-center gap-1 mt-0.5 ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>
                       <Buildings size={11} color={cardT.deep} weight="duotone" />
                       {lead.company}
                     </p>
@@ -99,7 +99,7 @@ export default function LeadGridView({ leads }: Props) {
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
                   <button onClick={e => e.stopPropagation()}
                     className={`p-1 rounded-lg transition-colors ${isDark ? "hover:bg-white/10" : "hover:bg-[#f9fbff]/60"}`}>
-                    <DotsThreeVertical size={15} color={isDark ? "#71717A" : "#475569"} weight="duotone" />
+                    <DotsThreeVertical size={15} color={isDark ? "#A1A1AA" : "#475569"} weight="duotone" />
                   </button>
                 </div>
               </div>
@@ -125,7 +125,7 @@ export default function LeadGridView({ leads }: Props) {
                   </div>
                 ) : null}
                 {!lead.email && !lead.mobile && (
-                  <p className={`text-[12px] italic ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>No contact info</p>
+                  <p className={`text-[12px] italic ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>No contact info</p>
                 )}
               </div>
             </div>
@@ -141,17 +141,17 @@ export default function LeadGridView({ leads }: Props) {
                   <Avatar src={OWNER_AVATARS[lead.owner]} sx={{ width: 20, height: 20, bgcolor: owCol, fontSize: "0.58rem", fontWeight: 800 }}>
                     {lead.ownerInitials}
                   </Avatar>
-                  <span className={`text-[12px] font-medium truncate max-w-[80px] ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>{lead.owner}</span>
+                  <span className={`text-[12px] font-medium truncate max-w-[80px] ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>{lead.owner}</span>
                 </div>
               </Tooltip>
               <div className="flex items-center gap-1.5">
                 {lead.leadSource && (
-                  <span className={`flex items-center gap-0.5 text-[11px] px-1.5 py-0.5 rounded-full ${isDark ? "bg-white/10 text-[#71717A]" : "bg-[#f9fbff]/70 text-slate-600"}`}>
+                  <span className={`flex items-center gap-0.5 text-[11px] px-1.5 py-0.5 rounded-full ${isDark ? "bg-white/10 text-[#A1A1AA]" : "bg-[#f9fbff]/70 text-slate-600"}`}>
                     <TrendUp size={10} color={cardT.deep} weight="duotone" />{lead.leadSource}
                   </span>
                 )}
                 {lead.rating && (
-                  <span className={`flex items-center gap-0.5 text-[11px] px-1.5 py-0.5 rounded-full ${isDark ? "bg-white/10 text-[#71717A]" : "bg-[#f9fbff]/70 text-slate-600"}`}>
+                  <span className={`flex items-center gap-0.5 text-[11px] px-1.5 py-0.5 rounded-full ${isDark ? "bg-white/10 text-[#A1A1AA]" : "bg-[#f9fbff]/70 text-slate-600"}`}>
                     <Star size={10} color="#F59E0B" weight="duotone" />{lead.rating}
                   </span>
                 )}

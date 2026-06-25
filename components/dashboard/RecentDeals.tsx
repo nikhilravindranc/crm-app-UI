@@ -47,12 +47,12 @@ export default function RecentDeals({ isDark = false }: { isDark?: boolean }) {
         style={{ backgroundColor: isDark ? "#18181B" : undefined }}>
         <div className="flex items-center gap-2 whitespace-nowrap">
           <h3 className={`text-[14px] font-bold leading-none m-0 ${isDark ? "text-[#FFFFFF]" : "text-[#0C2472]"}`}>Recent Deals</h3>
-          <span className="text-[11px] text-slate-400 leading-none">· 5 latest active deals</span>
+          <span className="text-[12px] text-slate-400 leading-none">· 5 latest active deals</span>
         </div>
         <Button
           size="small"
           endIcon={<ArrowSquareOut size={12} weight="duotone" />}
-          sx={{ textTransform:"none", fontSize:"0.72rem", color: isDark ? "#737373" : "#1D4ED8", fontWeight:700, borderRadius:"8px", "&:hover":{ bgcolor: isDark ? "rgba(255,255,255,0.05)" : "rgba(96, 165, 250, 0.1)" } }}
+          sx={{ textTransform:"none", fontSize:"0.72rem", color: isDark ? "#9CA3AF" : "#1D4ED8", fontWeight:700, borderRadius:"8px", "&:hover":{ bgcolor: isDark ? "rgba(255,255,255,0.05)" : "rgba(96, 165, 250, 0.1)" } }}
         >
           View All
         </Button>
@@ -63,7 +63,7 @@ export default function RecentDeals({ isDark = false }: { isDark?: boolean }) {
           <TableHead>
             <TableRow>
               {["Deal", "Amount", "Stage", "Owner", "Close Date"].map(h => (
-                <TableCell key={h} sx={{ backgroundColor: isDark ? "#111111" : "#EFF6FF", color: isDark ? "#52525B" : "#0C2472", borderBottom: `1px solid ${isDark ? "#27272A" : "#E3ECFC"}`, fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</TableCell>
+                <TableCell key={h} sx={{ backgroundColor: isDark ? "#111111" : "#EFF6FF", color: isDark ? "#9CA3AF" : "#0C2472", borderBottom: `1px solid ${isDark ? "#27272A" : "#E3ECFC"}`, fontWeight: 700, fontSize: "11.5px", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</TableCell>
               ))}
             </TableRow>
           </TableHead>
@@ -78,13 +78,13 @@ export default function RecentDeals({ isDark = false }: { isDark?: boolean }) {
                       {deal.change === "same" && <Minus size={11} color="#94A3B8" weight="bold" />}
                     </div>
                     <div className="flex items-center gap-1.5 whitespace-nowrap">
-                      <p className={`text-[12px] font-semibold leading-tight ${isDark ? "text-[#E2E8F0]" : "text-slate-800"}`}>{deal.name}</p>
-                      <p className="text-[10px] text-slate-400 font-mono">{deal.id}</p>
+                      <p className={`text-[14px] font-semibold leading-tight ${isDark ? "text-[#E2E8F0]" : "text-slate-800"}`}>{deal.name}</p>
+                      <p className="text-[12px] text-slate-400 font-mono">{deal.id}</p>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <span className={`text-[12px] font-bold ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}>{fmt(deal.amount)}</span>
+                  <span className={`text-[14px] font-bold ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}>{fmt(deal.amount)}</span>
                 </TableCell>
                 <TableCell>
                   <Chip label={deal.stage} size="small" sx={{ bgcolor: isDark ? "rgba(39,39,42,0.8)" : deal.stageBg, color: isDark ? "#A1A1AA" : deal.stageFg, fontWeight:700, fontSize:"0.65rem", height:20, borderRadius:"5px" }} />
@@ -103,7 +103,7 @@ export default function RecentDeals({ isDark = false }: { isDark?: boolean }) {
                   </Tooltip>
                 </TableCell>
                 <TableCell>
-                  <span className="text-[11px] text-slate-400 font-medium">{deal.closeDate}</span>
+                  <span className="text-[12px] text-slate-400 font-medium">{deal.closeDate}</span>
                 </TableCell>
               </TableRow>
             ))}

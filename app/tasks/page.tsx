@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 import Link from "next/link";
 import Sidebar from "@/components/layout/Sidebar";
@@ -18,14 +18,16 @@ import {
   House, CaretRight, Plus, MagnifyingGlass, FunnelSimple,
   ArrowsDownUp, DotsThreeVertical, Trash, CaretDown, List,
   ClipboardText, CheckCircle, PencilSimple, Copy,
+  Tag, CalendarBlank, Pulse, Flag, User, LinkSimple, UserCircle,
 } from "@phosphor-icons/react";
+import type { ElementType } from "react";
 import NewTaskDrawer from "@/components/tasks/NewTaskDrawer";
 import FiltersDrawer, { type FilterRow } from "@/components/leads/FiltersDrawer";
 import { useTheme } from "@/components/ThemeContext";
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Types & Data
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 type TaskStatus   = "To-Do" | "In Progress" | "Backlog" | "Completed" | "";
 type TaskPriority = "High" | "Medium" | "Low" | "";
 type TaskType     = "Task" | "Quote" | "Call" | "Email" | "";
@@ -50,9 +52,9 @@ const ALL_TASKS: TaskRecord[] = [
   { id: 5, type: "Quote", subject: "Quote",                      dueDate: "24/03/2026", status: "In Progress",priority: "Low",    contact: "",                   relatedTo: "",            taskOwner: "pm@socialdnalabs.com" },
 ];
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Config
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 const STATUS_CFG: Record<string, { bg: string; text: string; dot: string }> = {
   "To-Do":       { bg: "#EFF6FF",  text: "#0C2472", dot: "#3B82F6" },
   "In Progress": { bg: "#FEF3C7",  text: "#92400E", dot: "#F59E0B" },
@@ -73,21 +75,22 @@ const PRIORITY_CFG: Record<string, { bg: string; text: string }> = {
   "Low":    { bg: "#F0FDF4", text: "#16A34A" },
 };
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Helpers
-// ─────────────────────────────────────────────
-function ColHeader({ label, isDark = false }: { label: string; isDark?: boolean }) {
+// ---------------------------------------------
+function ColHeader({ label, icon: Icon, isDark = false }: { label: string; icon?: ElementType; isDark?: boolean }) {
   return (
-    <div className={`font-heading flex items-center gap-0.5 text-table-header uppercase tracking-wide cursor-pointer transition-colors group select-none ${isDark ? "text-[#737373] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+    <div className={`font-heading flex items-center gap-1.5 text-table-header uppercase tracking-wide cursor-pointer transition-colors group select-none ${isDark ? "text-[#9CA3AF] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+      {Icon && <Icon size={13} weight="duotone" />}
       {label}
-      <ArrowsDownUp size={12} weight="duotone" className={`opacity-30 group-hover:opacity-100 transition-opacity ${isDark ? "text-[#52525B]" : "text-[#60A5FA]"}`} />
+      <ArrowsDownUp size={12} weight="duotone" className={`opacity-30 group-hover:opacity-100 transition-opacity ${isDark ? "text-[#9CA3AF]" : "text-[#60A5FA]"}`} />
     </div>
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Page
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 export default function TasksPage() {
   const router = useRouter();
   const { theme } = useTheme();
@@ -142,11 +145,11 @@ export default function TasksPage() {
   const statusCounts: Record<string, number> = { All: ALL_TASKS.length };
   ALL_TASKS.forEach(t => { if (t.status) statusCounts[t.status] = (statusCounts[t.status] ?? 0) + 1; });
 
-  // ── DataGrid column definitions
+  // -- DataGrid column definitions
   const gridColumns: GridColDef<TaskRecord>[] = [
     {
       field: "type", headerName: "Type", flex: 0.8, minWidth: 80, sortable: false,
-      renderHeader: () => <ColHeader label="Type" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Type" icon={Tag} isDark={isDark} />,
       renderCell: (params) => (
         <p className={`text-table-cell font-medium truncate mb-0 ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>
           {params.row.type || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
@@ -155,7 +158,7 @@ export default function TasksPage() {
     },
     {
       field: "subject", headerName: "Subject", flex: 1.8, minWidth: 200, sortable: false,
-      renderHeader: () => <ColHeader label="Subject" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Subject" icon={ClipboardText} isDark={isDark} />,
       renderCell: (params) => (
         <Link href={`/tasks/${params.row.id}`} className={`font-heading text-table-cell font-medium truncate hover:underline ${isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]"}`} onClick={e => e.stopPropagation()}>
           {params.row.subject}
@@ -164,7 +167,7 @@ export default function TasksPage() {
     },
     {
       field: "dueDate", headerName: "Due Date", flex: 1, minWidth: 100, sortable: false,
-      renderHeader: () => <ColHeader label="Due Date" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Due Date" icon={CalendarBlank} isDark={isDark} />,
       renderCell: (params) => (
         <p className={`text-table-cell truncate mb-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
           {params.row.dueDate || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
@@ -173,7 +176,7 @@ export default function TasksPage() {
     },
     {
       field: "status", headerName: "Status", flex: 1.2, minWidth: 120, sortable: false,
-      renderHeader: () => <ColHeader label="Status" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Status" icon={Pulse} isDark={isDark} />,
       renderCell: (params) => {
         const rawCfg    = params.row.status ? STATUS_CFG[params.row.status] : null;
         const statusCfg = isDark && params.row.status ? STATUS_CFG_DARK[params.row.status] : rawCfg;
@@ -188,7 +191,7 @@ export default function TasksPage() {
     },
     {
       field: "priority", headerName: "Priority", flex: 0.9, minWidth: 90, sortable: false,
-      renderHeader: () => <ColHeader label="Priority" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Priority" icon={Flag} isDark={isDark} />,
       renderCell: (params) => {
         const priCfg = params.row.priority ? PRIORITY_CFG[params.row.priority] : null;
         return priCfg ? (
@@ -201,7 +204,7 @@ export default function TasksPage() {
     },
     {
       field: "contact", headerName: "Contact", flex: 1.5, minWidth: 150, sortable: false,
-      renderHeader: () => <ColHeader label="Contact" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Contact" icon={User} isDark={isDark} />,
       renderCell: (params) => (
         <p className={`text-table-cell truncate mb-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
           {params.row.contact || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
@@ -210,7 +213,7 @@ export default function TasksPage() {
     },
     {
       field: "relatedTo", headerName: "Related To", flex: 1.7, minWidth: 170, sortable: false,
-      renderHeader: () => <ColHeader label="Related To" isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Related To" icon={LinkSimple} isDark={isDark} />,
       renderCell: (params) => (
         <p className={`text-table-cell truncate mb-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
           {params.row.relatedTo || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
@@ -219,8 +222,8 @@ export default function TasksPage() {
     },
     {
       field: "taskOwner", headerName: "Task Owner", flex: 2, minWidth: 200, sortable: false,
-      renderHeader: () => <ColHeader label="Task Owner" isDark={isDark} />,
-      renderCell: (params) => <p className={`text-table-cell-secondary truncate mb-0 ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>{params.row.taskOwner}</p>,
+      renderHeader: () => <ColHeader label="Task Owner" icon={UserCircle} isDark={isDark} />,
+      renderCell: (params) => <p className={`text-table-cell-secondary truncate mb-0 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{params.row.taskOwner}</p>,
     },
     {
       field: "actions", headerName: "", width: 50, sortable: false, disableColumnMenu: true,
@@ -229,7 +232,7 @@ export default function TasksPage() {
           <Tooltip title="Actions">
             <IconButton size="small" onClick={e => e.stopPropagation()}
               sx={{ borderRadius: "6px", p: 0.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#E3ECFC" } }}>
-              <DotsThreeVertical size={15} color={isDark ? "#52525B" : "#94A3B8"} weight="duotone" />
+              <DotsThreeVertical size={15} color={isDark ? "#9CA3AF" : "#94A3B8"} weight="duotone" />
             </IconButton>
           </Tooltip>
         </div>
@@ -246,12 +249,12 @@ export default function TasksPage() {
 
         <main className="flex-1 px-4 md:px-8 py-3 md:py-4 space-y-3 animate-fade-in">
 
-          {/* ══ Breadcrumb + Header ══ */}
+          {/* -- Breadcrumb + Header -- */}
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-1 text-caption text-slate-400 mb-2">
-                <House size={12} weight="duotone" />
-                <CaretRight size={11} weight="duotone" />
+                <House size={16} weight="duotone" />
+                <CaretRight size={12} weight="duotone" />
                 <Link href="/tasks" className={`transition-colors font-medium ${isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#1D4ED8]"}`}>Tasks</Link>
               </div>
               <div className="flex items-center gap-2.5">
@@ -269,7 +272,7 @@ export default function TasksPage() {
               <Button variant="contained"
                 startIcon={<Plus size={16} weight="bold" />}
                 onClick={() => setDrawerOpen(true)}
-                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px", px: 2, py: 0.85, boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB", boxShadow: isDark ? "none" : "0 2px 14px #60A5FA55" }, "&:active": { bgcolor: isDark ? "#52525B" : "#0C2472" } }}>
+                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px", px: 2, py: 0.85, boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB", boxShadow: isDark ? "none" : "0 2px 14px #60A5FA55" }, "&:active": { bgcolor: isDark ? "#9CA3AF" : "#0C2472" } }}>
                 New Task
               </Button>
               <Tooltip title="More options">
@@ -281,7 +284,7 @@ export default function TasksPage() {
             </div>
           </div>
 
-          {/* ══ Status filter tabs ══ */}
+          {/* -- Status filter tabs -- */}
           <div className="flex items-center gap-1 overflow-x-auto pb-1">
             {STATUS_TABS.map(tab => {
               const cnt    = statusCounts[tab] ?? 0;
@@ -299,7 +302,7 @@ export default function TasksPage() {
                     <span className={`text-badge-text px-1.5 py-0.5 rounded-full leading-none ${
                       active
                         ? isDark ? "bg-white/10 text-[#A1A1AA]" : "bg-white/20 text-white"
-                        : isDark ? "bg-[#27272A] text-[#52525B]" : "bg-slate-100 text-slate-600"
+                        : isDark ? "bg-[#27272A] text-[#9CA3AF]" : "bg-slate-100 text-slate-600"
                     }`}>{cnt}</span>
                   )}
                 </button>
@@ -307,7 +310,7 @@ export default function TasksPage() {
             })}
           </div>
 
-          {/* ══ Toolbar ══ */}
+          {/* -- Toolbar -- */}
           <div className="flex items-center gap-2.5">
             <div className={`flex items-center gap-2 border rounded-xl px-3 py-2 w-72 focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
               <MagnifyingGlass size={15} color="#94A3B8" weight="duotone" />
@@ -343,7 +346,7 @@ export default function TasksPage() {
             </span>
           </div>
 
-          {/* ══ Bulk action bar ══ */}
+          {/* -- Bulk action bar -- */}
           {selected.length > 0 && (
             <div className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border shadow-sm ${isDark ? "bg-[#18181B] border-[#27272A]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
               <div className="flex items-center gap-2">
@@ -353,14 +356,14 @@ export default function TasksPage() {
               <div className={`w-px h-4 ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
               <button className={`text-button-sm font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Update Status</button>
               <button className={`text-button-sm font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Assign Owner</button>
-              <button onClick={() => setSelected([])} className={`ml-auto text-button-sm font-medium transition-colors ${isDark ? "text-[#52525B] hover:text-[#A1A1AA]" : "text-slate-400 hover:text-slate-600"}`}>Clear</button>
+              <button onClick={() => setSelected([])} className={`ml-auto text-button-sm font-medium transition-colors ${isDark ? "text-[#9CA3AF] hover:text-[#A1A1AA]" : "text-slate-400 hover:text-slate-600"}`}>Clear</button>
               <button className={`flex items-center gap-1.5 text-button-sm font-medium transition-colors ${isDark ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"}`}>
                 <Trash size={14} weight="duotone" /> Delete
               </button>
             </div>
           )}
 
-          {/* ══ Table (MUI DataGrid) ══ */}
+          {/* -- Table (MUI DataGrid) -- */}
           <div className="rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden" style={{ height: 600 }}>
             <DataGrid<TaskRecord>
               rows={filtered}
@@ -382,7 +385,7 @@ export default function TasksPage() {
                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 ${isDark ? "bg-[#27272A]" : "bg-[#f9fbff]"}`}>
                       <CheckCircle size={22} color={isDark ? "#3F3F46" : "#94A3B8"} weight="duotone" />
                     </div>
-                    <p className={`font-heading text-sm font-semibold ${isDark ? "text-[#52525B]" : "text-slate-500"}`}>No tasks found</p>
+                    <p className={`font-heading text-sm font-semibold ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>No tasks found</p>
                     <p className={`text-xs mt-1 ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>Try adjusting your search or filter</p>
                   </div>
                 ),
@@ -403,7 +406,7 @@ export default function TasksPage() {
         subtitle="Narrow down tasks by conditions"
       />
 
-      {/* ══ More menu ══ */}
+      {/* -- More menu -- */}
       <Menu anchorEl={moreAnchor} open={Boolean(moreAnchor)} onClose={() => setMoreAnchor(null)}
         PaperProps={{ sx: { borderRadius: "12px", border: `1px solid ${isDark ? "#27272A" : "#E3ECFC"}`, boxShadow: isDark ? "0 8px 32px rgba(0,0,0,0.4)" : "0 8px 32px rgba(12,36,114,0.10)", minWidth: 160 } }}>
         {[
