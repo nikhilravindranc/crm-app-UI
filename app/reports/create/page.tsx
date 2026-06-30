@@ -65,7 +65,7 @@ export default function DashboardPage() {
     <div className={`flex h-screen font-sans transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
       {/* <Sidebar /> */}
       <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
-        <TopBar title="Dashboard" />
+        {/* <TopBar title="Dashboard" /> */}
 
         <main className="flex-1 px-4 md:px-8 py-4 md:py-6 space-y-4 md:space-y-6 animate-fade-in">
 
