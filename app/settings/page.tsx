@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import InputBase from "@mui/material/InputBase";
@@ -21,11 +21,13 @@ import {
   Lightning, AddressBook, SquaresFour, UserPlus, ArrowLeft, Info,
   DotsSixVertical, TextT, TextAlignLeft, ListBullets, CalendarBlank,
   Hash, CurrencyDollar, CheckSquare, LinkSimple, ChartBar, X,
+  ClockCounterClockwise,
 } from "@phosphor-icons/react";
+import { useTheme } from "@/components/ThemeContext";
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Nav structure
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 const SECTIONS = [
   {
     key: "general", label: "General", icon: Gear,
@@ -54,7 +56,7 @@ const SECTIONS = [
     ],
   },
   {
-    key: "data", label: "Data Administrator", icon: HardDrive,
+    key: "data", label: "Data Administration", icon: HardDrive,
     items: [
       { key: "import",  label: "Import",      icon: UploadSimple   },
       { key: "export",  label: "Export",      icon: DownloadSimple },
@@ -63,9 +65,9 @@ const SECTIONS = [
   },
 ];
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Data
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 interface UserRecord {
   id: number; name: string; role: string; email: string;
   initials: string; firstName: string; lastName: string; phone: string;
@@ -94,34 +96,56 @@ const ROLE_BADGE: Record<string, { bg: string; text: string; border: string }> =
   "Team Leader":        { bg:"#FEF2F2", text:"#DC2626", border:"#FECACA" },
 };
 
-interface RoleNode { id: string; name: string; description: string; children?: RoleNode[]; }
+interface RoleNode {
+  id: string; name: string; description: string; reportsTo?: string; department?: string; createdDate?: string; children?: RoleNode[];
+}
+interface RoleActivity {
+  id: string; roleId: string; action: string; user: string; userEmail: string; timestamp: string;
+}
+
 const ROLE_TREE: RoleNode[] = [{
-  id:"admin", name:"Administrator", description:"Full access administrator",
+  id:"admin", name:"Administrator", description:"Full access administrator", reportsTo:"—", department:"Management",
   children:[
-    { id:"vp", name:"VP of Operations", description:"VP-level operations access",
-      children:[{ id:"ops", name:"Operations Manager", description:"Manages operations team",
-        children:[{ id:"se", name:"Support Executive", description:"Customer support role", children:[] }]
+    { id:"vp", name:"VP of Operations", description:"VP-level operations access", reportsTo:"Administrator", department:"Operations", createdDate:"2025-10-15",
+      children:[{ id:"ops", name:"Operations Manager", description:"Manages operations team", reportsTo:"VP of Operations", department:"Operations", createdDate:"2025-11-20",
+        children:[{ id:"se", name:"Support Executive", description:"Customer support role", reportsTo:"Operations Manager", department:"Support", createdDate:"2025-12-01", children:[] }]
       }]
     },
-    { id:"tl", name:"Team Leader", description:"Team leadership role", children:[] },
-    { id:"sa", name:"Super Admin", description:"Super administrator with all permissions", children:[] },
+    { id:"tl", name:"Team Leader", description:"Team leadership role", reportsTo:"Administrator", department:"Management", createdDate:"2026-01-10", children:[] },
+    { id:"sa", name:"Super Admin", description:"Super administrator with all permissions", reportsTo:"Administrator", department:"Management", createdDate:"2025-09-05", children:[] },
   ],
 }];
 
-// ─────────────────────────────────────────────
+const ROLE_ACTIVITIES: RoleActivity[] = [
+  { id:"1", roleId:"admin", action:"Role updated",                    user:"PM SDL", userEmail:"pm@socialdnalabs.com",    timestamp:"2026-06-15 14:30" },
+  { id:"2", roleId:"admin", action:"Permissions modified",            user:"PM SDL", userEmail:"pm@socialdnalabs.com",    timestamp:"2026-06-14 10:15" },
+  { id:"3", roleId:"admin", action:"Role created",                    user:"PM SDL", userEmail:"pm@socialdnalabs.com",    timestamp:"2026-06-12 09:20" },
+  { id:"4", roleId:"vp",    action:"Department changed to Operations", user:"Admin",  userEmail:"admin@mailinator.com",    timestamp:"2026-06-13 16:45" },
+  { id:"5", roleId:"vp",    action:"Role created",                    user:"PM SDL", userEmail:"pm@socialdnalabs.com",    timestamp:"2026-05-27 14:30" },
+  { id:"6", roleId:"ops",   action:"Role created",                    user:"PM SDL", userEmail:"pm@socialdnalabs.com",    timestamp:"2026-06-12 09:20" },
+  { id:"7", roleId:"se",    action:"Reporting structure updated",     user:"Admin",  userEmail:"admin@mailinator.com",    timestamp:"2026-06-11 13:00" },
+  { id:"8", roleId:"se",    action:"Role created",                    user:"PM SDL", userEmail:"pm@socialdnalabs.com",    timestamp:"2026-05-27 14:38" },
+  { id:"9", roleId:"tl",    action:"Description updated",             user:"PM SDL", userEmail:"pm@socialdnalabs.com",    timestamp:"2026-06-10 15:30" },
+  { id:"10",roleId:"tl",    action:"Role created",                    user:"PM SDL", userEmail:"pm@socialdnalabs.com",    timestamp:"2026-05-27 14:38" },
+  { id:"11",roleId:"sa",    action:"Role created",                    user:"PM SDL", userEmail:"pm@socialdnalabs.com",    timestamp:"2026-05-27 14:38" },
+];
+
+// ---------------------------------------------
 //  Shared UI primitives — NO <p> tags
-// ─────────────────────────────────────────────
-function SettingCard({ icon: Icon, title, color = "#1D4ED8", children, action }: {
+// ---------------------------------------------
+function SettingCard({ icon: Icon, title, color = "#3B82F6", children, action }: {
   icon: React.ElementType; title: string; color?: string;
   children: React.ReactNode; action?: React.ReactNode;
 }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   return (
-    <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
-      <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[#EFF6FF]">
-        <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ backgroundColor: color + "18" }}>
+    <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+      <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
+        <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ backgroundColor: color + (isDark ? "22" : "18") }}>
           <Icon size={13} color={color} weight="duotone" />
         </div>
-        <span className="font-heading text-[11px] font-bold uppercase tracking-[0.12em] flex-1" style={{ color }}>{title}</span>
+        <span className={`font-heading text-[12px] font-bold uppercase tracking-wider flex-1 text-slate-500`}>{title}</span>
         {action}
       </div>
       <div className="px-5 py-2">{children}</div>
@@ -132,6 +156,8 @@ function SettingCard({ icon: Icon, title, color = "#1D4ED8", children, action }:
 function KV({ label, value, link, editable, onSave }: {
   label: string; value: string; link?: boolean; editable?: boolean; onSave?: (newValue: string) => void;
 }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(value);
   const empty = !value || value === "—" || value === "-";
@@ -149,9 +175,9 @@ function KV({ label, value, link, editable, onSave }: {
   };
 
   return (
-    <div className="py-2.5 border-b border-[#EFF6FF] last:border-0 flex items-start justify-between group">
+    <div className={`py-2.5 border-b last:border-0 flex items-start justify-between group ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
       <div className="flex-1 min-w-0">
-        <div className="text-[10.5px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">{label}</div>
+        <div className={`text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{label}</div>
         {isEditing ? (
           <div className="flex items-center gap-1.5 -mx-2">
             <input
@@ -163,17 +189,17 @@ function KV({ label, value, link, editable, onSave }: {
                 if (e.key === "Escape") handleCancel();
               }}
               autoFocus
-              className="flex-1 px-2 py-1 text-[13px] font-medium border border-[#93C5FD] rounded-lg bg-white focus:outline-none focus:border-[#1D4ED8] focus:ring-1 focus:ring-[#93C5FD] text-slate-700"
+              className={`flex-1 px-2 py-1 text-[14px] font-medium border rounded-lg focus:outline-none ${isDark ? "border-[#9CA3AF] bg-[#27272A] text-[#D4D4D8] focus:border-[#71717A]" : "border-[#4A7AE8] bg-white focus:border-[#1D4ED8] focus:ring-1 focus:ring-[#4A7AE8] text-slate-700"}`}
             />
-            <button onClick={handleSave} className="px-2 py-1 text-[11px] font-bold text-white bg-[#1D4ED8] rounded hover:bg-[#60A5FA] transition-colors whitespace-nowrap">
+            <button onClick={handleSave} className={`px-2 py-1 text-[11px] font-bold rounded whitespace-nowrap transition-colors ${isDark ? "bg-[#3F3F46] text-[#D4D4D8] hover:bg-[#9CA3AF]" : "bg-[#1D4ED8] text-white hover:bg-[#60A5FA]"}`}>
               Save
             </button>
-            <button onClick={handleCancel} className="px-2 py-1 text-[11px] font-semibold text-slate-500 border border-[#E3ECFC] rounded hover:bg-slate-50 transition-colors whitespace-nowrap">
+            <button onClick={handleCancel} className={`px-2 py-1 text-[11px] font-semibold border rounded whitespace-nowrap transition-colors ${isDark ? "border-[#3F3F46] text-[#71717A] hover:bg-[#27272A]" : "border-[#E3ECFC] text-slate-500 hover:bg-slate-50"}`}>
               Cancel
             </button>
           </div>
         ) : (
-          <div className={`text-[13px] font-medium leading-snug ${link?"text-[#1D4ED8]":empty?"text-slate-300":"text-slate-700"}`}>
+          <div className={`text-[14px] font-medium leading-snug ${link ? (isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]") : empty ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>
             {empty ? "—" : editValue}
           </div>
         )}
@@ -183,7 +209,7 @@ function KV({ label, value, link, editable, onSave }: {
           <IconButton
             onClick={() => setIsEditing(true)}
             size="small"
-            sx={{ p:0.4, mt:0.5, color:"#CBD5E1", opacity:0, transition:"opacity 0.15s", ".group:hover &":{opacity:1}, "&:hover":{color:"#1D4ED8",bgcolor:"#EFF6FF"}, borderRadius:"6px", cursor:"pointer" }}>
+            sx={{ p:0.4, mt:0.5, color: isDark ? "#3F3F46" : "#E2E8F0", opacity:0, transition:"opacity 0.15s", ".group:hover &":{opacity:1}, "&:hover":{color: isDark ? "#71717A" : "#E3ECFC", bgcolor: isDark ? "#27272A" : "#EFF6FF"}, borderRadius:"6px", cursor:"pointer" }}>
             <PencilSimple size={13} weight="duotone" />
           </IconButton>
         </Tooltip>
@@ -197,9 +223,9 @@ function KVGrid({ children }: { children: React.ReactNode }) {
 }
 
 function RoleBadge({ role }: { role: string }) {
-  const cfg = ROLE_BADGE[role] ?? { bg:"#F1F5F9", text:"#475569", border:"#CBD5E1" };
+  const cfg = ROLE_BADGE[role] ?? { bg:"#F1F5F9", text:"#475569", border:"#E2E8F0" };
   return (
-    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border" style={{ backgroundColor:cfg.bg, color:cfg.text, borderColor:cfg.border }}>
+    <span className="text-[11px] font-bold px-2 py-0.5 rounded-full border" style={{ backgroundColor:cfg.bg, color:cfg.text, borderColor:cfg.border }}>
       {role}
     </span>
   );
@@ -210,31 +236,33 @@ function ProfileHero({ initials, name, role, subtitle, contacts, avatarBg, avata
   contacts: { icon: React.ElementType; value: string; link?: boolean }[];
   avatarBg: string; avatarText: string;
 }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   return (
-    <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden mb-4">
-      <div className="relative h-[64px] bg-gradient-to-r from-[#1D4ED8] to-[#3B82F6]">
-        <div className="absolute inset-0" style={{ background:"radial-gradient(ellipse at 80% 50%, rgba(255,255,255,0.15) 0%, transparent 70%)" }} />
+    <div className={`rounded-2xl border shadow-sm overflow-hidden mb-4 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+      <div className={`relative h-[64px] ${isDark ? "bg-gradient-to-r from-[#18181B] to-[#27272A]" : "bg-gradient-to-r from-[#1D4ED8] to-[#3B82F6]"}`}>
+        <div className="absolute inset-0" style={{ background:"radial-gradient(ellipse at 80% 50%, rgba(255,255,255,0.07) 0%, transparent 70%)" }} />
       </div>
       <div className="relative px-6 pb-5">
         <div className="absolute -top-8 left-6">
           <div className="relative">
-            <div className="w-[64px] h-[64px] rounded-full border-[3px] border-[#f9fbff] shadow-md flex items-center justify-center" style={{ backgroundColor:avatarBg }}>
+            <div className={`w-[64px] h-[64px] rounded-full border-[3px] shadow-md flex items-center justify-center ${isDark ? "border-[#1C1C1E]" : "border-[#f9fbff]"}`} style={{ backgroundColor:avatarBg }}>
               <span className="text-[20px] font-extrabold leading-none select-none" style={{ color:avatarText }}>{initials}</span>
             </div>
-            <button className="absolute bottom-0 right-0 w-5 h-5 rounded-full bg-white border border-[#E3ECFC] shadow-sm flex items-center justify-center hover:bg-[#EFF6FF] transition-colors">
-              <Camera size={10} color="#64748B" weight="duotone" />
+            <button className={`absolute bottom-0 right-0 w-5 h-5 rounded-full border shadow-sm flex items-center justify-center transition-colors ${isDark ? "bg-[#27272A] border-[#3F3F46] hover:bg-[#3F3F46]" : "bg-white border-[#E3ECFC] hover:bg-[#EFF6FF]"}`}>
+              <Camera size={10} color={isDark ? "#71717A" : "#64748B"} weight="duotone" />
             </button>
           </div>
         </div>
         <div className="pt-3 pl-[80px]">
           <div className="flex items-center gap-2 flex-wrap mb-1">
-            <span className="text-[16px] font-extrabold text-slate-900 tracking-tight leading-tight">{name}</span>
+            <span className={`text-[16px] font-extrabold tracking-tight leading-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>{name}</span>
             <RoleBadge role={role} />
           </div>
-          {subtitle && <div className="text-[11.5px] text-slate-400 mb-1.5">{subtitle}</div>}
+          {subtitle && <div className={`text-[12px] mb-1.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{subtitle}</div>}
           <div className="flex items-center gap-3 flex-wrap">
             {contacts.map(({ icon: Icon, value, link }, i) => (
-              <div key={i} className={`flex items-center gap-1.5 text-[11.5px] ${link?"text-[#1D4ED8]":"text-slate-500"}`}>
+              <div key={i} className={`flex items-center gap-1.5 text-[12px] ${link ? (isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]") : (isDark ? "text-[#71717A]" : "text-slate-500")}`}>
                 <Icon size={11} weight="duotone" />
                 <span>{value}</span>
               </div>
@@ -246,9 +274,9 @@ function ProfileHero({ initials, name, role, subtitle, contacts, avatarBg, avata
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Personal Settings panel
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function PersonalSettingsPanel() {
   const [data, setData] = useState({
     firstName: "PM",
@@ -265,8 +293,10 @@ function PersonalSettingsPanel() {
     setData(prev => ({ ...prev, [field]: value }));
   };
 
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   return (
-    <div className="flex-1 overflow-y-auto bg-[#EFF6FF] px-6 py-6 space-y-4">
+    <div className={`flex-1 overflow-y-auto px-6 py-6 space-y-4 ${isDark ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
       <ProfileHero
         initials="PM" name="PM SDL" role="Super Admin"
         avatarBg="#FEF3C7" avatarText="#B45309"
@@ -300,9 +330,9 @@ function PersonalSettingsPanel() {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  New User Drawer
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function NewUserDrawer({ open, onClose, onSubmit }: {
   open: boolean;
   onClose: () => void;
@@ -378,20 +408,23 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
     });
   };
 
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
   const FX = {
     "& .MuiOutlinedInput-root": {
       borderRadius: "10px",
-      backgroundColor: "#EFF6FF",
+      ...(isDark ? {} : { backgroundColor: "#EFF6FF" }),
       fontSize: "0.82rem",
-      "& fieldset":             { borderColor: "#E3ECFC", borderWidth: 1.5 },
-      "&:hover fieldset":       { borderColor: "#60A5FA" },
-      "&.Mui-focused fieldset": { borderColor: "#1D4ED8", borderWidth: 2 },
-      "&.Mui-focused":          { boxShadow: "0 0 0 2px #93C5FD" },
+      "& fieldset":             { borderColor: isDark ? "#3F3F46" : "#E3ECFC", borderWidth: 1.5 },
+      "&:hover fieldset":       { borderColor: isDark ? "#9CA3AF" : "#E3ECFC" },
+      "&.Mui-focused fieldset": { borderColor: isDark ? "#71717A" : "#E3ECFC", borderWidth: 2 },
+      "&.Mui-focused":          { boxShadow: isDark ? "none" : "0 0 0 2px #4A7AE8" },
       "& input":                { padding: "10px 14px" },
     },
-    "& .MuiInputLabel-root":             { fontSize: "0.79rem", color: "#6B7280" },
-    "& .MuiInputLabel-root.Mui-focused": { color: "#1D4ED8" },
-    "& .MuiSelect-select":               { fontSize: "0.82rem", padding: "10px 14px", backgroundColor: "#EFF6FF" },
+    "& .MuiInputLabel-root":             { fontSize: "0.79rem", ...(isDark ? {} : { color: "#6B7280" }) },
+    "& .MuiInputLabel-root.Mui-focused": { color: isDark ? "#A1A1AA" : "inherit" },
+    "& .MuiSelect-select":               { fontSize: "0.82rem", padding: "10px 14px", ...(isDark ? {} : { backgroundColor: "#EFF6FF" }) },
   };
 
   return (
@@ -404,23 +437,23 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
           width: { xs: "100%", sm: 520 },
           display: "flex",
           flexDirection: "column",
-          bgcolor: "#F8FAFF",
-          boxShadow: "-12px 0 48px rgba(12,36,114,0.12)",
+          bgcolor: isDark ? "#18181B" : "#F8FAFF",
+          boxShadow: isDark ? "-12px 0 48px rgba(0,0,0,0.5)" : "-12px 0 48px rgba(12,36,114,0.12)",
         },
       }}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 bg-[#f9fbff] border-b border-[#E3ECFC] flex-shrink-0">
+      <div className={`flex items-center justify-between px-6 py-4 border-b flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#1D4ED8] flex items-center justify-center shadow-sm">
-            <UsersThree size={18} color="#fff" weight="duotone" />
+          <div className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-sm ${isDark ? "bg-[#27272A]" : "bg-[#1D4ED8]"}`}>
+            <UsersThree size={18} color={isDark ? "#A1A1AA" : "#fff"} weight="duotone" />
           </div>
-          <h2 className="font-heading text-[16px] font-bold text-slate-900 tracking-tight">New User</h2>
+          <h2 className={`font-heading text-[16px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>New User</h2>
         </div>
         <Tooltip title="Close">
           <IconButton size="small" onClick={handleClose}
-            sx={{ borderRadius: "9px", border: "1.5px solid #E3ECFC", "&:hover": { bgcolor: "#EFF6FF" } }}>
-            <X size={17} color="#64748B" weight="duotone" />
+            sx={{ borderRadius: "9px", border: `1.5px solid ${isDark ? "#3F3F46" : "#E3ECFC"}`, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+            <X size={17} color={isDark ? "#71717A" : "#64748B"} weight="duotone" />
           </IconButton>
         </Tooltip>
       </div>
@@ -429,7 +462,7 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
         {/* User Information */}
         <div>
-          <h3 className="font-heading text-[13px] font-bold text-slate-800 mb-4 tracking-tight">User Information</h3>
+          <h3 className={`font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500`}>User Information</h3>
           <div className="space-y-3">
             <TextField
               label="First Name"
@@ -466,7 +499,7 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
 
         {/* More Information */}
         <div>
-          <h3 className="font-heading text-[13px] font-bold text-slate-800 mb-4 tracking-tight">More Information</h3>
+          <h3 className={`font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500`}>More Information</h3>
           <div className="space-y-3">
             <FormControl size="small" fullWidth sx={FX}>
               <InputLabel>Gender</InputLabel>
@@ -501,7 +534,7 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
 
         {/* Address Details */}
         <div>
-          <h3 className="font-heading text-[13px] font-bold text-slate-800 mb-4 tracking-tight">Address Details</h3>
+          <h3 className={`font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500`}>Address Details</h3>
           <div className="space-y-3">
             <TextField
               label="Address"
@@ -564,14 +597,14 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-end gap-3 px-6 py-4 bg-[#f9fbff] border-t border-[#E3ECFC] flex-shrink-0">
+      <div className={`flex items-center justify-end gap-3 px-6 py-4 border-t flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <Button variant="text" onClick={handleClose}
-          sx={{ color: "#64748B", textTransform: "none", fontWeight: 600, fontSize: "0.82rem", borderRadius: "9px", px: 2.5, "&:hover": { bgcolor: "#EFF6FF" } }}>
+          sx={{ color: isDark ? "#A1A1AA" : "#64748B", textTransform: "none", fontWeight: 600, fontSize: "0.82rem", borderRadius: "9px", px: 2.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
           Cancel
         </Button>
         <Button variant="contained" onClick={handleSubmit}
           disabled={!formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim()}
-          sx={{ bgcolor: "#1D4ED8", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: "0 1px 8px #1D4ED833", "&:hover": { bgcolor: "#60A5FA" }, "&:active": { bgcolor: "#0C2472" }, "&:disabled": { bgcolor: "#CBD5E1", color: "#F1F5F9" } }}>
+          sx={{ bgcolor: isDark ? "#27272A" : "inherit", color: isDark ? "#F4F4F5" : undefined, borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "inherit" }, "&:active": { bgcolor: isDark ? "#18181B" : "#0C2472" }, "&:disabled": { bgcolor: isDark ? "#27272A" : "#E2E8F0", color: isDark ? "#9CA3AF" : "#F1F5F9" } }}>
           Create User
         </Button>
       </div>
@@ -579,9 +612,9 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Users panel
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function UserDetailPanel({ user, onUpdate }: { user: UserRecord; onUpdate: (updates: Partial<UserRecord>) => void }) {
   const [data, setData] = useState<Record<string, string>>({
     firstName: user.firstName,
@@ -601,8 +634,10 @@ function UserDetailPanel({ user, onUpdate }: { user: UserRecord; onUpdate: (upda
     }
   };
 
+  const { theme: uTheme } = useTheme();
+  const isDarkUD = uTheme === "dark";
   return (
-    <div className="flex-1 overflow-y-auto bg-[#EFF6FF] px-5 py-5 space-y-4">
+    <div className={`flex-1 overflow-y-auto px-5 py-5 space-y-4 ${isDarkUD ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
       <ProfileHero
         initials={user.initials} name={user.name} role={user.role}
         avatarBg={user.avatarColor} avatarText={user.textColor}
@@ -637,6 +672,8 @@ function UserDetailPanel({ user, onUpdate }: { user: UserRecord; onUpdate: (upda
 }
 
 function UsersPanel() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [selected, setSelected]   = useState<UserRecord>(USERS[0]);
   const [search, setSearch]       = useState("");
   const [checked, setChecked]     = useState<number[]>([]);
@@ -681,17 +718,17 @@ function UsersPanel() {
   return (
     <div className="flex-1 flex overflow-hidden">
       {/* User list */}
-      <div className="w-[340px] flex-shrink-0 flex flex-col border-r border-[#E3ECFC] bg-[#f9fbff]">
+      <div className={`w-[340px] flex-shrink-0 flex flex-col border-r ${isDark ? "border-[#27272A] bg-[#111113]" : "border-[#E3ECFC] bg-[#f9fbff]"}`}>
         {/* Toolbar */}
-        <div className="px-4 py-3 border-b border-[#E3ECFC] flex items-center gap-2">
-          <div className="flex-1 flex items-center gap-1.5 bg-white border border-[#E3ECFC] rounded-xl px-3 py-1.5 focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#93C5FD] transition-all">
+        <div className={`px-4 py-3 border-b flex items-center gap-2 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+          <div className={`flex-1 flex items-center gap-1.5 border rounded-xl px-3 py-1.5 focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all ${isDark ? "bg-[#18181B] border-[#3F3F46]" : "bg-white border-[#E3ECFC]"}`}>
             <MagnifyingGlass size={13} color="#94A3B8" weight="duotone" />
             <InputBase placeholder="Search" value={search} onChange={e => setSearch(e.target.value)}
-              sx={{ flex:1, fontSize:"0.75rem", color:"#334155", "& input::placeholder":{color:"#94A3B8",opacity:1} }} />
+              sx={{ flex:1, fontSize:"0.75rem", color: isDark ? "#D4D4D8" : "#334155", "& input::placeholder":{color:"#94A3B8",opacity:1} }} />
           </div>
-          <Button variant="contained" size="small" startIcon={<Plus size={12} weight="duotone" />}
+          <Button variant="contained" size="small" startIcon={<Plus size={12} weight="bold" />}
             onClick={() => setShowNewUserModal(true)}
-            sx={{ bgcolor:"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", px:1.5, py:0.7, whiteSpace:"nowrap", boxShadow:"0 1px 6px #1D4ED833", "&:hover":{bgcolor:"#60A5FA"} }}>
+            sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", px:1.5, py:0.7, whiteSpace:"nowrap", boxShadow: isDark ? "none" : "0 1px 6px #1D4ED833", "&:hover":{ bgcolor: isDark ? "#3F3F46" : "#2563EB" } }}>
             New User
           </Button>
         </div>
@@ -708,7 +745,7 @@ function UsersPanel() {
                 }`}>
                 <div onClick={e => toggleCheck(user.id, e)}>
                   <Checkbox size="small" checked={isChecked}
-                    sx={{ p:0.3, color:"#CBD5E1", "&.Mui-checked":{color:"#1D4ED8"} }} />
+                    sx={{ p:0.3, color:"#E2E8F0", "&.Mui-checked":{color:"#1D4ED8"} }} />
                 </div>
                 <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-[13px] font-bold"
                   style={{ backgroundColor: user.avatarColor, color: user.textColor }}>
@@ -716,12 +753,12 @@ function UsersPanel() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 mb-0.5">
-                    <span className={`text-[13px] font-semibold truncate ${isActive?"text-[#1D4ED8]":"text-slate-800"}`}>{user.name}</span>
+                    <span className={`text-[14px] font-semibold truncate ${isActive?"text-[#1D4ED8]":"text-slate-800"}`}>{user.name}</span>
                     <div className="flex-shrink-0">
                       <RoleBadge role={user.role} />
                     </div>
                   </div>
-                  <div className="text-[11px] text-slate-400 truncate">{user.email}</div>
+                  <div className="text-[12px] text-slate-400 truncate">{user.email}</div>
                 </div>
                 {/* Online dot */}
                 <div className={`w-2 h-2 rounded-full flex-shrink-0 ${user.id <= 2 ? "bg-[#10B981]" : "bg-slate-200"}`} />
@@ -732,8 +769,8 @@ function UsersPanel() {
 
         {/* Pagination */}
         <div className="px-4 py-2.5 border-t border-[#E3ECFC] flex items-center justify-between">
-          <span className="text-[11px] text-slate-400">Rows per page: <span className="font-semibold text-slate-600">25</span></span>
-          <span className="text-[11px] text-slate-500 font-medium">1–{filtered.length} of {filtered.length}</span>
+          <span className="text-[12px] text-slate-400">Rows per page: <span className="font-semibold text-slate-600">25</span></span>
+          <span className="text-[12px] text-slate-500 font-medium">1–{filtered.length} of {filtered.length}</span>
         </div>
       </div>
 
@@ -750,9 +787,9 @@ function UsersPanel() {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Organization panel
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function OrganizationPanel() {
   const [orgData, setOrgData] = useState({
     companyName: "Social DNA Labs",
@@ -777,8 +814,10 @@ function OrganizationPanel() {
     setOrgData(prev => ({ ...prev, [field]: value }));
   };
 
+  const { theme: orgTheme } = useTheme();
+  const isDarkOrg = orgTheme === "dark";
   return (
-    <div className="flex-1 overflow-y-auto bg-[#EFF6FF] px-6 py-6 space-y-4">
+    <div className={`flex-1 overflow-y-auto px-6 py-6 space-y-4 ${isDarkOrg ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
       <ProfileHero
         initials="S" name="Social DNA Labs" role="Super Admin"
         subtitle="India · INR"
@@ -819,12 +858,134 @@ function OrganizationPanel() {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
+//  New Role Drawer
+// ---------------------------------------------
+function NewRoleDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [formData, setFormData] = useState({
+    roleName: "",
+    roleDescription: "",
+    reportsTo: "",
+    department: "",
+    status: "Active",
+  });
+
+  const handleChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = () => {
+    if (formData.roleName.trim()) {
+      console.log("New role:", formData);
+      onClose();
+      setFormData({ roleName: "", roleDescription: "", reportsTo: "", department: "", status: "Active" });
+    }
+  };
+
+  const handleClose = () => {
+    onClose();
+    setFormData({ roleName: "", roleDescription: "", reportsTo: "", department: "", status: "Active" });
+  };
+
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
+  const FX = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "10px",
+      ...(isDark ? {} : { backgroundColor: "#EFF6FF" }),
+      fontSize: "0.82rem",
+      "& fieldset":             { borderColor: isDark ? "#3F3F46" : "#E3ECFC", borderWidth: 1.5 },
+      "&:hover fieldset":       { borderColor: isDark ? "#9CA3AF" : "#E3ECFC" },
+      "&.Mui-focused fieldset": { borderColor: isDark ? "#71717A" : "#E3ECFC", borderWidth: 2 },
+      "&.Mui-focused":          { boxShadow: isDark ? "none" : "0 0 0 2px #4A7AE8" },
+      "& input":                { padding: "10px 14px" },
+    },
+    "& .MuiInputLabel-root":             { fontSize: "0.79rem", ...(isDark ? {} : { color: "#6B7280" }) },
+    "& .MuiInputLabel-root.Mui-focused": { color: isDark ? "#A1A1AA" : "inherit" },
+    "& .MuiSelect-select":               { fontSize: "0.82rem", padding: "10px 14px", ...(isDark ? {} : { backgroundColor: "#EFF6FF" }) },
+  };
+
+  return (
+    <Drawer anchor="right" open={open} onClose={handleClose}
+      PaperProps={{ sx: { width: { xs: "100%", sm: 520 }, display: "flex", flexDirection: "column", bgcolor: isDark ? "#18181B" : "#F8FAFF", boxShadow: isDark ? "-12px 0 48px rgba(0,0,0,0.5)" : "-12px 0 48px rgba(12,36,114,0.12)" } }}>
+      {/* Header */}
+      <div className={`flex items-center justify-between px-6 py-4 border-b flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+        <div className="flex items-center gap-3">
+          <div className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-sm ${isDark ? "bg-[#27272A]" : "bg-[#8B5CF6]"}`}>
+            <ShieldCheck size={18} color={isDark ? "#A1A1AA" : "#fff"} weight="duotone" />
+          </div>
+          <h2 className={`font-heading text-[16px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>New Role</h2>
+        </div>
+        <Tooltip title="Close">
+          <IconButton size="small" onClick={handleClose}
+            sx={{ borderRadius: "9px", border: `1.5px solid ${isDark ? "#3F3F46" : "#E3ECFC"}`, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+            <X size={17} color={isDark ? "#71717A" : "#64748B"} weight="duotone" />
+          </IconButton>
+        </Tooltip>
+      </div>
+
+      {/* Body */}
+      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+        {/* Role Details */}
+        <div>
+          <h3 className={`font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500`}>Role Details</h3>
+          <div className="space-y-3">
+            <TextField label="Role Name" value={formData.roleName} onChange={e => handleChange("roleName", e.target.value)}
+              size="small" fullWidth sx={FX} />
+            <TextField label="Role Description" value={formData.roleDescription} onChange={e => handleChange("roleDescription", e.target.value)}
+              multiline minRows={3} size="small" fullWidth sx={FX} />
+            <FormControl size="small" fullWidth sx={FX}>
+              <InputLabel>Reports To</InputLabel>
+              <Select label="Reports To" value={formData.reportsTo} onChange={e => handleChange("reportsTo", e.target.value)} displayEmpty>
+                <MenuItem value="" sx={{ fontSize: "0.82rem", color: "#94A3B8" }}><em>Select a role</em></MenuItem>
+                <MenuItem value="Administrator" sx={{ fontSize: "0.82rem" }}>Administrator</MenuItem>
+                <MenuItem value="VP of Operations" sx={{ fontSize: "0.82rem" }}>VP of Operations</MenuItem>
+                <MenuItem value="Operations Manager" sx={{ fontSize: "0.82rem" }}>Operations Manager</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+        </div>
+
+        {/* Additional Information */}
+        <div>
+          <h3 className={`font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500`}>Additional Information</h3>
+          <div className="space-y-3">
+            <TextField label="Department" value={formData.department} onChange={e => handleChange("department", e.target.value)}
+              size="small" fullWidth sx={FX} />
+            <FormControl size="small" fullWidth sx={FX}>
+              <InputLabel>Status</InputLabel>
+              <Select label="Status" value={formData.status} onChange={e => handleChange("status", e.target.value)}>
+                <MenuItem value="Active" sx={{ fontSize: "0.82rem" }}>Active</MenuItem>
+                <MenuItem value="Inactive" sx={{ fontSize: "0.82rem" }}>Inactive</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className={`flex items-center justify-end gap-3 px-6 py-4 border-t flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+        <Button variant="text" onClick={handleClose}
+          sx={{ color: isDark ? "#A1A1AA" : "#64748B", textTransform: "none", fontWeight: 600, fontSize: "0.82rem", borderRadius: "9px", px: 2.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+          Cancel
+        </Button>
+        <Button variant="contained" onClick={handleSubmit}
+          sx={{ bgcolor: isDark ? "#27272A" : "inherit", color: isDark ? "#F4F4F5" : undefined, borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "inherit" }, "&:active": { bgcolor: isDark ? "#18181B" : "#0C2472" } }}>
+          Create Role
+        </Button>
+      </div>
+    </Drawer>
+  );
+}
+
+// ---------------------------------------------
 //  Roles panel
-// ─────────────────────────────────────────────
-function RoleTreeNode({ node, depth, selectedId, expandedIds, onSelect, onToggle }: {
+// ---------------------------------------------
+function RoleTreeNode({ node, depth, selectedId, expandedIds, onSelect, onToggle, isDark }: {
   node: RoleNode; depth: number; selectedId: string;
   expandedIds: Set<string>; onSelect: (n: RoleNode) => void; onToggle: (id: string) => void;
+  isDark: boolean;
 }) {
   const isSelected = selectedId === node.id;
   const isExpanded = expandedIds.has(node.id);
@@ -833,83 +994,148 @@ function RoleTreeNode({ node, depth, selectedId, expandedIds, onSelect, onToggle
   return (
     <div>
       <div onClick={() => onSelect(node)}
-        className={`flex items-center gap-2 px-3 py-2.5 cursor-pointer border-b border-[#EFF6FF] transition-colors group ${
-          isSelected ? "bg-[#EFF6FF]" : "hover:bg-[#f9fbff]"
+        className={`flex items-center gap-2 px-3 py-2.5 cursor-pointer transition-colors group ${
+          isDark
+            ? `border-b border-[#27272A] ${isSelected ? "bg-[#27272A]" : "hover:bg-[#1C1C1E]"}`
+            : `border-b border-[#E3ECFC] ${isSelected ? "bg-[#EFF6FF]" : "hover:bg-[#f9fbff]"}`
         }`}
         style={{ paddingLeft: `${12 + depth * 20}px` }}>
         {/* Expand toggle */}
         <button onClick={e => { e.stopPropagation(); if (hasChildren) onToggle(node.id); }}
-          className="w-5 h-5 flex items-center justify-center flex-shrink-0 rounded-md hover:bg-[#E3ECFC] transition-colors">
+          className={`w-5 h-5 flex items-center justify-center flex-shrink-0 rounded-md transition-colors ${isDark ? "hover:bg-[#3F3F46]" : "hover:bg-[#E3ECFC]"}`}>
           {hasChildren
             ? isExpanded
-              ? <CaretDown size={10} color="#64748B" weight="bold" />
-              : <CaretRight size={10} color="#64748B" weight="bold" />
-            : <span className="w-1.5 h-1.5 rounded-full bg-slate-200 inline-block" />
+              ? <CaretDown size={10} color={isDark ? "#71717A" : "#94A3B8"} weight="bold" />
+              : <CaretRight size={10} color={isDark ? "#71717A" : "#94A3B8"} weight="bold" />
+            : <span className={`w-1.5 h-1.5 rounded-full inline-block ${isDark ? "bg-[#3F3F46]" : "bg-[#CBD5E1]"}`} />
           }
         </button>
-        <div className={`text-[13px] font-medium flex-1 ${isSelected?"text-[#1D4ED8] font-semibold":"text-slate-700"}`}>
+        <div className={`text-[14px] font-medium flex-1 ${
+          isSelected
+            ? isDark ? "text-[#D4D4D8] font-semibold" : "text-[#0C2472] font-semibold"
+            : isDark ? "text-[#71717A]" : "text-slate-500"
+        }`}>
           {node.name}
         </div>
-        {isSelected && <CheckCircle size={14} color="#1D4ED8" weight="duotone" />}
+        {isSelected && <CheckCircle size={14} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />}
       </div>
 
       {hasChildren && isExpanded && node.children!.map(child => (
         <RoleTreeNode key={child.id} node={child} depth={depth + 1}
           selectedId={selectedId} expandedIds={expandedIds}
-          onSelect={onSelect} onToggle={onToggle} />
+          onSelect={onSelect} onToggle={onToggle} isDark={isDark} />
       ))}
     </div>
   );
 }
 
 function RolesPanel() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [selectedRole, setSelectedRole] = useState<RoleNode>(ROLE_TREE[0]);
   const [activeTab, setActiveTab]       = useState<"overview"|"timeline">("overview");
+  const [viewMode, setViewMode]         = useState<"tree"|"list">("tree");
   const [expandedIds, setExpandedIds]   = useState<Set<string>>(
     new Set(["admin", "vp", "ops"])
   );
+  const [newRoleOpen, setNewRoleOpen] = useState(false);
 
   const toggleExpand = (id: string) =>
     setExpandedIds(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
 
+  const allRoles = (() => {
+    const roles: RoleNode[] = [];
+    const collect = (node: RoleNode) => {
+      roles.push(node);
+      node.children?.forEach(collect);
+    };
+    ROLE_TREE.forEach(collect);
+    return roles;
+  })();
+
+  const roleActivities = ROLE_ACTIVITIES.filter(a => a.roleId === selectedRole.id).sort((a, b) =>
+    new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  );
+
+  const RoleListView = () => (
+    <div className="flex-1 overflow-y-auto space-y-2">
+      {allRoles.map(role => (
+        <button key={role.id} onClick={() => setSelectedRole(role)}
+          className={`w-full text-left px-3 py-2.5 rounded-lg border transition-all ${
+            selectedRole.id === role.id
+              ? isDark ? "bg-[#27272A] border-[#3F3F46] shadow-sm" : "bg-[#EFF6FF] border-[#1D4ED8] shadow-sm"
+              : isDark ? "border-[#27272A] hover:bg-[#1C1C1E]" : "border-[#E3ECFC] hover:bg-[#f9fbff]"
+          }`}>
+          <div className={`text-[14px] font-semibold ${
+            selectedRole.id === role.id
+              ? isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"
+              : isDark ? "text-[#71717A]" : "text-slate-600"
+          }`}>
+            {role.name}
+          </div>
+          <div className={`text-[12px] mt-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{role.description}</div>
+        </button>
+      ))}
+    </div>
+  );
+
   return (
     <div className="flex-1 flex overflow-hidden">
-      {/* Role tree */}
-      <div className="w-[340px] flex-shrink-0 flex flex-col border-r border-[#E3ECFC] bg-[#f9fbff]">
+      {/* Role sidebar */}
+      <div className={`w-[340px] flex-shrink-0 flex flex-col border-r ${isDark ? "border-[#27272A] bg-[#111113]" : "border-[#E3ECFC] bg-[#f9fbff]"}`}>
         {/* Toolbar */}
-        <div className="px-4 py-3 border-b border-[#E3ECFC] flex items-center gap-2">
-          <button className="flex items-center gap-1.5 bg-white border border-[#E3ECFC] rounded-xl px-3 py-1.5 text-[12px] font-semibold text-slate-600 hover:border-[#1D4ED8] hover:text-[#1D4ED8] transition-colors">
-            <Tree size={13} weight="duotone" />
-            Tree
-            <CaretDown size={10} weight="bold" />
-          </button>
+        <div className={`px-4 py-3 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"} flex items-center gap-2`}>
+          <div className={`flex items-center rounded-xl p-1 gap-1 ${isDark ? "bg-[#1C1C1E] border border-[#27272A]" : "bg-[#EFF6FF] border border-[#E3ECFC]"}`}>
+            <button onClick={() => setViewMode("tree")}
+              className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
+                viewMode === "tree"
+                  ? isDark ? "bg-[#27272A] text-[#D4D4D8]" : "bg-[#E3ECFC] text-[#0C2472]"
+                  : isDark ? "text-[#9CA3AF]" : "text-slate-400"
+              }`}>
+              <Tree size={12} weight="duotone" />
+              Tree
+            </button>
+            <button onClick={() => setViewMode("list")}
+              className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-semibold transition-colors ${
+                viewMode === "list"
+                  ? isDark ? "bg-[#27272A] text-[#D4D4D8]" : "bg-[#E3ECFC] text-[#0C2472]"
+                  : isDark ? "text-[#9CA3AF]" : "text-slate-400"
+              }`}>
+              <ListBullets size={12} weight="duotone" />
+              List
+            </button>
+          </div>
           <div className="flex-1" />
-          <Button variant="contained" size="small"
-            sx={{ bgcolor:"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", px:1.5, py:0.7, boxShadow:"0 1px 6px #1D4ED833", "&:hover":{bgcolor:"#60A5FA"} }}>
+          <Button variant="contained" size="small" onClick={() => setNewRoleOpen(true)}
+            sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#D4D4D8" : "white", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", px:1.5, py:0.7, boxShadow: isDark ? "none" : "0 1px 6px #1D4ED833", "&:hover":{ bgcolor: isDark ? "#3F3F46" : "#2563EB", color: isDark ? "#F4F4F5" : "white" } }}>
             New Role
           </Button>
         </div>
 
-        {/* Tree */}
-        <div className="flex-1 overflow-y-auto">
-          {ROLE_TREE.map(node => (
-            <RoleTreeNode key={node.id} node={node} depth={0}
-              selectedId={selectedRole.id} expandedIds={expandedIds}
-              onSelect={setSelectedRole} onToggle={toggleExpand} />
-          ))}
+        {/* Tree or List view */}
+        <div className="flex-1 overflow-y-auto p-2">
+          {viewMode === "tree" ? (
+            ROLE_TREE.map(node => (
+              <RoleTreeNode key={node.id} node={node} depth={0}
+                selectedId={selectedRole.id} expandedIds={expandedIds}
+                onSelect={setSelectedRole} onToggle={toggleExpand} isDark={isDark} />
+            ))
+          ) : (
+            <RoleListView />
+          )}
         </div>
       </div>
 
       {/* Role detail */}
-      <div className="flex-1 overflow-y-auto bg-[#EFF6FF] px-6 py-6">
+      <div className={`flex-1 overflow-y-auto px-6 py-6 ${isDark ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
         {/* Tabs */}
         <div className="flex items-center gap-2 mb-5">
           {(["overview","timeline"] as const).map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)}
-              className={`px-4 py-1.5 rounded-full text-[12.5px] font-semibold capitalize transition-all ${
+              className={`px-4 py-1.5 rounded-full text-[14px] font-semibold capitalize transition-all ${
                 activeTab === tab
-                  ? "bg-[#1D4ED8] text-white shadow-sm"
-                  : "bg-[#f9fbff] text-slate-500 hover:bg-[#E3ECFC] hover:text-[#1D4ED8]"
+                  ? isDark ? "bg-[#27272A] text-[#D4D4D8] shadow-sm" : "bg-[#1D4ED8] text-white shadow-sm"
+                  : isDark ? "bg-[#1C1C1E] text-[#9CA3AF] hover:bg-[#27272A] hover:text-[#A1A1AA]" : "bg-white text-slate-500 hover:bg-[#E3ECFC] hover:text-[#0C2472]"
               }`}>
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
@@ -918,24 +1144,105 @@ function RolesPanel() {
 
         {activeTab === "overview" && (
           <SettingCard icon={ShieldCheck} title="Role Information" color="#8B5CF6">
-            <KV label="Role Name"        value={selectedRole.name}        />
-            <KV label="Role Description" value={selectedRole.description} />
+            <KV label="Role Name"        value={selectedRole.name}        editable onSave={() => {}} />
+            <KV label="Role Description" value={selectedRole.description} editable onSave={() => {}} />
+            <KV label="Reports To"       value={selectedRole.reportsTo ?? "—"} editable onSave={() => {}} />
+            <KV label="Department"       value={selectedRole.department ?? "—"} editable onSave={() => {}} />
+            <KV label="Created Date"     value={selectedRole.createdDate ?? "—"} />
           </SettingCard>
         )}
 
-        {activeTab === "timeline" && (
-          <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm px-5 py-8 text-center text-slate-300 text-[12.5px]">
-            No activity recorded for this role.
-          </div>
-        )}
+        {activeTab === "timeline" && (() => {
+          const fmt = (ts: string) => {
+            const d = new Date(ts);
+            return {
+              date: d.toLocaleDateString("en-GB", { day:"numeric", month:"long", year:"numeric" }),
+              time: d.toLocaleTimeString("en-US", { hour:"2-digit", minute:"2-digit", hour12:true }).toLowerCase(),
+            };
+          };
+          const getIcon = (action: string) => {
+            if (action.toLowerCase().includes("created")) return { icon: Plus,          color:"#1D4ED8", bg:"#EFF6FF" };
+            if (action.toLowerCase().includes("updated")) return { icon: PencilSimple,  color:"#1D4ED8", bg:"#EFF6FF" };
+            if (action.toLowerCase().includes("modified"))return { icon: PencilSimple,  color:"#1D4ED8", bg:"#EFF6FF" };
+            if (action.toLowerCase().includes("changed")) return { icon: PencilSimple,  color:"#1D4ED8", bg:"#EFF6FF" };
+            return                                               { icon: PencilSimple,  color:"#1D4ED8", bg:"#EFF6FF" };
+          };
+          // group by date
+          const grouped: { date: string; items: typeof roleActivities }[] = [];
+          roleActivities.forEach(a => {
+            const { date } = fmt(a.timestamp);
+            const grp = grouped.find(g => g.date === date);
+            if (grp) grp.items.push(a);
+            else grouped.push({ date, items: [a] });
+          });
+
+          return (
+            <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center gap-2 px-5 py-3.5 border-b border-[#EFF6FF]">
+                <div className="w-6 h-6 rounded-lg bg-[#EFF6FF] flex items-center justify-center">
+                  <ClockCounterClockwise size={13} color="#1D4ED8" weight="duotone" />
+                </div>
+                <span className="font-heading text-[12px] font-bold uppercase tracking-wider text-slate-500">History</span>
+              </div>
+
+              {roleActivities.length > 0 ? (
+                <div className="px-5 py-4 space-y-5">
+                  {grouped.map(({ date, items }) => (
+                    <div key={date}>
+                      {/* Date divider */}
+                      <div className="flex items-center gap-3 mb-4">
+                        <span className="text-[12px] font-semibold text-slate-400 whitespace-nowrap">{date}</span>
+                        <div className="flex-1 h-px bg-[#E3ECFC]" />
+                      </div>
+                      {/* Items for this date */}
+                      <div className="space-y-4">
+                        {items.map(activity => {
+                          const { time } = fmt(activity.timestamp);
+                          const { icon: Icon, color, bg } = getIcon(activity.action);
+                          const [verb, ...rest] = activity.action.split(" ");
+                          return (
+                            <div key={activity.id} className="flex items-start gap-4">
+                              {/* Time */}
+                              <span className="text-[12px] text-slate-400 font-medium w-[60px] flex-shrink-0 pt-0.5">{time}</span>
+                              {/* Icon */}
+                              <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: bg }}>
+                                <Icon size={13} color={color} weight="duotone" />
+                              </div>
+                              {/* Text */}
+                              <div className="flex-1 min-w-0">
+                                <div className="text-[14px] text-slate-700 leading-snug">
+                                  <span className="font-bold">{verb}:</span>{" "}
+                                  <span className="font-medium">{rest.join(" ")}</span>
+                                </div>
+                                <div className="text-[11.5px] text-[#1D4ED8] mt-0.5">by {activity.userEmail}</div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="px-5 py-8 text-center text-slate-400 text-[14px]">
+                  No activity recorded for this role.
+                </div>
+              )}
+            </div>
+          );
+        })()}
       </div>
+
+      {/* New Role Drawer */}
+      {newRoleOpen && <NewRoleDrawer open={newRoleOpen} onClose={() => setNewRoleOpen(false)} />}
     </div>
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Permissions panel
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 type PermKey = "fullAccess"|"create"|"read"|"update"|"delete"|"print"|"import"|"export"|"email"|"dataSharingPublic";
 type PermState = Record<string, Record<string, Record<PermKey, boolean>>>;
 
@@ -968,7 +1275,7 @@ const PERM_MODULES = [
 ];
 
 const PERM_ROLES = [
-  { key:"administrator",  label:"Administrator",      color:"#1D4ED8" },
+  { key:"administrator",  label:"Administrator",      color:"#3B82F6" },
   { key:"vpOperations",   label:"VP of Operations",   color:"#8B5CF6" },
   { key:"opsManager",     label:"Operations Manager", color:"#10B981" },
   { key:"supportExec",    label:"Support Executive",  color:"#06B6D4" },
@@ -993,7 +1300,7 @@ function buildDefaultPerms(): PermState {
 function MiniToggle({ checked, onChange }: { checked: boolean; onChange: () => void }) {
   return (
     <button onClick={onChange}
-      className={`relative inline-flex w-[28px] h-[15px] rounded-full transition-colors duration-200 focus:outline-none flex-shrink-0 ${checked ? "bg-[#1D4ED8]" : "bg-slate-200"}`}>
+      className={`relative inline-flex w-[28px] h-[15px] rounded-full transition-colors duration-200 focus:outline-none flex-shrink-0 ${checked ? "bg-[#10B981]" : "bg-slate-200"}`}>
       <span className={`inline-block w-[11px] h-[11px] rounded-full bg-white shadow-sm transform transition-transform duration-200 absolute top-[2px] ${checked ? "translate-x-[15px]" : "translate-x-[2px]"}`} />
     </button>
   );
@@ -1013,13 +1320,13 @@ function PermCell({ module, role, state, onToggle }: {
             <Tooltip title={M1.label}>
               <div className="flex items-center gap-0.5">
                 <MiniToggle checked={state[p1]} onChange={() => onToggle(module, role, p1)} />
-                <M1.icon size={10} color={state[p1] ? M1.color : "#CBD5E1"} weight={p1==="fullAccess"||p1==="delete"?"fill":"duotone"} />
+                <M1.icon size={10} color={state[p1] ? M1.color : "#E2E8F0"} weight={p1==="fullAccess"||p1==="delete"?"fill":"duotone"} />
               </div>
             </Tooltip>
             <Tooltip title={M2.label}>
               <div className="flex items-center gap-0.5">
                 <MiniToggle checked={state[p2]} onChange={() => onToggle(module, role, p2)} />
-                <M2.icon size={10} color={state[p2] ? M2.color : "#CBD5E1"} weight={p2==="fullAccess"||p2==="delete"?"fill":"duotone"} />
+                <M2.icon size={10} color={state[p2] ? M2.color : "#E2E8F0"} weight={p2==="fullAccess"||p2==="delete"?"fill":"duotone"} />
               </div>
             </Tooltip>
           </div>
@@ -1030,6 +1337,8 @@ function PermCell({ module, role, state, onToggle }: {
 }
 
 function PermissionPanel() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [tab, setTab]         = useState<"matrix"|"summary">("matrix");
   const [perms, setPerms]     = useState<PermState>(buildDefaultPerms);
   const [saved, setSaved]     = useState(false);
@@ -1043,13 +1352,13 @@ function PermissionPanel() {
   };
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden bg-[#EFF6FF]">
+    <div className={`flex-1 flex flex-col overflow-hidden ${isDark ? "bg-[#0A0A0A]" : "bg-white"}`}>
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 bg-[#f9fbff] border-b border-[#E3ECFC]">
-        <div className="text-[18px] font-extrabold text-[#0C2472] tracking-tight">Permissions</div>
+      <div className={`flex items-center justify-between px-6 py-4 border-b ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+        <div className={`text-[18px] font-extrabold tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-900"}`}>Permissions</div>
         <Button variant="contained" size="small"
           onClick={() => setSaved(true)}
-          sx={{ bgcolor: saved ? "#10B981" : "#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.8, boxShadow:"0 1px 6px #1D4ED833", "&:hover":{ bgcolor: saved ? "#059669" : "#60A5FA" } }}>
+          sx={{ bgcolor: saved ? "#10B981" : (isDark ? "#27272A" : "#1D4ED8"), color: saved ? "#fff" : (isDark ? "#D4D4D8" : "white"), borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.8, boxShadow: isDark ? "none" : "0 1px 6px #1D4ED833", "&:hover":{ bgcolor: saved ? "#059669" : (isDark ? "#3F3F46" : "#2563EB") } }}>
           {saved ? "Saved!" : "Save Changes"}
         </Button>
       </div>
@@ -1058,10 +1367,10 @@ function PermissionPanel() {
       <div className="flex items-center gap-1 px-6 pt-4 pb-0">
         {(["matrix","summary"] as const).map(t => (
           <button key={t} onClick={() => setTab(t)}
-            className={`px-4 py-1.5 rounded-t-xl text-[12.5px] font-semibold transition-all border border-b-0 ${
+            className={`px-4 py-1.5 rounded-t-xl text-[14px] font-semibold transition-all border border-b-0 ${
               tab === t
-                ? "bg-white border-[#E3ECFC] text-[#1D4ED8]"
-                : "bg-transparent border-transparent text-slate-400 hover:text-slate-600"
+                ? isDark ? "bg-[#1C1C1E] border-[#27272A] text-[#D4D4D8]" : "bg-white border-[#E3ECFC] text-slate-900"
+                : isDark ? "bg-transparent border-transparent text-[#9CA3AF] hover:text-[#A1A1AA]" : "bg-transparent border-transparent text-slate-400 hover:text-slate-600"
             }`}>
             {t === "matrix" ? "Permission Matrix" : "Summary View"}
           </button>
@@ -1070,11 +1379,11 @@ function PermissionPanel() {
 
       {/* Matrix */}
       {tab === "matrix" && (
-        <div className="flex-1 overflow-auto mx-6 mb-4 bg-white rounded-b-2xl rounded-tr-2xl border border-[#E3ECFC] shadow-sm">
+        <div className={`flex-1 overflow-auto mx-6 mb-4 rounded-b-2xl rounded-tr-2xl border shadow-sm ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
           <table className="w-full border-collapse text-left" style={{ minWidth: 900 }}>
             <thead>
-              <tr className="bg-[#f9fbff] border-b border-[#E3ECFC]">
-                <th className="sticky left-0 z-10 bg-[#f9fbff] px-5 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider w-[160px] border-r border-[#E3ECFC]">
+              <tr className={`border-b ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+                <th className={`sticky left-0 z-10 px-5 py-3 text-[11px] font-bold uppercase tracking-wider w-[160px] border-r ${isDark ? "bg-[#111113] text-[#9CA3AF] border-[#27272A]" : "bg-[#f9fbff] text-slate-600 border-[#E3ECFC]"}`}>
                   Module
                 </th>
                 {PERM_ROLES.map(role => (
@@ -1088,12 +1397,12 @@ function PermissionPanel() {
             </thead>
             <tbody>
               {PERM_MODULES.map((mod, i) => (
-                <tr key={mod} className={`border-b border-[#EFF6FF] ${i % 2 === 0 ? "bg-white" : "bg-[#fafcff]"}`}>
-                  <td className="sticky left-0 z-10 px-5 py-2 border-r border-[#E3ECFC] font-semibold text-[13px] text-slate-700 bg-inherit align-middle whitespace-nowrap">
+                <tr key={mod} className={`border-b ${isDark ? `border-[#27272A] ${i % 2 === 0 ? "bg-[#1C1C1E]" : "bg-[#18181B]"}` : `border-[#E3ECFC] ${i % 2 === 0 ? "bg-white" : "bg-[#f9fbff]"}`}`}>
+                  <td className={`sticky left-0 z-10 px-5 py-2 border-r font-semibold text-[14px] bg-inherit align-middle whitespace-nowrap ${isDark ? "text-[#A1A1AA] border-[#27272A]" : "text-slate-700 border-[#E3ECFC]"}`}>
                     {mod}
                   </td>
                   {PERM_ROLES.map(role => (
-                    <td key={role.key} className="border-r border-[#EFF6FF] last:border-r-0 align-top">
+                    <td key={role.key} className={`border-r last:border-r-0 align-top ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
                       <PermCell module={mod} role={role.key} state={perms[mod][role.key]} onToggle={toggle} />
                     </td>
                   ))}
@@ -1105,22 +1414,90 @@ function PermissionPanel() {
       )}
 
       {tab === "summary" && (
-        <div className="flex-1 flex items-center justify-center text-slate-300 text-[13px]">
-          Summary view coming soon.
+        <div className="flex-1 overflow-auto px-6 py-5 space-y-5">
+          {/* Role cards grid */}
+          <div className="grid grid-cols-3 gap-4">
+            {PERM_ROLES.map(role => {
+              const rolePerms = perms;
+              return (
+                <div key={role.key} className="bg-white rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
+                  {/* Role header badge */}
+                  <div className="px-4 py-3 border-b border-[#EFF6FF]">
+                    <span className="inline-block px-3 py-1 rounded-full text-[11px] font-bold text-white" style={{ backgroundColor: role.color }}>
+                      {role.label}
+                    </span>
+                  </div>
+                  {/* Module rows */}
+                  <div className="divide-y divide-[#F8FAFF]">
+                    {PERM_MODULES.map(mod => {
+                      const state = rolePerms[mod]?.[role.key];
+                      const activePerms = state
+                        ? (Object.entries(state) as [PermKey, boolean][]).filter(([, v]) => v).map(([k]) => k)
+                        : [];
+                      const hasAny = activePerms.length > 0;
+                      return (
+                        <div key={mod} className="flex items-center justify-between px-4 py-2 hover:bg-[#fafcff] transition-colors">
+                          <span className="text-[14px] text-slate-600 font-medium">{mod}</span>
+                          {hasAny ? (
+                            <div className="flex items-center gap-0.5">
+                              {activePerms.map(perm => {
+                                const meta = PERM_META[perm];
+                                if (!meta) return null;
+                                const Icon = meta.icon;
+                                return (
+                                  <Tooltip key={perm} title={meta.label}>
+                                    <span className="flex items-center justify-center w-5 h-5">
+                                      <Icon size={12} color={meta.color} weight={perm === "fullAccess" || perm === "delete" ? "fill" : "duotone"} />
+                                    </span>
+                                  </Tooltip>
+                                );
+                              })}
+                            </div>
+                          ) : (
+                            <Lock size={12} color="#E2E8F0" weight="duotone" />
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Legend */}
+          <div className="bg-white rounded-2xl border border-[#E3ECFC] px-5 py-4">
+            <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3">Permission Legend</div>
+            <div className="grid grid-cols-4 gap-x-8 gap-y-2">
+              {(Object.entries(PERM_META) as [PermKey, typeof PERM_META[PermKey]][]).map(([key, meta]) => {
+                const Icon = meta.icon;
+                return (
+                  <div key={key} className="flex items-center gap-2">
+                    <Icon size={13} color={meta.color} weight={key === "fullAccess" || key === "delete" ? "fill" : "duotone"} />
+                    <span className="text-[12px] text-slate-600">{meta.label}</span>
+                  </div>
+                );
+              })}
+              <div className="flex items-center gap-2">
+                <Lock size={13} color="#E2E8F0" weight="duotone" />
+                <span className="text-[12px] text-slate-600">Data Sharing (Private)</span>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
       {/* Legend */}
       {tab === "matrix" && (
-        <div className="mx-6 mb-5 bg-white rounded-2xl border border-[#E3ECFC] px-5 py-3">
-          <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Permission Legend</div>
+        <div className={`mx-6 mb-5 rounded-2xl border px-5 py-3 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
+          <div className={`text-[11px] font-bold uppercase tracking-wider mb-2 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Permission Legend</div>
           <div className="grid grid-cols-4 gap-x-6 gap-y-1.5">
             {(Object.entries(PERM_META) as [PermKey, typeof PERM_META[PermKey]][]).map(([key, meta]) => {
               const Icon = meta.icon;
               return (
                 <div key={key} className="flex items-center gap-1.5">
                   <Icon size={12} color={meta.color} weight={key==="fullAccess"||key==="delete"?"fill":"duotone"} />
-                  <span className="text-[11.5px] text-slate-600">{meta.label}</span>
+                  <span className={`text-[11.5px] ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>{meta.label}</span>
                 </div>
               );
             })}
@@ -1131,12 +1508,12 @@ function PermissionPanel() {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Modules and Fields panel
-// ─────────────────────────────────────────────
-// ─────────────────────────────────────────────
+// ---------------------------------------------
+// ---------------------------------------------
 //  Layout Editor (full-screen overlay)
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 const NEW_FIELD_TYPES = [
   { label:"Single Line",  icon:TextT           },
   { label:"Multi-Line",   icon:TextAlignLeft   },
@@ -1222,14 +1599,14 @@ const DV_BC_FIELDS = [
 
 function FieldCell({ field }: { field: LField }) {
   return (
-    <div className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-white hover:border-[#93C5FD] transition-colors cursor-pointer group">
+    <div className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-white hover:border-[#4A7AE8] transition-colors cursor-pointer group">
       <div className="flex items-center gap-0.5 min-w-0">
-        <span className="text-[12px] font-medium text-slate-700 truncate">{field.label}</span>
-        {field.required && <span className="text-red-500 text-[10px] ml-0.5">*</span>}
+        <span className="text-[14px] font-medium text-slate-700 truncate">{field.label}</span>
+        {field.required && <span className="text-red-500 text-[12px] ml-0.5">*</span>}
       </div>
       <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
-        {field.prefix && <span className="text-[11px] text-slate-400">{field.prefix} ·</span>}
-        {field.type && <span className="text-[11px] text-[#93C5FD]">{field.type}</span>}
+        {field.prefix && <span className="text-[12px] text-slate-400">{field.prefix} ·</span>}
+        {field.type && <span className="text-[12px] text-inherit">{field.type}</span>}
         <span className="text-slate-300 group-hover:text-slate-500 text-[11px] font-bold">···</span>
       </div>
     </div>
@@ -1246,23 +1623,23 @@ function LayoutEditor({ module, layoutName, onClose }: {
   const modDef = MODULE_DEFS.find(m => m.key === module);
 
   return (
-    <div className="fixed inset-0 z-50 bg-white flex flex-col overflow-hidden">
+    <div className="absolute inset-0 z-30 bg-white flex flex-col overflow-hidden">
       {/* Top bar */}
       <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#E3ECFC] flex-shrink-0">
-        <button onClick={onClose} className="flex items-center gap-1.5 text-[12.5px] font-semibold text-slate-600 hover:text-[#1D4ED8] transition-colors">
+        <button onClick={onClose} className="flex items-center gap-1.5 text-[14px] font-semibold text-slate-600 transition-colors">
           <ArrowLeft size={14} weight="bold" />
           {modDef?.label ?? module}
         </button>
-        <button className="flex items-center gap-1.5 px-2.5 py-1 border border-[#E3ECFC] rounded-lg text-[12.5px] font-semibold text-slate-700 hover:border-[#1D4ED8] bg-white transition-colors">
+        <button className="flex items-center gap-1.5 px-2.5 py-1 border border-[#E3ECFC] rounded-lg text-[14px] font-semibold text-slate-700 hover:border-[#1D4ED8] bg-white transition-colors">
           {layoutName} <CaretDown size={11} weight="bold" />
         </button>
         <IconButton size="small" sx={{ p:0.5, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
           <Gear size={14} weight="duotone" />
         </IconButton>
         <div className="flex-1" />
-        <button onClick={onClose} className="px-3 py-1.5 text-[12.5px] font-semibold text-slate-500 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">Cancel</button>
-        <button className="px-3 py-1.5 text-[12.5px] font-semibold text-slate-500 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">Save and Close</button>
-        <button className="px-4 py-1.5 text-[12.5px] font-bold text-white bg-[#1D4ED8] rounded-lg hover:bg-[#60A5FA] transition-colors">Save</button>
+        <button onClick={onClose} className="px-3 py-1.5 text-[14px] font-semibold text-slate-500 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">Cancel</button>
+        <button className="px-3 py-1.5 text-[14px] font-semibold text-slate-500 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">Save and Close</button>
+        <button className="px-4 py-1.5 text-[14px] font-bold text-white bg-[#1D4ED8] rounded-lg hover:bg-[#60A5FA] transition-colors">Save</button>
       </div>
 
       {/* Body */}
@@ -1271,7 +1648,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
         <div className="w-[260px] flex-shrink-0 border-r border-[#E3ECFC] bg-[#f9fbff] overflow-y-auto">
           {tab === "create" && (<>
             <button onClick={() => setNfOpen(p=>!p)}
-              className="flex items-center justify-between w-full px-4 py-2.5 text-[10.5px] font-bold text-slate-400 uppercase tracking-wider hover:bg-[#EFF6FF]">
+              className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold text-slate-400 uppercase tracking-wider hover:bg-[#EFF6FF]">
               <span>New Fields</span>
               {nfOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
             </button>
@@ -1281,8 +1658,8 @@ function LayoutEditor({ module, layoutName, onClose }: {
                   const Icon = ft.icon;
                   return (
                     <div key={ft.label}
-                      className="flex items-center gap-1.5 px-2 py-1.5 border border-[#E3ECFC] rounded-lg bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF] cursor-grab transition-colors text-[11px] font-medium text-slate-600">
-                      <Icon size={11} color="#1D4ED8" weight="duotone" />
+                      className="flex items-center gap-1.5 px-2 py-1.5 border border-[#E3ECFC] rounded-lg bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF] cursor-grab transition-colors text-[14px] font-medium text-slate-600">
+                      <Icon size={11} color="#94A3B8" weight="duotone" />
                       {ft.label}
                     </div>
                   );
@@ -1290,12 +1667,12 @@ function LayoutEditor({ module, layoutName, onClose }: {
               </div>
             )}
             <div className="px-3 pb-3">
-              <button className="flex items-center gap-1.5 w-full px-3 py-2 border border-dashed border-[#93C5FD] rounded-lg text-[11.5px] font-bold text-[#1D4ED8] hover:bg-[#EFF6FF] transition-colors justify-center">
+              <button className="flex items-center gap-1.5 w-full px-3 py-2 border border-dashed border-[#4A7AE8] rounded-lg text-[11.5px] font-bold text-[#1D4ED8] hover:bg-[#EFF6FF] transition-colors justify-center">
                 <Plus size={11} weight="bold"/> NEW SECTION
               </button>
             </div>
             <button onClick={() => setUnusedOpen(p=>!p)}
-              className="flex items-center justify-between w-full px-4 py-2.5 text-[10.5px] font-bold text-slate-400 uppercase tracking-wider hover:bg-[#EFF6FF]">
+              className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold text-slate-400 uppercase tracking-wider hover:bg-[#EFF6FF]">
               <span>Unused Items</span>
               {unusedOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
             </button>
@@ -1305,17 +1682,17 @@ function LayoutEditor({ module, layoutName, onClose }: {
           {tab === "quickCreate" && (
             <div>
               <div className="flex items-center justify-between px-4 py-3 border-b border-[#E3ECFC]">
-                <span className="text-[13px] font-bold text-slate-700">Available Fields</span>
+                <span className="text-[14px] font-bold text-slate-700">Available Fields</span>
                 <IconButton size="small" sx={{ p:0.4, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
                   <MagnifyingGlass size={13} weight="duotone"/>
                 </IconButton>
               </div>
               {Object.entries(QC_AVAILABLE).map(([sec, flds]) => (
                 <div key={sec} className="px-3 pt-3">
-                  <div className="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 px-1">{sec}</div>
+                  <div className="text-[12px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 px-1">{sec}</div>
                   {flds.map(f => (
                     <div key={f} className="flex items-center gap-2 px-2 py-1.5 mb-0.5 border border-[#E3ECFC] rounded-lg bg-white text-[12px] text-slate-600 cursor-grab hover:border-[#1D4ED8] hover:bg-[#EFF6FF] transition-colors">
-                      <DotsSixVertical size={11} color="#CBD5E1"/>
+                      <DotsSixVertical size={11} color="#E2E8F0"/>
                       {f}
                     </div>
                   ))}
@@ -1327,7 +1704,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
           {tab === "detailView" && (
             <div>
               <button onClick={() => setUnusedOpen(p=>!p)}
-                className="flex items-center justify-between w-full px-4 py-2.5 text-[10.5px] font-bold text-slate-400 uppercase tracking-wider hover:bg-[#EFF6FF] border-b border-[#E3ECFC]">
+                className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold text-slate-400 uppercase tracking-wider hover:bg-[#EFF6FF] border-b border-[#E3ECFC]">
                 <span>Unused Related List</span>
                 {unusedOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
               </button>
@@ -1345,7 +1722,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                 const labels = { create:"Create", quickCreate:"Quick Create", detailView:"Detail View" };
                 return (
                   <button key={t} onClick={() => setTab(t)}
-                    className={`px-5 py-2.5 text-[13px] font-semibold transition-all border-b-2 -mb-px ${
+                    className={`px-5 py-2.5 text-[14px] font-semibold transition-all border-b-2 -mb-px ${
                       tab===t ? "border-[#1D4ED8] text-[#1D4ED8]" : "border-transparent text-slate-400 hover:text-slate-600"
                     }`}>
                     {labels[t]}
@@ -1353,7 +1730,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                 );
               })}
             </div>
-            <button className="text-[12.5px] font-semibold text-[#1D4ED8] hover:underline pb-2.5">Preview</button>
+            <button className="text-[14px] font-semibold text-[#1D4ED8] hover:underline pb-2.5">Preview</button>
           </div>
 
           {/* CREATE */}
@@ -1362,8 +1739,8 @@ function LayoutEditor({ module, layoutName, onClose }: {
               {LEADS_CREATE_SECTIONS.map(section => (
                 <div key={section.title} className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
                   <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#E3ECFC] bg-[#fafcff]">
-                    <DotsSixVertical size={14} color="#CBD5E1"/>
-                    <span className="text-[13px] font-bold text-slate-700 flex-1">{section.title}</span>
+                    <DotsSixVertical size={14} color="#E2E8F0"/>
+                    <span className="text-[12px] font-bold text-slate-700 flex-1">{section.title}</span>
                     <IconButton size="small" sx={{ p:0.3, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
                       <Gear size={13} weight="duotone"/>
                     </IconButton>
@@ -1371,18 +1748,18 @@ function LayoutEditor({ module, layoutName, onClose }: {
                   {section.addressLayout ? (
                     <div className="p-3 space-y-1.5">
                       {section.fields.slice(0,-2).map((f,i) => (
-                        <div key={i} className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-[#fafcff] hover:border-[#93C5FD] transition-colors cursor-pointer group">
-                          <span className="text-[12px] font-medium text-slate-700">{f.label}</span>
+                        <div key={i} className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-[#fafcff] hover:border-[#4A7AE8] transition-colors cursor-pointer group">
+                          <span className="text-[14px] font-medium text-slate-700">{f.label}</span>
                           <div className="flex items-center gap-1.5">
-                            {f.type && <span className="text-[11px] text-[#93C5FD]">{f.type}</span>}
+                            {f.type && <span className="text-[12px] text-inherit">{f.type}</span>}
                             <span className="text-slate-300 group-hover:text-slate-500 text-[11px] font-bold">···</span>
                           </div>
                         </div>
                       ))}
                       <div className="grid grid-cols-2 gap-1.5">
                         {section.fields.slice(-2).map((f,i) => (
-                          <div key={i} className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-[#fafcff] hover:border-[#93C5FD] transition-colors cursor-pointer group">
-                            <span className="text-[12px] font-medium text-slate-700">{f.label}</span>
+                          <div key={i} className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-[#fafcff] hover:border-[#4A7AE8] transition-colors cursor-pointer group">
+                            <span className="text-[14px] font-medium text-slate-700">{f.label}</span>
                             <span className="text-slate-300 group-hover:text-slate-500 text-[11px] font-bold">···</span>
                           </div>
                         ))}
@@ -1408,8 +1785,8 @@ function LayoutEditor({ module, layoutName, onClose }: {
               <div className="w-[500px] bg-white rounded-xl border border-[#E3ECFC] overflow-hidden shadow-sm">
                 {QC_ACTIVE.map((f,i) => (
                   <div key={i} className="flex items-center px-4 py-2.5 border-b border-[#EFF6FF] last:border-0 group">
-                    <span className="text-[13px] text-slate-700 w-36 flex-shrink-0">{f.label}</span>
-                    <span className="flex-1 text-[13px] text-[#93C5FD]">{f.type}</span>
+                    <span className="text-[14px] text-slate-700 w-36 flex-shrink-0">{f.label}</span>
+                    <span className="flex-1 text-[14px] text-inherit">{f.type}</span>
                     {f.removable && (
                       <button className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors opacity-60 hover:opacity-100">
                         <X size={11} color="#94A3B8" weight="bold"/>
@@ -1427,23 +1804,23 @@ function LayoutEditor({ module, layoutName, onClose }: {
               {/* Business Card */}
               <div className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 border-b border-[#E3ECFC]">
-                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Business Card</span>
+                  <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Business Card</span>
                   <div className="flex items-center gap-3">
                     <GreenSwitch checked={bcEnabled} onChange={() => setBcEnabled(p=>!p)}/>
-                    <button className="text-[12.5px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>
+                    <button className="text-[14px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>
                   </div>
                 </div>
                 <div className="divide-y divide-[#EFF6FF]">
                   {DV_BC_FIELDS.map((f,i) => (
                     <div key={i} className="flex items-center gap-3 px-4 py-2.5">
-                      <DotsSixVertical size={13} color="#CBD5E1"/>
-                      <span className="text-[13px] text-slate-700 flex-1">{f.label}</span>
-                      <span className="text-[12px] text-[#93C5FD]">{f.type}</span>
+                      <DotsSixVertical size={13} color="#E2E8F0"/>
+                      <span className="text-[14px] text-slate-700 flex-1">{f.label}</span>
+                      <span className="text-[12px] text-inherit">{f.type}</span>
                     </div>
                   ))}
                 </div>
                 <div className="px-4 py-2.5 border-t border-[#EFF6FF]">
-                  <div className="flex items-center gap-1.5 text-[11.5px] text-slate-400">
+                  <div className="flex items-center gap-1.5 text-[12px] text-slate-400">
                     <Info size={11} weight="duotone"/>
                     You can add up to <span className="font-bold text-slate-600 mx-0.5">5 fields</span> to your Business Card.
                   </div>
@@ -1452,16 +1829,16 @@ function LayoutEditor({ module, layoutName, onClose }: {
               {/* Details */}
               <div className="bg-white rounded-xl border border-[#E3ECFC]">
                 <div className="px-4 py-2.5 border-b border-[#E3ECFC]">
-                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Details</span>
+                  <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Details</span>
                 </div>
-                <div className="mx-3 my-3 px-4 py-3 text-[12.5px] text-slate-400 bg-[#fafcff] rounded-lg border border-[#E3ECFC]">
+                <div className="mx-3 my-3 px-4 py-3 text-[14px] text-slate-400 bg-[#fafcff] rounded-lg border border-[#E3ECFC]">
                   Fields customized in the Create page will appear here.
                 </div>
               </div>
               {/* Related List */}
               <div className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
                 <div className="px-4 py-2.5 border-b border-[#E3ECFC]">
-                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Related List</span>
+                  <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Related List</span>
                 </div>
                 {[
                   { name:"Notes",       standard:true,  customize:false },
@@ -1470,9 +1847,9 @@ function LayoutEditor({ module, layoutName, onClose }: {
                 ].map(item => (
                   <div key={item.name} className="px-4 py-3 border-b border-[#EFF6FF] last:border-0">
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[13px] font-bold text-slate-700">{item.name}</span>
+                      <span className="text-[14px] font-bold text-slate-700">{item.name}</span>
                       <div className="flex items-center gap-1">
-                        {item.customize && <button className="text-[12.5px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>}
+                        {item.customize && <button className="text-[14px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>}
                         <IconButton size="small" sx={{ p:0.3, color:"#94A3B8", "&:hover":{color:"#EF4444"}, borderRadius:"6px" }}>
                           <Trash size={13} weight="duotone"/>
                         </IconButton>
@@ -1485,8 +1862,8 @@ function LayoutEditor({ module, layoutName, onClose }: {
                     ) : (
                       <div className="border border-[#E3ECFC] rounded-lg overflow-hidden">
                         <div className="grid grid-cols-2 bg-[#fafcff] border-b border-[#E3ECFC]">
-                          <div className="px-4 py-2 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Title</div>
-                          <div className="px-4 py-2 text-[10px] font-bold text-slate-500 uppercase tracking-wider border-l border-[#E3ECFC]">Status</div>
+                          <div className="px-4 py-2 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">Title</div>
+                          <div className="px-4 py-2 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider border-l border-[#E3ECFC]">Status</div>
                         </div>
                       </div>
                     )}
@@ -1501,8 +1878,355 @@ function LayoutEditor({ module, layoutName, onClose }: {
   );
 }
 
+interface BField { id:number; label:string; }
+interface BSection { id:number; title:string; fields:BField[]; }
+
+function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void; }) {
+  const [tab, setTab]             = useState<"create"|"quickCreate"|"detailView">("create");
+  const [layoutName, setLayoutName] = useState("");
+  const [nameTouched, setNameTouched] = useState(false);
+  const [nfOpen, setNfOpen]       = useState(true);
+  const [unusedOpen, setUnusedOpen] = useState(true);
+  const [sections, setSections]   = useState<BSection[]>([]);
+  const [qcFields, setQcFields]   = useState<BField[]>([]);
+  const [qcDragOver, setQcDragOver] = useState(false);
+  const [dvBcEnabled, setDvBcEnabled] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [dragField, setDragField] = useState<string|null>(null);
+  const [dragOverSection, setDragOverSection] = useState<number|null>(null);
+  const idRef = useRef(1);
+  const modDef = MODULE_DEFS.find(m => m.key === module);
+  const hasSections = sections.length > 0;
+  const canDragFields = tab === "create" ? hasSections : tab === "quickCreate";
+  const allFields = sections.flatMap(s => s.fields);
+
+  const addSection = () => {
+    setSections(prev => [...prev, { id: idRef.current++, title: `New Section ${prev.length + 1}`, fields: [] }]);
+  };
+  const handleDrop = (sectionId: number) => {
+    if (!dragField) { setDragOverSection(null); return; }
+    setSections(prev => prev.map(s =>
+      s.id === sectionId ? { ...s, fields: [...s.fields, { id: idRef.current++, label: dragField }] } : s
+    ));
+    setDragField(null);
+    setDragOverSection(null);
+  };
+  const removeField = (sectionId: number, fieldId: number) => {
+    setSections(prev => prev.map(s => s.id === sectionId ? { ...s, fields: s.fields.filter(f => f.id !== fieldId) } : s));
+  };
+  const removeSection = (sectionId: number) => {
+    setSections(prev => prev.filter(s => s.id !== sectionId));
+  };
+  const handleQcDrop = () => {
+    if (!dragField) { setQcDragOver(false); return; }
+    setQcFields(prev => [...prev, { id: idRef.current++, label: dragField }]);
+    setDragField(null);
+    setQcDragOver(false);
+  };
+  const removeQcField = (fieldId: number) => {
+    setQcFields(prev => prev.filter(f => f.id !== fieldId));
+  };
+  const requireName = () => { if (!layoutName.trim()) setNameTouched(true); };
+
+  return (
+    <div className="absolute inset-0 z-30 bg-white flex flex-col overflow-hidden">
+      {/* Top bar */}
+      <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#E3ECFC] flex-shrink-0">
+        <button onClick={onClose} className="flex items-center gap-1.5 text-[14px] font-semibold text-slate-600 transition-colors">
+          <ArrowLeft size={14} weight="bold" />
+          {modDef?.label ?? module}
+        </button>
+        <span className="text-[14px] font-semibold text-slate-400">add</span>
+        <div className="relative">
+          <input
+            value={layoutName}
+            onChange={e => setLayoutName(e.target.value)}
+            onBlur={requireName}
+            placeholder="Layout Name"
+            className={`px-3 py-1.5 rounded-lg text-[14px] font-semibold text-slate-700 w-40 outline-none transition-colors border ${
+              nameTouched && !layoutName.trim() ? "border-red-400" : "border-[#E3ECFC] focus:border-[#1D4ED8]"
+            }`}
+          />
+          {nameTouched && !layoutName.trim() && (
+            <div className="absolute left-0 top-full mt-0.5 text-[12px] text-red-500 font-medium whitespace-nowrap">Layout Name is required</div>
+          )}
+        </div>
+        <IconButton size="small" sx={{ p:0.5, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
+          <Gear size={14} weight="duotone" />
+        </IconButton>
+        <div className="flex-1" />
+        <button onClick={onClose} className="px-3 py-1.5 text-[14px] font-semibold text-slate-500 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">Cancel</button>
+        <button onClick={requireName} className="px-3 py-1.5 text-[14px] font-semibold text-slate-500 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">Save and Close</button>
+        <button onClick={requireName} className="px-4 py-1.5 text-[14px] font-bold text-white bg-[#1D4ED8] rounded-lg hover:bg-[#60A5FA] transition-colors">Save</button>
+      </div>
+
+      {/* Body */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Left sidebar */}
+        <div className="w-[260px] flex-shrink-0 border-r border-[#E3ECFC] bg-[#f9fbff] overflow-y-auto">
+          {tab === "detailView" ? (
+            <>
+              <button onClick={() => setUnusedOpen(p=>!p)}
+                className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold text-slate-400 uppercase tracking-wider hover:bg-[#EFF6FF] border-b border-[#E3ECFC]">
+                <span>Unused Related List</span>
+                {unusedOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
+              </button>
+              {unusedOpen && <div className="px-4 py-3 text-[14px] text-slate-400">No more related lists available.</div>}
+            </>
+          ) : (
+            <>
+              <button onClick={() => setNfOpen(p=>!p)}
+                className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold text-slate-400 uppercase tracking-wider hover:bg-[#EFF6FF]">
+                <span>New Fields</span>
+                {nfOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
+              </button>
+              {nfOpen && (
+                <>
+                  {!canDragFields && (
+                    <div className="px-3 pb-2 text-[14px] font-medium text-amber-600 bg-amber-50 border border-amber-200 rounded-lg mx-3 px-2.5 py-1.5">
+                      {tab === "create" ? "Add a section before dragging in fields." : "Switch to a tab with a drop target to add fields."}
+                    </div>
+                  )}
+                  <div className="px-3 pb-3 grid grid-cols-2 gap-1.5">
+                    {NEW_FIELD_TYPES.map(ft => {
+                      const Icon = ft.icon;
+                      return (
+                        <div key={ft.label}
+                          draggable={canDragFields}
+                          onDragStart={() => canDragFields && setDragField(ft.label)}
+                          onDragEnd={() => setDragField(null)}
+                          title={canDragFields ? undefined : "Add a section first"}
+                          className={`flex items-center gap-1.5 px-2 py-1.5 border rounded-lg transition-colors text-[14px] font-medium ${
+                            canDragFields
+                              ? "border-[#E3ECFC] bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF] cursor-grab active:cursor-grabbing text-slate-600"
+                              : "border-[#EFF6FF] bg-slate-50 text-slate-300 cursor-not-allowed"
+                          }`}>
+                          <Icon size={11} color={canDragFields ? "#1D4ED8" : "#CBD5E1"} weight="duotone" />
+                          {ft.label}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+              <div className="px-3 pb-3">
+                <button onClick={addSection}
+                  className="flex items-center gap-1.5 w-full px-3 py-2 border border-dashed border-[#4A7AE8] rounded-lg text-[14px] font-bold text-[#1D4ED8] hover:bg-[#EFF6FF] transition-colors justify-center">
+                  <Plus size={11} weight="bold"/> NEW SECTION
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Main area */}
+        <div className="flex-1 overflow-y-auto bg-[#F8FAFC]">
+          <div className="flex items-center justify-between px-6 pt-4 border-b border-[#E3ECFC] bg-white mb-0">
+            <div className="flex items-center">
+              {(["create","quickCreate","detailView"] as const).map(t => {
+                const labels = { create:"Create", quickCreate:"Quick Create", detailView:"Detail View" };
+                return (
+                  <button key={t} onClick={() => setTab(t)}
+                    className={`px-5 py-2.5 text-[14px] font-semibold transition-all border-b-2 -mb-px ${
+                      tab===t ? "border-[#1D4ED8] text-[#1D4ED8]" : "border-transparent text-slate-400 hover:text-slate-600"
+                    }`}>
+                    {labels[t]}
+                  </button>
+                );
+              })}
+            </div>
+            <button onClick={() => setPreviewOpen(true)} className="text-[14px] font-semibold text-[#1D4ED8] hover:underline pb-2.5">Preview</button>
+          </div>
+
+          {tab === "create" ? (
+            <div className="px-6 py-5 space-y-4">
+              {sections.length === 0 ? (
+                <div className="border-2 border-dashed border-[#CBD5E1] rounded-xl py-16 flex flex-col items-center justify-center gap-2 text-slate-300">
+                  <SquaresFour size={28} weight="duotone"/>
+                  <span className="text-[14px] font-semibold text-slate-400">Click &quot;New Section&quot; to start building this layout</span>
+                </div>
+              ) : sections.map(section => (
+                <div key={section.id} className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
+                  <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#E3ECFC] bg-[#fafcff]">
+                    <DotsSixVertical size={14} color="#E2E8F0"/>
+                    <span className="text-[14px] font-bold text-slate-700 flex-1">{section.title}</span>
+                    <IconButton size="small" onClick={() => removeSection(section.id)} sx={{ p:0.3, color:"#94A3B8", "&:hover":{color:"#EF4444"}, borderRadius:"6px" }}>
+                      <Trash size={13} weight="duotone"/>
+                    </IconButton>
+                  </div>
+                  <div
+                    onDragOver={e => { e.preventDefault(); setDragOverSection(section.id); }}
+                    onDragLeave={() => setDragOverSection(prev => prev === section.id ? null : prev)}
+                    onDrop={() => handleDrop(section.id)}
+                    className={`p-3 grid grid-cols-2 gap-1.5 min-h-[64px] rounded-b-xl transition-colors ${dragOverSection === section.id ? "bg-[#EFF6FF]" : ""}`}>
+                    {section.fields.length === 0 ? (
+                      <div className="col-span-2 flex items-center justify-center py-6 text-[14px] text-slate-300 border border-dashed border-[#E3ECFC] rounded-lg">
+                        Drag fields here
+                      </div>
+                    ) : section.fields.map(f => (
+                      <div key={f.id} className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-[#fafcff] hover:border-[#4A7AE8] transition-colors group">
+                        <span className="text-[14px] font-medium text-slate-700">{f.label}</span>
+                        <button onClick={() => removeField(section.id, f.id)} className="opacity-0 group-hover:opacity-100 transition-opacity">
+                          <X size={11} color="#94A3B8" weight="bold"/>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : tab === "quickCreate" ? (
+            <div className="px-6 py-5 flex flex-col items-center">
+              <div className="w-[420px] bg-white rounded-xl border border-[#E3ECFC] overflow-hidden shadow-sm">
+                <div className="px-4 py-2.5 border-b border-[#E3ECFC] bg-[#fafcff]">
+                  <span className="text-[14px] font-bold text-slate-700">Quick Create</span>
+                </div>
+                <div
+                  onDragOver={e => { e.preventDefault(); setQcDragOver(true); }}
+                  onDragLeave={() => setQcDragOver(false)}
+                  onDrop={handleQcDrop}
+                  className={`transition-colors ${qcDragOver ? "bg-[#EFF6FF]" : ""}`}>
+                  {qcFields.length === 0 ? (
+                    <div className="flex items-center justify-center py-10 text-[14px] text-slate-300 m-3 border border-dashed border-[#E3ECFC] rounded-lg">
+                      Drag fields here
+                    </div>
+                  ) : (
+                    <div className="divide-y divide-[#EFF6FF]">
+                      {qcFields.map(f => (
+                        <div key={f.id} className="flex items-center px-4 py-2.5 group">
+                          <span className="text-[14px] text-slate-700 flex-1">{f.label}</span>
+                          <button onClick={() => removeQcField(f.id)} className="opacity-0 group-hover:opacity-100 transition-opacity">
+                            <X size={11} color="#94A3B8" weight="bold"/>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <p className="text-[14px] text-slate-400 font-medium mt-3 text-center max-w-[420px]">
+                Fields shown here appear in the Quick Create popup used to add a new {modDef?.label.toLowerCase().replace(/s$/, "") ?? "record"} from a list view.
+              </p>
+            </div>
+          ) : (
+            <div className="px-6 py-5 space-y-4">
+              {/* Business Card */}
+              <div className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-[#E3ECFC]">
+                  <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Business Card</span>
+                  <div className="flex items-center gap-3">
+                    <GreenSwitch checked={dvBcEnabled} onChange={() => setDvBcEnabled(p=>!p)}/>
+                    {dvBcEnabled && <button className="text-[14px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>}
+                  </div>
+                </div>
+                {dvBcEnabled ? (
+                  allFields.length === 0 ? (
+                    <div className="px-4 py-3 text-[14px] text-slate-400 bg-[#fafcff]">
+                      Add fields in the Create tab to feature them on the Business Card.
+                    </div>
+                  ) : (
+                    <>
+                      <div className="divide-y divide-[#EFF6FF]">
+                        {allFields.slice(0,5).map(f => (
+                          <div key={f.id} className="flex items-center gap-3 px-4 py-2.5">
+                            <DotsSixVertical size={13} color="#E2E8F0"/>
+                            <span className="text-[14px] text-slate-700 flex-1">{f.label}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="px-4 py-2.5 border-t border-[#EFF6FF]">
+                        <div className="flex items-center gap-1.5 text-[14px] text-slate-400">
+                          <Info size={11} weight="duotone"/>
+                          You can add up to <span className="font-bold text-slate-600 mx-0.5">5 fields</span> to your Business Card.
+                        </div>
+                      </div>
+                    </>
+                  )
+                ) : (
+                  <div className="px-4 py-3 text-[14px] text-slate-400">
+                    Business Card cannot be customized as it is hidden.<br/>
+                    Turn it on to customize the fields to be shown in details page.
+                  </div>
+                )}
+              </div>
+              {/* Details */}
+              <div className="bg-white rounded-xl border border-[#E3ECFC]">
+                <div className="px-4 py-2.5 border-b border-[#E3ECFC]">
+                  <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Details</span>
+                </div>
+                {allFields.length === 0 ? (
+                  <div className="mx-3 my-3 px-4 py-3 text-[14px] text-slate-400 bg-[#fafcff] rounded-lg border border-[#E3ECFC]">
+                    Fields customized in the Create page will appear here.
+                  </div>
+                ) : (
+                  <div className="divide-y divide-[#EFF6FF]">
+                    {allFields.map(f => (
+                      <div key={f.id} className="flex items-center gap-3 px-4 py-2.5">
+                        <DotsSixVertical size={13} color="#E2E8F0"/>
+                        <span className="text-[14px] text-slate-700 flex-1">{f.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {/* Related List */}
+              <div className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
+                <div className="px-4 py-2.5 border-b border-[#E3ECFC]">
+                  <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Related List</span>
+                </div>
+                <div className="px-4 py-3 text-[14px] text-slate-400">No related lists added yet.</div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Preview */}
+      {previewOpen && (
+        <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/40">
+          <div className="w-[480px] max-h-[80%] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#E3ECFC] flex-shrink-0">
+              <span className="text-[15.5px] font-extrabold text-slate-900">
+                {layoutName.trim() || "Untitled Layout"} &middot; Preview
+              </span>
+              <IconButton size="small" onClick={() => setPreviewOpen(false)} sx={{ p:0.4, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
+                <X size={14} weight="bold"/>
+              </IconButton>
+            </div>
+            <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5 bg-[#F8FAFC]">
+              {sections.length === 0 ? (
+                <div className="text-center text-[14px] text-slate-400 py-10">
+                  No sections added yet. Build the Create tab to preview the form here.
+                </div>
+              ) : sections.map(section => (
+                <div key={section.id}>
+                  <div className="text-[12px] font-bold text-slate-500 uppercase tracking-wider mb-2">{section.title}</div>
+                  {section.fields.length === 0 ? (
+                    <div className="text-[14px] text-slate-300 italic">No fields in this section.</div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3">
+                      {section.fields.map(f => (
+                        <div key={f.id}>
+                          <label className="block text-[11.5px] font-semibold text-slate-500 mb-1">{f.label}</label>
+                          <div className="px-3 py-2 rounded-lg border border-[#E3ECFC] bg-white text-[14px] text-slate-300">
+                            {f.label.toLowerCase()}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 const MODULE_DEFS = [
-  { key:"leads",    label:"Leads",    icon:UserPlus,    color:"#1D4ED8", sharedTo:"Administrator, Operations Manager, Support Executive, VP of Operations", lastMod:"Feb 27, 2026" },
+  { key:"leads",    label:"Leads",    icon:UserPlus,    color:"#3B82F6", sharedTo:"Administrator, Operations Manager, Support Executive, VP of Operations", lastMod:"Feb 27, 2026" },
   { key:"deals",    label:"Deals",    icon:Lightning,   color:"#F59E0B", sharedTo:"Administrator, Operations Manager, Support Executive, VP of Operations", lastMod:"Feb 27, 2026" },
   { key:"contacts", label:"Contacts", icon:AddressBook, color:"#10B981", sharedTo:"Administrator, Operations Manager, Support Executive, VP of Operations", lastMod:"Feb 27, 2026" },
   { key:"accounts", label:"Accounts", icon:SquaresFour, color:"#8B5CF6", sharedTo:"Administrator, Operations Manager, Support Executive, VP of Operations", lastMod:"Feb 27, 2026" },
@@ -1531,8 +2255,11 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
   modKey: string; onBack: () => void; onSelect: (k: string) => void;
   onOpenLayout: (name: string) => void;
 }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [tab, setTab]     = useState<"layouts"|"fields">("layouts");
   const [search, setSearch] = useState("");
+  const [showCreateLayoutModal, setShowCreateLayoutModal] = useState(false);
   const mod     = MODULE_DEFS.find(m => m.key === modKey);
   const layouts = MODULE_LAYOUTS[modKey] ?? [];
   const title   = modKey === "new" ? "add" : (mod?.label ?? modKey);
@@ -1544,7 +2271,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
       {/* Sub-sidebar */}
       <div className="w-[200px] flex-shrink-0 border-r border-[#E3ECFC] bg-[#f9fbff] flex flex-col">
         <div className="flex items-center justify-between px-3 py-3 border-b border-[#E3ECFC]">
-          <button onClick={onBack} className="flex items-center gap-1 text-[12px] font-semibold text-slate-600 hover:text-[#1D4ED8] transition-colors">
+          <button onClick={onBack} className="flex items-center gap-1 text-[12px] font-semibold text-slate-600 transition-colors">
             <ArrowLeft size={13} weight="bold" />
             Modules
           </button>
@@ -1558,8 +2285,8 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
             const isActive = modKey === m.key;
             return (
               <button key={m.key} onClick={() => onSelect(m.key)}
-                className={`flex items-center gap-2.5 w-full px-3 py-2.5 text-[12.5px] font-medium transition-colors ${
-                  isActive ? "bg-[#1D4ED8] text-white" : "text-slate-600 hover:bg-[#EFF6FF] hover:text-[#1D4ED8]"
+                className={`flex items-center gap-2.5 w-full px-3 py-2.5 text-[14px] font-medium transition-colors ${
+                  isActive ? "bg-[#1D4ED8] text-white" : "text-slate-600 hover:bg-[#EFF6FF]"
                 }`}>
                 <Icon size={13} color={isActive ? "#fff" : m.color} weight="duotone" />
                 {m.label}
@@ -1572,7 +2299,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
       {/* Main content */}
       <div className="flex-1 overflow-y-auto flex flex-col">
         {/* Breadcrumb */}
-        <div className="px-6 pt-5 pb-1 flex items-center gap-1.5 text-[11.5px] text-slate-400">
+        <div className="px-6 pt-5 pb-1 flex items-center gap-1.5 text-[12px] text-slate-400">
           <House size={11} weight="duotone" />
           {["Setup","Customization","Modules"].map(crumb => (
             <span key={crumb} className="flex items-center gap-1.5">
@@ -1595,7 +2322,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
         <div className="px-6 border-b border-[#E3ECFC] flex items-center gap-1">
           {(["layouts","fields"] as const).map(t => (
             <button key={t} onClick={() => setTab(t)}
-              className={`px-4 py-2.5 text-[13px] font-semibold capitalize transition-all border-b-2 -mb-px ${
+              className={`px-4 py-2.5 text-[14px] font-semibold capitalize transition-all border-b-2 -mb-px ${
                 tab === t ? "border-[#1D4ED8] text-[#1D4ED8]" : "border-transparent text-slate-400 hover:text-slate-600"
               }`}>
               {t.charAt(0).toUpperCase() + t.slice(1)}
@@ -1607,12 +2334,12 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
         <div className="flex-1 px-6 py-5">
           {tab === "layouts" && (
             <>
-              <div className="text-[12.5px] text-[#1D4ED8] mb-4 leading-relaxed">
+              <div className="text-[14px] text-[#1D4ED8] mb-4 leading-relaxed">
                 Design your own layouts to fit your business processes, then assign them to your user accounts based on permission profiles.
               </div>
               <div className="flex justify-end mb-4">
-                <Button variant="contained" size="small"
-                  sx={{ bgcolor:"#1D4ED8", borderRadius:"8px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.8, boxShadow:"0 1px 6px #1D4ED833", "&:hover":{bgcolor:"#60A5FA"} }}>
+                <Button variant="contained" size="small" onClick={() => setShowCreateLayoutModal(true)}
+                  sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius:"8px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.8, boxShadow: isDark ? "none" : "0 1px 6px #1D4ED833", "&:hover":{ bgcolor: isDark ? "#3F3F46" : "#2563EB" } }}>
                   Create New Layout
                 </Button>
               </div>
@@ -1620,21 +2347,21 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
                 <table className="w-full border-collapse text-left">
                   <thead>
                     <tr className="bg-[#f9fbff] border-b border-[#E3ECFC]">
-                      <th className="px-4 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Name</th>
-                      <th className="px-4 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Shared To</th>
-                      <th className="px-4 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Last Modified</th>
-                      <th className="px-4 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider text-right">Status</th>
+                      <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">Name</th>
+                      <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">Shared To</th>
+                      <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">Last Modified</th>
+                      <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider text-right">Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     {layouts.length === 0 ? (
-                      <tr><td colSpan={4} className="px-4 py-8 text-center text-[12.5px] text-slate-300">No records found.</td></tr>
+                      <tr><td colSpan={4} className="px-4 py-8 text-center text-[14px] text-slate-300">No records found.</td></tr>
                     ) : layouts.map((l, i) => (
                       <tr key={i} className="border-b border-[#EFF6FF] last:border-0 hover:bg-[#fafcff] transition-colors">
-                        <td className="px-4 py-3 text-[13px] font-semibold text-[#1D4ED8] cursor-pointer hover:underline" onClick={() => onOpenLayout(l.name)}>{l.name}</td>
-                        <td className="px-4 py-3 text-[12.5px] text-slate-500">{l.sharedTo}</td>
+                        <td className="px-4 py-3 text-[14px] font-semibold text-[#1D4ED8] cursor-pointer hover:underline" onClick={() => onOpenLayout(l.name)}>{l.name}</td>
+                        <td className="px-4 py-3 text-[12px] text-slate-500">{l.sharedTo}</td>
                         <td className="px-4 py-3">
-                          <div className="flex items-center gap-1.5 text-[12.5px] text-slate-500">
+                          <div className="flex items-center gap-1.5 text-[12px] text-slate-500">
                             <User size={12} weight="duotone" />
                             {l.lastMod}
                           </div>
@@ -1650,8 +2377,44 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
             </>
           )}
           {tab === "fields" && (
-            <div className="text-center py-12 text-slate-300 text-[12.5px]">No fields configured yet.</div>
+            <div className="text-center py-12 text-slate-300 text-[14px]">No fields configured yet.</div>
           )}
+        </div>
+      </div>
+
+      {showCreateLayoutModal && (
+        <CreateLayoutModal
+          existingLayouts={layouts.map(l => l.name)}
+          onClose={() => setShowCreateLayoutModal(false)}
+          onContinue={() => { setShowCreateLayoutModal(false); onOpenLayout("__NEW__"); }}
+        />
+      )}
+    </div>
+  );
+}
+
+function CreateLayoutModal({ existingLayouts, onClose, onContinue }: {
+  existingLayouts: string[]; onClose: () => void; onContinue: (cloneFrom: string|null) => void;
+}) {
+  const [cloneFrom, setCloneFrom] = useState("");
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
+      <div className="w-[460px] bg-white rounded-2xl shadow-2xl p-6">
+        <div className="text-[17px] font-extrabold text-slate-900 mb-5">Create New Layout</div>
+        <FormControl fullWidth size="small" sx={{ mb: 5 }}>
+          <InputLabel sx={{ fontSize: "0.8rem", color: "#1D4ED8" }}>Clone Layout from</InputLabel>
+          <Select value={cloneFrom} label="Clone Layout from" onChange={e => setCloneFrom(e.target.value)}
+            sx={{ borderRadius: "10px", fontSize: "0.8rem",
+              "& .MuiOutlinedInput-notchedOutline": { borderColor: "#1D4ED8" },
+              "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#1D4ED8" } }}>
+            {existingLayouts.map(l => (<MenuItem key={l} value={l} sx={{ fontSize: "0.8rem" }}>{l}</MenuItem>))}
+            <MenuItem value="__scratch__" sx={{ fontSize: "0.8rem" }}>Create from scratch (empty)</MenuItem>
+          </Select>
+        </FormControl>
+        <div className="flex justify-end gap-2">
+          <button onClick={onClose} className="px-4 py-2 text-[14px] font-semibold text-slate-500 hover:text-slate-700 transition-colors">Cancel</button>
+          <button disabled={!cloneFrom} onClick={() => onContinue(cloneFrom === "__scratch__" ? null : cloneFrom)}
+            className="px-5 py-2 rounded-lg text-[14px] font-bold text-white bg-[#1D4ED8] hover:bg-[#2563EB] disabled:opacity-40 disabled:cursor-not-allowed transition-colors">Continue</button>
         </div>
       </div>
     </div>
@@ -1659,6 +2422,8 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
 }
 
 function ModulesAndFieldsPanel() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [view, setView]             = useState<"list"|"detail">("list");
   const [selectedMod, setSelectedMod] = useState("leads");
   const [openLayout, setOpenLayout] = useState<string|null>(null);
@@ -1669,6 +2434,9 @@ function ModulesAndFieldsPanel() {
 
   const filtered = MODULE_DEFS.filter(m => !search || m.label.toLowerCase().includes(search.toLowerCase()));
 
+  if (openLayout === "__NEW__") {
+    return <NewLayoutBuilder module={selectedMod} onClose={() => setOpenLayout(null)} />;
+  }
   if (openLayout !== null) {
     return <LayoutEditor module={selectedMod} layoutName={openLayout} onClose={() => setOpenLayout(null)} />;
   }
@@ -1685,22 +2453,22 @@ function ModulesAndFieldsPanel() {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto bg-white">
+    <div className={`flex-1 overflow-y-auto ${isDark ? "bg-[#0A0A0A]" : "bg-white"}`}>
       {/* Toolbar */}
-      <div className="flex items-center gap-3 px-6 py-4 border-b border-[#E3ECFC]">
-        <div className="flex items-center gap-1.5 bg-[#f9fbff] border border-[#E3ECFC] rounded-xl px-3 py-1.5 w-56 focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#93C5FD] transition-all">
+      <div className={`flex items-center gap-3 px-6 py-4 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+        <div className={`flex items-center gap-1.5 border rounded-xl px-3 py-1.5 w-56 focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all ${isDark ? "bg-[#18181B] border-[#3F3F46]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
           <MagnifyingGlass size={13} color="#94A3B8" weight="duotone" />
           <InputBase placeholder="Search" value={search} onChange={e => setSearch(e.target.value)}
-            sx={{ flex:1, fontSize:"0.75rem", color:"#334155", "& input::placeholder":{color:"#94A3B8",opacity:1} }} />
+            sx={{ flex:1, fontSize:"0.75rem", color: isDark ? "#D4D4D8" : "#334155", "& input::placeholder":{color:"#94A3B8",opacity:1} }} />
         </div>
-        <button className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold text-slate-600 bg-[#f9fbff] border border-[#E3ECFC] rounded-xl hover:border-[#1D4ED8] hover:text-[#1D4ED8] transition-colors">
+        <button className={`flex items-center gap-1.5 px-3 py-1.5 text-[14px] font-semibold rounded-xl hover:border-[#1D4ED8] transition-colors ${isDark ? "text-[#D4D4D8] bg-[#18181B] border border-[#3F3F46]" : "text-slate-600 bg-[#f9fbff] border border-[#E3ECFC]"}`}>
           <Gear size={13} weight="duotone" />
           Custom Module
         </button>
         <div className="flex-1" />
         <Button variant="contained" size="small"
           onClick={() => { setSelectedMod("new"); setView("detail"); }}
-          sx={{ bgcolor:"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.8, boxShadow:"0 1px 6px #1D4ED833", whiteSpace:"nowrap", "&:hover":{bgcolor:"#60A5FA"} }}>
+          sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.8, boxShadow: isDark ? "none" : "0 1px 6px #1D4ED833", whiteSpace:"nowrap", "&:hover":{ bgcolor: isDark ? "#3F3F46" : "#2563EB" } }}>
           Create New Module
         </Button>
       </div>
@@ -1708,12 +2476,12 @@ function ModulesAndFieldsPanel() {
       {/* Table */}
       <table className="w-full border-collapse text-left">
         <thead>
-          <tr className="bg-[#f9fbff] border-b border-[#E3ECFC]">
-            <th className="px-6 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Displayed In Tabs As</th>
-            <th className="px-6 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Module Name</th>
-            <th className="px-6 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Shared To</th>
-            <th className="px-6 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Last Modified</th>
-            <th className="px-6 py-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center">Status</th>
+          <tr className={isDark ? "bg-[#111113] border-b border-[#27272A]" : "bg-[#f9fbff] border-b border-[#E3ECFC]"}>
+            <th className={`px-6 py-3 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Displayed In Tabs As</th>
+            <th className={`px-6 py-3 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Module Name</th>
+            <th className={`px-6 py-3 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Shared To</th>
+            <th className={`px-6 py-3 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Last Modified</th>
+            <th className={`px-6 py-3 text-[11.5px] font-bold uppercase tracking-wider text-center ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Status</th>
           </tr>
         </thead>
         <tbody>
@@ -1721,20 +2489,20 @@ function ModulesAndFieldsPanel() {
             const Icon = mod.icon;
             const isOn = modStatuses[mod.key];
             return (
-              <tr key={mod.key} className="border-b border-[#EFF6FF] hover:bg-[#fafcff] transition-colors">
+              <tr key={mod.key} className={`border-b transition-colors ${isDark ? "border-[#18181B] hover:bg-[#111113]" : "border-[#EFF6FF] hover:bg-[#fafcff]"}`}>
                 <td className="px-6 py-4">
                   <button onClick={() => { setSelectedMod(mod.key); setView("detail"); }}
-                    className="flex items-center gap-2 text-[13px] font-semibold text-[#1D4ED8] hover:underline">
+                    className={`flex items-center gap-2 text-[14px] font-semibold hover:underline ${isDark ? "text-[#60A5FA]" : "text-[#1D4ED8]"}`}>
                     <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ backgroundColor: mod.color + "18" }}>
                       <Icon size={12} color={mod.color} weight="duotone" />
                     </div>
                     {mod.label}
                   </button>
                 </td>
-                <td className="px-6 py-4 text-[13px] text-slate-600">{mod.label}</td>
-                <td className="px-6 py-4 text-[12.5px] text-slate-500">{mod.sharedTo}</td>
+                <td className={`px-6 py-4 text-[14px] ${isDark ? "text-[#D4D4D8]" : "text-slate-600"}`}>{mod.label}</td>
+                <td className={`px-6 py-4 text-[12px] ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{mod.sharedTo}</td>
                 <td className="px-6 py-4">
-                  <div className="flex items-center gap-1.5 text-[12.5px] text-slate-500">
+                  <div className={`flex items-center gap-1.5 text-[12px] ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
                     <User size={12} weight="duotone" />
                     {mod.lastMod}
                   </div>
@@ -1743,7 +2511,7 @@ function ModulesAndFieldsPanel() {
                   <div className="flex items-center justify-center gap-2">
                     <GreenSwitch checked={isOn} onChange={() => setModStatuses(p => ({ ...p, [mod.key]: !p[mod.key] }))} />
                     <Tooltip title="Module info">
-                      <IconButton size="small" sx={{ p:0.3, color:"#CBD5E1", "&:hover":{color:"#1D4ED8",bgcolor:"#EFF6FF"}, borderRadius:"6px" }}>
+                      <IconButton size="small" sx={{ p:0.3, color: isDark ? "#9CA3AF" : "#94A3B8", "&:hover":{color:"#1D4ED8",bgcolor: isDark ? "#27272A" : "#EFF6FF"}, borderRadius:"6px" }}>
                         <Info size={13} weight="duotone" />
                       </IconButton>
                     </Tooltip>
@@ -1758,42 +2526,44 @@ function ModulesAndFieldsPanel() {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Placeholder
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 function PlaceholderPanel({ label }: { label: string }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   return (
-    <div className="flex-1 flex items-center justify-center bg-[#EFF6FF]">
+    <div className={`flex-1 flex items-center justify-center ${isDark ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
       <div className="text-center">
-        <div className="w-12 h-12 rounded-2xl bg-[#EFF6FF] flex items-center justify-center mx-auto mb-3">
-          <Gear size={22} color="#1D4ED8" weight="duotone" />
+        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 ${isDark ? "bg-[#18181B]" : "bg-[#EFF6FF]"}`}>
+          <Gear size={22} color={isDark ? "#9CA3AF" : "#94A3B8"} weight="duotone" />
         </div>
-        <div className="text-[15px] font-bold text-slate-700">{label}</div>
-        <div className="text-[12.5px] text-slate-400 mt-1">This section is coming soon.</div>
+        <div className={`text-[15px] font-bold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{label}</div>
+        <div className={`text-[12px] mt-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>This section is coming soon.</div>
       </div>
     </div>
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Settings sub-sidebar
-// ─────────────────────────────────────────────
-function SettingsSidebar({ activeItem, setActiveItem }: {
-  activeItem: string; setActiveItem: (k: string) => void;
+// ---------------------------------------------
+function SettingsSidebar({ activeItem, setActiveItem, isDark = false }: {
+  activeItem: string; setActiveItem: (k: string) => void; isDark?: boolean;
 }) {
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const toggle = (key: string) => setCollapsed(p => ({ ...p, [key]: !p[key] }));
 
   return (
-    <div className="w-[220px] flex-shrink-0 bg-[#f9fbff] border-r border-[#E3ECFC] flex flex-col overflow-y-auto">
-      <div className="px-4 pt-5 pb-4 border-b border-[#E3ECFC]">
+    <div className={`w-full md:w-[220px] flex-shrink-0 border-b md:border-b-0 md:border-r flex flex-col overflow-y-auto max-h-[260px] md:max-h-none transition-colors duration-300 ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+      <div className={`px-4 pt-5 pb-4 border-b transition-colors duration-300 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-xl bg-[#1D4ED8] flex items-center justify-center shadow-sm flex-shrink-0">
             <Gear size={15} color="#fff" weight="duotone" />
           </div>
           <div>
-            <div className="font-heading text-[14px] font-bold text-slate-900 leading-tight">Settings</div>
-            <div className="text-[10.5px] text-slate-400 leading-tight">Manage workspace</div>
+            <div className={`font-heading text-[14px] font-bold leading-tight ${isDark ? "text-[#FFFFFF]" : "text-slate-900"}`}>Settings</div>
+            <div className="text-[12px] text-slate-400 leading-tight">Manage workspace</div>
           </div>
         </div>
       </div>
@@ -1804,11 +2574,11 @@ function SettingsSidebar({ activeItem, setActiveItem }: {
           return (
             <div key={section.key}>
               <button onClick={() => toggle(section.key)}
-                className="flex items-center justify-between w-full px-2 py-1.5 rounded-lg hover:bg-[#EFF6FF] transition-colors group">
-                <span className="font-heading text-[10px] font-bold text-slate-400 uppercase tracking-widest group-hover:text-slate-500 transition-colors">
+                className={`flex items-center justify-between w-full px-2 py-1.5 rounded-lg transition-colors group ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}>
+                <span className={`font-heading text-[12px] font-bold uppercase tracking-widest transition-colors ${isDark ? "text-[#475569] group-hover:text-[#64748B]" : "text-slate-400 group-hover:text-slate-500"}`}>
                   {section.label}
                 </span>
-                {isOpen ? <CaretUp size={10} color="#CBD5E1" weight="bold" /> : <CaretDown size={10} color="#CBD5E1" weight="bold" />}
+                {isOpen ? <CaretUp size={10} color={isDark ? "#475569" : "#E2E8F0"} weight="bold" /> : <CaretDown size={10} color={isDark ? "#475569" : "#E2E8F0"} weight="bold" />}
               </button>
 
               {isOpen && (
@@ -1818,11 +2588,13 @@ function SettingsSidebar({ activeItem, setActiveItem }: {
                     const isActive = activeItem === item.key;
                     return (
                       <button key={item.key} onClick={() => setActiveItem(item.key)}
-                        className={`relative flex items-center gap-2 w-full px-3 py-2 rounded-xl text-[12px] font-medium transition-all ${
-                          isActive ? "bg-[#EFF6FF] text-[#1D4ED8] font-semibold" : "text-slate-500 hover:bg-[#EFF6FF]/60 hover:text-slate-700"
+                        className={`relative flex items-center gap-2 w-full px-3 py-2 rounded-xl text-[14px] font-medium transition-all ${
+                          isActive
+                            ? isDark ? "bg-[#27272A] text-[#D4D4D8] font-semibold" : "bg-[#EFF6FF] text-[#1D4ED8] font-semibold"
+                            : isDark ? "text-[#9CA3AF] hover:bg-[#27272A] hover:text-[#FFFFFF]" : "text-slate-500 hover:bg-[#EFF6FF]/60 hover:text-slate-700"
                         }`}>
-                        {isActive && <span className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full bg-[#1D4ED8]" />}
-                        <IIcon size={13} color={isActive ? "#1D4ED8" : "#94A3B8"} weight="duotone" />
+                        {isActive && <span className={`absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full ${isDark ? "bg-[#9CA3AF]" : "bg-[#1D4ED8]"}`} />}
+                        <IIcon size={13} color={isActive ? (isDark ? "#6B8BA3" : "#1D4ED8") : "#94A3B8"} weight="duotone" />
                         {item.label}
                       </button>
                     );
@@ -1837,10 +2609,13 @@ function SettingsSidebar({ activeItem, setActiveItem }: {
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Page
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 export default function SettingsPage() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
   const [activeItem, setActiveItem] = useState("personal");
   const activeLabel = SECTIONS.flatMap(s => s.items).find(i => i.key === activeItem)?.label ?? "";
 
@@ -1863,3 +2638,4 @@ export default function SettingsPage() {
     </div>
   );
 }
+

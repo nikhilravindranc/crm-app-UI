@@ -10,7 +10,8 @@ export const LEAD_AVATARS: Record<number, string> = {
   4:  "https://randomuser.me/api/portraits/women/68.jpg", // Sudha R
   5:  "https://randomuser.me/api/portraits/women/15.jpg", // Jaya 56678
   6:  "https://randomuser.me/api/portraits/men/9.jpg",    // Leo
-  // 7 & 8 are test/garbage data — no image
+  7:  "https://randomuser.me/api/portraits/men/23.jpg",   // Test data
+  8:  "https://randomuser.me/api/portraits/women/31.jpg", // Test data
   9:  "https://randomuser.me/api/portraits/men/43.jpg",   // Leo
   10: "https://randomuser.me/api/portraits/men/51.jpg",   // James Wilson
   11: "https://randomuser.me/api/portraits/women/79.jpg", // Sara Kim

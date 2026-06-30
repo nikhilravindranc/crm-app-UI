@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -9,7 +9,7 @@ import Chip from "@mui/material/Chip";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
-import { ArrowSquareOut, TrendUp } from "@phosphor-icons/react";
+import { ArrowSquareOut, TrendUp, TrendDown, Minus } from "@phosphor-icons/react";
 import { OWNER_AVATARS } from "@/lib/avatars";
 
 type Deal = {
@@ -21,27 +21,38 @@ type Deal = {
 
 const deals: Deal[] = [
   { id:"CRM-2026-0013", name:"Sweany Inc",     amount:29999,  stage:"Qualification",  stageBg:"#EFF6FF", stageFg:"#0C2472", owner:"PM SDL",   initials:"PM", avatarBg:"#1D4ED8", closeDate:"15 May", change:"same" },
-  { id:"CRM-2026-0012", name:"TechFlow Ltd",   amount:85000,  stage:"Proposal",       stageBg:"#E3ECFC", stageFg:"#1D4ED8", owner:"Sarah K",  initials:"SK", avatarBg:"#3B82F6", closeDate:"12 May", change:"up"   },
-  { id:"CRM-2026-0011", name:"Apex Solutions", amount:42500,  stage:"Needs Analysis", stageBg:"#EFF6FF", stageFg:"#1D4ED8", owner:"John D",   initials:"JD", avatarBg:"#60A5FA", closeDate:"10 May", change:"up"   },
+  { id:"CRM-2026-0012", name:"TechFlow Ltd",   amount:85000,  stage:"Proposal",       stageBg:"#E3ECFC", stageFg:"#0C2472", owner:"Sarah K",  initials:"SK", avatarBg:"#3B82F6", closeDate:"12 May", change:"up"   },
+  { id:"CRM-2026-0011", name:"Apex Solutions", amount:42500,  stage:"Needs Analysis", stageBg:"#EFF6FF", stageFg:"#0C2472", owner:"John D",   initials:"JD", avatarBg:"#2E9E7B", closeDate:"10 May", change:"up"   },
   { id:"CRM-2026-0010", name:"Matrix Corp",    amount:120000, stage:"Negotiation",    stageBg:"#E3ECFC", stageFg:"#0C2472", owner:"PM SDL",   initials:"PM", avatarBg:"#1D4ED8", closeDate:"08 May", change:"up"   },
   { id:"CRM-2026-0009", name:"Pixel Studios",  amount:18750,  stage:"Qualification",  stageBg:"#EFF6FF", stageFg:"#0C2472", owner:"Ria M",    initials:"RM", avatarBg:"#0C2472", closeDate:"05 May", change:"down" },
 ];
 
 const fmt = (n: number) => "₹" + n.toLocaleString("en-IN");
 
-export default function RecentDeals() {
+export default function RecentDeals({ isDark = false }: { isDark?: boolean }) {
+  const cellSx = {
+    borderBottom: `1px solid ${isDark ? "#27272A" : "#E3ECFC"}`,
+    py: "14px",
+    backgroundColor: isDark ? "#18181B" : "#f9fbff",
+  };
+
   return (
-    <div className="rounded-2xl border border-white/30 overflow-hidden backdrop-blur-xl"
-      style={{ backgroundColor: "rgba(255, 255, 255, 0.6)", boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08)" }}>
-      <div className="flex items-center justify-between px-6 py-4 border-b border-[#E3ECFC]">
-        <div>
-          <h3 className="text-[14px] font-bold text-[#0C2472]">Recent Deals</h3>
-          <p className="text-[11px] text-slate-400 mt-0.5">5 latest active deals</p>
+    <div className="rounded-2xl border overflow-hidden backdrop-blur-xl transition-colors duration-300"
+      style={{
+        backgroundColor: isDark ? "#18181B" : "rgba(255, 255, 255, 0.6)",
+        borderColor: isDark ? "#27272A" : "rgba(255,255,255,0.3)",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08)",
+      }}>
+      <div className={`flex items-center justify-between px-6 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}
+        style={{ backgroundColor: isDark ? "#18181B" : undefined }}>
+        <div className="flex items-center gap-2 whitespace-nowrap">
+          <h3 className={`text-[14px] font-bold leading-none m-0 ${isDark ? "text-[#FFFFFF]" : "text-[#0C2472]"}`}>Recent Deals</h3>
+          <span className="text-[12px] text-slate-400 leading-none">· 5 latest active deals</span>
         </div>
         <Button
           size="small"
           endIcon={<ArrowSquareOut size={12} weight="duotone" />}
-          sx={{ textTransform:"none", fontSize:"0.72rem", color:"#1D4ED8", fontWeight:700, borderRadius:"8px", "&:hover":{ bgcolor:"rgba(96, 165, 250, 0.1)" } }}
+          sx={{ textTransform:"none", fontSize:"0.72rem", color: isDark ? "#9CA3AF" : "#1D4ED8", fontWeight:700, borderRadius:"8px", "&:hover":{ bgcolor: isDark ? "rgba(255,255,255,0.05)" : "rgba(96, 165, 250, 0.1)" } }}
         >
           View All
         </Button>
@@ -52,27 +63,31 @@ export default function RecentDeals() {
           <TableHead>
             <TableRow>
               {["Deal", "Amount", "Stage", "Owner", "Close Date"].map(h => (
-                <TableCell key={h}>{h}</TableCell>
+                <TableCell key={h} sx={{ backgroundColor: isDark ? "#111111" : "#EFF6FF", color: isDark ? "#9CA3AF" : "#0C2472", borderBottom: `1px solid ${isDark ? "#27272A" : "#E3ECFC"}`, fontWeight: 700, fontSize: "11.5px", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
             {deals.map(deal => (
-              <TableRow key={deal.id} hover sx={{ "&:hover":{ bgcolor:"rgba(29,78,216,0.04)" }, cursor:"pointer", "& td":{ borderBottom:"1px solid #E3ECFC", py: "14px" } }}>
+              <TableRow key={deal.id} hover sx={{ "&:hover td":{ bgcolor: isDark ? "rgba(255,255,255,0.03)" : "rgba(29,78,216,0.04)" }, cursor:"pointer", "& td": cellSx }}>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    {deal.change === "up" && <TrendUp size={13} color="#10B981" weight="duotone" />}
-                    <div>
-                      <p className="text-[12px] font-semibold text-slate-800 leading-tight">{deal.name}</p>
-                      <p className="text-[10px] text-slate-400 font-mono">{deal.id}</p>
+                    <div className="w-[13px] h-[13px] flex items-center justify-center flex-shrink-0">
+                      {deal.change === "up" && <TrendUp size={13} color="#10B981" weight="duotone" />}
+                      {deal.change === "down" && <TrendDown size={13} color="#EF4444" weight="duotone" />}
+                      {deal.change === "same" && <Minus size={11} color="#94A3B8" weight="bold" />}
+                    </div>
+                    <div className="flex items-center gap-1.5 whitespace-nowrap">
+                      <p className={`text-[14px] font-semibold leading-tight ${isDark ? "text-[#E2E8F0]" : "text-slate-800"}`}>{deal.name}</p>
+                      <p className="text-[12px] text-slate-400 font-mono">{deal.id}</p>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <span className="text-[12px] font-bold text-slate-800">{fmt(deal.amount)}</span>
+                  <span className={`text-[14px] font-bold ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}>{fmt(deal.amount)}</span>
                 </TableCell>
                 <TableCell>
-                  <Chip label={deal.stage} size="small" sx={{ bgcolor:deal.stageBg, color:deal.stageFg, fontWeight:700, fontSize:"0.65rem", height:20, borderRadius:"5px" }} />
+                  <Chip label={deal.stage} size="small" sx={{ bgcolor: isDark ? "rgba(39,39,42,0.8)" : deal.stageBg, color: isDark ? "#A1A1AA" : deal.stageFg, fontWeight:700, fontSize:"0.65rem", height:20, borderRadius:"5px" }} />
                 </TableCell>
                 <TableCell>
                   <Tooltip title={deal.owner}>
@@ -83,12 +98,12 @@ export default function RecentDeals() {
                       >
                         {deal.initials}
                       </Avatar>
-                      <span className="text-[11.5px] text-slate-600 font-medium">{deal.owner}</span>
+                      <span className={`text-[11.5px] font-medium ${isDark ? "text-[#94A3B8]" : "text-slate-600"}`}>{deal.owner}</span>
                     </div>
                   </Tooltip>
                 </TableCell>
                 <TableCell>
-                  <span className="text-[11px] text-slate-400 font-medium">{deal.closeDate}</span>
+                  <span className="text-[12px] text-slate-400 font-medium">{deal.closeDate}</span>
                 </TableCell>
               </TableRow>
             ))}
@@ -98,3 +113,4 @@ export default function RecentDeals() {
     </div>
   );
 }
+

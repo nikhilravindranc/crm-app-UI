@@ -7,8 +7,9 @@ import Checkbox from "@mui/material/Checkbox";
 import InputBase from "@mui/material/InputBase";
 import Tooltip from "@mui/material/Tooltip";
 import { X, Columns, MagnifyingGlass } from "@phosphor-icons/react";
+import { useTheme } from "@/components/ThemeContext";
 
-// ── Column definitions grouped (from user spec) ──────────────────
+// ── Column definitions grouped ──────────────────────────────────────
 export const COLUMN_GROUPS = [
   {
     group: "Name",
@@ -49,14 +50,14 @@ export const COLUMN_GROUPS = [
   {
     group: "Address",
     cols: [
-      { key: "country",   label: "Country / Region"                                            },
-      { key: "building",  label: "Flat / House No. / Building / Apartment Name"                },
-      { key: "address1",  label: "Address Line 1"                                              },
-      { key: "city",      label: "City"                                                        },
-      { key: "state",     label: "State / Province"                                            },
-      { key: "pincode",   label: "Pincode / Zip / Postal Code"                                 },
-      { key: "latitude",  label: "Latitude"                                                    },
-      { key: "longitude", label: "Longitude"                                                   },
+      { key: "country",   label: "Country / Region"                             },
+      { key: "building",  label: "Flat / House No. / Building / Apartment Name" },
+      { key: "address1",  label: "Address Line 1"                               },
+      { key: "city",      label: "City"                                         },
+      { key: "state",     label: "State / Province"                             },
+      { key: "pincode",   label: "Pincode / Zip / Postal Code"                  },
+      { key: "latitude",  label: "Latitude"                                     },
+      { key: "longitude", label: "Longitude"                                    },
     ],
   },
   {
@@ -72,7 +73,6 @@ export const COLUMN_GROUPS = [
   },
 ] as const;
 
-// Default columns visible in the table
 export const DEFAULT_COLUMNS = new Set([
   "leadName", "company", "email", "mobile", "leadStatus", "leadOwner", "creation", "actions",
 ]);
@@ -88,6 +88,8 @@ interface Props {
 }
 
 export default function ColumnsDrawer({ open, onClose, selected, onChange }: Props) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [local, setLocal]   = useState<Set<string>>(new Set(selected));
   const [search, setSearch] = useState("");
 
@@ -112,8 +114,8 @@ export default function ColumnsDrawer({ open, onClose, selected, onChange }: Pro
     });
   };
 
-  const selectAll  = () => setLocal(new Set(ALL_KEYS));
-  const clearAll   = () => setLocal(new Set(COLUMN_GROUPS.flatMap(g => g.cols.filter(c => (c as { locked?: boolean }).locked).map(c => c.key))));
+  const selectAll    = () => setLocal(new Set(ALL_KEYS));
+  const clearAll     = () => setLocal(new Set(COLUMN_GROUPS.flatMap(g => g.cols.filter(c => (c as { locked?: boolean }).locked).map(c => c.key))));
   const resetDefault = () => setLocal(new Set(DEFAULT_COLUMNS));
 
   const handleApply = () => { onChange(new Set(local)); onClose(); };
@@ -128,53 +130,55 @@ export default function ColumnsDrawer({ open, onClose, selected, onChange }: Pro
 
   return (
     <Drawer anchor="right" open={open} onClose={onClose}
-      PaperProps={{ sx: { width: 420, display: "flex", flexDirection: "column", bgcolor: "#F8FAFF", boxShadow: "-12px 0 48px rgba(12,36,114,0.12)" } }}>
+      PaperProps={{ sx: { width: 420, display: "flex", flexDirection: "column", bgcolor: isDark ? "#18181B" : "#F8FAFF", boxShadow: isDark ? "-12px 0 48px rgba(0,0,0,0.5)" : "-12px 0 48px rgba(12,36,114,0.12)" } }}>
 
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 bg-[#f9fbff] border-b border-[#E3ECFC] flex-shrink-0">
+      <div className={`flex items-center justify-between px-6 py-4 border-b flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#EFF6FF] flex items-center justify-center">
-            <Columns size={18} color="#1D4ED8" weight="duotone" />
+          <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
+            <Columns size={18} color={isDark ? "#71717A" : "#1D4ED8"} weight="duotone" />
           </div>
           <div>
-            <h2 className="font-heading text-[15px] font-bold text-slate-900 tracking-tight">Configure Columns</h2>
-            <p className="text-[11px] text-slate-400">{local.size} of {TOTAL} columns selected</p>
+            <h2 className={`m-0 font-heading text-h2 tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Configure Columns</h2>
+            <p className={`m-0 text-caption ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>{local.size} of {TOTAL} columns selected</p>
           </div>
         </div>
         <Tooltip title="Close">
           <IconButton size="small" onClick={onClose}
-            sx={{ borderRadius: "9px", border: "1.5px solid #E3ECFC", "&:hover": { bgcolor: "#EFF6FF" } }}>
-            <X size={17} color="#64748B" weight="duotone" />
+            sx={{ borderRadius: "9px", border: `1.5px solid ${isDark ? "#3F3F46" : "#E3ECFC"}`, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+            <X size={17} color={isDark ? "#71717A" : "#64748B"} weight="duotone" />
           </IconButton>
         </Tooltip>
       </div>
 
       {/* Search + Select All / Clear */}
-      <div className="px-5 pt-4 pb-2 bg-[#f9fbff] border-b border-[#EFF6FF] flex-shrink-0 space-y-3">
-        <div className="flex items-center gap-2 bg-[#EFF6FF] border border-[#E3ECFC] rounded-xl px-3 py-1.5">
-          <MagnifyingGlass size={14} color="#94A3B8" weight="duotone" />
+      <div className={`px-5 pt-4 pb-2 border-b flex-shrink-0 space-y-3 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#EFF6FF]"}`}>
+        <div className={`flex items-center gap-2 border rounded-xl px-3 py-1.5 ${isDark ? "bg-[#1C1C1E] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
+          <MagnifyingGlass size={14} color={isDark ? "#71717A" : "#94A3B8"} weight="duotone" />
           <InputBase
             placeholder="Search columns…"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            sx={{ flex: 1, fontSize: "0.77rem", color: "#334155", "& input::placeholder": { color: "#94A3B8", opacity: 1 } }}
+            sx={{ flex: 1, fontSize: "0.77rem", "& input::placeholder": { color: isDark ? "#52525B" : "#94A3B8", opacity: 1 } }}
           />
-          {search && <button onClick={() => setSearch("")} className="text-slate-300 hover:text-slate-500 text-sm">✕</button>}
+          {search && (
+            <button onClick={() => setSearch("")} className={`text-sm ${isDark ? "text-[#E4E4E7] hover:text-[#A1A1AA]" : "text-slate-300 hover:text-slate-500"}`}>✕</button>
+          )}
         </div>
 
         <div className="flex items-center gap-2">
           <button onClick={selectAll}
-            className="text-[11.5px] font-semibold text-[#1D4ED8] hover:text-[#0C2472] px-2.5 py-1 rounded-lg hover:bg-[#EFF6FF] transition-colors">
+            className={`text-button-sm px-2.5 py-1 rounded-lg transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#F4F4F5] hover:bg-[#27272A]" : "text-[#1D4ED8] hover:text-[#0C2472] hover:bg-[#EFF6FF]"}`}>
             Select All
           </button>
-          <span className="text-slate-200">·</span>
+          <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>·</span>
           <button onClick={clearAll}
-            className="text-[11.5px] font-semibold text-slate-400 hover:text-slate-600 px-2.5 py-1 rounded-lg hover:bg-slate-50 transition-colors">
+            className={`text-button-sm px-2.5 py-1 rounded-lg transition-colors ${isDark ? "text-[#71717A] hover:text-[#A1A1AA] hover:bg-[#27272A]" : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"}`}>
             Clear
           </button>
-          <span className="text-slate-200">·</span>
+          <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>·</span>
           <button onClick={resetDefault}
-            className="text-[11.5px] font-semibold text-slate-400 hover:text-[#1D4ED8] px-2.5 py-1 rounded-lg hover:bg-[#EFF6FF] transition-colors">
+            className={`text-button-sm px-2.5 py-1 rounded-lg transition-colors ${isDark ? "text-[#71717A] hover:text-[#A1A1AA] hover:bg-[#27272A]" : "text-slate-400 hover:bg-[#EFF6FF]"}`}>
             Reset Default
           </button>
         </div>
@@ -189,27 +193,25 @@ export default function ColumnsDrawer({ open, onClose, selected, onChange }: Pro
           const someOn    = unlocked.some(k => local.has(k));
 
           return (
-            <div key={group} className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] overflow-hidden shadow-sm">
-              {/* Group header */}
+            <div key={group} className={`rounded-2xl border overflow-hidden shadow-sm ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
               <button
                 onClick={() => toggleGroup(keys)}
-                className="flex items-center gap-2 w-full px-4 py-2.5 bg-[#EFF6FF] hover:bg-[#E3ECFC] transition-colors border-b border-[#E3ECFC]"
+                className={`flex items-center gap-2 w-full px-4 py-2.5 border-b transition-colors ${isDark ? "bg-[#27272A] border-[#3F3F46] hover:bg-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC] hover:bg-[#E3ECFC]"}`}
               >
                 <Checkbox
                   checked={allOn}
                   indeterminate={!allOn && someOn}
                   size="small"
                   onClick={e => { e.stopPropagation(); toggleGroup(keys); }}
-                  sx={{ p: 0.25, color: "#CBD5E1", "&.Mui-checked, &.MuiCheckbox-indeterminate": { color: "#1D4ED8" } }}
+                  sx={{ p: 0.25, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked, &.MuiCheckbox-indeterminate": { color: "inherit" } }}
                 />
-                <span className="font-heading text-[11px] font-bold text-[#1D4ED8] uppercase tracking-wider">{group}</span>
-                <span className="ml-auto text-[10px] text-slate-400 font-medium">
+                <span className={`font-heading text-nav-group-label uppercase ${isDark ? "text-[#71717A]" : "text-[#1D4ED8]"}`}>{group}</span>
+                <span className={`ml-auto text-caption ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>
                   {unlocked.filter(k => local.has(k)).length} / {unlocked.length}
                 </span>
               </button>
 
-              {/* Columns */}
-              <div className="divide-y divide-[#EFF6FF]">
+              <div className={`divide-y ${isDark ? "divide-[#27272A]" : "divide-[#EFF6FF]"}`}>
                 {cols.map(col => {
                   const locked = (col as { locked?: boolean }).locked;
                   const checked = local.has(col.key as string);
@@ -217,7 +219,7 @@ export default function ColumnsDrawer({ open, onClose, selected, onChange }: Pro
                     <label
                       key={col.key}
                       className={`flex items-center gap-3 px-4 py-2 transition-colors ${
-                        locked ? "cursor-default" : "cursor-pointer hover:bg-[#EFF6FF]/60"
+                        locked ? "cursor-default" : `cursor-pointer ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]/60"}`
                       }`}
                     >
                       <Checkbox
@@ -225,13 +227,13 @@ export default function ColumnsDrawer({ open, onClose, selected, onChange }: Pro
                         disabled={locked}
                         size="small"
                         onChange={() => toggle(col.key as string, locked)}
-                        sx={{ p: 0.25, color: "#CBD5E1", "&.Mui-checked": { color: "#1D4ED8" }, "&.Mui-disabled": { color: "#CBD5E1" } }}
+                        sx={{ p: 0.25, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked": { color: "inherit" }, "&.Mui-disabled": { color: isDark ? "#27272A" : "#E2E8F0" } }}
                       />
-                      <span className={`text-[12.5px] flex-1 truncate ${locked ? "text-slate-400" : "text-slate-700"}`}>
+                      <span className={`text-body flex-1 truncate ${locked ? (isDark ? "text-[#52525B]" : "text-slate-400") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>
                         {col.label}
                       </span>
                       {locked && (
-                        <span className="text-[9.5px] font-bold text-slate-300 uppercase tracking-wider">Locked</span>
+                        <span className={`text-caption font-medium uppercase tracking-wide ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>Locked</span>
                       )}
                     </label>
                   );
@@ -242,19 +244,25 @@ export default function ColumnsDrawer({ open, onClose, selected, onChange }: Pro
         })}
 
         {filtered.length === 0 && (
-          <div className="text-center py-10 text-slate-400 text-sm">No columns match "{search}"</div>
+          <div className={`text-center py-10 text-sm ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>No columns match "{search}"</div>
         )}
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between px-6 py-4 bg-[#f9fbff] border-t border-[#E3ECFC] flex-shrink-0">
+      <div className={`flex items-center justify-between px-6 py-4 border-t flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <button onClick={onClose}
-          className="text-[13px] font-semibold text-slate-400 hover:text-slate-600 px-3 py-2 rounded-xl hover:bg-[#EFF6FF] transition-colors">
+          className={`text-button-sm px-3 py-2 rounded-xl transition-colors ${isDark ? "text-[#71717A] hover:text-[#A1A1AA] hover:bg-[#27272A]" : "text-slate-400 hover:text-slate-600 hover:bg-[#EFF6FF]"}`}>
           Cancel
         </button>
         <Button variant="contained" size="small" startIcon={<Columns size={14} weight="duotone" />}
           onClick={handleApply}
-          sx={{ bgcolor: "#1D4ED8", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.78rem", px: 2.5, py: 0.9, boxShadow: "0 2px 12px #1D4ED833", "&:hover": { bgcolor: "#60A5FA", boxShadow: "0 2px 14px #60A5FA55" }, "&:active": { bgcolor: "#0C2472" } }}>
+          sx={{
+            bgcolor: isDark ? "#3F3F46" : "#1D4ED8",
+            color: "#fff",
+            borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px", px: 2.5, py: 0.9,
+            boxShadow: isDark ? "none" : "0 2px 12px #1D4ED833",
+            "&:hover": { bgcolor: isDark ? "#52525B" : "#1640B8", boxShadow: isDark ? "none" : "0 2px 14px #60A5FA55" },
+          }}>
           Apply Columns
         </Button>
       </div>

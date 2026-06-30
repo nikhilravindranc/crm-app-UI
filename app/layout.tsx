@@ -1,23 +1,14 @@
 import type { Metadata } from "next";
-import { Figtree, DM_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import ThemeRegistry from "@/components/ThemeRegistry";
-import AppHeader from "@/components/layout/AppHeader";
-import Sidebar from "@/components/layout/Sidebar";
+import NavGuard from "@/components/layout/NavGuard";
 
-// ── Figtree: headings & eyebrows ──────────────────────────────────
-const figtree = Figtree({
+// ── Inter: universal font family ──────────────────────────────────
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "600", "700", "800"],
-  variable: "--font-heading",
-  display: "swap",
-});
-
-// ── DM Sans: body, labels, descriptions ──────────────────────────
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["300", "400", "500"],
-  variable: "--font-body",
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-inter",
   display: "swap",
 });
 
@@ -32,11 +23,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${figtree.variable} ${dmSans.variable}`}>
+    <html lang="en" className={inter.variable} style={{ fontFamily: "var(--font-inter)" }}>
       <body suppressHydrationWarning>
         <ThemeRegistry>
-          <AppHeader />
-          <Sidebar />
+          <NavGuard />
           {children}
         </ThemeRegistry>
       </body>

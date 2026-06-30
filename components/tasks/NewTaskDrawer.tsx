@@ -11,6 +11,7 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Switch from "@mui/material/Switch";
 import { X, ClipboardText } from "@phosphor-icons/react";
+import { useTheme } from "@/components/ThemeContext";
 
 // ─────────────────────────────────────────────
 //  Data lists
@@ -23,34 +24,6 @@ const RELATE_TYPES  = ["Account", "Deal", "Contact", "Lead"];
 const CONTACTS      = ["SDL Test Test-SDL", "John Smith", "Raja rajan", "Vishnutharan R", "Speedy Mike", "test test"];
 const RELATED_TO    = ["SDL - Account", "RMVT - Account", "Sweany Inc - Account", "SDL LEAD1 - Account", "New - Deal", "CRM Application - Deal"];
 const TASK_OWNERS   = ["PM SDL", "SE User 1", "Admin"];
-
-// ─────────────────────────────────────────────
-//  Shared MUI input styling
-// ─────────────────────────────────────────────
-const FX = {
-  "& .MuiOutlinedInput-root": {
-    borderRadius: "10px",
-    backgroundColor: "#EFF6FF",
-    fontSize: "0.82rem",
-    "& fieldset":             { borderColor: "#E3ECFC", borderWidth: 1.5 },
-    "&:hover fieldset":       { borderColor: "#60A5FA" },
-    "&.Mui-focused fieldset": { borderColor: "#1D4ED8", borderWidth: 2 },
-    "&.Mui-focused":          { boxShadow: "0 0 0 2px #93C5FD" },
-    "& input":                { padding: "10px 14px" },
-  },
-  "& .MuiInputLabel-root":             { fontSize: "0.79rem", color: "#6B7280" },
-  "& .MuiInputLabel-root.Mui-focused": { color: "#1D4ED8" },
-  "& .MuiSelect-select":               { fontSize: "0.82rem", padding: "10px 14px", backgroundColor: "#EFF6FF" },
-};
-
-const TEXTAREA_FX = {
-  ...FX,
-  "& .MuiOutlinedInput-root": {
-    ...FX["& .MuiOutlinedInput-root"],
-    "& textarea": { padding: "10px 14px" },
-    "& input":    undefined,
-  },
-};
 
 // ─────────────────────────────────────────────
 //  Default state
@@ -70,18 +43,42 @@ const DEFAULT = {
   description:  "",
 };
 
-// ─────────────────────────────────────────────
-//  Component
-// ─────────────────────────────────────────────
 interface Props {
   open:    boolean;
   onClose: () => void;
 }
 
 export default function NewTaskDrawer({ open, onClose }: Props) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [form, setForm] = useState({ ...DEFAULT });
   const set  = (k: string, v: string)  => setForm(p => ({ ...p, [k]: v }));
   const setB = (k: string, v: boolean) => setForm(p => ({ ...p, [k]: v }));
+
+  const FX = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "10px",
+      ...(isDark ? {} : { backgroundColor: "#EFF6FF" }),
+      fontSize: "0.82rem",
+      "& fieldset":             { borderColor: isDark ? "#3F3F46" : "#E3ECFC", borderWidth: 1.5 },
+      "&:hover fieldset":       { borderColor: isDark ? "#52525B" : "#E3ECFC" },
+      "&.Mui-focused fieldset": { borderColor: isDark ? "#71717A" : "#D0DEFA", borderWidth: 1.5 },
+      "&.Mui-focused":          { boxShadow: "none" },
+      "& input":                { padding: "10px 14px" },
+    },
+    "& .MuiInputLabel-root":             { fontSize: "0.79rem", ...(isDark ? {} : { color: "#94A3B8" }) },
+    "& .MuiInputLabel-root.Mui-focused": { color: isDark ? "#A1A1AA" : "#64748B" },
+    "& .MuiSelect-select":               { fontSize: "0.82rem", padding: "10px 14px", ...(isDark ? {} : { backgroundColor: "#EFF6FF" }) },
+  };
+
+  const TEXTAREA_FX = {
+    ...FX,
+    "& .MuiOutlinedInput-root": {
+      ...FX["& .MuiOutlinedInput-root"],
+      "& textarea": { padding: "10px 14px" },
+      "& input":    undefined,
+    },
+  };
 
   const handleSubmit = () => {
     console.log("New task:", form);
@@ -104,23 +101,23 @@ export default function NewTaskDrawer({ open, onClose }: Props) {
           width: { xs: "100%", sm: 580 },
           display: "flex",
           flexDirection: "column",
-          bgcolor: "#F8FAFF",
-          boxShadow: "-12px 0 48px rgba(12,36,114,0.12)",
+          bgcolor: isDark ? "#18181B" : "#F8FAFF",
+          boxShadow: isDark ? "-12px 0 48px rgba(0,0,0,0.5)" : "-12px 0 48px rgba(12,36,114,0.12)",
         },
       }}
     >
       {/* ══ Header ══ */}
-      <div className="flex items-center justify-between px-6 py-4 bg-[#f9fbff] border-b border-[#E3ECFC] flex-shrink-0">
+      <div className={`flex items-center justify-between px-6 py-4 border-b flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#1D4ED8] flex items-center justify-center shadow-sm">
-            <ClipboardText size={18} color="#fff" weight="duotone" />
+          <div className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-sm ${isDark ? "bg-[#27272A]" : "bg-[#1D4ED8]"}`}>
+            <ClipboardText size={18} color={isDark ? "#A1A1AA" : "#fff"} weight="duotone" />
           </div>
-          <h2 className="font-heading text-[16px] font-bold text-slate-900 tracking-tight">New Task</h2>
+          <h2 className={`font-heading text-[16px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>New Task</h2>
         </div>
         <Tooltip title="Close">
           <IconButton size="small" onClick={handleClose}
-            sx={{ borderRadius: "9px", border: "1.5px solid #E3ECFC", "&:hover": { bgcolor: "#EFF6FF" } }}>
-            <X size={17} color="#64748B" weight="duotone" />
+            sx={{ borderRadius: "9px", border: `1.5px solid ${isDark ? "#3F3F46" : "#E3ECFC"}`, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+            <X size={17} color={isDark ? "#71717A" : "#64748B"} weight="duotone" />
           </IconButton>
         </Tooltip>
       </div>
@@ -130,10 +127,9 @@ export default function NewTaskDrawer({ open, onClose }: Props) {
 
         {/* ── Task Information ── */}
         <div>
-          <h3 className="font-heading text-[13px] font-bold text-slate-800 mb-4 tracking-tight">Task Information</h3>
+          <h3 className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-4 ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Task Information</h3>
 
           <div className="space-y-3">
-            {/* Type */}
             <FormControl size="small" fullWidth sx={FX}>
               <InputLabel>Type</InputLabel>
               <Select label="Type" value={form.type} onChange={e => set("type", e.target.value)}>
@@ -143,7 +139,6 @@ export default function NewTaskDrawer({ open, onClose }: Props) {
               </Select>
             </FormControl>
 
-            {/* Subject */}
             <TextField
               label="Subject"
               value={form.subject}
@@ -151,7 +146,6 @@ export default function NewTaskDrawer({ open, onClose }: Props) {
               size="small" fullWidth sx={FX}
             />
 
-            {/* Due Date */}
             <TextField
               label="Due Date"
               type="date"
@@ -162,7 +156,6 @@ export default function NewTaskDrawer({ open, onClose }: Props) {
               sx={FX}
             />
 
-            {/* Status */}
             <FormControl size="small" fullWidth sx={FX}>
               <InputLabel>Status</InputLabel>
               <Select label="Status" value={form.status} onChange={e => set("status", e.target.value)}>
@@ -172,7 +165,6 @@ export default function NewTaskDrawer({ open, onClose }: Props) {
               </Select>
             </FormControl>
 
-            {/* Priority */}
             <FormControl size="small" fullWidth sx={FX}>
               <InputLabel>Priority</InputLabel>
               <Select label="Priority" value={form.priority} onChange={e => set("priority", e.target.value)}>
@@ -228,28 +220,28 @@ export default function NewTaskDrawer({ open, onClose }: Props) {
 
             {/* Reminder toggle */}
             <div className="flex items-center gap-3 py-1">
-              <span className="text-[13px] text-slate-600 font-medium">Reminder</span>
+              <span className={`text-[14px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>Reminder</span>
               <Switch
                 checked={form.reminder}
                 onChange={e => setB("reminder", e.target.checked)}
                 size="small"
                 sx={{
-                  "& .MuiSwitch-switchBase.Mui-checked":             { color: "#1D4ED8" },
-                  "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": { bgcolor: "#93C5FD" },
+                  "& .MuiSwitch-switchBase.Mui-checked":             { color: "inherit" },
+                  "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": { bgcolor: "inherit" },
                 }}
               />
             </div>
 
             {/* Task Owner — fieldset-style */}
-            <fieldset className="rounded-[10px] border border-[#E3ECFC] px-3 pb-3 pt-1 bg-[#EFF6FF]">
-              <legend className="text-[11px] font-semibold text-slate-500 px-1">Task Owner</legend>
+            <fieldset className={`rounded-[10px] border px-3 pb-3 pt-1 ${isDark ? "border-[#3F3F46] bg-[#1C1C1E]" : "border-[#E3ECFC] bg-[#EFF6FF]"}`}>
+              <legend className={`text-[11.5px] font-semibold uppercase tracking-wider px-1 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Task Owner</legend>
               <FormControl size="small" fullWidth sx={{
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "8px", fontSize: "0.82rem",
-                  "& fieldset":             { borderColor: "#E3ECFC" },
-                  "&:hover fieldset":       { borderColor: "#60A5FA" },
-                  "&.Mui-focused fieldset": { borderColor: "#1D4ED8" },
-                  "& .MuiSelect-select":    { padding: "8px 14px", backgroundColor: "#fff" },
+                  "& fieldset":             { borderColor: isDark ? "#3F3F46" : "#E3ECFC" },
+                  "&:hover fieldset":       { borderColor: isDark ? "#52525B" : "#E3ECFC" },
+                  "&.Mui-focused fieldset": { borderColor: isDark ? "#71717A" : "#D0DEFA" },
+                  "& .MuiSelect-select":    { padding: "8px 14px", ...(isDark ? {} : { backgroundColor: "#fff" }) },
                 },
               }}>
                 <Select value={form.taskOwner} onChange={e => set("taskOwner", e.target.value)}>
@@ -264,7 +256,7 @@ export default function NewTaskDrawer({ open, onClose }: Props) {
 
         {/* ── Description Information ── */}
         <div>
-          <h3 className="font-heading text-[13px] font-bold text-slate-800 mb-4 tracking-tight">Description Information</h3>
+          <h3 className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-4 ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>Description Information</h3>
           <TextField
             label="Description"
             value={form.description}
@@ -277,13 +269,24 @@ export default function NewTaskDrawer({ open, onClose }: Props) {
       </div>
 
       {/* ══ Footer ══ */}
-      <div className="flex items-center justify-end gap-3 px-6 py-4 bg-[#f9fbff] border-t border-[#E3ECFC] flex-shrink-0">
+      <div className={`flex items-center justify-end gap-3 px-6 py-4 border-t flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <Button variant="text" onClick={handleClose}
-          sx={{ color: "#64748B", textTransform: "none", fontWeight: 600, fontSize: "0.82rem", borderRadius: "9px", px: 2.5, "&:hover": { bgcolor: "#EFF6FF" } }}>
+          sx={{
+            color: isDark ? "#A1A1AA" : "#64748B",
+            textTransform: "none", fontWeight: 600, fontSize: "0.82rem", borderRadius: "9px", px: 2.5,
+            "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" },
+          }}>
           Cancel
         </Button>
         <Button variant="contained" onClick={handleSubmit}
-          sx={{ bgcolor: "#1D4ED8", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: "0 1px 8px #1D4ED833", "&:hover": { bgcolor: "#60A5FA" }, "&:active": { bgcolor: "#0C2472" } }}>
+          sx={{
+            bgcolor: isDark ? "#27272A" : "#1D4ED8",
+            color: isDark ? "#F4F4F5" : "#fff",
+            borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3,
+            boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833",
+            "&:hover":  { bgcolor: isDark ? "#3F3F46" : "#60A5FA" },
+            "&:active": { bgcolor: isDark ? "#18181B" : "#0C2472" },
+          }}>
           Submit
         </Button>
       </div>

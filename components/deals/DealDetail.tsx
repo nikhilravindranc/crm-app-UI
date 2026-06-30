@@ -16,10 +16,10 @@ import {
   House, CaretRight, PencilSimple, DotsThreeVertical,
   Note, ClipboardText, Paperclip, ClockCounterClockwise,
   ThumbsUp, ThumbsDown, Plus, Trash, Copy,
-  GridFour, List, Trophy, Handshake, CurrencyCircleDollar,
-  CalendarBlank, UserCircle, Buildings, Tag, CheckCircle,
+  GridFour, List, Trophy, Handshake, Tag,
 } from "@phosphor-icons/react";
 import { OWNER_AVATARS } from "@/lib/avatars";
+import { useTheme } from "@/components/ThemeContext";
 
 // ─────────────────────────────────────────────
 //  Types
@@ -36,8 +36,8 @@ interface StageHistoryRow {
 }
 interface TaskRow { subject: string; status: string; }
 interface TimelineEntry {
-  date: string;   // "2026-06-11"
-  time: string;   // "11:37 am"
+  date: string;
+  time: string;
   probability?: { from: number; to: number };
   stage?: { from: string; to: string };
   by: string;
@@ -115,29 +115,21 @@ const STAGES: DealStage[] = [
   "Identify Decision Makers", "Proposal/Price Quote", "Negotiation/Review", "Closed Won",
 ];
 
-const STAGE_CFG: Record<DealStage, { fill: string; text: string }> = {
-  "Qualification":            { fill: "#D6E4F9", text: "#0C2472" },
-  "Needs Analysis":           { fill: "#D0E5E0", text: "#065F46" },
-  "Value Proposition":        { fill: "#FAE3D0", text: "#7C2D12" },
-  "Identify Decision Makers": { fill: "#F5D9E1", text: "#831843" },
-  "Proposal/Price Quote":     { fill: "#D2DFF0", text: "#1E3A5F" },
-  "Negotiation/Review":       { fill: "#FEF3C7", text: "#92400E" },
-  "Closed Won":               { fill: "#DCFCE7", text: "#166534" },
-};
-
 // ─────────────────────────────────────────────
-//  Sub-components
+//  Sub-components (theme-aware)
 // ─────────────────────────────────────────────
 function SectionCard({ icon: Icon, title, children, action }: {
   icon: React.ElementType; title: string; children: React.ReactNode; action?: React.ReactNode;
 }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   return (
-    <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
-      <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[#EFF6FF]">
-        <div className="w-6 h-6 rounded-lg bg-[#EFF6FF] flex items-center justify-center">
-          <Icon size={13} color="#1D4ED8" weight="duotone" />
+    <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+      <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
+        <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
+          <Icon size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
         </div>
-        <p className="font-heading text-[11px] font-bold text-[#1D4ED8] uppercase tracking-[0.12em] flex-1">{title}</p>
+        <p className={`font-heading text-[12px] font-bold uppercase tracking-wider flex-1 ${isDark ? "text-slate-500" : "text-slate-500"}`}>{title}</p>
         {action}
       </div>
       <div className="px-5 py-4">{children}</div>
@@ -150,12 +142,13 @@ function InfoGrid({ children }: { children: React.ReactNode }) {
 }
 
 function KV({ label, value }: { label: string; value?: string | number }) {
-  const display = value !== undefined && value !== "" && value !== 0
-    ? String(value) : "—";
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+  const display = value !== undefined && value !== "" && value !== 0 ? String(value) : "—";
   return (
-    <div className="py-2.5 border-b border-[#EFF6FF] last:border-0">
-      <p className="text-[10.5px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">{label}</p>
-      <p className={`text-[13px] font-medium ${display === "—" ? "text-slate-300" : "text-slate-700"}`}>{display}</p>
+    <div className={`py-2.5 border-b last:border-0 ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
+      <p className={`text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{label}</p>
+      <p className={`text-[14px] font-medium ${display === "—" ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>{display}</p>
     </div>
   );
 }
@@ -165,6 +158,8 @@ function KV({ label, value }: { label: string; value?: string | number }) {
 // ─────────────────────────────────────────────
 export default function DealDetail({ dealId }: { dealId: number }) {
   const router = useRouter();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const deal = DEALS_DETAIL[dealId];
 
   const [activeTab, setActiveTab] = useState<"overview" | "timeline">("overview");
@@ -175,14 +170,14 @@ export default function DealDetail({ dealId }: { dealId: number }) {
 
   if (!deal) {
     return (
-      <div className="flex h-screen bg-[#EFF6FF] font-sans">
+      <div className={`flex h-screen font-sans ${isDark ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
         <Sidebar />
         <div className="sidebar-content flex-1 flex flex-col">
           <TopBar title="Deals" />
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
-              <p className="text-[#0C2472] text-xl font-bold mb-2">Deal not found</p>
-              <button onClick={() => router.push("/deals")} className="text-[#1D4ED8] text-sm underline">Back to Deals</button>
+              <p className={`text-xl font-bold mb-2 ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>Deal not found</p>
+              <button onClick={() => router.push("/deals")} className={`text-sm underline ${isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]"}`}>Back to Deals</button>
             </div>
           </div>
         </div>
@@ -191,7 +186,6 @@ export default function DealDetail({ dealId }: { dealId: number }) {
   }
 
   const stageIdx = STAGES.indexOf(deal.stage);
-  const stageCfg = STAGE_CFG[deal.stage];
 
   const addNote = () => {
     if (!note.trim()) return;
@@ -202,26 +196,51 @@ export default function DealDetail({ dealId }: { dealId: number }) {
   const relatedItems = [
     { label: "Notes",         icon: Note,                  count: notes.length,           color: "#8B5CF6" },
     { label: "Attachments",   icon: Paperclip,             count: 0,                      color: "#F59E0B" },
-    { label: "Stage History", icon: ClockCounterClockwise, count: deal.stageHistory.length, color: "#1D4ED8" },
+    { label: "Stage History", icon: ClockCounterClockwise, count: deal.stageHistory.length, color: "#64748B" },
     { label: "Tasks",         icon: ClipboardText,         count: deal.tasks.length,      color: "#10B981" },
   ];
 
+  const RelatedListPanel = ({ onClickItem }: { onClickItem: (label: string) => void }) => (
+    <div className="space-y-4">
+      <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+        <div className={`px-4 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
+          <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-500"}`}>Related List</p>
+        </div>
+        <div className="p-2 space-y-0.5">
+          {relatedItems.map(({ label, icon: Icon, count, color }) => (
+            <button key={label} onClick={() => onClickItem(label)}
+              className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-xl transition-colors ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}>
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: color + "20" }}>
+                <Icon size={14} color={color} weight="duotone" />
+              </div>
+              <span className={`flex-1 text-left text-[14px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>{label}</span>
+              {count > 0 && (
+                <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded-full ${isDark ? "bg-[#27272A] text-[#A1A1AA]" : "bg-[#E3ECFC] text-[#1D4ED8]"}`}>{count}</span>
+              )}
+              <CaretRight size={14} color={isDark ? "#3F3F46" : "#E2E8F0"} weight="duotone" />
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="flex h-screen bg-[#EFF6FF] font-sans">
+    <div className={`flex h-screen font-sans ${isDark ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
       <Sidebar />
 
       <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-hidden">
         <TopBar title="Deals" />
 
         {/* ── Breadcrumb ── */}
-        <div className="flex items-center gap-1.5 px-8 py-3 bg-[#E3ECFC] border-b border-[#E3ECFC] text-[12px]">
-          <Link href="/" className="text-slate-400 hover:text-[#1D4ED8] transition-colors">
+        <div className={`flex items-center gap-1.5 px-8 py-3 border-b text-[12px] ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#E3ECFC] border-[#E3ECFC]"}`}>
+          <Link href="/" className={`transition-colors ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
             <House size={13} weight="duotone" />
           </Link>
-          <CaretRight size={11} color="#CBD5E1" />
-          <Link href="/deals" className="text-slate-400 hover:text-[#1D4ED8] font-medium transition-colors">Deals</Link>
-          <CaretRight size={11} color="#CBD5E1" />
-          <span className="text-[#0C2472] font-semibold">{deal.refId}</span>
+          <CaretRight size={11} color={isDark ? "#3F3F46" : "#E2E8F0"} />
+          <Link href="/deals" className={`font-medium transition-colors ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>Deals</Link>
+          <CaretRight size={11} color={isDark ? "#3F3F46" : "#E2E8F0"} />
+          <span className={`font-semibold ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>{deal.refId}</span>
         </div>
 
         {/* ── Body ── */}
@@ -231,10 +250,10 @@ export default function DealDetail({ dealId }: { dealId: number }) {
           <div className="flex items-center gap-2 mb-5">
             {(["overview", "timeline"] as const).map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
-                className={`px-4 py-1.5 rounded-full text-[12.5px] font-semibold capitalize transition-all ${
+                className={`px-4 py-1.5 rounded-full text-[14px] font-semibold capitalize transition-all ${
                   activeTab === tab
-                    ? "bg-[#1D4ED8] text-white shadow-sm"
-                    : "bg-[#f9fbff] text-slate-500 hover:bg-[#E3ECFC] hover:text-[#1D4ED8]"
+                    ? isDark ? "bg-[#3F3F46] text-[#F4F4F5] shadow-sm" : "bg-[#1D4ED8] text-white shadow-sm"
+                    : isDark ? "bg-[#1C1C1E] text-[#71717A] hover:bg-[#27272A]" : "bg-[#f9fbff] text-slate-500 hover:bg-[#E3ECFC]"
                 }`}>
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
               </button>
@@ -245,24 +264,22 @@ export default function DealDetail({ dealId }: { dealId: number }) {
               <div className="grid grid-cols-3 gap-4 items-start">
               <div className="col-span-2 space-y-5">
                 {/* ── Stage Pipeline ── */}
-                <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm p-4">
-                  {/* Dates row */}
+                <div className={`rounded-2xl border shadow-sm p-4 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Start</p>
-                      <p className="text-[11px] font-semibold text-slate-600">
+                      <p className={`text-[12px] font-bold uppercase tracking-widest ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>Start</p>
+                      <p className={`text-[12px] font-semibold ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>
                         {new Date(deal.startDate).toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" }).toUpperCase()}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Closing</p>
-                      <p className="text-[11px] font-semibold text-slate-600">
+                      <p className={`text-[12px] font-bold uppercase tracking-widest ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>Closing</p>
+                      <p className={`text-[12px] font-semibold ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>
                         {new Date(deal.closingDate).toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" }).toUpperCase()}
                       </p>
                     </div>
                   </div>
 
-                  {/* Pipeline stages */}
                   <div className="flex items-center gap-0 overflow-x-auto pb-1">
                     {STAGES.map((stage, i) => {
                       const isActive = deal.stage === stage;
@@ -271,34 +288,37 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                       return (
                         <div key={stage} className="flex items-center flex-shrink-0">
                           <div className={`
-                            relative px-3 py-1.5 text-[11px] font-semibold flex items-center gap-1.5 transition-all
+                            relative px-3 py-1.5 text-[12.5px] font-bold flex items-center gap-1.5 transition-all
                             ${i === 0 ? "rounded-l-lg" : ""} ${isLast ? "rounded-r-lg" : ""}
-                            ${isActive ? "bg-[#1D4ED8] text-white z-10 shadow-md shadow-[#1D4ED8]/20"
-                              : isPast ? "bg-[#E3ECFC] text-[#1D4ED8]"
-                              : "bg-[#f9fbff] text-slate-400 border border-[#E3ECFC]"}
+                            ${isActive
+                              ? isDark ? "bg-[#3F3F46] text-[#F4F4F5] z-10 shadow-md" : "bg-[#1D4ED8] text-white z-10 shadow-md shadow-[#1D4ED8]/20"
+                              : isPast
+                                ? isDark ? "bg-[#27272A] text-[#71717A]" : "bg-[#E3ECFC] text-[#1D4ED8]"
+                                : isDark ? "bg-[#1C1C1E] text-[#3F3F46] border border-[#27272A]" : "bg-[#f9fbff] text-slate-400 border border-[#E3ECFC]"}
                           `}>
                             {isLast && <Trophy size={12} weight="duotone" />}
                             <span className="whitespace-nowrap">{stage}</span>
                           </div>
                           {!isLast && (
                             <div className={`w-0 h-0 border-t-[14px] border-b-[14px] border-l-[10px] border-transparent flex-shrink-0 ${
-                              isActive ? "border-l-[#1D4ED8]" : isPast ? "border-l-[#E3ECFC]" : "border-l-[#E3ECFC]"
+                              isActive ? (isDark ? "border-l-[#3F3F46]" : "border-l-[#1D4ED8]")
+                                : isPast ? (isDark ? "border-l-[#27272A]" : "border-l-[#E3ECFC]")
+                                : isDark ? "border-l-[#1C1C1E]" : "border-l-[#E3ECFC]"
                             }`} />
                           )}
                         </div>
                       );
                     })}
 
-                    {/* Thumbs */}
                     <div className="flex items-center gap-1 ml-3 flex-shrink-0">
                       <Tooltip title="Won">
-                        <IconButton size="small" sx={{ bgcolor:"#DCFCE7", "&:hover":{bgcolor:"#BBF7D0"}, borderRadius:"8px", p:0.8 }}>
-                          <ThumbsUp size={14} color="#16A34A" weight="duotone" />
+                        <IconButton size="small" sx={{ bgcolor: isDark ? "#14532D" : "#DCFCE7", "&:hover":{bgcolor: isDark ? "#166534" : "#BBF7D0"}, borderRadius:"8px", p:0.8 }}>
+                          <ThumbsUp size={14} color={isDark ? "#4ADE80" : "#16A34A"} weight="duotone" />
                         </IconButton>
                       </Tooltip>
                       <Tooltip title="Lost">
-                        <IconButton size="small" sx={{ bgcolor:"#FEF2F2", "&:hover":{bgcolor:"#FECACA"}, borderRadius:"8px", p:0.8 }}>
-                          <ThumbsDown size={14} color="#DC2626" weight="duotone" />
+                        <IconButton size="small" sx={{ bgcolor: isDark ? "#450A0A" : "#FEF2F2", "&:hover":{bgcolor: isDark ? "#7F1D1D" : "#FECACA"}, borderRadius:"8px", p:0.8 }}>
+                          <ThumbsDown size={14} color={isDark ? "#F87171" : "#DC2626"} weight="duotone" />
                         </IconButton>
                       </Tooltip>
                     </div>
@@ -306,21 +326,19 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                 </div>
 
                 {/* ── Quick Info ── */}
-                <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm divide-y divide-[#EFF6FF]">
+                <div className={`rounded-2xl border shadow-sm divide-y ${isDark ? "bg-[#1C1C1E] border-[#27272A] divide-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC] divide-[#EFF6FF]"}`}>
                   {[
-                    { label: "Deal Name", value: deal.name, editable: false },
-                    { label: "Stage",     value: deal.stage, editable: true },
-                    { label: "Probability (%)", value: String(deal.probability), editable: false },
-                    { label: "Closing Date", value: deal.closingDate, editable: true },
-                  ].map(({ label, value, editable }) => (
+                    { label: "Deal Name", value: deal.name },
+                    { label: "Stage",     value: deal.stage },
+                    { label: "Probability (%)", value: String(deal.probability) },
+                    { label: "Closing Date", value: deal.closingDate },
+                  ].map(({ label, value }) => (
                     <div key={label} className="flex items-center justify-between px-5 py-3">
-                      <span className="text-[12.5px] text-slate-500 font-medium w-40 flex-shrink-0">{label}:</span>
-                      <span className="flex-1 text-[13px] font-semibold text-slate-700">{value}</span>
-                      {editable && (
-                        <IconButton size="small" sx={{ p:0.5, color:"#CBD5E1", "&:hover":{color:"#1D4ED8", bgcolor:"#EFF6FF"}, borderRadius:"6px" }}>
-                          <PencilSimple size={14} weight="duotone" />
-                        </IconButton>
-                      )}
+                      <span className={`text-[12px] font-medium w-40 flex-shrink-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{label}:</span>
+                      <span className={`flex-1 text-[14px] font-semibold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{value}</span>
+                      <IconButton size="small" sx={{ p:0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&:hover":{color:"#1D4ED8", bgcolor: isDark ? "#27272A" : "#EFF6FF"}, borderRadius:"6px" }}>
+                        <PencilSimple size={14} weight="duotone" />
+                      </IconButton>
                     </div>
                   ))}
                 </div>
@@ -329,7 +347,7 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                 <SectionCard icon={Handshake} title="Deal Information"
                   action={
                     <IconButton size="small" onClick={e => setMoreAnchor(e.currentTarget)}
-                      sx={{ p:0.5, color:"#CBD5E1", "&:hover":{color:"#1D4ED8", bgcolor:"#EFF6FF"}, borderRadius:"6px" }}>
+                      sx={{ p:0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&:hover":{color:"#1D4ED8", bgcolor: isDark ? "#27272A" : "#EFF6FF"}, borderRadius:"6px" }}>
                       <DotsThreeVertical size={16} weight="bold" />
                     </IconButton>
                   }>
@@ -361,27 +379,27 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                 <div id="section-notes">
                   <SectionCard icon={Note} title="Notes">
                     <div className="space-y-3">
-                      <div className="border border-[#E3ECFC] rounded-xl overflow-hidden focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#93C5FD] transition-all">
+                      <div className={`border rounded-xl overflow-hidden transition-all ${isDark ? "border-[#3F3F46] focus-within:border-[#9CA3AF]" : "border-[#E3ECFC] focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#4A7AE8]"}`}>
                         <InputBase
                           fullWidth multiline minRows={2}
                           placeholder="Add a note…"
                           value={note}
                           onChange={e => setNote(e.target.value)}
-                          sx={{ px:2, py:1.5, fontSize:"0.8rem", color:"#334155", "& textarea::placeholder":{color:"#CBD5E1", opacity:1} }}
+                          sx={{ px:2, py:1.5, fontSize:"0.8rem", color: isDark ? "#D4D4D8" : "#334155", "& textarea::placeholder":{color: isDark ? "#3F3F46" : "#E2E8F0", opacity:1} }}
                         />
                         {note.trim() && (
                           <div className="flex justify-end px-3 pb-2">
                             <Button size="small" variant="contained" onClick={addNote}
-                              sx={{ bgcolor:"#1D4ED8", borderRadius:"8px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", "&:hover":{bgcolor:"#60A5FA"}, "&:active":{bgcolor:"#0C2472"} }}>
+                              sx={{ bgcolor: isDark ? "#27272A" : "#E3ECFC", color: isDark ? "#F4F4F5" : undefined, borderRadius:"8px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", "&:hover":{bgcolor: isDark ? "#3F3F46" : "#E3ECFC"} }}>
                               Save Note
                             </Button>
                           </div>
                         )}
                       </div>
                       {notes.map((n, i) => (
-                        <div key={i} className="bg-[#EFF6FF] rounded-xl px-4 py-3 border border-[#E3ECFC]">
-                          <p className="text-[12.5px] text-slate-700">{n.text}</p>
-                          <p className="text-[10px] text-slate-400 mt-1">{n.at}</p>
+                        <div key={i} className={`rounded-xl px-4 py-3 border ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
+                          <p className={`text-[14px] ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{n.text}</p>
+                          <p className={`text-[12px] mt-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{n.at}</p>
                         </div>
                       ))}
                     </div>
@@ -393,21 +411,21 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                   <SectionCard icon={Paperclip} title="Attachments"
                     action={
                       <div className="flex items-center gap-2">
-                        <div className="flex items-center bg-[#EFF6FF] rounded-lg p-0.5 gap-0.5">
+                        <div className={`flex items-center rounded-lg p-0.5 gap-0.5 ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
                           {[{ k:"grid", Icon:GridFour }, { k:"list", Icon:List }].map(({ k, Icon }) => (
-                            <button key={k} onClick={() => setAttachView(k as any)}
-                              className={`p-1 rounded-md transition-colors ${attachView===k ? "bg-[#f9fbff] text-[#1D4ED8]" : "text-slate-400 hover:text-[#1D4ED8]"}`}>
+                            <button key={k} onClick={() => setAttachView(k as "grid" | "list")}
+                              className={`p-1 rounded-md transition-colors ${attachView===k ? (isDark ? "bg-[#3F3F46] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]") : (isDark ? "text-[#9CA3AF]" : "text-slate-400")}`}>
                               <Icon size={13} weight="duotone" />
                             </button>
                           ))}
                         </div>
                         <Button size="small" variant="outlined"
-                          sx={{ borderColor:"#E3ECFC", color:"#0C2472", bgcolor:"#E3ECFC", borderRadius:"8px", textTransform:"none", fontWeight:600, fontSize:"0.73rem", "&:hover":{borderColor:"#1D4ED8", color:"#1D4ED8", bgcolor:"#f9fbff"} }}>
+                          sx={{ borderColor: isDark ? "#3F3F46" : "#E3ECFC", color: isDark ? "#A1A1AA" : "#0C2472", bgcolor: isDark ? "#27272A" : "#E3ECFC", borderRadius:"8px", textTransform:"none", fontWeight:600, fontSize:"0.73rem", "&:hover":{borderColor: isDark ? "#9CA3AF" : "#E3ECFC", bgcolor: isDark ? "#3F3F46" : "#f9fbff"} }}>
                           Attach
                         </Button>
                       </div>
                     }>
-                    <div className="flex items-center justify-center py-6 text-slate-300 text-[12.5px]">
+                    <div className={`flex items-center justify-center py-6 text-[14px] ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>
                       No attachments yet
                     </div>
                   </SectionCard>
@@ -417,28 +435,28 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                 <div id="section-stage-history">
                   <SectionCard icon={ClockCounterClockwise} title="Stage History"
                     action={
-                      <IconButton size="small" sx={{ p:0.5, color:"#CBD5E1", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
+                      <IconButton size="small" sx={{ p:0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
                         <DotsThreeVertical size={16} weight="bold" />
                       </IconButton>
                     }>
                     <div className="overflow-x-auto -mx-5 px-5">
-                      <table className="w-full text-[12px] min-w-[600px]">
+                      <table className="w-full min-w-[600px]">
                         <thead>
-                          <tr className="border-b border-[#E3ECFC]">
+                          <tr className={`border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
                             {["Stage","Amount","Probability (%)","Expected Revenue","Stage Duration (Days)","Moved From","Is Current"].map(h => (
-                              <th key={h} className="text-left py-2 pr-4 text-[10.5px] font-bold text-[#0C2472] uppercase tracking-wider whitespace-nowrap">{h}</th>
+                              <th key={h} className={`text-left py-2 pr-4 text-[11.5px] font-bold uppercase tracking-wider whitespace-nowrap ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>{h}</th>
                             ))}
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-[#EFF6FF]">
+                        <tbody className={`divide-y ${isDark ? "divide-[#27272A]" : "divide-[#EFF6FF]"}`}>
                           {deal.stageHistory.map((row, i) => (
-                            <tr key={i} className="hover:bg-[rgba(29,78,216,0.03)] transition-colors">
-                              <td className="py-3 pr-4 font-medium text-slate-700">{row.stage}</td>
-                              <td className="py-3 pr-4 text-slate-600">₹{row.amount.toLocaleString()}</td>
-                              <td className="py-3 pr-4 text-slate-600">{row.probability}</td>
-                              <td className="py-3 pr-4 text-slate-600">₹{row.expectedRevenue.toLocaleString()}</td>
-                              <td className="py-3 pr-4 text-slate-600">{row.stageDurationDays}</td>
-                              <td className="py-3 pr-4 text-slate-600">{row.movedFrom || "—"}</td>
+                            <tr key={i} className={`transition-colors ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[rgba(29,78,216,0.03)]"}`}>
+                              <td className={`py-3 pr-4 text-[14px] font-medium ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{row.stage}</td>
+                              <td className={`py-3 pr-4 text-[14px] ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>₹{row.amount.toLocaleString()}</td>
+                              <td className={`py-3 pr-4 text-[14px] ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>{row.probability}</td>
+                              <td className={`py-3 pr-4 text-[14px] ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>₹{row.expectedRevenue.toLocaleString()}</td>
+                              <td className={`py-3 pr-4 text-[14px] ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>{row.stageDurationDays}</td>
+                              <td className={`py-3 pr-4 text-[14px] ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>{row.movedFrom || "—"}</td>
                               <td className="py-3 pr-4">
                                 {row.isCurrent === 1 && (
                                   <span className="text-[11px] font-bold bg-[#DCFCE7] text-[#166534] px-2 py-0.5 rounded-full">1</span>
@@ -457,32 +475,32 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                   <SectionCard icon={ClipboardText} title="Tasks"
                     action={
                       <div className="flex items-center gap-2">
-                        <Button size="small" variant="contained" startIcon={<Plus size={13} weight="duotone" />}
-                          sx={{ bgcolor:"#1D4ED8", borderRadius:"8px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", boxShadow:"0 1px 6px #1D4ED833", "&:hover":{bgcolor:"#60A5FA"}, "&:active":{bgcolor:"#0C2472"} }}>
+                        <Button size="small" variant="contained" startIcon={<Plus size={13} weight="bold" />}
+                          sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius:"8px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", boxShadow: isDark ? "none" : "0 1px 6px #1D4ED833", "&:hover":{bgcolor: isDark ? "#3F3F46" : "#2563EB"} }}>
                           New Task
                         </Button>
-                        <IconButton size="small" sx={{ p:0.5, color:"#CBD5E1", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
+                        <IconButton size="small" sx={{ p:0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
                           <DotsThreeVertical size={16} weight="bold" />
                         </IconButton>
                       </div>
                     }>
                     <div className="overflow-x-auto -mx-5 px-5">
-                      <table className="w-full text-[12px]">
+                      <table className="w-full">
                         <thead>
-                          <tr className="border-b border-[#E3ECFC]">
-                            <th className="text-left py-2 pr-4 text-[10.5px] font-bold text-[#0C2472] uppercase tracking-wider">Subject</th>
-                            <th className="text-left py-2 pr-4 text-[10.5px] font-bold text-[#0C2472] uppercase tracking-wider">Status</th>
+                          <tr className={`border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+                            <th className={`text-left py-2 pr-4 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>Subject</th>
+                            <th className={`text-left py-2 pr-4 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>Status</th>
                           </tr>
                         </thead>
                         <tbody>
                           {deal.tasks.length === 0 ? (
                             <tr>
-                              <td colSpan={2} className="py-8 text-center text-slate-300 text-[12.5px]">No rows</td>
+                              <td colSpan={2} className={`py-8 text-center text-[14px] ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>No rows</td>
                             </tr>
                           ) : deal.tasks.map((t, i) => (
-                            <tr key={i} className="border-b border-[#EFF6FF] hover:bg-[rgba(29,78,216,0.03)] transition-colors">
-                              <td className="py-3 pr-4 font-medium text-slate-700">{t.subject}</td>
-                              <td className="py-3 pr-4 text-slate-600">{t.status}</td>
+                            <tr key={i} className={`border-b transition-colors ${isDark ? "border-[#27272A] hover:bg-[#27272A]" : "border-[#EFF6FF] hover:bg-[rgba(29,78,216,0.03)]"}`}>
+                              <td className={`py-3 pr-4 text-[14px] font-medium ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{t.subject}</td>
+                              <td className={`py-3 pr-4 text-[14px] ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>{t.status}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -493,51 +511,29 @@ export default function DealDetail({ dealId }: { dealId: number }) {
 
               </div>{/* end col-span-2 */}
 
-              {/* ── Right: Related List ── */}
-              <div className="space-y-4">
-                <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
-                  <div className="px-4 py-3.5 border-b border-[#EFF6FF]">
-                    <p className="font-heading text-[11px] font-bold text-slate-500 uppercase tracking-wider">Related List</p>
-                  </div>
-                  <div className="p-2 space-y-0.5">
-                    {relatedItems.map(({ label, icon: Icon, count, color }) => (
-                      <button key={label}
-                        onClick={() => document.getElementById(`section-${label.toLowerCase().replace(/\s/g, "-")}`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                        className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl hover:bg-[#EFF6FF] group transition-colors">
-                        <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: color + "20" }}>
-                          <Icon size={14} color={color} weight="duotone" />
-                        </div>
-                        <span className="flex-1 text-left text-[12.5px] font-medium text-slate-700 group-hover:text-[#1D4ED8] transition-colors">{label}</span>
-                        {count > 0 && (
-                          <span className="text-[10px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>
-                        )}
-                        <CaretRight size={14} color="#CBD5E1" weight="duotone" />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              <RelatedListPanel onClickItem={label =>
+                document.getElementById(`section-${label.toLowerCase().replace(/\s/g, "-")}`)?.scrollIntoView({ behavior: "smooth", block: "start" })
+              } />
             </div>
             )}
 
             {activeTab === "timeline" && (
               <div className="grid grid-cols-3 gap-4 items-start">
               <div className="col-span-2">
-              <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
-                <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[#EFF6FF]">
-                  <div className="w-6 h-6 rounded-lg bg-[#EFF6FF] flex items-center justify-center">
-                    <ClockCounterClockwise size={13} color="#1D4ED8" weight="duotone" />
+              <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+                <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
+                  <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
+                    <ClockCounterClockwise size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
                   </div>
-                  <p className="font-heading text-[11px] font-bold text-[#1D4ED8] uppercase tracking-[0.12em]">History</p>
+                  <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-500"}`}>History</p>
                 </div>
 
                 {deal.timeline.length === 0 ? (
                   <div className="py-12 flex flex-col items-center justify-center gap-2">
-                    <ClockCounterClockwise size={28} color="#CBD5E1" weight="duotone" />
-                    <p className="text-[12.5px] text-slate-400">No history yet</p>
+                    <ClockCounterClockwise size={28} color={isDark ? "#27272A" : "#E2E8F0"} weight="duotone" />
+                    <p className={`text-[14px] ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>No history yet</p>
                   </div>
                 ) : (() => {
-                  // Group entries by date
                   const grouped: Record<string, TimelineEntry[]> = {};
                   deal.timeline.forEach(e => {
                     if (!grouped[e.date]) grouped[e.date] = [];
@@ -549,51 +545,46 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                     <div className="px-6 py-5 space-y-6">
                       {sortedDates.map(date => (
                         <div key={date}>
-                          {/* Date header */}
                           <div className="flex items-center gap-3 mb-4">
-                            <span className="text-[11px] font-semibold text-slate-400">
+                            <span className={`text-[12px] font-semibold ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
                               {new Date(date).toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" })}
                             </span>
-                            <div className="flex-1 h-px bg-[#E3ECFC]" />
+                            <div className={`flex-1 h-px ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
                           </div>
 
-                          {/* Entries for this date */}
                           <div className="space-y-0">
                             {grouped[date].map((entry, i) => {
                               const isLast = i === grouped[date].length - 1 && date === sortedDates[sortedDates.length - 1];
                               return (
                                 <div key={i} className="flex gap-4">
-                                  {/* Time */}
                                   <div className="w-16 flex-shrink-0 text-right">
-                                    <span className="text-[11px] text-slate-400 font-medium">{entry.time}</span>
+                                    <span className={`text-[12px] font-medium ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{entry.time}</span>
                                   </div>
 
-                                  {/* Icon + line */}
                                   <div className="flex flex-col items-center flex-shrink-0">
-                                    <div className="w-8 h-8 rounded-full bg-[#EFF6FF] border-2 border-[#E3ECFC] flex items-center justify-center z-10 flex-shrink-0">
-                                      <PencilSimple size={13} color="#1D4ED8" weight="duotone" />
+                                    <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center z-10 flex-shrink-0 ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
+                                      <PencilSimple size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
                                     </div>
-                                    {!isLast && <div className="w-px flex-1 bg-[#E3ECFC] my-1 min-h-[24px]" />}
+                                    {!isLast && <div className={`w-px flex-1 my-1 min-h-[24px] ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />}
                                   </div>
 
-                                  {/* Content */}
                                   <div className="pb-5 flex-1 min-w-0 overflow-hidden">
                                     {entry.probability && (
-                                      <p className="text-[12.5px] text-slate-700 leading-relaxed break-words">
+                                      <p className={`text-[14px] leading-relaxed break-words ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>
                                         <span className="font-bold">Probability:</span>{" "}
-                                        <span className="text-slate-500">{entry.probability.from}.0 → {entry.probability.to}.0</span>
+                                        <span className={isDark ? "text-[#71717A]" : "text-slate-500"}>{entry.probability.from}.0 → {entry.probability.to}.0</span>
                                       </p>
                                     )}
                                     {entry.stage && entry.stage.to && (
-                                      <p className="text-[12.5px] text-slate-700 leading-relaxed break-words">
+                                      <p className={`text-[14px] leading-relaxed break-words ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>
                                         <span className="font-bold">Stage:</span>{" "}
                                         {entry.stage.from
-                                          ? <><span className="text-slate-500">{entry.stage.from} → {entry.stage.to}</span></>
-                                          : <span className="text-slate-500">{entry.stage.to}</span>
+                                          ? <span className={isDark ? "text-[#71717A]" : "text-slate-500"}>{entry.stage.from} → {entry.stage.to}</span>
+                                          : <span className={isDark ? "text-[#71717A]" : "text-slate-500"}>{entry.stage.to}</span>
                                         }
                                       </p>
                                     )}
-                                    <p className="text-[11px] text-[#3B82F6] mt-0.5 break-all">by {entry.by}</p>
+                                    <p className={`text-[12px] mt-0.5 break-all ${isDark ? "text-[#9CA3AF]" : "text-inherit"}`}>by {entry.by}</p>
                                   </div>
                                 </div>
                               );
@@ -607,30 +598,7 @@ export default function DealDetail({ dealId }: { dealId: number }) {
               </div>
               </div>{/* end col-span-2 */}
 
-              {/* ── Right: Related List ── */}
-              <div className="space-y-4">
-                <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
-                  <div className="px-4 py-3.5 border-b border-[#EFF6FF]">
-                    <p className="font-heading text-[11px] font-bold text-slate-500 uppercase tracking-wider">Related List</p>
-                  </div>
-                  <div className="p-2 space-y-0.5">
-                    {relatedItems.map(({ label, icon: Icon, count, color }) => (
-                      <button key={label}
-                        onClick={() => setActiveTab("overview")}
-                        className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl hover:bg-[#EFF6FF] group transition-colors">
-                        <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: color + "20" }}>
-                          <Icon size={14} color={color} weight="duotone" />
-                        </div>
-                        <span className="flex-1 text-left text-[12.5px] font-medium text-slate-700 group-hover:text-[#1D4ED8] transition-colors">{label}</span>
-                        {count > 0 && (
-                          <span className="text-[10px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>
-                        )}
-                        <CaretRight size={14} color="#CBD5E1" weight="duotone" />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              <RelatedListPanel onClickItem={() => setActiveTab("overview")} />
             </div>
             )}
         </div>
@@ -638,18 +606,18 @@ export default function DealDetail({ dealId }: { dealId: number }) {
 
       {/* ── More menu ── */}
       <Menu anchorEl={moreAnchor} open={Boolean(moreAnchor)} onClose={() => setMoreAnchor(null)}
-        PaperProps={{ sx:{ borderRadius:"12px", border:"1px solid #E3ECFC", boxShadow:"0 8px 32px rgba(12,36,114,0.10)", minWidth:160 } }}>
+        PaperProps={{ sx:{ borderRadius:"12px", border:`1px solid ${isDark ? "#27272A" : "#E3ECFC"}`, bgcolor: isDark ? "#1C1C1E" : "#fff", boxShadow: isDark ? "0 8px 32px rgba(0,0,0,0.5)" : "0 8px 32px rgba(12,36,114,0.10)", minWidth:160 } }}>
         {[
-          { label:"Edit Deal",    icon:PencilSimple, color:"#334155" },
-          { label:"Copy",         icon:Copy,         color:"#334155" },
+          { label:"Edit Deal",    icon:PencilSimple, color: isDark ? "#D4D4D8" : "#334155" },
+          { label:"Copy",         icon:Copy,         color: isDark ? "#D4D4D8" : "#334155" },
           { label:"Delete",       icon:Trash,        color:"#EF4444" },
         ].map(opt => (
           <MenuItem key={opt.label} onClick={() => setMoreAnchor(null)}
-            sx={{ mx:0.5, borderRadius:"8px", py:1, "&:hover":{bgcolor:"#EFF6FF"} }}>
+            sx={{ mx:0.5, borderRadius:"8px", py:1, "&:hover":{bgcolor: isDark ? "#27272A" : "#EFF6FF"} }}>
             <ListItemIcon sx={{ minWidth:30 }}>
               <opt.icon size={15} color={opt.color} weight="duotone" />
             </ListItemIcon>
-            <ListItemText primaryTypographyProps={{ fontSize:"0.8rem", fontWeight:600, color: opt.color==="#EF4444"?"#EF4444":"#334155" }}>
+            <ListItemText primaryTypographyProps={{ fontSize:"0.8rem", fontWeight:600, color: opt.color==="#EF4444"?"#EF4444": (isDark ? "#D4D4D8" : "#334155") }}>
               {opt.label}
             </ListItemText>
           </MenuItem>

@@ -13,6 +13,7 @@ import {
   Note, ClipboardText, Paperclip, ClockCounterClockwise,
   Plus, GridFour, List, UserCircle, MapPin, Handshake,
 } from "@phosphor-icons/react";
+import { useTheme } from "@/components/ThemeContext";
 
 // ─────────────────────────────────────────────
 //  Types
@@ -305,19 +306,21 @@ const CONTACTS_DETAIL: Record<number, ContactRecord> = {
 };
 
 // ─────────────────────────────────────────────
-//  Sub-components
+//  Sub-components (theme-aware)
 // ─────────────────────────────────────────────
 function SectionCard({ icon: Icon, title, children, action, id }: {
   icon: React.ElementType; title: string; children: React.ReactNode;
   action?: React.ReactNode; id?: string;
 }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   return (
-    <div id={id} className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
-      <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[#EFF6FF]">
-        <div className="w-6 h-6 rounded-lg bg-[#EFF6FF] flex items-center justify-center">
-          <Icon size={13} color="#1D4ED8" weight="duotone" />
+    <div id={id} className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+      <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
+        <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
+          <Icon size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
         </div>
-        <p className="font-heading text-[11px] font-bold text-[#1D4ED8] uppercase tracking-[0.12em] flex-1">{title}</p>
+        <p className={`font-heading text-[12px] font-bold uppercase tracking-wider flex-1 ${isDark ? "text-slate-500" : "text-slate-500"}`}>{title}</p>
         {action}
       </div>
       <div className="px-5 py-4">{children}</div>
@@ -326,13 +329,15 @@ function SectionCard({ icon: Icon, title, children, action, id }: {
 }
 
 function KV({ label, value, fullWidth }: { label: string; value?: string | boolean; fullWidth?: boolean }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const display = value !== undefined && value !== "" && value !== false
     ? (typeof value === "boolean" ? (value ? "Yes" : "No") : String(value))
     : (typeof value === "boolean" ? "No" : "—");
   return (
-    <div className={`py-2.5 border-b border-[#EFF6FF] last:border-0 ${fullWidth ? "col-span-2" : ""}`}>
-      <p className="text-[10.5px] font-semibold text-slate-400 uppercase tracking-wider mb-0.5">{label}</p>
-      <p className={`text-[13px] font-medium ${display === "—" ? "text-slate-300" : "text-slate-700"}`}>{display}</p>
+    <div className={`py-2.5 border-b last:border-0 ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"} ${fullWidth ? "col-span-2" : ""}`}>
+      <p className={`text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{label}</p>
+      <p className={`text-[14px] font-medium ${display === "—" ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>{display}</p>
     </div>
   );
 }
@@ -342,6 +347,8 @@ function KV({ label, value, fullWidth }: { label: string; value?: string | boole
 // ─────────────────────────────────────────────
 export default function ContactDetail({ contactId }: { contactId: number }) {
   const router = useRouter();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const contact = CONTACTS_DETAIL[contactId];
 
   const [activeTab, setActiveTab] = useState<"overview" | "timeline">("overview");
@@ -351,14 +358,14 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
 
   if (!contact) {
     return (
-      <div className="flex h-screen bg-[#EFF6FF] font-sans">
+      <div className={`flex h-screen font-sans ${isDark ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
         <Sidebar />
         <div className="sidebar-content flex-1 flex flex-col">
           <TopBar title="Contacts" />
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
-              <p className="text-[#0C2472] text-xl font-bold mb-2">Contact not found</p>
-              <button onClick={() => router.push("/contacts")} className="text-[#1D4ED8] text-sm underline">
+              <p className={`text-xl font-bold mb-2 ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>Contact not found</p>
+              <button onClick={() => router.push("/contacts")} className={`text-sm underline ${isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]"}`}>
                 Back to Contacts
               </button>
             </div>
@@ -381,29 +388,54 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
     { label: "Tasks",        icon: ClipboardText, count: 0,                          color: "#10B981" },
     { label: "Notes",        icon: Note,          count: notes.length,               color: "#8B5CF6" },
     { label: "Attachments",  icon: Paperclip,     count: 0,                          color: "#F59E0B" },
-    { label: "Contact Name", icon: Handshake,     count: contact.relatedDeals.length, color: "#1D4ED8" },
+    { label: "Contact Name", icon: Handshake,     count: contact.relatedDeals.length, color: "#64748B" },
   ];
 
   const fullName = `${contact.firstName} ${contact.lastName}`.trim();
 
+  const RelatedListPanel = ({ onClickItem }: { onClickItem: (label: string) => void }) => (
+    <div className="space-y-4">
+      <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+        <div className={`px-4 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
+          <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-500"}`}>Related List</p>
+        </div>
+        <div className="p-2 space-y-0.5">
+          {relatedItems.map(({ label, icon: Icon, count, color }) => (
+            <button key={label} onClick={() => onClickItem(label)}
+              className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-xl transition-colors ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}>
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: color + "20" }}>
+                <Icon size={14} color={color} weight="duotone" />
+              </div>
+              <span className={`flex-1 text-left text-[14px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>{label}</span>
+              {count > 0 && (
+                <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded-full ${isDark ? "bg-[#27272A] text-[#A1A1AA]" : "bg-[#E3ECFC] text-[#1D4ED8]"}`}>{count}</span>
+              )}
+              <CaretRight size={14} color={isDark ? "#3F3F46" : "#E2E8F0"} weight="duotone" />
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="flex h-screen bg-[#EFF6FF] font-sans">
+    <div className={`flex h-screen font-sans ${isDark ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
       <Sidebar />
 
       <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-hidden">
         <TopBar title="Contacts" />
 
         {/* ── Breadcrumb ── */}
-        <div className="flex items-center gap-1.5 px-8 py-3 bg-[#E3ECFC] border-b border-[#E3ECFC] text-[12px]">
-          <Link href="/" className="text-slate-400 hover:text-[#1D4ED8] transition-colors">
+        <div className={`flex items-center gap-1.5 px-8 py-3 border-b text-[12px] ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#E3ECFC] border-[#E3ECFC]"}`}>
+          <Link href="/" className={`transition-colors ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
             <House size={13} weight="duotone" />
           </Link>
-          <CaretRight size={11} color="#CBD5E1" />
-          <Link href="/contacts" className="text-slate-400 hover:text-[#1D4ED8] font-medium transition-colors">
+          <CaretRight size={11} color={isDark ? "#3F3F46" : "#E2E8F0"} />
+          <Link href="/contacts" className={`font-medium transition-colors ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
             Contacts
           </Link>
-          <CaretRight size={11} color="#CBD5E1" />
-          <span className="text-[#0C2472] font-semibold">{fullName}</span>
+          <CaretRight size={11} color={isDark ? "#3F3F46" : "#E2E8F0"} />
+          <span className={`font-semibold ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>{fullName}</span>
         </div>
 
         {/* ── Body ── */}
@@ -413,10 +445,10 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
           <div className="flex items-center gap-2 mb-5">
             {(["overview", "timeline"] as const).map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
-                className={`px-4 py-1.5 rounded-full text-[12.5px] font-semibold capitalize transition-all ${
+                className={`px-4 py-1.5 rounded-full text-[14px] font-semibold capitalize transition-all ${
                   activeTab === tab
-                    ? "bg-[#1D4ED8] text-white shadow-sm"
-                    : "bg-[#f9fbff] text-slate-500 hover:bg-[#E3ECFC] hover:text-[#1D4ED8]"
+                    ? isDark ? "bg-[#3F3F46] text-[#F4F4F5] shadow-sm" : "bg-[#1D4ED8] text-white shadow-sm"
+                    : isDark ? "bg-[#1C1C1E] text-[#71717A] hover:bg-[#27272A]" : "bg-[#f9fbff] text-slate-500 hover:bg-[#E3ECFC]"
                 }`}>
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
               </button>
@@ -428,7 +460,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
             <div className="grid grid-cols-3 gap-4 items-start">
             <div className="col-span-2 space-y-5">
                 {/* ── Quick info card ── */}
-                <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm divide-y divide-[#EFF6FF]">
+                <div className={`rounded-2xl border shadow-sm divide-y ${isDark ? "bg-[#1C1C1E] border-[#27272A] divide-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC] divide-[#EFF6FF]"}`}>
                   {[
                     { label: "Contact Owner", value: contact.contactOwner },
                     { label: "Email",         value: contact.email },
@@ -437,8 +469,8 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                     { label: "Department",    value: contact.department },
                   ].map(({ label, value }) => (
                     <div key={label} className="flex items-center px-5 py-3">
-                      <span className="text-[12.5px] text-slate-500 font-medium w-40 flex-shrink-0">{label}:</span>
-                      <span className={`flex-1 text-[13px] font-semibold ${value ? "text-slate-700" : "text-slate-300"}`}>
+                      <span className={`text-[12px] font-medium w-40 flex-shrink-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{label}:</span>
+                      <span className={`flex-1 text-[14px] font-semibold ${value ? (isDark ? "text-[#D4D4D8]" : "text-slate-700") : (isDark ? "text-[#3F3F46]" : "text-slate-300")}`}>
                         {value || "—"}
                       </span>
                     </div>
@@ -449,7 +481,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                 <SectionCard icon={UserCircle} title="Contact Information"
                   action={
                     <IconButton size="small"
-                      sx={{ p: 0.5, color: "#CBD5E1", "&:hover": { color: "#1D4ED8", bgcolor: "#EFF6FF" }, borderRadius: "6px" }}>
+                      sx={{ p: 0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&:hover": { color: "#1D4ED8", bgcolor: isDark ? "#27272A" : "#EFF6FF" }, borderRadius: "6px" }}>
                       <DotsThreeVertical size={16} weight="bold" />
                     </IconButton>
                   }>
@@ -494,27 +526,27 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                     action={
                       <div className="flex items-center gap-2">
                         <Button size="small" variant="contained"
-                          startIcon={<Plus size={13} weight="duotone" />}
-                          sx={{ bgcolor: "#1D4ED8", borderRadius: "8px", textTransform: "none", fontWeight: 700, fontSize: "0.73rem", boxShadow: "0 1px 6px #1D4ED833", "&:hover": { bgcolor: "#60A5FA" }, "&:active": { bgcolor: "#0C2472" } }}>
+                          startIcon={<Plus size={13} weight="bold" />}
+                          sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "8px", textTransform: "none", fontWeight: 700, fontSize: "0.73rem", boxShadow: isDark ? "none" : "0 1px 6px #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB" } }}>
                           New Task
                         </Button>
                         <IconButton size="small"
-                          sx={{ p: 0.5, color: "#CBD5E1", "&:hover": { color: "#1D4ED8" }, borderRadius: "6px" }}>
+                          sx={{ p: 0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&:hover": { color: "#1D4ED8" }, borderRadius: "6px" }}>
                           <DotsThreeVertical size={16} weight="bold" />
                         </IconButton>
                       </div>
                     }>
                     <div className="overflow-x-auto -mx-5 px-5">
-                      <table className="w-full text-[12px]">
+                      <table className="w-full text-[14px]">
                         <thead>
-                          <tr className="border-b border-[#E3ECFC]">
-                            <th className="text-left py-2 pr-4 text-[10.5px] font-bold text-[#0C2472] uppercase tracking-wider">Subject</th>
-                            <th className="text-left py-2 pr-4 text-[10.5px] font-bold text-[#0C2472] uppercase tracking-wider">Status</th>
+                          <tr className={`border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+                            <th className={`text-left py-2 pr-4 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>Subject</th>
+                            <th className={`text-left py-2 pr-4 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>Status</th>
                           </tr>
                         </thead>
                         <tbody>
                           <tr>
-                            <td colSpan={2} className="py-8 text-center text-slate-300 text-[12.5px]">No rows</td>
+                            <td colSpan={2} className={`py-8 text-center text-[14px] ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>No rows</td>
                           </tr>
                         </tbody>
                       </table>
@@ -526,27 +558,27 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                 <div id="section-notes">
                   <SectionCard icon={Note} title="Notes">
                     <div className="space-y-3">
-                      <div className="border border-[#E3ECFC] rounded-xl overflow-hidden focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#93C5FD] transition-all">
+                      <div className={`border rounded-xl overflow-hidden transition-all ${isDark ? "border-[#3F3F46] focus-within:border-[#9CA3AF]" : "border-[#E3ECFC] focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#4A7AE8]"}`}>
                         <InputBase
                           fullWidth multiline minRows={2}
                           placeholder="Add a note…"
                           value={note}
                           onChange={e => setNote(e.target.value)}
-                          sx={{ px: 2, py: 1.5, fontSize: "0.8rem", color: "#334155", "& textarea::placeholder": { color: "#CBD5E1", opacity: 1 } }}
+                          sx={{ px: 2, py: 1.5, fontSize: "0.8rem", color: isDark ? "#D4D4D8" : "#334155", "& textarea::placeholder": { color: isDark ? "#3F3F46" : "#E2E8F0", opacity: 1 } }}
                         />
                         {note.trim() && (
                           <div className="flex justify-end px-3 pb-2">
                             <Button size="small" variant="contained" onClick={addNote}
-                              sx={{ bgcolor: "#1D4ED8", borderRadius: "8px", textTransform: "none", fontWeight: 700, fontSize: "0.73rem", "&:hover": { bgcolor: "#60A5FA" }, "&:active": { bgcolor: "#0C2472" } }}>
+                              sx={{ bgcolor: isDark ? "#27272A" : "inherit", color: isDark ? "#F4F4F5" : undefined, borderRadius: "8px", textTransform: "none", fontWeight: 700, fontSize: "0.73rem", "&:hover": { bgcolor: isDark ? "#3F3F46" : "inherit" } }}>
                               Save Note
                             </Button>
                           </div>
                         )}
                       </div>
                       {notes.map((n, i) => (
-                        <div key={i} className="bg-[#EFF6FF] rounded-xl px-4 py-3 border border-[#E3ECFC]">
-                          <p className="text-[12.5px] text-slate-700">{n.text}</p>
-                          <p className="text-[10px] text-slate-400 mt-1">{n.at}</p>
+                        <div key={i} className={`rounded-xl px-4 py-3 border ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
+                          <p className={`text-[14px] ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{n.text}</p>
+                          <p className={`text-[12px] mt-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{n.at}</p>
                         </div>
                       ))}
                     </div>
@@ -558,21 +590,21 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                   <SectionCard icon={Paperclip} title="Attachments"
                     action={
                       <div className="flex items-center gap-2">
-                        <div className="flex items-center bg-[#EFF6FF] rounded-lg p-0.5 gap-0.5">
+                        <div className={`flex items-center rounded-lg p-0.5 gap-0.5 ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
                           {[{ k: "grid", Icon: GridFour }, { k: "list", Icon: List }].map(({ k, Icon }) => (
                             <button key={k} onClick={() => setAttachView(k as "grid" | "list")}
-                              className={`p-1 rounded-md transition-colors ${attachView === k ? "bg-[#f9fbff] text-[#1D4ED8]" : "text-slate-400 hover:text-[#1D4ED8]"}`}>
+                              className={`p-1 rounded-md transition-colors ${attachView === k ? (isDark ? "bg-[#3F3F46] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]") : (isDark ? "text-[#9CA3AF]" : "text-slate-400")}`}>
                               <Icon size={13} weight="duotone" />
                             </button>
                           ))}
                         </div>
                         <Button size="small" variant="outlined"
-                          sx={{ borderColor: "#E3ECFC", color: "#0C2472", bgcolor: "#E3ECFC", borderRadius: "8px", textTransform: "none", fontWeight: 600, fontSize: "0.73rem", "&:hover": { borderColor: "#1D4ED8", color: "#1D4ED8", bgcolor: "#f9fbff" } }}>
+                          sx={{ borderColor: isDark ? "#3F3F46" : "#E3ECFC", color: isDark ? "#A1A1AA" : "#0C2472", bgcolor: isDark ? "#27272A" : "#E3ECFC", borderRadius: "8px", textTransform: "none", fontWeight: 600, fontSize: "0.73rem", "&:hover": { borderColor: isDark ? "#9CA3AF" : "#E3ECFC", bgcolor: isDark ? "#3F3F46" : "#f9fbff" } }}>
                           Attach
                         </Button>
                       </div>
                     }>
-                    <div className="flex items-center justify-center py-6 text-slate-300 text-[12.5px]">
+                    <div className={`flex items-center justify-center py-6 text-[14px] ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>
                       No attachments yet
                     </div>
                   </SectionCard>
@@ -584,37 +616,37 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                     action={
                       <div className="flex items-center gap-2">
                         <Button size="small" variant="contained"
-                          startIcon={<Plus size={13} weight="duotone" />}
-                          sx={{ bgcolor: "#1D4ED8", borderRadius: "8px", textTransform: "none", fontWeight: 700, fontSize: "0.73rem", boxShadow: "0 1px 6px #1D4ED833", "&:hover": { bgcolor: "#60A5FA" }, "&:active": { bgcolor: "#0C2472" } }}>
+                          startIcon={<Plus size={13} weight="bold" />}
+                          sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "8px", textTransform: "none", fontWeight: 700, fontSize: "0.73rem", boxShadow: isDark ? "none" : "0 1px 6px #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB" } }}>
                           New Contact
                         </Button>
                         <IconButton size="small"
-                          sx={{ p: 0.5, color: "#CBD5E1", "&:hover": { color: "#1D4ED8" }, borderRadius: "6px" }}>
+                          sx={{ p: 0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&:hover": { color: "#1D4ED8" }, borderRadius: "6px" }}>
                           <DotsThreeVertical size={16} weight="bold" />
                         </IconButton>
                       </div>
                     }>
                     <div className="overflow-x-auto -mx-5 px-5">
-                      <table className="w-full text-[12px] min-w-[500px]">
+                      <table className="w-full text-[14px] min-w-[500px]">
                         <thead>
-                          <tr className="border-b border-[#E3ECFC]">
+                          <tr className={`border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
                             {["Deal Name", "Amount", "Stage", "Probability (%)", "Closing Date"].map(h => (
-                              <th key={h} className="text-left py-2 pr-4 text-[10.5px] font-bold text-[#0C2472] uppercase tracking-wider whitespace-nowrap">{h}</th>
+                              <th key={h} className={`text-left py-2 pr-4 text-[11.5px] font-bold uppercase tracking-wider whitespace-nowrap ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>{h}</th>
                             ))}
                           </tr>
                         </thead>
                         <tbody>
                           {contact.relatedDeals.length === 0 ? (
                             <tr>
-                              <td colSpan={5} className="py-8 text-center text-slate-300 text-[12.5px]">No rows</td>
+                              <td colSpan={5} className={`py-8 text-center text-[14px] ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>No rows</td>
                             </tr>
                           ) : contact.relatedDeals.map((d, i) => (
-                            <tr key={i} className="border-b border-[#EFF6FF] hover:bg-[rgba(29,78,216,0.03)] transition-colors">
-                              <td className="py-3 pr-4 font-medium text-[#1D4ED8] cursor-pointer hover:underline">{d.name}</td>
-                              <td className="py-3 pr-4 text-slate-600">₹{d.amount.toLocaleString()}</td>
-                              <td className="py-3 pr-4 text-slate-600">{d.stage}</td>
-                              <td className="py-3 pr-4 text-slate-600">{d.probability}</td>
-                              <td className="py-3 pr-4 text-slate-600">{d.closingDate}</td>
+                            <tr key={i} className={`border-b transition-colors ${isDark ? "border-[#27272A] hover:bg-[#27272A]" : "border-[#EFF6FF] hover:bg-[rgba(29,78,216,0.03)]"}`}>
+                              <td className={`py-3 pr-4 font-medium cursor-pointer hover:underline ${isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]"}`}>{d.name}</td>
+                              <td className={`py-3 pr-4 ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>₹{d.amount.toLocaleString()}</td>
+                              <td className={`py-3 pr-4 ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>{d.stage}</td>
+                              <td className={`py-3 pr-4 ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>{d.probability}</td>
+                              <td className={`py-3 pr-4 ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>{d.closingDate}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -625,30 +657,9 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
 
             </div>{/* end col-span-2 */}
 
-            {/* ── Right: Related List ── */}
-            <div className="space-y-4">
-              <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
-                <div className="px-4 py-3.5 border-b border-[#EFF6FF]">
-                  <p className="font-heading text-[11px] font-bold text-slate-500 uppercase tracking-wider">Related List</p>
-                </div>
-                <div className="p-2 space-y-0.5">
-                  {relatedItems.map(({ label, icon: Icon, count, color }) => (
-                    <button key={label}
-                      onClick={() => document.getElementById(`section-${label.toLowerCase().replace(/\s+/g, "-")}`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                      className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl hover:bg-[#EFF6FF] group transition-colors">
-                      <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: color + "20" }}>
-                        <Icon size={14} color={color} weight="duotone" />
-                      </div>
-                      <span className="flex-1 text-left text-[12.5px] font-medium text-slate-700 group-hover:text-[#1D4ED8] transition-colors">{label}</span>
-                      {count > 0 && (
-                        <span className="text-[10px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>
-                      )}
-                      <CaretRight size={14} color="#CBD5E1" weight="duotone" />
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <RelatedListPanel onClickItem={label =>
+              document.getElementById(`section-${label.toLowerCase().replace(/\s+/g, "-")}`)?.scrollIntoView({ behavior: "smooth", block: "start" })
+            } />
           </div>
           )}
 
@@ -656,18 +667,18 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
           {activeTab === "timeline" && (
             <div className="grid grid-cols-3 gap-4 items-start">
             <div className="col-span-2">
-            <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
-                <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[#EFF6FF]">
-                  <div className="w-6 h-6 rounded-lg bg-[#EFF6FF] flex items-center justify-center">
-                    <ClockCounterClockwise size={13} color="#1D4ED8" weight="duotone" />
+            <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+                <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
+                  <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
+                    <ClockCounterClockwise size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
                   </div>
-                  <p className="font-heading text-[11px] font-bold text-[#1D4ED8] uppercase tracking-[0.12em]">History</p>
+                  <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-500"}`}>History</p>
                 </div>
 
                 {contact.timeline.length === 0 ? (
                   <div className="py-12 flex flex-col items-center justify-center gap-2">
-                    <ClockCounterClockwise size={28} color="#CBD5E1" weight="duotone" />
-                    <p className="text-[12.5px] text-slate-400">No history yet</p>
+                    <ClockCounterClockwise size={28} color={isDark ? "#27272A" : "#E2E8F0"} weight="duotone" />
+                    <p className={`text-[14px] ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>No history yet</p>
                   </div>
                 ) : (() => {
                   const grouped: Record<string, TimelineEntry[]> = {};
@@ -682,10 +693,10 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                       {sortedDates.map(date => (
                         <div key={date}>
                           <div className="flex items-center gap-3 mb-4">
-                            <span className="text-[11px] font-semibold text-slate-400 whitespace-nowrap">
+                            <span className={`text-[12px] font-semibold whitespace-nowrap ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
                               {new Date(date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
                             </span>
-                            <div className="flex-1 h-px bg-[#E3ECFC]" />
+                            <div className={`flex-1 h-px ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
                           </div>
 
                           <div className="space-y-0">
@@ -694,25 +705,25 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                               return (
                                 <div key={i} className="flex gap-4">
                                   <div className="w-16 flex-shrink-0 text-right">
-                                    <span className="text-[11px] text-slate-400 font-medium">{entry.time}</span>
+                                    <span className={`text-[12px] font-medium ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{entry.time}</span>
                                   </div>
                                   <div className="flex flex-col items-center flex-shrink-0">
-                                    <div className="w-8 h-8 rounded-full bg-[#EFF6FF] border-2 border-[#E3ECFC] flex items-center justify-center z-10 flex-shrink-0">
-                                      <PencilSimple size={13} color="#1D4ED8" weight="duotone" />
+                                    <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center z-10 flex-shrink-0 ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
+                                      <PencilSimple size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
                                     </div>
-                                    {!isLast && <div className="w-px flex-1 bg-[#E3ECFC] my-1 min-h-[24px]" />}
+                                    {!isLast && <div className={`w-px flex-1 my-1 min-h-[24px] ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />}
                                   </div>
                                   <div className="pb-5 flex-1 min-w-0 overflow-hidden">
                                     {entry.field && (
-                                      <p className="text-[12.5px] text-slate-700 leading-relaxed break-words">
+                                      <p className={`text-[14px] leading-relaxed break-words ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>
                                         <span className="font-bold">{entry.field}:</span>{" "}
                                         {entry.from
-                                          ? <span className="text-slate-500">{entry.from} → {entry.to}</span>
-                                          : <span className="text-slate-500">{entry.to}</span>
+                                          ? <span className={isDark ? "text-[#71717A]" : "text-slate-500"}>{entry.from} → {entry.to}</span>
+                                          : <span className={isDark ? "text-[#71717A]" : "text-slate-500"}>{entry.to}</span>
                                         }
                                       </p>
                                     )}
-                                    <p className="text-[11px] text-[#3B82F6] mt-0.5 break-all">by {entry.by}</p>
+                                    <p className={`text-[12px] mt-0.5 break-all ${isDark ? "text-[#9CA3AF]" : "text-inherit"}`}>by {entry.by}</p>
                                   </div>
                                 </div>
                               );
@@ -726,30 +737,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
               </div>
             </div>{/* end col-span-2 */}
 
-            {/* ── Right: Related List ── */}
-            <div className="space-y-4">
-              <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
-                <div className="px-4 py-3.5 border-b border-[#EFF6FF]">
-                  <p className="font-heading text-[11px] font-bold text-slate-500 uppercase tracking-wider">Related List</p>
-                </div>
-                <div className="p-2 space-y-0.5">
-                  {relatedItems.map(({ label, icon: Icon, count, color }) => (
-                    <button key={label}
-                      onClick={() => setActiveTab("overview")}
-                      className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl hover:bg-[#EFF6FF] group transition-colors">
-                      <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: color + "20" }}>
-                        <Icon size={14} color={color} weight="duotone" />
-                      </div>
-                      <span className="flex-1 text-left text-[12.5px] font-medium text-slate-700 group-hover:text-[#1D4ED8] transition-colors">{label}</span>
-                      {count > 0 && (
-                        <span className="text-[10px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>
-                      )}
-                      <CaretRight size={14} color="#CBD5E1" weight="duotone" />
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <RelatedListPanel onClickItem={() => setActiveTab("overview")} />
           </div>
           )}
         </div>

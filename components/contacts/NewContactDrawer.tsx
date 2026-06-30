@@ -13,6 +13,7 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import Divider from "@mui/material/Divider";
 import { X, AddressBook } from "@phosphor-icons/react";
+import { useTheme } from "@/components/ThemeContext";
 
 // ─────────────────────────────────────────────
 //  Lists
@@ -26,39 +27,12 @@ const COUNTRIES     = ["India", "United States", "United Kingdom", "Singapore", 
 const STATES_IN     = ["Andhra Pradesh", "Delhi", "Gujarat", "Karnataka", "Kerala", "Maharashtra", "Tamil Nadu", "Telangana", "Other"];
 
 // ─────────────────────────────────────────────
-//  Shared input style (brand palette)
-// ─────────────────────────────────────────────
-const FX = {
-  "& .MuiOutlinedInput-root": {
-    borderRadius: "10px",
-    backgroundColor: "#EFF6FF",
-    fontSize: "0.82rem",
-    "& fieldset":             { borderColor: "#E3ECFC", borderWidth: 1.5 },
-    "&:hover fieldset":       { borderColor: "#60A5FA" },
-    "&.Mui-focused fieldset": { borderColor: "#1D4ED8", borderWidth: 2 },
-    "&.Mui-focused":          { boxShadow: "0 0 0 2px #93C5FD" },
-    "& input":                { padding: "9px 12px" },
-  },
-  "& .MuiInputLabel-root":             { fontSize: "0.78rem", color: "#6B7280" },
-  "& .MuiInputLabel-root.Mui-focused": { color: "#1D4ED8" },
-  "& .MuiSelect-select":               { fontSize: "0.82rem", padding: "9px 12px", backgroundColor: "#EFF6FF" },
-};
-
-// Small FX variant for Salutation
-const FX_SM = {
-  ...FX,
-  "& .MuiOutlinedInput-root": {
-    ...FX["& .MuiOutlinedInput-root"],
-    "& .MuiSelect-select": { fontSize: "0.78rem", padding: "9px 10px" },
-  },
-};
-
-// ─────────────────────────────────────────────
-//  Section header (plain style matching screenshot)
+//  Section header
 // ─────────────────────────────────────────────
 function SectionTitle({ children }: { children: React.ReactNode }) {
+  const { theme } = useTheme();
   return (
-    <h3 className="font-heading text-[13.5px] font-bold text-slate-800 mb-4">{children}</h3>
+    <h3 className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-4 ${theme === "dark" ? "text-[#D4D4D8]" : "text-slate-500"}`}>{children}</h3>
   );
 }
 
@@ -66,23 +40,23 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 //  Address sub-panel (Mailing or Other)
 // ─────────────────────────────────────────────
 type AddressKey = "country" | "building" | "street" | "city" | "state" | "zip" | "lat" | "lng";
-
 interface AddressFields { country: string; building: string; street: string; city: string; state: string; zip: string; lat: string; lng: string; }
 
 function AddressPanel({
-  title, values, onChange, onClear,
+  title, values, onChange, onClear, isDark, fx,
 }: {
   title: string;
   values: AddressFields;
   onChange: (k: AddressKey, v: string) => void;
   onClear: () => void;
+  isDark: boolean;
+  fx: object;
 }) {
   return (
-    <div className="flex-1 min-w-0 bg-[#EFF6FF]/60 rounded-xl border border-[#E3ECFC] p-4 space-y-2.5">
-      <p className="font-heading text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3">{title}</p>
+    <div className={`flex-1 min-w-0 rounded-xl border p-4 space-y-2.5 ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF]/60 border-[#E3ECFC]"}`}>
+      <p className={`font-heading text-[12px] font-bold uppercase tracking-wider mb-3 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{title}</p>
 
-      {/* Country / Region */}
-      <FormControl size="small" fullWidth sx={FX}>
+      <FormControl size="small" fullWidth sx={fx}>
         <InputLabel>Country / Region</InputLabel>
         <Select label="Country / Region" value={values.country} onChange={e => onChange("country", e.target.value)}>
           <MenuItem value="" sx={{ fontSize: "0.82rem", color: "#9CA3AF" }}>—</MenuItem>
@@ -90,20 +64,14 @@ function AddressPanel({
         </Select>
       </FormControl>
 
-      {/* Flat / Building */}
       <TextField label="Flat / House No. / Building / Apartment Name" value={values.building}
-        onChange={e => onChange("building", e.target.value)} size="small" fullWidth sx={FX} />
-
-      {/* Street */}
+        onChange={e => onChange("building", e.target.value)} size="small" fullWidth sx={fx} />
       <TextField label="Street Address" value={values.street}
-        onChange={e => onChange("street", e.target.value)} size="small" fullWidth sx={FX} />
-
-      {/* City */}
+        onChange={e => onChange("street", e.target.value)} size="small" fullWidth sx={fx} />
       <TextField label="City" value={values.city}
-        onChange={e => onChange("city", e.target.value)} size="small" fullWidth sx={FX} />
+        onChange={e => onChange("city", e.target.value)} size="small" fullWidth sx={fx} />
 
-      {/* State */}
-      <FormControl size="small" fullWidth sx={FX}>
+      <FormControl size="small" fullWidth sx={fx}>
         <InputLabel>State / Province</InputLabel>
         <Select label="State / Province" value={values.state} onChange={e => onChange("state", e.target.value)}>
           <MenuItem value="" sx={{ fontSize: "0.82rem", color: "#9CA3AF" }}>—</MenuItem>
@@ -111,19 +79,16 @@ function AddressPanel({
         </Select>
       </FormControl>
 
-      {/* Zip */}
       <TextField label="Zip / Postal Code" value={values.zip}
-        onChange={e => onChange("zip", e.target.value)} size="small" fullWidth sx={FX} />
+        onChange={e => onChange("zip", e.target.value)} size="small" fullWidth sx={fx} />
 
-      {/* Lat / Lng */}
       <div className="grid grid-cols-2 gap-2">
-        <TextField label="Latitude"  value={values.lat} onChange={e => onChange("lat", e.target.value)} size="small" fullWidth sx={FX} />
-        <TextField label="Longitude" value={values.lng} onChange={e => onChange("lng", e.target.value)} size="small" fullWidth sx={FX} />
+        <TextField label="Latitude"  value={values.lat} onChange={e => onChange("lat", e.target.value)} size="small" fullWidth sx={fx} />
+        <TextField label="Longitude" value={values.lng} onChange={e => onChange("lng", e.target.value)} size="small" fullWidth sx={fx} />
       </div>
 
-      {/* Clear All */}
       <div className="flex justify-end pt-0.5">
-        <button onClick={onClear} className="text-[11.5px] font-semibold text-[#1D4ED8] hover:text-[#0C2472] hover:underline transition-colors">
+        <button onClick={onClear} className={`text-[11.5px] font-semibold transition-colors ${isDark ? "text-[#9CA3AF] hover:text-[#A1A1AA]" : "text-[#475569] hover:underline"}`}>
           Clear All
         </button>
       </div>
@@ -177,8 +142,34 @@ interface Props {
 }
 
 export default function NewContactDrawer({ open, onClose, mode = "create", initialData }: Props) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const isEdit = mode === "edit";
   const [form, setForm] = useState<typeof DEFAULT>({ ...DEFAULT, ...initialData });
+
+  const FX = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "10px",
+      ...(isDark ? {} : { backgroundColor: "#EFF6FF" }),
+      fontSize: "0.82rem",
+      "& fieldset":             { borderColor: isDark ? "#3F3F46" : "#E3ECFC", borderWidth: 1.5 },
+      "&:hover fieldset":       { borderColor: isDark ? "#52525B" : "#E3ECFC" },
+      "&.Mui-focused fieldset": { borderColor: isDark ? "#71717A" : "#D0DEFA", borderWidth: 1.5 },
+      "&.Mui-focused":          { boxShadow: "none" },
+      "& input":                { padding: "9px 12px" },
+    },
+    "& .MuiInputLabel-root":             { fontSize: "0.78rem", ...(isDark ? {} : { color: "#94A3B8" }) },
+    "& .MuiInputLabel-root.Mui-focused": { color: isDark ? "#A1A1AA" : "#64748B" },
+    "& .MuiSelect-select":               { fontSize: "0.82rem", padding: "9px 12px", ...(isDark ? {} : { backgroundColor: "#EFF6FF" }) },
+  };
+
+  const FX_SM = {
+    ...FX,
+    "& .MuiOutlinedInput-root": {
+      ...FX["& .MuiOutlinedInput-root"],
+      "& .MuiSelect-select": { fontSize: "0.78rem", padding: "9px 10px" },
+    },
+  };
 
   const set  = (k: keyof typeof DEFAULT, v: string | boolean) => setForm(p => ({ ...p, [k]: v }));
   const setA = (side: "mailing" | "other", k: AddressKey, v: string) =>
@@ -198,25 +189,25 @@ export default function NewContactDrawer({ open, onClose, mode = "create", initi
           width: { xs: "100%", sm: 700 },
           display: "flex",
           flexDirection: "column",
-          bgcolor: "#F8FAFF",
-          boxShadow: "-12px 0 48px rgba(12,36,114,0.12)",
+          bgcolor: isDark ? "#18181B" : "#F8FAFF",
+          boxShadow: isDark ? "-12px 0 48px rgba(0,0,0,0.5)" : "-12px 0 48px rgba(12,36,114,0.12)",
         },
       }}
     >
       {/* ══ Header ══ */}
-      <div className="flex items-center justify-between px-6 py-4 bg-[#f9fbff] border-b border-[#E3ECFC] flex-shrink-0">
+      <div className={`flex items-center justify-between px-6 py-4 border-b flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#1D4ED8] flex items-center justify-center shadow-sm">
-            <AddressBook size={18} color="#fff" weight="duotone" />
+          <div className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-sm ${isDark ? "bg-[#27272A]" : "bg-[#1D4ED8]"}`}>
+            <AddressBook size={18} color={isDark ? "#A1A1AA" : "#fff"} weight="duotone" />
           </div>
-          <h2 className="font-heading text-[16px] font-bold text-slate-900 tracking-tight">
+          <h2 className={`font-heading text-[16px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
             {isEdit ? "Edit Contact" : "New Contact"}
           </h2>
         </div>
         <Tooltip title="Close">
           <IconButton size="small" onClick={onClose}
-            sx={{ borderRadius: "9px", border: "1.5px solid #E3ECFC", "&:hover": { bgcolor: "#EFF6FF" } }}>
-            <X size={17} color="#64748B" weight="duotone" />
+            sx={{ borderRadius: "9px", border: `1.5px solid ${isDark ? "#3F3F46" : "#E3ECFC"}`, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+            <X size={17} color={isDark ? "#71717A" : "#64748B"} weight="duotone" />
           </IconButton>
         </Tooltip>
       </div>
@@ -229,7 +220,6 @@ export default function NewContactDrawer({ open, onClose, mode = "create", initi
           <SectionTitle>Contact Information</SectionTitle>
           <div className="space-y-3">
 
-            {/* Row 1: Salutation | First Name | Last Name */}
             <div className="grid gap-3" style={{ gridTemplateColumns: "110px 1fr 1fr" }}>
               <FormControl size="small" sx={FX_SM}>
                 <InputLabel>Salutation</InputLabel>
@@ -241,7 +231,6 @@ export default function NewContactDrawer({ open, onClose, mode = "create", initi
               <TextField label="Last Name"  value={form.lastName}  onChange={e => set("lastName",  e.target.value)} size="small" fullWidth sx={FX} />
             </div>
 
-            {/* Row 2: Contact Owner | Lead Source */}
             <div className="grid grid-cols-2 gap-3">
               <FormControl size="small" fullWidth sx={FX}>
                 <InputLabel>Contact Owner</InputLabel>
@@ -258,7 +247,6 @@ export default function NewContactDrawer({ open, onClose, mode = "create", initi
               </FormControl>
             </div>
 
-            {/* Row 3: Account Name | Email */}
             <div className="grid grid-cols-2 gap-3">
               <FormControl size="small" fullWidth sx={FX}>
                 <InputLabel>Account Name</InputLabel>
@@ -270,57 +258,49 @@ export default function NewContactDrawer({ open, onClose, mode = "create", initi
               <TextField label="Email" type="email" value={form.email} onChange={e => set("email", e.target.value)} size="small" fullWidth sx={FX} />
             </div>
 
-            {/* Row 4: Title | Phone */}
             <div className="grid grid-cols-2 gap-3">
               <TextField label="Title"  value={form.title} onChange={e => set("title", e.target.value)} size="small" fullWidth sx={FX} />
               <TextField label="Phone"  value={form.phone} onChange={e => set("phone", e.target.value)} size="small" fullWidth sx={FX} />
             </div>
 
-            {/* Row 5: Department | Other Phone */}
             <div className="grid grid-cols-2 gap-3">
               <TextField label="Department"  value={form.department}  onChange={e => set("department",  e.target.value)} size="small" fullWidth sx={FX} />
               <TextField label="Other Phone" value={form.otherPhone}  onChange={e => set("otherPhone",  e.target.value)} size="small" fullWidth sx={FX} />
             </div>
 
-            {/* Row 6: Home Phone | Mobile */}
             <div className="grid grid-cols-2 gap-3">
               <TextField label="Home Phone" value={form.homePhone} onChange={e => set("homePhone", e.target.value)} size="small" fullWidth sx={FX} />
               <TextField label="Mobile"     value={form.mobile}    onChange={e => set("mobile",    e.target.value)} size="small" fullWidth sx={FX} />
             </div>
 
-            {/* Row 7: Fax | Assistant */}
             <div className="grid grid-cols-2 gap-3">
               <TextField label="Fax"       value={form.fax}       onChange={e => set("fax",       e.target.value)} size="small" fullWidth sx={FX} />
               <TextField label="Assistant" value={form.assistant}  onChange={e => set("assistant", e.target.value)} size="small" fullWidth sx={FX} />
             </div>
 
-            {/* Row 8: Date of Birth | Asst Phone */}
             <div className="grid grid-cols-2 gap-3">
               <TextField label="Date of Birth" type="date" value={form.dateOfBirth}
                 onChange={e => set("dateOfBirth", e.target.value)} size="small" fullWidth sx={FX} InputLabelProps={{ shrink: true }} />
               <TextField label="Asst Phone" value={form.asstPhone} onChange={e => set("asstPhone", e.target.value)} size="small" fullWidth sx={FX} />
             </div>
 
-            {/* Row 9: Email Opt Out | Skype ID */}
             <div className="grid grid-cols-2 gap-3 items-center">
               <FormControlLabel
                 control={
                   <Checkbox checked={form.emailOptOut} onChange={e => set("emailOptOut", e.target.checked)} size="small"
-                    sx={{ color: "#CBD5E1", "&.Mui-checked": { color: "#1D4ED8" }, p: 0.75 }} />
+                    sx={{ color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked": { color: "inherit" }, p: 0.75 }} />
                 }
-                label={<span className="text-[13px] text-slate-700 font-medium">Email Opt Out</span>}
+                label={<span className={`text-[14px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>Email Opt Out</span>}
                 sx={{ m: 0 }}
               />
               <TextField label="Skype ID" value={form.skypeId} onChange={e => set("skypeId", e.target.value)} size="small" fullWidth sx={FX} />
             </div>
 
-            {/* Row 10: Secondary Email | Twitter */}
             <div className="grid grid-cols-2 gap-3">
               <TextField label="Secondary Email" type="email" value={form.secondaryEmail} onChange={e => set("secondaryEmail", e.target.value)} size="small" fullWidth sx={FX} />
               <TextField label="Twitter" value={form.twitter} onChange={e => set("twitter", e.target.value)} size="small" fullWidth sx={FX} placeholder="@handle" />
             </div>
 
-            {/* Row 11: Reporting To */}
             <div className="grid grid-cols-2 gap-3">
               <FormControl size="small" fullWidth sx={FX}>
                 <InputLabel>Reporting To</InputLabel>
@@ -333,7 +313,7 @@ export default function NewContactDrawer({ open, onClose, mode = "create", initi
           </div>
         </div>
 
-        <Divider sx={{ borderColor: "#E3ECFC" }} />
+        <Divider sx={{ borderColor: isDark ? "#3F3F46" : "#E3ECFC" }} />
 
         {/* ── Section 2: Address Information ── */}
         <div>
@@ -344,12 +324,16 @@ export default function NewContactDrawer({ open, onClose, mode = "create", initi
               values={form.mailing}
               onChange={(k, v) => setA("mailing", k, v)}
               onClear={() => clearAddr("mailing")}
+              isDark={isDark}
+              fx={FX}
             />
             <AddressPanel
               title="Other Address"
               values={form.other}
               onChange={(k, v) => setA("other", k, v)}
               onClear={() => clearAddr("other")}
+              isDark={isDark}
+              fx={FX}
             />
           </div>
         </div>
@@ -358,13 +342,25 @@ export default function NewContactDrawer({ open, onClose, mode = "create", initi
       </div>
 
       {/* ══ Footer ══ */}
-      <div className="flex items-center justify-end gap-3 px-6 py-4 bg-[#f9fbff] border-t border-[#E3ECFC] flex-shrink-0">
+      <div className={`flex items-center justify-end gap-3 px-6 py-4 border-t flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <Button variant="outlined" size="small" onClick={onClose}
-          sx={{ borderColor: "#E3ECFC", color: "#475569", borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.8rem", px: 3, py: 0.9, "&:hover": { borderColor: "#60A5FA", color: "#1D4ED8", bgcolor: "#EFF6FF" } }}>
+          sx={{
+            borderColor: isDark ? "#3F3F46" : "#E3ECFC",
+            color: isDark ? "#A1A1AA" : "#475569",
+            borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.8rem", px: 3, py: 0.9,
+            "&:hover": { borderColor: isDark ? "#52525B" : "#E3ECFC", bgcolor: isDark ? "#27272A" : "#EFF6FF" },
+          }}>
           Cancel
         </Button>
         <Button variant="contained" size="small" onClick={handleSubmit}
-          sx={{ bgcolor: "#1D4ED8", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.8rem", px: 3, py: 0.9, boxShadow: "0 2px 12px #1D4ED833", "&:hover": { bgcolor: "#60A5FA", boxShadow: "0 4px 18px #60A5FA55" }, "&:active": { bgcolor: "#0C2472" } }}>
+          sx={{
+            bgcolor: isDark ? "#27272A" : "#1D4ED8",
+            color: isDark ? "#F4F4F5" : "#fff",
+            borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.8rem", px: 3, py: 0.9,
+            boxShadow: isDark ? "none" : "0 2px 12px #1D4ED833",
+            "&:hover": { bgcolor: isDark ? "#3F3F46" : "#60A5FA", boxShadow: isDark ? "none" : "0 4px 18px #60A5FA55" },
+            "&:active": { bgcolor: isDark ? "#18181B" : "#0C2472" },
+          }}>
           Submit
         </Button>
       </div>

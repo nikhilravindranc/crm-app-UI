@@ -1,13 +1,16 @@
 "use client";
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import IconButton from "@mui/material/IconButton";
 import Badge from "@mui/material/Badge";
 import InputBase from "@mui/material/InputBase";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import Avatar from "@mui/material/Avatar";
-import { ListIcon, MagnifyingGlass, Bell, Plus, Command } from "@phosphor-icons/react";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Divider from "@mui/material/Divider";
+import { ListIcon, MagnifyingGlass, Bell, Plus, Command, UserCircleIcon, SignOutIcon } from "@phosphor-icons/react";
 import { OWNER_AVATARS } from "@/lib/avatars";
 
 const EXPANDED_W = "260px";
@@ -25,11 +28,78 @@ const PATH_TITLES: Record<string, string> = {
   "/settings": "Settings",
 };
 
+function UserMenu({
+  anchor, onClose, router,
+}: {
+  anchor: HTMLElement | null;
+  onClose: () => void;
+  router: ReturnType<typeof useRouter>;
+}) {
+  return (
+    <Menu
+      anchorEl={anchor}
+      open={Boolean(anchor)}
+      onClose={onClose}
+      onClick={onClose}
+      transformOrigin={{ horizontal: "right", vertical: "top" }}
+      anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+      slotProps={{
+        paper: {
+          elevation: 0,
+          sx: {
+            mt: 1.5, minWidth: 220,
+            borderRadius: "16px",
+            border: "1px solid #E8EEFB",
+            boxShadow: "0 12px 40px rgba(0,0,0,0.12)",
+            overflow: "hidden",
+          },
+        },
+      }}
+    >
+      {/* User info */}
+      <div className="px-5 pt-4 pb-3">
+        <p className="text-[15px] font-bold text-[#0C2472] leading-tight">PM SDL</p>
+        <p className="text-[12px] text-slate-400 mt-0.5">Super Admin</p>
+      </div>
+
+      <Divider sx={{ borderColor: "#F1F5F9", mx: 0 }} />
+
+      <div className="py-1.5 px-1.5">
+        <MenuItem
+          onClick={() => router.push("/settings")}
+          sx={{
+            gap: 2, px: "14px", py: "10px", fontSize: "0.875rem", fontWeight: 500,
+            color: "#334155", borderRadius: "10px",
+            "&:hover": { bgcolor: "#EFF6FF", color: "#1D4ED8" },
+          }}
+        >
+          <UserCircleIcon size={18} weight="duotone" />
+          My Account
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => router.push("/login")}
+          sx={{
+            gap: 2, px: "14px", py: "10px", fontSize: "0.875rem", fontWeight: 500,
+            color: "#EF4444", borderRadius: "10px",
+            "&:hover": { bgcolor: "#FEF2F2", color: "#DC2626" },
+          }}
+        >
+          <SignOutIcon size={18} weight="duotone" />
+          Log out
+        </MenuItem>
+      </div>
+    </Menu>
+  );
+}
+
 export default function AppHeader() {
   const pathname  = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
-  const [isMobile, setIsMobile]   = useState(false);
-  const [search, setSearch]       = useState("");
+  const router    = useRouter();
+  const [collapsed, setCollapsed]         = useState(false);
+  const [isMobile, setIsMobile]           = useState(false);
+  const [search, setSearch]               = useState("");
+  const [avatarAnchor, setAvatarAnchor]   = useState<HTMLElement | null>(null);
 
   const today = new Date().toLocaleDateString("en-IN", {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
@@ -115,16 +185,17 @@ export default function AppHeader() {
           </IconButton>
         </Tooltip>
 
-        <Tooltip title="PM SDL — Admin">
-          <Avatar
-            src={OWNER_AVATARS["PM SDL"]}
-            sx={{
-              width: 34, height: 34,
-              bgcolor: "#1D4ED8", fontSize: "0.6rem", fontWeight: 800,
-              cursor: "pointer", border: "2px solid #E3ECFC",
-            }}
-          >PM</Avatar>
-        </Tooltip>
+        <Avatar
+          src={OWNER_AVATARS["PM SDL"]}
+          onClick={e => setAvatarAnchor(e.currentTarget)}
+          sx={{
+            width: 34, height: 34,
+            bgcolor: "#1D4ED8", fontSize: "0.6rem", fontWeight: 800,
+            cursor: "pointer", border: "2px solid #E3ECFC",
+          }}
+        >PM</Avatar>
+
+        <UserMenu anchor={avatarAnchor} onClose={() => setAvatarAnchor(null)} router={router} />
       </header>
     );
   }
@@ -222,13 +293,14 @@ export default function AppHeader() {
         </Tooltip>
 
         {/* Avatar */}
-        <Tooltip title="PM SDL — Admin">
-          <Avatar
-            src={OWNER_AVATARS["PM SDL"]}
-            sx={{ width: 32, height: 32, bgcolor: "#1D4ED8", fontSize: "0.6rem", fontWeight: 800, cursor: "pointer" }}
-            className="ring-2 ring-transparent hover:ring-[#93C5FD] transition-all"
-          >PM</Avatar>
-        </Tooltip>
+        <Avatar
+          src={OWNER_AVATARS["PM SDL"]}
+          onClick={e => setAvatarAnchor(e.currentTarget)}
+          sx={{ width: 32, height: 32, bgcolor: "#1D4ED8", fontSize: "0.6rem", fontWeight: 800, cursor: "pointer" }}
+          className="ring-2 ring-transparent hover:ring-[#93C5FD] transition-all"
+        >PM</Avatar>
+
+        <UserMenu anchor={avatarAnchor} onClose={() => setAvatarAnchor(null)} router={router} />
       </div>
     </header>
   );

@@ -7,23 +7,27 @@ import ContactGridView from "@/components/contacts/ContactGridView";
 import FiltersDrawer, { type FilterRow } from "@/components/leads/FiltersDrawer";
 import ColumnsDrawer from "@/components/leads/ColumnsDrawer";
 import SortPopover, { type SortRow } from "@/components/leads/SortPopover";
-import Checkbox from "@mui/material/Checkbox";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
 import InputBase from "@mui/material/InputBase";
 import Badge from "@mui/material/Badge";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import { getDataGridSx, ROWS_PER_PAGE_OPTIONS } from "@/lib/dataGridStyles";
 import {
   Plus, MagnifyingGlass, SlidersHorizontal, SortAscending, Columns,
   ArrowsDownUp, List, GridFour, House, CaretRight, Trash,
   DotsThreeVertical, Phone, DeviceMobile, Envelope, FunnelSimple, CaretDown,
+  User, IdentificationBadge, UserCircle, CalendarBlank,
 } from "@phosphor-icons/react";
+import type { ElementType } from "react";
 import { OWNER_AVATARS } from "@/lib/avatars";
+import { useTheme } from "@/components/ThemeContext";
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Data — exact from screenshot (13 visible of 25)
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 interface Contact {
   id: number; firstName: string; lastName: string;
   ownerName: string; ownerEmail: string; ownerInitials: string;
@@ -47,9 +51,9 @@ const ALL_CONTACTS: Contact[] = [
   { id:13, firstName:"Test",         lastName:"user001", ownerName:"Admin",     ownerEmail:"admin@mailinator.com",  ownerInitials:"AD", email:"",                        phone:"9978654311", mobile:"",           accountName:"",            creation:"20 Aug 2025, 11:57 AM", modified:"05 Feb 2026, 06:50 PM" },
 ];
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Column definitions
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 // Fixed px widths — table scrolls horizontally on narrow viewports
 const COL_DEFS = [
   { key: "firstName",    label: "First Name",     width: "200px" },
@@ -69,32 +73,35 @@ const COL_DEFS = [
 // At 1440px viewport (1162px table): firstName → 1162−796 = 366px ✓
 const DEFAULT_VISIBLE = new Set(["firstName", "lastName", "contactOwner", "email", "phone", "creation"]);
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Helpers
-// ─────────────────────────────────────────────
-const AVATAR_PAL = ["#0C2472", "#1D4ED8", "#3B82F6", "#60A5FA"];
+// ---------------------------------------------
+const AVATAR_PAL = ["#7C3AED", "#10B981", "#F59E0B", "#DB2777"];
 const avatarColor = (n: string) => AVATAR_PAL[n.split("").reduce((a, c) => a + c.charCodeAt(0), 0) % AVATAR_PAL.length];
 
-function ColHeader({ label }: { label: string }) {
+function ColHeader({ label, icon: Icon, isDark = false }: { label: string; icon?: ElementType; isDark?: boolean }) {
   return (
-    <div className="font-heading flex items-center gap-0.5 text-[10.5px] font-bold text-[#0C2472] uppercase tracking-wider cursor-pointer hover:text-[#1D4ED8] transition-colors group select-none">
+    <div className={`font-heading flex items-center gap-1.5 text-table-header uppercase tracking-wide cursor-pointer transition-colors group select-none ${isDark ? "text-[#9CA3AF] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+      {Icon && <Icon size={13} weight="duotone" />}
       {label}
-      <ArrowsDownUp size={12} weight="duotone" className="opacity-30 group-hover:opacity-100 text-[#60A5FA] transition-opacity" />
+      <ArrowsDownUp size={12} weight="duotone" className={`opacity-30 group-hover:opacity-100 transition-opacity ${isDark ? "text-[#9CA3AF]" : "text-[#60A5FA]"}`} />
     </div>
   );
 }
 
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 //  Page
-// ─────────────────────────────────────────────
+// ---------------------------------------------
 export default function ContactsPage() {
   const router = useRouter();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   const [selected, setSelected]     = useState<number[]>([]);
   const [search, setSearch]         = useState("");
   const [view, setView]             = useState<"list" | "grid">("list");
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filtersAnchor, setFiltersAnchor] = useState<HTMLElement | null>(null);
   const [columnsOpen, setColumnsOpen] = useState(false);
   const [sortAnchor, setSortAnchor]   = useState<HTMLElement | null>(null);
   const [activeFilters, setActiveFilters] = useState<FilterRow[]>([]);
@@ -110,30 +117,114 @@ export default function ContactsPage() {
       c.ownerName.toLowerCase().includes(q);
   });
 
-  const allChecked  = selected.length === filtered.length && filtered.length > 0;
-  const someChecked = selected.length > 0 && !allChecked;
-  const toggleAll   = () => setSelected(allChecked ? [] : filtered.map(c => c.id));
-  const toggleOne   = (id: number) => setSelected(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
+  // -- DataGrid column builders, keyed by COL_DEFS.key
+  const COLUMN_BUILDERS: Record<string, GridColDef<Contact>> = {
+    firstName: {
+      field: "firstName", headerName: "First Name", flex: 1.3, minWidth: 140, sortable: false,
+      renderHeader: () => <ColHeader label="First Name" icon={User} isDark={isDark} />,
+      renderCell: (params) => (
+        <p className="m-0 font-heading text-table-cell font-medium text-[#1D4ED8] truncate hover:underline cursor-pointer">{params.row.firstName}</p>
+      ),
+    },
+    lastName: {
+      field: "lastName", headerName: "Last Name", flex: 1.1, minWidth: 110, sortable: false,
+      renderHeader: () => <ColHeader label="Last Name" icon={IdentificationBadge} isDark={isDark} />,
+      renderCell: (params) => <p className="m-0 text-table-cell text-slate-700 truncate">{params.row.lastName}</p>,
+    },
+    contactOwner: {
+      field: "contactOwner", headerName: "Contact Owner", flex: 1.4, minWidth: 150, sortable: false,
+      renderHeader: () => <ColHeader label="Contact Owner" icon={UserCircle} isDark={isDark} />,
+      renderCell: (params) => {
+        const contact = params.row;
+        return (
+          <Tooltip title={`${contact.ownerName} · ${contact.ownerEmail}`} placement="top">
+            <div className="flex items-center gap-1.5 min-w-0">
+              <Avatar src={OWNER_AVATARS[contact.ownerName]} sx={{ width: 20, height: 20, bgcolor: avatarColor(contact.ownerName), fontSize: "0.48rem", fontWeight: 800, flexShrink: 0 }}>{contact.ownerInitials}</Avatar>
+              <span className="text-table-cell-secondary text-slate-500 truncate">{contact.ownerEmail}</span>
+            </div>
+          </Tooltip>
+        );
+      },
+    },
+    email: {
+      field: "email", headerName: "Email", flex: 1.7, minWidth: 180, sortable: false,
+      renderHeader: () => <ColHeader label="Email" icon={Envelope} isDark={isDark} />,
+      renderCell: (params) => (
+        <Tooltip title={params.row.email} placement="top">
+          <div className="text-table-cell truncate w-full">
+            {params.row.email
+              ? <span className={`${isDark ? "text-slate-300" : "text-slate-600"} flex items-center gap-1`}><Envelope size={11} color="#94A3B8" weight="duotone" className="flex-shrink-0" />{params.row.email}</span>
+              : <span className="text-slate-200">—</span>}
+          </div>
+        </Tooltip>
+      ),
+    },
+    phone: {
+      field: "phone", headerName: "Phone", flex: 1.1, minWidth: 110, sortable: false,
+      renderHeader: () => <ColHeader label="Phone" icon={Phone} isDark={isDark} />,
+      renderCell: (params) => (
+        <div className="text-table-cell text-slate-500 font-mono truncate">
+          {params.row.phone
+            ? <span className="flex items-center gap-1"><Phone size={11} color="#94A3B8" weight="duotone" />{params.row.phone}</span>
+            : <span className="text-slate-200">—</span>}
+        </div>
+      ),
+    },
+    mobile: {
+      field: "mobile", headerName: "Mobile", flex: 1.1, minWidth: 110, sortable: false,
+      renderHeader: () => <ColHeader label="Mobile" icon={DeviceMobile} isDark={isDark} />,
+      renderCell: (params) => (
+        <div className="text-table-cell text-slate-500 font-mono truncate">
+          {params.row.mobile
+            ? <span className="flex items-center gap-1"><DeviceMobile size={11} color="#94A3B8" weight="duotone" />{params.row.mobile}</span>
+            : <span className="text-slate-200">—</span>}
+        </div>
+      ),
+    },
+    creation: {
+      field: "creation", headerName: "Creation", flex: 1.4, minWidth: 140, sortable: false,
+      renderHeader: () => <ColHeader label="Creation" icon={CalendarBlank} isDark={isDark} />,
+      renderCell: (params) => <p className="m-0 text-table-cell-secondary text-slate-400 truncate">{params.row.creation}</p>,
+    },
+    modified: {
+      field: "modified", headerName: "Modified", flex: 1.4, minWidth: 140, sortable: false,
+      renderHeader: () => <ColHeader label="Modified" icon={CalendarBlank} isDark={isDark} />,
+      renderCell: (params) => <p className="m-0 text-table-cell-secondary text-slate-400 truncate">{params.row.modified}</p>,
+    },
+  };
 
-  const visibleColDefs = COL_DEFS.filter(c => visibleCols.has(c.key));
-  const gridTemplate   = ["36px", ...visibleColDefs.map(c => c.width), "40px"].join(" ");
+  const gridColumns: GridColDef<Contact>[] = [
+    ...COL_DEFS.filter(c => visibleCols.has(c.key)).map(c => COLUMN_BUILDERS[c.key]),
+    {
+      field: "actions", headerName: "", width: 50, sortable: false, disableColumnMenu: true,
+      renderCell: () => (
+        <div className="flex justify-end w-full opacity-0 group-hover:opacity-100 transition-opacity">
+          <Tooltip title="Actions">
+            <IconButton size="small" onClick={e => e.stopPropagation()} sx={{ borderRadius: "6px", p: 0.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#E3ECFC" } }}>
+              <DotsThreeVertical size={15} color="#94A3B8" weight="duotone" />
+            </IconButton>
+          </Tooltip>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
 
       <main className="flex-1 px-8 py-6 space-y-5 animate-fade-in">
 
-          {/* ══ Breadcrumb + Header ══ */}
+          {/* -- Breadcrumb + Header -- */}
           <div className="flex items-start justify-between">
             <div>
-              <div className="flex items-center gap-1 text-[11px] text-slate-400 mb-2">
-                <House size={12} weight="duotone" />
-                <CaretRight size={11} weight="duotone" />
-                <Link href="/contacts" className="hover:text-[#1D4ED8] transition-colors font-medium">Contacts</Link>
+              <div className="flex items-center gap-1 text-caption text-slate-400 mb-2">
+                <House size={16} weight="duotone" />
+                <CaretRight size={12} weight="duotone" />
+                <Link href="/contacts" className={`transition-colors font-medium ${isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#1D4ED8]"}`}>Contacts</Link>
               </div>
               <div className="flex items-center gap-2.5">
-                <h1 className="font-heading text-[20px] font-extrabold text-slate-900 tracking-tight">Contacts</h1>
-                <span className="text-[11px] font-bold text-slate-400 bg-[#f9fbff] border border-[#E3ECFC] px-2 py-0.5 rounded-full shadow-sm">
+                <h1 className="font-heading text-h1 text-slate-900 tracking-tight">Contacts</h1>
+                <span className="text-badge-text text-slate-400 bg-[#f9fbff] border border-[#E3ECFC] px-2 py-0.5 rounded-full shadow-sm">
                   {ALL_CONTACTS.length} total
                 </span>
               </div>
@@ -141,14 +232,16 @@ export default function ContactsPage() {
 
             <div className="flex items-center gap-2 mt-1">
               {/* View toggle */}
-              <div className="flex items-center bg-[#f9fbff] border border-[#E3ECFC] rounded-xl p-0.5 gap-0.5 shadow-sm">
+              <div className={`flex items-center border rounded-xl p-0.5 gap-0.5 shadow-sm ${isDark ? "bg-[#000000] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
                 {[
                   { k: "list", Icon: List,     label: "List" },
                   { k: "grid", Icon: GridFour, label: "Grid" },
                 ].map(({ k, Icon, label }) => (
                   <button key={k} onClick={() => setView(k as typeof view)}
-                    className={`flex items-center gap-1.5 px-2.5 py-[7px] rounded-lg text-[11.5px] font-semibold transition-all ${
-                      view === k ? "bg-[#f9fbff] text-[#1D4ED8]" : "text-slate-400 hover:text-slate-600"
+                    className={`flex items-center gap-1.5 px-2.5 py-[7px] rounded-lg text-button-sm transition-all ${
+                      view === k
+                        ? isDark ? "bg-[#18181B] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]"
+                        : isDark ? "text-[#9CA3AF] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "text-slate-400 hover:text-slate-600"
                     }`}>
                     <Icon size={14} weight="duotone" />{label}
                   </button>
@@ -156,21 +249,21 @@ export default function ContactsPage() {
               </div>
 
               <Button variant="contained"
-                startIcon={<Plus size={16} weight="duotone" />}
+                startIcon={<Plus size={16} weight="bold" />}
                 onClick={() => setDrawerOpen(true)}
-                sx={{ bgcolor: "#1D4ED8", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.78rem", px: 2, py: 0.85, boxShadow: "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: "#60A5FA", boxShadow: "0 2px 14px #60A5FA55" }, "&:active": { bgcolor: "#0C2472" } }}>
+                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px", px: 2, py: 0.85, boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB", boxShadow: isDark ? "none" : "0 2px 14px #60A5FA55" }, "&:active": { bgcolor: isDark ? "#9CA3AF" : "#0C2472" } }}>
                 New Contact
               </Button>
             </div>
           </div>
 
-          {/* ══ Toolbar ══ */}
+          {/* -- Toolbar -- */}
           <div className="flex items-center gap-2.5">
-            <div className="flex items-center gap-2 bg-[#f9fbff] border border-[#E3ECFC] rounded-xl px-3 py-2 w-72 focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#93C5FD] transition-all">
+            <div className={`flex items-center gap-2 border rounded-xl px-3 py-2 w-72 focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
               <MagnifyingGlass size={15} color="#94A3B8" weight="duotone" />
               <InputBase placeholder="Search by name, email, owner…" value={search}
                 onChange={e => setSearch(e.target.value)}
-                sx={{ flex: 1, fontSize: "0.76rem", color: "#334155", "& input::placeholder": { color: "#94A3B8", opacity: 1 } }}
+                sx={{ flex: 1, fontSize: "0.76rem", color: isDark ? "#D4D4D8" : "#334155", "& input::placeholder": { color: "#94A3B8", opacity: 1 } }}
               />
               {search && <button onClick={() => setSearch("")} className="text-slate-300 hover:text-slate-500 text-sm">✕</button>}
             </div>
@@ -182,15 +275,31 @@ export default function ContactsPage() {
                   </Badge>
                 : <FunnelSimple size={14} weight="duotone" />
               }
-              onClick={() => setFiltersOpen(true)}
-              sx={{ borderColor: activeFilters.length > 0 ? "#1D4ED8" : "#E3ECFC", color: activeFilters.length > 0 ? "#1D4ED8" : "#0C2472", bgcolor: activeFilters.length > 0 ? "#f9fbff" : "#E3ECFC", borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem", "&:hover": { borderColor: "#1D4ED8", color: "#1D4ED8", bgcolor: "#f9fbff" } }}>
+              onClick={e => setFiltersAnchor(e.currentTarget)}
+              sx={{
+                borderColor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#27272A" : "#E3ECFC",
+                color: activeFilters.length > 0 ? "#fff" : isDark ? "#9CA3AF" : "#0C2472",
+                bgcolor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#0F0F0F" : "#E3ECFC",
+                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "13px",
+                "&:hover": {
+                  borderColor: activeFilters.length > 0 ? "#1640B8" : "#1D4ED8",
+                  color: activeFilters.length > 0 ? "#fff" : "#0C2472",
+                  bgcolor: activeFilters.length > 0 ? "#1640B8" : isDark ? "#0A0A0A" : "#DCE6FB",
+                },
+              }}>
               Filters{activeFilters.length > 0 ? ` (${activeFilters.length})` : ""}
             </Button>
 
             <Button variant="outlined" size="small"
               startIcon={<Columns size={14} weight="duotone" />}
               onClick={() => setColumnsOpen(true)}
-              sx={{ borderColor: "#E3ECFC", color: "#0C2472", bgcolor: "#E3ECFC", borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem", "&:hover": { borderColor: "#1D4ED8", color: "#1D4ED8", bgcolor: "#f9fbff" } }}>
+              sx={{
+                borderColor: isDark ? "#27272A" : "#E3ECFC",
+                color: isDark ? "#9CA3AF" : "#0C2472",
+                bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
+                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "13px",
+                "&:hover": { borderColor: isDark ? "#3F3F46" : "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
+              }}>
               Columns
             </Button>
 
@@ -198,33 +307,39 @@ export default function ContactsPage() {
               startIcon={<SortAscending size={14} weight="duotone" />}
               endIcon={<CaretDown size={11} weight="duotone" />}
               onClick={e => setSortAnchor(e.currentTarget)}
-              sx={{ borderColor: activeSorts.length > 0 ? "#1D4ED8" : "#E3ECFC", color: activeSorts.length > 0 ? "#1D4ED8" : "#0C2472", bgcolor: activeSorts.length > 0 ? "#f9fbff" : "#E3ECFC", borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.74rem", "&:hover": { borderColor: "#1D4ED8", color: "#1D4ED8", bgcolor: "#f9fbff" } }}>
+              sx={{
+                borderColor: isDark ? "#27272A" : "#E3ECFC",
+                color: isDark ? "#9CA3AF" : "#0C2472",
+                bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
+                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "13px",
+                "&:hover": { borderColor: isDark ? "#3F3F46" : "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
+              }}>
               Sort{activeSorts.length > 0 ? ` (${activeSorts.length})` : ""}
             </Button>
 
-            <span className="ml-auto text-[11px] text-slate-400 font-medium bg-[#f9fbff] px-3 py-1.5 rounded-lg">
+            <span className={`ml-auto text-caption px-3 py-1.5 rounded-lg ${isDark ? "text-[#71717A] bg-[#18181B]" : "text-slate-400 bg-[#f9fbff]"}`}>
               {filtered.length} of {ALL_CONTACTS.length} records
             </span>
           </div>
 
-          {/* ══ Bulk action bar ══ */}
+          {/* -- Bulk action bar -- */}
           {selected.length > 0 && (
-            <div className="flex items-center gap-3 bg-[#0C2472] text-white px-4 py-2.5 rounded-xl animate-slide-up shadow-lg shadow-[#0C2472]/20">
+            <div className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border animate-slide-up shadow-sm ${isDark ? "bg-[#18181B] border-[#27272A]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
               <div className="flex items-center gap-2">
-                <span className="w-5 h-5 rounded-md bg-[#1D4ED8] flex items-center justify-center text-[10px] font-extrabold">{selected.length}</span>
-                <span className="text-[12px] font-semibold">selected</span>
+                <span className="w-5 h-5 rounded-md bg-[#1D4ED8] text-white flex items-center justify-center text-badge-text">{selected.length}</span>
+                <span className={`text-button-sm font-semibold ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>selected</span>
               </div>
-              <div className="w-px h-4 bg-[#f9fbff]/15" />
-              <button className="text-[11.5px] font-semibold text-[#93C5FD] hover:text-white transition-colors">Send Email</button>
-              <button className="text-[11.5px] font-semibold text-[#93C5FD] hover:text-white transition-colors">Assign Owner</button>
-              <button onClick={() => setSelected([])} className="ml-auto text-[11.5px] font-semibold text-white/50 hover:text-white transition-colors">Clear</button>
-              <button className="flex items-center gap-1.5 text-[11.5px] font-semibold text-red-300 hover:text-red-200 transition-colors">
+              <div className={`w-px h-4 ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
+              <button className={`text-button-sm font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Send Email</button>
+              <button className={`text-button-sm font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Assign Owner</button>
+              <button onClick={() => setSelected([])} className={`ml-auto text-button-sm font-medium transition-colors ${isDark ? "text-[#9CA3AF] hover:text-[#A1A1AA]" : "text-slate-400 hover:text-slate-600"}`}>Clear</button>
+              <button className={`flex items-center gap-1.5 text-button-sm font-medium transition-colors ${isDark ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"}`}>
                 <Trash size={14} weight="duotone" /> Delete
               </button>
             </div>
           )}
 
-          {/* ══ GRID VIEW ══ */}
+          {/* -- GRID VIEW -- */}
           {view === "grid" && (
             <ContactGridView contacts={filtered.map(c => ({
               id: c.id, firstName: c.firstName, lastName: c.lastName,
@@ -234,157 +349,45 @@ export default function ContactsPage() {
             }))} />
           )}
 
-          {/* ══ LIST VIEW ══ */}
+          {/* -- LIST VIEW (MUI DataGrid) -- */}
           {view === "list" && (
-            <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm flex flex-col">
-              {/* overflow-x-auto: inner scroll so pagination stays outside and rounded card border is preserved */}
-              <div className="overflow-x-auto" style={{ scrollbarWidth: "thin" }}>
-              {/* Header row */}
-              <div className="grid items-center px-4 py-2.5 bg-[#E3ECFC] border-b border-[#E3ECFC]"
-                style={{ gridTemplateColumns: gridTemplate }}>
-                <Checkbox size="small" checked={allChecked} indeterminate={someChecked} onChange={toggleAll}
-                  sx={{ p: 0.5, color: "#CBD5E1", "&.Mui-checked, &.MuiCheckbox-indeterminate": { color: "#1D4ED8" } }} />
-                {visibleColDefs.map(c => <ColHeader key={c.key} label={c.label} />)}
-                <div />
-              </div>
-
-              {/* Rows */}
-              <div className="divide-y divide-[#EFF6FF]">
-                {filtered.map(contact => {
-                  const isSel  = selected.includes(contact.id);
-                  const owCol  = avatarColor(contact.ownerName);
-
-                  return (
-                    <div key={contact.id}
-                      className={`grid items-center px-4 py-[11px] transition-all duration-100 cursor-pointer group ${
-                        isSel ? "bg-[#f9fbff]" : "hover:bg-[#60A5FA]/[0.04]"
-                      }`}
-                      style={{ gridTemplateColumns: gridTemplate }}
-                      onClick={() => router.push(`/contacts/${contact.id}`)}>
-
-                      <Checkbox size="small" checked={isSel} onChange={() => toggleOne(contact.id)} onClick={e => e.stopPropagation()}
-                        sx={{ p: 0.5, color: "#CBD5E1", "&.Mui-checked": { color: "#1D4ED8" } }} />
-
-                      {/* First Name */}
-                      {visibleCols.has("firstName") && (
-                        <p className="font-heading text-[12.5px] font-semibold text-[#1D4ED8] truncate pr-2 hover:underline cursor-pointer">
-                          {contact.firstName}
-                        </p>
-                      )}
-
-                      {/* Last Name */}
-                      {visibleCols.has("lastName") && (
-                        <p className="text-[12px] text-slate-700 truncate pr-2">{contact.lastName}</p>
-                      )}
-
-                      {/* Contact Owner */}
-                      {visibleCols.has("contactOwner") && (
-                        <Tooltip title={`${contact.ownerName} · ${contact.ownerEmail}`} placement="top">
-                          <div className="flex items-center gap-1.5 min-w-0 pr-2">
-                            <Avatar src={OWNER_AVATARS[contact.ownerName]} sx={{ width: 20, height: 20, bgcolor: owCol, fontSize: "0.48rem", fontWeight: 800, flexShrink: 0 }}>
-                              {contact.ownerInitials}
-                            </Avatar>
-                            <span className="text-[11.5px] text-slate-500 truncate">{contact.ownerEmail}</span>
-                          </div>
-                        </Tooltip>
-                      )}
-
-                      {/* Email */}
-                      {visibleCols.has("email") && (
-                        <Tooltip title={contact.email} placement="top">
-                          <div className="text-[12px] truncate pr-2">
-                            {contact.email
-                              ? <span className="text-[#3B82F6] flex items-center gap-1"><Envelope size={11} color="#93C5FD" weight="duotone" className="flex-shrink-0" />{contact.email}</span>
-                              : <span className="text-slate-200">—</span>}
-                          </div>
-                        </Tooltip>
-                      )}
-
-                      {/* Phone */}
-                      {visibleCols.has("phone") && (
-                        <div className="text-[12px] text-slate-500 font-mono truncate pr-2">
-                          {contact.phone
-                            ? <span className="flex items-center gap-1"><Phone size={11} color="#93C5FD" weight="duotone" />{contact.phone}</span>
-                            : <span className="text-slate-200">—</span>}
-                        </div>
-                      )}
-
-                      {/* Mobile */}
-                      {visibleCols.has("mobile") && (
-                        <div className="text-[12px] text-slate-500 font-mono truncate pr-2">
-                          {contact.mobile
-                            ? <span className="flex items-center gap-1"><DeviceMobile size={11} color="#93C5FD" weight="duotone" />{contact.mobile}</span>
-                            : <span className="text-slate-200">—</span>}
-                        </div>
-                      )}
-
-                      {/* Creation */}
-                      {visibleCols.has("creation") && (
-                        <p className="text-[11px] text-slate-400 truncate pr-2">{contact.creation}</p>
-                      )}
-
-                      {/* Modified */}
-                      {visibleCols.has("modified") && (
-                        <p className="text-[11px] text-slate-400 truncate">{contact.modified}</p>
-                      )}
-
-                      {/* Actions */}
-                      <div className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Tooltip title="Actions">
-                          <IconButton size="small" onClick={e => e.stopPropagation()}
-                            sx={{ borderRadius: "6px", p: 0.5, "&:hover": { bgcolor: "#E3ECFC" } }}>
-                            <DotsThreeVertical size={15} color="#94A3B8" weight="duotone" />
-                          </IconButton>
-                        </Tooltip>
+            <div className="rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden" style={{ height: 600 }}>
+              <DataGrid<Contact>
+                rows={filtered}
+                columns={gridColumns}
+                getRowId={row => row.id}
+                checkboxSelection
+                disableRowSelectionOnClick
+                disableColumnMenu
+                rowHeight={44}
+                columnHeaderHeight={40}
+                rowSelectionModel={selected}
+                onRowSelectionModelChange={model => setSelected(model as number[])}
+                onRowClick={params => router.push(`/contacts/${params.id}`)}
+                initialState={{ pagination: { paginationModel: { pageSize: 20 } } }}
+                pageSizeOptions={ROWS_PER_PAGE_OPTIONS}
+                slots={{
+                  noRowsOverlay: () => (
+                    <div className="py-16 text-center">
+                      <div className="w-12 h-12 rounded-2xl bg-[#f9fbff] flex items-center justify-center mx-auto mb-3">
+                        <MagnifyingGlass size={22} color="#94A3B8" weight="duotone" />
                       </div>
+                      <p className="font-heading text-slate-500 text-sm font-semibold">No contacts found</p>
+                      <p className="text-slate-300 text-xs mt-1">Try adjusting your search or filters</p>
                     </div>
-                  );
-                })}
-              </div>
-
-              {/* Empty */}
-              {filtered.length === 0 && (
-                <div className="py-16 text-center">
-                  <div className="w-12 h-12 rounded-2xl bg-[#f9fbff] flex items-center justify-center mx-auto mb-3">
-                    <MagnifyingGlass size={22} color="#93C5FD" weight="duotone" />
-                  </div>
-                  <p className="font-heading text-slate-500 text-sm font-semibold">No contacts found</p>
-                  <p className="text-slate-300 text-xs mt-1">Try adjusting your search or filters</p>
-                </div>
-              )}
-
-              </div> {/* end overflow-x-auto */}
-
-              {/* Pagination — outside scroll, always visible at bottom of card */}
-              <div className="flex items-center justify-between px-4 py-3 border-t border-[#EFF6FF]">
-                <p className="text-[11px] text-slate-400 font-medium">
-                  Showing <span className="text-slate-700 font-bold">1–{filtered.length}</span> of{" "}
-                  <span className="text-slate-700 font-bold">25</span> records
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
-                    <span>Rows per page:</span>
-                    <button className="flex items-center gap-0.5 bg-[#f9fbff] text-[#1D4ED8] font-bold px-2 py-1 rounded-lg hover:bg-[#E3ECFC] text-[11px]">
-                      20 <CaretDown size={12} weight="duotone" />
-                    </button>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <button className="w-7 h-7 flex items-center justify-center rounded-lg bg-[#f9fbff] text-[#1D4ED8] hover:bg-[#E3ECFC] disabled:opacity-30 font-bold text-sm" disabled>‹</button>
-                    <button className="w-7 h-7 flex items-center justify-center rounded-lg bg-[#1D4ED8] text-white text-[11px] font-bold shadow-sm">1</button>
-                    <button className="w-7 h-7 flex items-center justify-center rounded-lg bg-[#f9fbff] text-[#1D4ED8] hover:bg-[#E3ECFC] font-bold text-sm">2</button>
-                    <button className="w-7 h-7 flex items-center justify-center rounded-lg bg-[#f9fbff] text-[#1D4ED8] hover:bg-[#E3ECFC] font-bold text-sm">›</button>
-                  </div>
-                </div>
-              </div>
+                  ),
+                }}
+                sx={getDataGridSx(isDark)}
+              />
             </div>
           )}
         </main> 
 
-      {/* ══ Panels ══ */}
+      {/* -- Panels -- */}
       <NewContactDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
       <FiltersDrawer
-        open={filtersOpen} onClose={() => setFiltersOpen(false)}
+        anchor={filtersAnchor} onClose={() => setFiltersAnchor(null)}
         filters={activeFilters} onChange={setActiveFilters}
       />
 
@@ -400,3 +403,5 @@ export default function ContactsPage() {
     </div>
   );
 }
+
+
