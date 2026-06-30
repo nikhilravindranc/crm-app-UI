@@ -173,7 +173,7 @@ export default function DealDetail({ dealId }: { dealId: number }) {
       <div className={`flex h-screen font-sans ${isDark ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
         <Sidebar />
         <div className="sidebar-content flex-1 flex flex-col">
-          <TopBar title="Deals" />
+          {/* <TopBar title="Deals" /> */}
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
               <p className={`text-xl font-bold mb-2 ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>Deal not found</p>
@@ -230,7 +230,7 @@ export default function DealDetail({ dealId }: { dealId: number }) {
       <Sidebar />
 
       <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-hidden">
-        <TopBar title="Deals" />
+        {/* <TopBar title="Deals" /> */}
 
         {/* ── Breadcrumb ── */}
         <div className={`flex items-center gap-1.5 px-8 py-3 border-b text-[12px] ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#E3ECFC] border-[#E3ECFC]"}`}>
