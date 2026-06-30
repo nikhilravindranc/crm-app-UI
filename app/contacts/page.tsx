@@ -2,8 +2,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Sidebar from "@/components/layout/Sidebar";
-import TopBar from "@/components/layout/TopBar";
 import NewContactDrawer from "@/components/contacts/NewContactDrawer";
 import ContactGridView from "@/components/contacts/ContactGridView";
 import FiltersDrawer, { type FilterRow } from "@/components/leads/FiltersDrawer";
@@ -121,13 +119,9 @@ export default function ContactsPage() {
   const gridTemplate   = ["36px", ...visibleColDefs.map(c => c.width), "40px"].join(" ");
 
   return (
-    <div className="flex h-screen bg-transparent font-sans">
-      <Sidebar />
+    <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
 
-      <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
-        <TopBar />
-
-        <main className="flex-1 px-8 py-6 space-y-5 animate-fade-in">
+      <main className="flex-1 px-8 py-6 space-y-5 animate-fade-in">
 
           {/* ══ Breadcrumb + Header ══ */}
           <div className="flex items-start justify-between">
@@ -384,8 +378,7 @@ export default function ContactsPage() {
               </div>
             </div>
           )}
-        </main>
-      </div>
+        </main> 
 
       {/* ══ Panels ══ */}
       <NewContactDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />

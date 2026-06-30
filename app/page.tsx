@@ -1,6 +1,4 @@
 "use client";
-import Sidebar from "@/components/layout/Sidebar";
-import TopBar from "@/components/layout/TopBar";
 import KPICard from "@/components/dashboard/KPICard";
 import RevenueChart from "@/components/dashboard/RevenueChart";
 import DealStageChart from "@/components/dashboard/DealStageChart";
@@ -58,15 +56,8 @@ const quickStats = [
 
 export default function DashboardPage() {
   return (
-    <div className="flex h-screen bg-transparent font-sans">
-      {/* ── Sidebar ── */}
-      <Sidebar />
-
-      {/* ── Main area ── */}
-      <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
-        <TopBar title="Dashboard" />
-
-        <main className="flex-1 px-8 py-6 space-y-6 animate-fade-in">
+    <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
+      <main className="flex-1 px-8 py-6 space-y-6 animate-fade-in">
           {/* ═══════════════════════════════════════
               WELCOME BANNER
           ═══════════════════════════════════════ */}
@@ -137,8 +128,7 @@ export default function DashboardPage() {
               <ActivityFeed />
             </div>
           </div>
-        </main>
-      </div>
+      </main>
     </div>
   );
 }

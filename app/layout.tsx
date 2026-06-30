@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Figtree, DM_Sans } from "next/font/google";
 import "./globals.css";
 import ThemeRegistry from "@/components/ThemeRegistry";
+import AppHeader from "@/components/layout/AppHeader";
+import Sidebar from "@/components/layout/Sidebar";
 
 // ── Figtree: headings & eyebrows ──────────────────────────────────
 const figtree = Figtree({
@@ -32,7 +34,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${figtree.variable} ${dmSans.variable}`}>
       <body suppressHydrationWarning>
-        <ThemeRegistry>{children}</ThemeRegistry>
+        <ThemeRegistry>
+          <AppHeader />
+          <Sidebar />
+          {children}
+        </ThemeRegistry>
       </body>
     </html>
   );

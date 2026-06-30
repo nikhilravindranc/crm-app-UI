@@ -2,8 +2,6 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Sidebar from "@/components/layout/Sidebar";
-import TopBar from "@/components/layout/TopBar";
 import NewLeadDrawer from "@/components/leads/NewLeadDrawer";
 import FiltersDrawer, { type FilterRow } from "@/components/leads/FiltersDrawer";
 import ColumnsDrawer, { COLUMN_GROUPS, DEFAULT_COLUMNS } from "@/components/leads/ColumnsDrawer";
@@ -19,7 +17,7 @@ import InputBase from "@mui/material/InputBase";
 import Badge from "@mui/material/Badge";
 import {
   Plus, MagnifyingGlass, SlidersHorizontal, SortAscending, Columns,
-  DotsThreeVertical, ArrowsDownUp, List, GridFour, Kanban,
+  DotsThreeVertical, ArrowsDownUp, ListIcon, GridFour, Kanban,
   CaretDown, House, CaretRight, Trash, UserCheck, NotePencil, Phone,
   FunnelSimple,
 } from "@phosphor-icons/react";
@@ -164,13 +162,9 @@ export default function LeadsPage() {
   const gridTemplate   = ["36px", ...visibleColDefs.map(c => c.width), "40px"].join(" ");
 
   return (
-    <div className="flex h-screen bg-transparent font-sans">
-      <Sidebar />
+    <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
 
-      <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
-        <TopBar />
-
-        <main className="flex-1 px-8 py-6 space-y-5 animate-fade-in">
+      <main className="flex-1 px-8 py-6 space-y-5 animate-fade-in">
 
           {/* ══ Page header ══ */}
           <div className="flex items-start justify-between">
@@ -192,9 +186,9 @@ export default function LeadsPage() {
               {/* View toggle */}
               <div className="flex items-center bg-white border border-slate-100 rounded-xl p-0.5 gap-0.5 shadow-sm">
                 {[
-                  { k:"list",   Icon:List,     label:"List"   },
-                  { k:"grid",   Icon:GridFour, label:"Grid"   },
-                  { k:"kanban", Icon:Kanban,   label:"Kanban" },
+                  { k:"list",   Icon:ListIcon,     label:"List"   },
+                  { k:"grid",   Icon:GridFour,    label:"Grid"   },
+                  { k:"kanban", Icon:Kanban,      label:"Kanban" },
                 ].map(({ k, Icon, label }) => (
                   <button key={k} onClick={() => setView(k as typeof view)}
                     className={`flex items-center gap-1.5 px-2.5 py-[7px] rounded-lg text-[11.5px] font-semibold transition-all ${
@@ -466,7 +460,6 @@ export default function LeadsPage() {
             </div>
           )}
         </main>
-      </div>
 
       {/* ══ Panels ══ */}
       <NewLeadDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />

@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Sidebar from "@/components/layout/Sidebar";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -51,7 +50,6 @@ function SectionRow({ title, subtitle, onEdit, children }: {
           </IconButton>
         )}
       </div>
-    </div>
   );
 }
 
@@ -111,10 +109,7 @@ export default function CreateReportPage() {
   );
 
   return (
-    <div className="flex h-screen bg-transparent font-sans">
-      <Sidebar />
-
-      <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-hidden">
+    <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-hidden">
 
         {/* ══ Builder header ══ */}
         <div className="flex items-start justify-between px-6 py-4 bg-[#f9fbff] border-b border-[#E3ECFC] flex-shrink-0">
@@ -418,6 +413,5 @@ export default function CreateReportPage() {
           </div>
         </div>
       </div>
-    </div>
   );
 }

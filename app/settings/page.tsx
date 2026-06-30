@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import Sidebar from "@/components/layout/Sidebar";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import InputBase from "@mui/material/InputBase";
@@ -1858,12 +1857,9 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="flex h-screen bg-[#EFF6FF] font-sans">
-      <Sidebar />
-      <div className="sidebar-content flex-1 flex overflow-hidden">
-        <SettingsSidebar activeItem={activeItem} setActiveItem={setActiveItem} />
-        {content()}
-      </div>
+    <div className="sidebar-content flex-1 flex overflow-hidden bg-[#EFF6FF] font-sans">
+      <SettingsSidebar activeItem={activeItem} setActiveItem={setActiveItem} />
+      {content()}
     </div>
   );
 }

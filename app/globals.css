@@ -66,8 +66,22 @@ p {
 :root { --sidebar-w: 260px; }
 
 .sidebar-content {
-  margin-left: var(--sidebar-w);
-  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding-top: 72px;
+}
+
+/* Desktop: sidebar pushes content */
+@media (min-width: 1024px) {
+  .sidebar-content {
+    margin-left: var(--sidebar-w);
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* Mobile: header is shorter, no push */
+@media (max-width: 1023px) {
+  .sidebar-content {
+    padding-top: 64px;
+  }
 }
 
 /* ── Slim scrollbar ─────────────────────────── */
