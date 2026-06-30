@@ -1,8 +1,6 @@
 "use client";
 import { useState, use } from "react";
 import { useRouter } from "next/navigation";
-import Sidebar from "@/components/layout/Sidebar";
-import TopBar from "@/components/layout/TopBar";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
@@ -37,13 +35,9 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
   const hdr  = isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]";
 
   return (
-    <div className={`flex h-screen font-sans ${isDark ? "bg-[#0A0A0A]" : "bg-transparent"}`}>
-      <Sidebar />
+    <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
 
-      <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
-        <TopBar />
-
-        <main className="flex-1 flex flex-col animate-fade-in">
+      <main className="flex-1 flex flex-col animate-fade-in">
 
           {/* ── Report header ── */}
           <div className={`flex items-center justify-between px-6 py-4 border-b ${hdr}`}>
@@ -137,6 +131,5 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
           </div>
         </main>
       </div>
-    </div>
   );
 }

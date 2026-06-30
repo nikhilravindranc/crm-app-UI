@@ -2,8 +2,6 @@
 import { useState, useRef, type ElementType } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Sidebar from "@/components/layout/Sidebar";
-import TopBar from "@/components/layout/TopBar";
 import NewLeadDrawer from "@/components/leads/NewLeadDrawer";
 import FiltersDrawer, { type FilterRow } from "@/components/leads/FiltersDrawer";
 import ColumnsDrawer, { COLUMN_GROUPS, DEFAULT_COLUMNS } from "@/components/leads/ColumnsDrawer";
@@ -22,7 +20,7 @@ import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { getDataGridSx } from "@/lib/dataGridStyles";
 import {
   Plus, MagnifyingGlass, SlidersHorizontal, SortAscending, Columns,
-  DotsThreeVertical, List, GridFour, Kanban,
+  DotsThreeVertical, ArrowsDownUp, ListIcon, GridFour, Kanban,
   CaretDown, House, CaretRight, Trash, UserCheck, NotePencil, Phone,
   FunnelSimple, PencilSimple, Eye,
   IdentificationBadge, Buildings, Envelope, Pulse, UserCircle, CalendarBlank,
@@ -353,13 +351,9 @@ export default function LeadsPage() {
   ];
 
   return (
-    <div className="flex h-screen bg-transparent font-sans">
-      <Sidebar />
+    <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
 
-      <div className={`sidebar-content flex-1 flex flex-col min-h-screen overflow-auto transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
-        <TopBar />
-
-        <main className="flex-1 px-4 md:px-8 py-3 md:py-4 space-y-3 animate-fade-in">
+      <main className="flex-1 px-8 py-6 space-y-5 animate-fade-in">
 
           {/* ══ Page header ══ */}
           <div className="flex items-start justify-between">
@@ -381,9 +375,9 @@ export default function LeadsPage() {
               {/* View toggle */}
               <div className={`flex items-center rounded-xl p-0.5 gap-0.5 shadow-sm border ${isDark ? "bg-[#000000] border-[#27272A]" : "bg-white border-slate-100"}`}>
                 {[
-                  { k:"list",   Icon:List,     label:"List"   },
-                  { k:"grid",   Icon:GridFour, label:"Grid"   },
-                  { k:"kanban", Icon:Kanban,   label:"Kanban" },
+                  { k:"list",   Icon:ListIcon,     label:"List"   },
+                  { k:"grid",   Icon:GridFour,    label:"Grid"   },
+                  { k:"kanban", Icon:Kanban,      label:"Kanban" },
                 ].map(({ k, Icon, label }) => (
                   <button key={k} onClick={() => setView(k as typeof view)}
                     className={`flex items-center gap-1.5 px-2.5 py-[7px] rounded-lg text-[14px]/[18px] font-medium transition-all ${
@@ -586,7 +580,6 @@ export default function LeadsPage() {
             </MenuItem>
           </Menu>
         </main>
-      </div>
 
       {/* ══ Panels ══ */}
       <NewLeadDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />

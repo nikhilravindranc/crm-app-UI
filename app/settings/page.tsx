@@ -1,7 +1,5 @@
 "use client";
 import { useState, useRef } from "react";
-import Sidebar from "@/components/layout/Sidebar";
-import TopBar from "@/components/layout/TopBar";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import InputBase from "@mui/material/InputBase";
@@ -2634,17 +2632,9 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className={`flex min-h-screen font-sans transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-[#EFF6FF]"}`}>
-      <Sidebar />
-      <div className={`sidebar-content flex-1 flex flex-col overflow-hidden transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
-        <TopBar />
-        <div className="flex flex-col md:flex-row flex-1 overflow-auto md:overflow-hidden">
-          <SettingsSidebar activeItem={activeItem} setActiveItem={setActiveItem} isDark={isDark} />
-          <div className={`relative flex-1 overflow-auto ${isDark ? "bg-[#000000]" : "bg-[#EFF6FF]"}`}>
-            {content()}
-          </div>
-        </div>
-      </div>
+    <div className="sidebar-content flex-1 flex overflow-hidden bg-[#EFF6FF] font-sans">
+      <SettingsSidebar activeItem={activeItem} setActiveItem={setActiveItem} />
+      {content()}
     </div>
   );
 }

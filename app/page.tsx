@@ -1,6 +1,4 @@
-﻿"use client";
-import Sidebar from "@/components/layout/Sidebar";
-import TopBar from "@/components/layout/TopBar";
+"use client";
 import KPICard from "@/components/dashboard/KPICard";
 import RevenueChart from "@/components/dashboard/RevenueChart";
 import DealStageChart from "@/components/dashboard/DealStageChart";
@@ -60,17 +58,14 @@ const quickStats = [
 export default function DashboardPage() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
-
   return (
-    <div className={`flex h-screen font-sans transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
-      <Sidebar />
-      <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
-        <TopBar title="Dashboard" />
-
-        <main className="flex-1 px-4 md:px-8 py-4 md:py-6 space-y-4 md:space-y-6 animate-fade-in">
-
-          {/* ── WELCOME BANNER ── */}
-          <div className={`relative rounded-2xl overflow-hidden ${isDark ? "bg-[#18181B]" : "bg-[#0C2472]"}`}>
+    <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
+      <main className="flex-1 px-8 py-6 space-y-6 animate-fade-in">
+          {/* ═══════════════════════════════════════
+              WELCOME BANNER
+          ═══════════════════════════════════════ */}
+          <div className="relative bg-[#0C2472] rounded-2xl overflow-hidden">
+            {/* Decorative blobs */}
             <div className="absolute -right-10 -top-10 w-52 h-52 rounded-full bg-white/5 pointer-events-none" />
             <div className="absolute right-16 top-6 w-28 h-28 rounded-full bg-white/5 pointer-events-none" />
             <div className="absolute right-48 -bottom-8 w-36 h-36 rounded-full bg-white/5 pointer-events-none" />
@@ -110,8 +105,7 @@ export default function DashboardPage() {
             <div className="lg:col-span-2"><RecentDeals isDark={isDark} /></div>
             <div className="lg:col-span-1"><ActivityFeed isDark={isDark} /></div>
           </div>
-        </main>
-      </div>
+      </main>
     </div>
   );
 }
