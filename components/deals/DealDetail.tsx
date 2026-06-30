@@ -17,6 +17,7 @@ import {
   Note, ClipboardText, Paperclip, ClockCounterClockwise,
   ThumbsUp, ThumbsDown, Plus, Trash, Copy,
   GridFour, List, Trophy, Handshake, Tag,
+  CurrencyCircleDollar, ChartLineUp, CalendarBlank,
 } from "@phosphor-icons/react";
 import { OWNER_AVATARS } from "@/lib/avatars";
 import { useTheme } from "@/components/ThemeContext";
@@ -129,7 +130,7 @@ function SectionCard({ icon: Icon, title, children, action }: {
         <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
           <Icon size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
         </div>
-        <p className={`font-heading text-[12px] font-bold uppercase tracking-wider flex-1 ${isDark ? "text-slate-500" : "text-slate-500"}`}>{title}</p>
+        <p className={`font-heading text-[12px] font-bold uppercase tracking-[0.12em] flex-1 ${isDark ? "text-[#D4D4D8]" : "text-[#1D4ED8]"}`}>{title}</p>
         {action}
       </div>
       <div className="px-5 py-4">{children}</div>
@@ -141,14 +142,15 @@ function InfoGrid({ children }: { children: React.ReactNode }) {
   return <div className="grid grid-cols-2 gap-x-10 gap-y-0">{children}</div>;
 }
 
-function KV({ label, value }: { label: string; value?: string | number }) {
+function KV({ label, value, blue }: { label: string; value?: string | number; blue?: boolean }) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const display = value !== undefined && value !== "" && value !== 0 ? String(value) : "—";
+  const isEmpty = display === "—";
   return (
-    <div className={`py-2.5 border-b last:border-0 ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
-      <p className={`text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{label}</p>
-      <p className={`text-[14px] font-medium ${display === "—" ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>{display}</p>
+    <div className="py-2 border-b border-[#EFF6FF] last:border-0">
+      <p className={`font-heading text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>{label}</p>
+      <p className={`text-[14px] font-medium ${blue ? "text-inherit" : isDark ? (isEmpty ? "text-[#3F3F46] italic" : "text-[#D4D4D8]") : (isEmpty ? "text-slate-300 italic" : "text-slate-800")}`}>{display}</p>
     </div>
   );
 }
@@ -170,10 +172,10 @@ export default function DealDetail({ dealId }: { dealId: number }) {
 
   if (!deal) {
     return (
-      <div className={`flex h-screen font-sans ${isDark ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
+      <div className="flex h-screen bg-transparent font-sans">
         <Sidebar />
-        <div className="sidebar-content flex-1 flex flex-col">
-          <TopBar title="Deals" />
+        <div className={`sidebar-content flex-1 flex flex-col min-h-screen overflow-auto transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
+          <TopBar />
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
               <p className={`text-xl font-bold mb-2 ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>Deal not found</p>
@@ -194,86 +196,158 @@ export default function DealDetail({ dealId }: { dealId: number }) {
   };
 
   const relatedItems = [
-    { label: "Notes",         icon: Note,                  count: notes.length,           color: "#8B5CF6" },
-    { label: "Attachments",   icon: Paperclip,             count: 0,                      color: "#F59E0B" },
+    { label: "Notes",         icon: Note,                  count: notes.length,             color: "#8B5CF6" },
+    { label: "Attachments",   icon: Paperclip,             count: 0,                        color: "#F59E0B" },
     { label: "Stage History", icon: ClockCounterClockwise, count: deal.stageHistory.length, color: "#64748B" },
-    { label: "Tasks",         icon: ClipboardText,         count: deal.tasks.length,      color: "#10B981" },
+    { label: "Tasks",         icon: ClipboardText,         count: deal.tasks.length,        color: "#10B981" },
+  ];
+
+  // Quick stat cards data
+  const quickStats = [
+    { label: "Amount",           value: `₹${deal.amount.toLocaleString("en-IN")}`, icon: CurrencyCircleDollar, fill: isDark ? "rgba(96,165,250,0.08)"  : "#EFF6FF", deep: isDark ? "#60A5FA" : "#1D4ED8" },
+    { label: "Probability",      value: `${deal.probability}%`,                    icon: ChartLineUp,          fill: isDark ? "rgba(52,211,153,0.08)"  : "#F0FDF4", deep: isDark ? "#34D399" : "#059669" },
+    { label: "Expected Revenue", value: `₹${deal.expectedRevenue.toLocaleString("en-IN")}`, icon: CurrencyCircleDollar, fill: isDark ? "rgba(251,191,36,0.08)" : "#FFFBEB", deep: isDark ? "#FBBF24" : "#D97706" },
+    { label: "Closing Date",     value: deal.closingDate,                           icon: CalendarBlank,        fill: isDark ? "rgba(244,114,182,0.08)" : "#FDF2F8", deep: isDark ? "#F472B6" : "#DB2777" },
   ];
 
   const RelatedListPanel = ({ onClickItem }: { onClickItem: (label: string) => void }) => (
     <div className="space-y-4">
       <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <div className={`px-4 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
-          <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-500"}`}>Related List</p>
+          <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-[#ABABAD]" : "text-slate-500"}`}>Related List</p>
         </div>
         <div className="p-2 space-y-0.5">
           {relatedItems.map(({ label, icon: Icon, count, color }) => (
             <button key={label} onClick={() => onClickItem(label)}
-              className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-xl transition-colors ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}>
+              className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-xl group transition-colors ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}>
               <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: color + "20" }}>
                 <Icon size={14} color={color} weight="duotone" />
               </div>
-              <span className={`flex-1 text-left text-[14px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>{label}</span>
+              <span className={`flex-1 min-w-0 truncate text-left text-[14px] font-medium ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{label}</span>
               {count > 0 && (
-                <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded-full ${isDark ? "bg-[#27272A] text-[#A1A1AA]" : "bg-[#E3ECFC] text-[#1D4ED8]"}`}>{count}</span>
+                <span className="text-[12px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>
               )}
-              <CaretRight size={14} color={isDark ? "#3F3F46" : "#E2E8F0"} weight="duotone" />
+              <CaretRight size={14} color="#E2E8F0" weight="duotone" />
             </button>
           ))}
+        </div>
+      </div>
+
+      {/* Ownership panel */}
+      <div className={`rounded-2xl border shadow-sm p-4 space-y-3 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+        <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-[#ABABAD]" : "text-slate-500"}`}>Ownership</p>
+        <div className="space-y-2">
+          <div className="flex justify-between text-[12px]">
+            <span className={`font-medium ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>Owner</span>
+            <span className={`font-semibold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{deal.owner}</span>
+          </div>
+          <div className="flex justify-between text-[12px]">
+            <span className={`font-medium ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>Created</span>
+            <span className={`font-semibold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{deal.createdAt}</span>
+          </div>
+          <div className="flex justify-between text-[12px]">
+            <span className={`font-medium ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>Modified</span>
+            <span className={`font-semibold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{deal.modifiedAt}</span>
+          </div>
         </div>
       </div>
     </div>
   );
 
   return (
-    <div className={`flex h-screen font-sans ${isDark ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
+    <div className="flex h-screen bg-transparent font-sans">
       <Sidebar />
 
-      <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-hidden">
-        <TopBar title="Deals" />
+      <div className={`sidebar-content flex-1 flex flex-col min-h-screen overflow-auto transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
+        <TopBar />
 
-        {/* ── Breadcrumb ── */}
-        <div className={`flex items-center gap-1.5 px-8 py-3 border-b text-[12px] ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#E3ECFC] border-[#E3ECFC]"}`}>
-          <Link href="/" className={`transition-colors ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
-            <House size={13} weight="duotone" />
-          </Link>
-          <CaretRight size={11} color={isDark ? "#3F3F46" : "#E2E8F0"} />
-          <Link href="/deals" className={`font-medium transition-colors ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>Deals</Link>
-          <CaretRight size={11} color={isDark ? "#3F3F46" : "#E2E8F0"} />
-          <span className={`font-semibold ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>{deal.refId}</span>
-        </div>
+        <main className="flex-1 px-6 py-5 space-y-4 animate-fade-in">
 
-        {/* ── Body ── */}
-        <div className="flex-1 overflow-y-auto px-6 py-5">
+          {/* ── Breadcrumb ── */}
+          <div className={`flex items-center gap-1.5 text-[13.5px] ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>
+            <House size={16} weight="duotone" />
+            <CaretRight size={12} weight="duotone" />
+            <Link href="/deals" className="hover:text-[#1D4ED8] transition-colors font-medium">Deals</Link>
+            <CaretRight size={12} weight="duotone" />
+            <span className="text-[#1D4ED8] font-semibold truncate max-w-[240px]">{deal.name}</span>
+          </div>
+
+          {/* ── Header card ── */}
+          <div className={`rounded-2xl border shadow-sm px-5 py-4 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <h1 className={`text-[20px] font-extrabold tracking-tight truncate ${isDark ? "text-[#FFFFFF]" : "text-slate-900"}`}>{deal.name}</h1>
+                <p className={`text-[12px] mt-0.5 ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>{deal.refId} · {deal.account}</p>
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <Button variant="outlined" size="small"
+                  sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#B4B5B6":"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.84rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#1D4ED8", color:"#1D4ED8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
+                  Convert
+                </Button>
+                <Button variant="outlined" size="small"
+                  sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#B4B5B6":"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.84rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#1D4ED8", color:"#1D4ED8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
+                  Send Email
+                </Button>
+                <Button variant="contained" size="small"
+                  startIcon={<PencilSimple size={14} weight="duotone" />}
+                  onClick={e => setMoreAnchor(e.currentTarget)}
+                  sx={{ bgcolor:"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.84rem", boxShadow:"0 1px 8px 0 #1D4ED833", "&:hover":{ bgcolor:"#60A5FA", boxShadow:"0 2px 14px 0 #60A5FA55" }, "&:active":{ bgcolor:"#0C2472" } }}>
+                  Edit
+                </Button>
+                <Tooltip title="More options">
+                  <IconButton size="small"
+                    sx={{ border:`1px solid ${isDark?"#27272A":"#E3ECFC"}`, bgcolor: isDark?"#0F0F0F":"transparent", borderRadius:"9px", p:0.75, "&:hover":{ borderColor:"#1D4ED8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
+                    <DotsThreeVertical size={16} color={isDark?"#B4B5B6":"#1D4ED8"} weight="bold" />
+                  </IconButton>
+                </Tooltip>
+              </div>
+            </div>
+
+            {/* Quick stat cards */}
+            <div className="grid grid-cols-4 gap-3 mt-4">
+              {quickStats.map(({ label, value, icon: Icon, fill, deep }) => (
+                <div key={label} className="rounded-xl border border-white/50 p-3.5"
+                  style={{ backgroundColor: fill, boxShadow: "0 6px 24px rgba(15,23,42,0.06)" }}>
+                  <div className="w-7 h-7 rounded-lg flex items-center justify-center mb-2"
+                    style={{ backgroundColor: isDark ? "rgba(255,255,255,0.08)" : "rgba(249,251,255,0.7)" }}>
+                    <Icon size={15} color={deep} weight="duotone" />
+                  </div>
+                  <p className="font-heading text-[12px] font-bold uppercase tracking-wider mb-0.5" style={{ color: isDark ? "#94A3B8" : "#475569" }}>{label}</p>
+                  <p className="text-[14px] font-bold truncate" style={{ color: isDark ? "#FFFFFF" : "#0C2472" }}>{value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
 
           {/* ── Tabs ── */}
-          <div className="flex items-center gap-2 mb-5">
+          <div className={`flex items-center gap-1 border rounded-xl p-1 w-fit shadow-sm ${isDark ? "bg-[#000000] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
             {(["overview", "timeline"] as const).map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
-                className={`px-4 py-1.5 rounded-full text-[14px] font-semibold capitalize transition-all ${
+                className={`px-4 py-1.5 rounded-lg text-[14px] font-semibold capitalize transition-all ${
                   activeTab === tab
-                    ? isDark ? "bg-[#3F3F46] text-[#F4F4F5] shadow-sm" : "bg-[#1D4ED8] text-white shadow-sm"
-                    : isDark ? "bg-[#1C1C1E] text-[#71717A] hover:bg-[#27272A]" : "bg-[#f9fbff] text-slate-500 hover:bg-[#E3ECFC]"
+                    ? "bg-[#1D4ED8] text-white shadow-sm"
+                    : isDark ? "text-[#B4B5B6] bg-[#0A0A0A] hover:bg-[#27272A] hover:text-[#D4D4D8]"
+                    : "text-[#0C2472] bg-[#E3ECFC] hover:bg-[#1D4ED8]/10"
                 }`}>
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
               </button>
             ))}
           </div>
 
-            {activeTab === "overview" && (
-              <div className="grid grid-cols-3 gap-4 items-start">
-              <div className="col-span-2 space-y-5">
+          {activeTab === "overview" && (
+            <div className="grid grid-cols-3 gap-4 items-start">
+              <div className="col-span-2 space-y-5 min-w-0">
                 {/* ── Stage Pipeline ── */}
                 <div className={`rounded-2xl border shadow-sm p-4 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                      <p className={`text-[12px] font-bold uppercase tracking-widest ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>Start</p>
+                      <p className={`text-[12px] font-bold uppercase tracking-widest ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>Start</p>
                       <p className={`text-[12px] font-semibold ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>
                         {new Date(deal.startDate).toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" }).toUpperCase()}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className={`text-[12px] font-bold uppercase tracking-widest ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>Closing</p>
+                      <p className={`text-[12px] font-bold uppercase tracking-widest ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>Closing</p>
                       <p className={`text-[12px] font-semibold ${isDark ? "text-[#A1A1AA]" : "text-slate-600"}`}>
                         {new Date(deal.closingDate).toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" }).toUpperCase()}
                       </p>
@@ -364,8 +438,8 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                     <KV label="Lead Source"       value={deal.leadSource} />
                     <KV label="Expected Revenue"  value={`₹${deal.expectedRevenue.toLocaleString()}`} />
                     <KV label="Contact Name"      value={deal.contactName} />
-                    <KV label="Created By"        value={`${deal.createdBy}\n${deal.createdAt}`} />
-                    <KV label="Modified By"       value={`${deal.modifiedBy}\n${deal.modifiedAt}`} />
+                    <KV label="Created By"        value={`${deal.createdBy} · ${deal.createdAt}`} />
+                    <KV label="Modified By"       value={`${deal.modifiedBy} · ${deal.modifiedAt}`} />
                     <KV label="Record Category"   value={deal.recordCategory} />
                   </InfoGrid>
                 </SectionCard>
@@ -385,12 +459,12 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                           placeholder="Add a note…"
                           value={note}
                           onChange={e => setNote(e.target.value)}
-                          sx={{ px:2, py:1.5, fontSize:"0.8rem", color: isDark ? "#D4D4D8" : "#334155", "& textarea::placeholder":{color: isDark ? "#3F3F46" : "#E2E8F0", opacity:1} }}
+                          sx={{ px:2, py:1.5, fontSize:"0.8rem", color: isDark ? "#D4D4D8" : "#334155", "& textarea::placeholder":{ color: isDark ? "#3F3F46" : "#CBD5E1", opacity:1 } }}
                         />
                         {note.trim() && (
                           <div className="flex justify-end px-3 pb-2">
                             <Button size="small" variant="contained" onClick={addNote}
-                              sx={{ bgcolor: isDark ? "#27272A" : "#E3ECFC", color: isDark ? "#F4F4F5" : undefined, borderRadius:"8px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", "&:hover":{bgcolor: isDark ? "#3F3F46" : "#E3ECFC"} }}>
+                              sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius:"8px", textTransform:"none", fontWeight:700, fontSize:"0.73rem", "&:hover":{bgcolor: isDark ? "#3F3F46" : "#2563EB"} }}>
                               Save Note
                             </Button>
                           </div>
@@ -399,7 +473,7 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                       {notes.map((n, i) => (
                         <div key={i} className={`rounded-xl px-4 py-3 border ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
                           <p className={`text-[14px] ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{n.text}</p>
-                          <p className={`text-[12px] mt-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{n.at}</p>
+                          <p className={`text-[12px] mt-1 ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>{n.at}</p>
                         </div>
                       ))}
                     </div>
@@ -414,13 +488,13 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                         <div className={`flex items-center rounded-lg p-0.5 gap-0.5 ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
                           {[{ k:"grid", Icon:GridFour }, { k:"list", Icon:List }].map(({ k, Icon }) => (
                             <button key={k} onClick={() => setAttachView(k as "grid" | "list")}
-                              className={`p-1 rounded-md transition-colors ${attachView===k ? (isDark ? "bg-[#3F3F46] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]") : (isDark ? "text-[#9CA3AF]" : "text-slate-400")}`}>
+                              className={`p-1 rounded-md transition-colors ${attachView===k ? (isDark ? "bg-[#3F3F46] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]") : (isDark ? "text-[#E4E4E7]" : "text-slate-400")}`}>
                               <Icon size={13} weight="duotone" />
                             </button>
                           ))}
                         </div>
                         <Button size="small" variant="outlined"
-                          sx={{ borderColor: isDark ? "#3F3F46" : "#E3ECFC", color: isDark ? "#A1A1AA" : "#0C2472", bgcolor: isDark ? "#27272A" : "#E3ECFC", borderRadius:"8px", textTransform:"none", fontWeight:600, fontSize:"0.73rem", "&:hover":{borderColor: isDark ? "#9CA3AF" : "#E3ECFC", bgcolor: isDark ? "#3F3F46" : "#f9fbff"} }}>
+                          sx={{ borderColor: isDark ? "#27272A" : "#E3ECFC", color: isDark ? "#B4B5B6" : "#1D4ED8", bgcolor: isDark ? "#0F0F0F" : "transparent", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.84rem", "&:hover":{ borderColor:"#1D4ED8", color:"#1D4ED8", bgcolor: isDark ? "#0A0A0A" : "#EFF6FF" } }}>
                           Attach
                         </Button>
                       </div>
@@ -444,7 +518,7 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                         <thead>
                           <tr className={`border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
                             {["Stage","Amount","Probability (%)","Expected Revenue","Stage Duration (Days)","Moved From","Is Current"].map(h => (
-                              <th key={h} className={`text-left py-2 pr-4 text-[11.5px] font-bold uppercase tracking-wider whitespace-nowrap ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>{h}</th>
+                              <th key={h} className={`text-left py-2 pr-4 text-[11.5px] font-bold uppercase tracking-wider whitespace-nowrap ${isDark ? "text-[#ABABAD]" : "text-[#0C2472]"}`}>{h}</th>
                             ))}
                           </tr>
                         </thead>
@@ -488,8 +562,8 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                       <table className="w-full">
                         <thead>
                           <tr className={`border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
-                            <th className={`text-left py-2 pr-4 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>Subject</th>
-                            <th className={`text-left py-2 pr-4 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-[#0C2472]"}`}>Status</th>
+                            <th className={`text-left py-2 pr-4 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#ABABAD]" : "text-[#0C2472]"}`}>Subject</th>
+                            <th className={`text-left py-2 pr-4 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#ABABAD]" : "text-[#0C2472]"}`}>Status</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -511,106 +585,110 @@ export default function DealDetail({ dealId }: { dealId: number }) {
 
               </div>{/* end col-span-2 */}
 
-              <RelatedListPanel onClickItem={label =>
-                document.getElementById(`section-${label.toLowerCase().replace(/\s/g, "-")}`)?.scrollIntoView({ behavior: "smooth", block: "start" })
-              } />
-            </div>
-            )}
-
-            {activeTab === "timeline" && (
-              <div className="grid grid-cols-3 gap-4 items-start">
-              <div className="col-span-2">
-              <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
-                <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
-                  <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
-                    <ClockCounterClockwise size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
-                  </div>
-                  <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-500"}`}>History</p>
-                </div>
-
-                {deal.timeline.length === 0 ? (
-                  <div className="py-12 flex flex-col items-center justify-center gap-2">
-                    <ClockCounterClockwise size={28} color={isDark ? "#27272A" : "#E2E8F0"} weight="duotone" />
-                    <p className={`text-[14px] ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>No history yet</p>
-                  </div>
-                ) : (() => {
-                  const grouped: Record<string, TimelineEntry[]> = {};
-                  deal.timeline.forEach(e => {
-                    if (!grouped[e.date]) grouped[e.date] = [];
-                    grouped[e.date].push(e);
-                  });
-                  const sortedDates = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
-
-                  return (
-                    <div className="px-6 py-5 space-y-6">
-                      {sortedDates.map(date => (
-                        <div key={date}>
-                          <div className="flex items-center gap-3 mb-4">
-                            <span className={`text-[12px] font-semibold ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
-                              {new Date(date).toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" })}
-                            </span>
-                            <div className={`flex-1 h-px ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
-                          </div>
-
-                          <div className="space-y-0">
-                            {grouped[date].map((entry, i) => {
-                              const isLast = i === grouped[date].length - 1 && date === sortedDates[sortedDates.length - 1];
-                              return (
-                                <div key={i} className="flex gap-4">
-                                  <div className="w-16 flex-shrink-0 text-right">
-                                    <span className={`text-[12px] font-medium ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{entry.time}</span>
-                                  </div>
-
-                                  <div className="flex flex-col items-center flex-shrink-0">
-                                    <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center z-10 flex-shrink-0 ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
-                                      <PencilSimple size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
-                                    </div>
-                                    {!isLast && <div className={`w-px flex-1 my-1 min-h-[24px] ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />}
-                                  </div>
-
-                                  <div className="pb-5 flex-1 min-w-0 overflow-hidden">
-                                    {entry.probability && (
-                                      <p className={`text-[14px] leading-relaxed break-words ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>
-                                        <span className="font-bold">Probability:</span>{" "}
-                                        <span className={isDark ? "text-[#71717A]" : "text-slate-500"}>{entry.probability.from}.0 → {entry.probability.to}.0</span>
-                                      </p>
-                                    )}
-                                    {entry.stage && entry.stage.to && (
-                                      <p className={`text-[14px] leading-relaxed break-words ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>
-                                        <span className="font-bold">Stage:</span>{" "}
-                                        {entry.stage.from
-                                          ? <span className={isDark ? "text-[#71717A]" : "text-slate-500"}>{entry.stage.from} → {entry.stage.to}</span>
-                                          : <span className={isDark ? "text-[#71717A]" : "text-slate-500"}>{entry.stage.to}</span>
-                                        }
-                                      </p>
-                                    )}
-                                    <p className={`text-[12px] mt-0.5 break-all ${isDark ? "text-[#9CA3AF]" : "text-inherit"}`}>by {entry.by}</p>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  );
-                })()}
+              <div className="sticky top-4 self-start">
+                <RelatedListPanel onClickItem={label =>
+                  document.getElementById(`section-${label.toLowerCase().replace(/\s/g, "-")}`)?.scrollIntoView({ behavior: "smooth", block: "start" })
+                } />
               </div>
+            </div>
+          )}
+
+          {activeTab === "timeline" && (
+            <div className="grid grid-cols-3 gap-4 items-start">
+              <div className="col-span-2">
+                <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+                  <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
+                    <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
+                      <ClockCounterClockwise size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
+                    </div>
+                    <p className={`font-heading text-[12px] font-bold uppercase tracking-[0.12em] ${isDark ? "text-[#D4D4D8]" : "text-[#1D4ED8]"}`}>History</p>
+                  </div>
+
+                  {deal.timeline.length === 0 ? (
+                    <div className="py-12 flex flex-col items-center justify-center gap-2">
+                      <ClockCounterClockwise size={28} color={isDark ? "#27272A" : "#E2E8F0"} weight="duotone" />
+                      <p className={`text-[14px] ${isDark ? "text-[#A1A1AA]" : "text-slate-400"}`}>No history yet</p>
+                    </div>
+                  ) : (() => {
+                    const grouped: Record<string, TimelineEntry[]> = {};
+                    deal.timeline.forEach(e => {
+                      if (!grouped[e.date]) grouped[e.date] = [];
+                      grouped[e.date].push(e);
+                    });
+                    const sortedDates = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
+
+                    return (
+                      <div className="px-6 py-5 space-y-6">
+                        {sortedDates.map(date => (
+                          <div key={date}>
+                            <div className="flex items-center gap-3 mb-4">
+                              <span className={`text-[12px] font-semibold ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>
+                                {new Date(date).toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" })}
+                              </span>
+                              <div className={`flex-1 h-px ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
+                            </div>
+
+                            <div className="space-y-0">
+                              {grouped[date].map((entry, i) => {
+                                const isLast = i === grouped[date].length - 1 && date === sortedDates[sortedDates.length - 1];
+                                return (
+                                  <div key={i} className="flex gap-4">
+                                    <div className="w-16 flex-shrink-0 text-right">
+                                      <span className={`text-[12px] font-medium ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>{entry.time}</span>
+                                    </div>
+
+                                    <div className="flex flex-col items-center flex-shrink-0">
+                                      <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center z-10 flex-shrink-0 ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
+                                        <PencilSimple size={13} color={isDark ? "#A1A1AA" : "#1D4ED8"} weight="duotone" />
+                                      </div>
+                                      {!isLast && <div className={`w-px flex-1 my-1 min-h-[24px] ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />}
+                                    </div>
+
+                                    <div className="pb-5 flex-1 min-w-0 overflow-hidden">
+                                      {entry.probability && (
+                                        <p className={`text-[14px] leading-relaxed break-words ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>
+                                          <span className="font-bold">Probability:</span>{" "}
+                                          <span className={isDark ? "text-[#71717A]" : "text-slate-500"}>{entry.probability.from}.0 → {entry.probability.to}.0</span>
+                                        </p>
+                                      )}
+                                      {entry.stage && entry.stage.to && (
+                                        <p className={`text-[14px] leading-relaxed break-words ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>
+                                          <span className="font-bold">Stage:</span>{" "}
+                                          {entry.stage.from
+                                            ? <span className={isDark ? "text-[#71717A]" : "text-slate-500"}>{entry.stage.from} → {entry.stage.to}</span>
+                                            : <span className={isDark ? "text-[#71717A]" : "text-slate-500"}>{entry.stage.to}</span>
+                                          }
+                                        </p>
+                                      )}
+                                      <p className={`text-[12px] mt-0.5 break-all ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>by {entry.by}</p>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })()}
+                </div>
               </div>{/* end col-span-2 */}
 
-              <RelatedListPanel onClickItem={() => setActiveTab("overview")} />
+              <div className="sticky top-4 self-start">
+                <RelatedListPanel onClickItem={() => setActiveTab("overview")} />
+              </div>
             </div>
-            )}
-        </div>
+          )}
+        </main>
       </div>
 
       {/* ── More menu ── */}
       <Menu anchorEl={moreAnchor} open={Boolean(moreAnchor)} onClose={() => setMoreAnchor(null)}
         PaperProps={{ sx:{ borderRadius:"12px", border:`1px solid ${isDark ? "#27272A" : "#E3ECFC"}`, bgcolor: isDark ? "#1C1C1E" : "#fff", boxShadow: isDark ? "0 8px 32px rgba(0,0,0,0.5)" : "0 8px 32px rgba(12,36,114,0.10)", minWidth:160 } }}>
         {[
-          { label:"Edit Deal",    icon:PencilSimple, color: isDark ? "#D4D4D8" : "#334155" },
-          { label:"Copy",         icon:Copy,         color: isDark ? "#D4D4D8" : "#334155" },
-          { label:"Delete",       icon:Trash,        color:"#EF4444" },
+          { label:"Edit Deal", icon:PencilSimple, color: isDark ? "#D4D4D8" : "#334155" },
+          { label:"Copy",      icon:Copy,         color: isDark ? "#D4D4D8" : "#334155" },
+          { label:"Delete",    icon:Trash,        color:"#EF4444" },
         ].map(opt => (
           <MenuItem key={opt.label} onClick={() => setMoreAnchor(null)}
             sx={{ mx:0.5, borderRadius:"8px", py:1, "&:hover":{bgcolor: isDark ? "#27272A" : "#EFF6FF"} }}>

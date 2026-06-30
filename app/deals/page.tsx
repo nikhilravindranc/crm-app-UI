@@ -106,12 +106,13 @@ const DEFAULT_VISIBLE_COLS = new Set([
 // ---------------------------------------------
 const fmt = (n: number) => n === 0 ? "₹0" : `₹${n.toLocaleString("en-IN")}`;
 
-function ColHeader({ label, icon: Icon, isDark = false }: { label: string; icon?: ElementType; isDark?: boolean }) {
+function ColHeader({ label, icon: Icon }: { label: string; icon?: ElementType }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   return (
-    <div className={`font-heading flex items-center gap-1.5 text-table-header uppercase tracking-wide cursor-pointer transition-colors group select-none ${isDark ? "text-[#9CA3AF] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+    <div className={`flex items-center gap-1.5 font-heading text-[14px]/[18px] font-semibold uppercase tracking-wide select-none ${isDark ? "text-[#E4E4E7]" : "text-[#737373]"}`}>
       {Icon && <Icon size={13} weight="duotone" />}
       {label}
-      <ArrowsDownUp size={12} weight="duotone" className={`opacity-30 group-hover:opacity-100 transition-opacity ${isDark ? "text-[#9CA3AF]" : "text-[#60A5FA]"}`} />
     </div>
   );
 }
@@ -154,32 +155,32 @@ export default function DealsPage() {
   const COLUMN_BUILDERS: Record<string, GridColDef<Deal>> = {
     dealName: {
       field: "dealName", headerName: "Deal Name", flex: 1.8, minWidth: 160, sortable: false,
-      renderHeader: () => <ColHeader label="Deal Name" icon={Handshake} isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Deal Name" icon={Handshake} />,
       renderCell: (params) => (
-        <p className={`m-0 font-heading text-table-cell font-medium truncate ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}>{params.row.name}</p>
+        <p className={`m-0 font-heading text-[15px]/[20px] font-medium truncate ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}>{params.row.name}</p>
       ),
     },
     amount: {
       field: "amount", headerName: "Amount", flex: 1, minWidth: 100, sortable: false,
-      renderHeader: () => <ColHeader label="Amount" icon={CurrencyCircleDollar} isDark={isDark} />,
-      renderCell: (params) => <p className={`m-0 text-table-cell font-medium truncate ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}>{fmt(params.row.amount)}</p>,
+      renderHeader: () => <ColHeader label="Amount" icon={CurrencyCircleDollar} />,
+      renderCell: (params) => <p className={`m-0 text-[15px]/[20px] font-medium truncate ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}>{fmt(params.row.amount)}</p>,
     },
     accountName: {
       field: "accountName", headerName: "Account Name", flex: 1.3, minWidth: 120, sortable: false,
-      renderHeader: () => <ColHeader label="Account Name" icon={Buildings} isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Account Name" icon={Buildings} />,
       renderCell: (params) => (
-        <p className={`m-0 text-table-cell truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
-          {params.row.account || <span className={isDark ? "text-[#9CA3AF]" : "text-slate-200"}>—</span>}
+        <p className={`m-0 text-[15px]/[20px] truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
+          {params.row.account || <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>}
         </p>
       ),
     },
     stage: {
       field: "stage", headerName: "Stage", flex: 1.7, minWidth: 160, sortable: false,
-      renderHeader: () => <ColHeader label="Stage" icon={Pulse} isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Stage" icon={Pulse} />,
       renderCell: (params) => {
         const cfg = STAGE_CFG[params.row.stage] ?? STAGE_CFG["Qualification"];
         return (
-          <span className="self-center inline-flex items-center gap-1.5 text-badge-text px-2 py-[3px] rounded-full leading-none"
+          <span className="self-center inline-flex items-center gap-1.5 text-[13px] font-medium px-2 py-[3px] rounded-full leading-none"
             style={{ backgroundColor: isDark ? cfg.bgDark : cfg.bg, color: isDark ? cfg.textDark : cfg.text }}>
             <span className="w-[5px] h-[5px] rounded-full flex-shrink-0" style={{ backgroundColor: isDark ? cfg.textDark : cfg.dot }} />
             {params.row.stage}
@@ -189,7 +190,7 @@ export default function DealsPage() {
     },
     probability: {
       field: "probability", headerName: "Probability (%)", flex: 1, minWidth: 100, sortable: false,
-      renderHeader: () => <ColHeader label="Probability (%)" icon={ChartLineUp} isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Probability (%)" icon={ChartLineUp} />,
       renderCell: (params) => {
         const cfg = STAGE_CFG[params.row.stage] ?? STAGE_CFG["Qualification"];
         return (
@@ -197,39 +198,39 @@ export default function DealsPage() {
             <div className={`w-14 h-1 rounded-full overflow-hidden flex-shrink-0 ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`}>
               <div className="h-full rounded-full" style={{ width: `${params.row.probability}%`, backgroundColor: isDark ? cfg.textDark : cfg.dot }} />
             </div>
-            <span className={`text-table-cell-secondary font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>{params.row.probability}%</span>
+            <span className={`text-[13px]/[16px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>{params.row.probability}%</span>
           </div>
         );
       },
     },
     contactName: {
       field: "contactName", headerName: "Contact Name", flex: 1.3, minWidth: 120, sortable: false,
-      renderHeader: () => <ColHeader label="Contact Name" icon={User} isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Contact Name" icon={User} />,
       renderCell: (params) => (
-        <p className={`m-0 text-table-cell truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
-          {params.row.contactName || <span className={isDark ? "text-[#9CA3AF]" : "text-slate-200"}>—</span>}
+        <p className={`m-0 text-[15px]/[20px] truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
+          {params.row.contactName || <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>}
         </p>
       ),
     },
     createdBy: {
       field: "createdBy", headerName: "Created By", flex: 1.2, minWidth: 110, sortable: false,
-      renderHeader: () => <ColHeader label="Created By" icon={UserCircle} isDark={isDark} />,
-      renderCell: (params) => <p className={`m-0 text-table-cell-secondary truncate ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{params.row.createdBy}</p>,
+      renderHeader: () => <ColHeader label="Created By" icon={UserCircle} />,
+      renderCell: (params) => <p className={`m-0 text-[13px]/[16px] truncate ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>{params.row.createdBy}</p>,
     },
     modifiedBy: {
       field: "modifiedBy", headerName: "Modified By", flex: 1.2, minWidth: 110, sortable: false,
-      renderHeader: () => <ColHeader label="Modified By" icon={UserCircle} isDark={isDark} />,
-      renderCell: (params) => <p className={`m-0 text-table-cell-secondary truncate ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{params.row.modifiedBy}</p>,
+      renderHeader: () => <ColHeader label="Modified By" icon={UserCircle} />,
+      renderCell: (params) => <p className={`m-0 text-[13px]/[16px] truncate ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>{params.row.modifiedBy}</p>,
     },
     creation: {
       field: "creation", headerName: "Creation", flex: 1.5, minWidth: 150, sortable: false,
-      renderHeader: () => <ColHeader label="Creation" icon={CalendarBlank} isDark={isDark} />,
-      renderCell: (params) => <p className={`m-0 text-table-cell-secondary truncate ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{params.row.creation}</p>,
+      renderHeader: () => <ColHeader label="Creation" icon={CalendarBlank} />,
+      renderCell: (params) => <p className={`m-0 text-[13px]/[16px] truncate ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>{params.row.creation}</p>,
     },
     modified: {
       field: "modified", headerName: "Modified", flex: 1.5, minWidth: 150, sortable: false,
-      renderHeader: () => <ColHeader label="Modified" icon={CalendarBlank} isDark={isDark} />,
-      renderCell: (params) => <p className={`m-0 text-table-cell-secondary truncate ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{params.row.modified}</p>,
+      renderHeader: () => <ColHeader label="Modified" icon={CalendarBlank} />,
+      renderCell: (params) => <p className={`m-0 text-[13px]/[16px] truncate ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>{params.row.modified}</p>,
     },
   };
 
@@ -261,18 +262,18 @@ export default function DealsPage() {
           {/* -- Breadcrumb + Header -- */}
           <div className="flex items-start justify-between">
             <div>
-              <div className="flex items-center gap-1 text-caption text-slate-400 mb-2">
+              <div className={`flex items-center gap-1.5 text-[13.5px]/[18px] mb-1 ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>
                 <House size={16} weight="duotone" />
                 <CaretRight size={12} weight="duotone" />
                 <Link href="/deals" className={`transition-colors font-medium ${isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#1D4ED8]"}`}>Deals</Link>
               </div>
               <div className="flex items-center gap-2.5">
-                <h1 className="font-heading text-h1 text-slate-900 tracking-tight">Deals</h1>
-                <span className="text-badge-text text-slate-400 bg-[#f9fbff] border border-[#E3ECFC] px-2 py-0.5 rounded-full shadow-sm">
+                <h1 className="font-heading text-[22px]/[28px] font-semibold text-slate-900 tracking-tight m-0">Deals</h1>
+                <span className={`text-[13px]/[16px] font-medium border px-2.5 py-1 rounded-full shadow-sm flex items-center ${isDark ? "bg-[#0A0A0A] border-[#27272A] text-[#E4E4E7]" : "bg-[#f9fbff] border-[#E3ECFC] text-slate-400"}`}>
                   {ALL_DEALS.length} total
                 </span>
                 {/* Total pipeline value */}
-                <span className="flex items-center gap-1 text-badge-text text-[#059669] bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full">
+                <span className={`flex items-center gap-1 text-[13px]/[16px] font-medium px-2.5 py-1 rounded-full border ${isDark ? "text-[#34D399] bg-[#064E3B] border-[#047857]" : "text-[#059669] bg-emerald-50 border-emerald-100"}`}>
                   <TrendUp size={10} weight="duotone" />
                   Pipeline: ₹{(ALL_DEALS.reduce((s, d) => s + d.amount, 0) / 100000).toFixed(1)}L
                 </span>
@@ -281,17 +282,17 @@ export default function DealsPage() {
 
             <div className="flex items-center gap-2 mt-1">
               {/* View toggle */}
-              <div className={`flex items-center border rounded-xl p-0.5 gap-0.5 shadow-sm ${isDark ? "bg-[#000000] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+              <div className={`flex items-center rounded-xl p-0.5 gap-0.5 shadow-sm border ${isDark ? "bg-[#000000] border-[#27272A]" : "bg-white border-slate-100"}`}>
                 {[
                   { k: "list",   Icon: List,     label: "List"   },
                   { k: "grid",   Icon: GridFour, label: "Grid"   },
                   { k: "kanban", Icon: Kanban,   label: "Kanban" },
                 ].map(({ k, Icon, label }) => (
                   <button key={k} onClick={() => setView(k as typeof view)}
-                    className={`flex items-center gap-1.5 px-2.5 py-[7px] rounded-lg text-button-sm transition-all ${
+                    className={`flex items-center gap-1.5 px-2.5 py-[7px] rounded-lg text-[14px]/[18px] font-medium transition-all ${
                       view === k
                         ? isDark ? "bg-[#18181B] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]"
-                        : isDark ? "text-[#9CA3AF] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "text-slate-400 hover:text-slate-600"
+                        : isDark ? "text-[#E4E4E7] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "bg-[#f9fbff] text-slate-400 hover:bg-[#E3ECFC]"
                     }`}>
                     <Icon size={14} weight="duotone" />{label}
                   </button>
@@ -301,27 +302,28 @@ export default function DealsPage() {
               <Button variant="contained"
                 startIcon={<Plus size={16} weight="bold" />}
                 onClick={() => setDrawerOpen(true)}
-                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px", px: 2, py: 0.85, boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB", boxShadow: isDark ? "none" : "0 2px 14px #60A5FA55" }, "&:active": { bgcolor: isDark ? "#9CA3AF" : "#0C2472" } }}>
+                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "15px", px: 2, py: 0.85, boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB", boxShadow: isDark ? "none" : "0 2px 14px 0 #60A5FA55" }, "&:active": { bgcolor: isDark ? "#52525B" : "#0C2472" } }}>
                 New Deal
               </Button>
             </div>
           </div>
 
           {/* -- Stage filter tabs -- */}
-          <div className="flex items-center gap-1 overflow-x-auto pb-1">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-hide">
             {STAGE_TABS.map(stage => {
               const cnt    = stageCounts[stage] ?? 0;
               const active = activeStage === stage;
               if (stage !== "All" && cnt === 0) return null;
               return (
                 <button key={stage} onClick={() => setActiveStage(stage)}
-                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-button-sm whitespace-nowrap transition-all flex-shrink-0 border ${
-                    active ? isDark ? "bg-[#18181B] text-white border-[#27272A] shadow-sm shadow-[#27272A]/10" : "bg-[#1D4ED8] text-white border-[#1D4ED8] shadow-sm shadow-[#1D4ED8]/20"
-                           : isDark ? "bg-[#0A0A0A] text-[#A1A1AA] border-[#27272A] hover:bg-[#27272A] hover:text-[#FFFFFF]" : "bg-[#f9fbff] text-slate-600 border-[#E3ECFC] hover:bg-[#E3ECFC]"
+                  className={`flex items-center gap-1.5 px-3 py-[7px] rounded-xl text-[14px]/[18px] font-medium whitespace-nowrap transition-all border ${
+                    active
+                      ? isDark ? "bg-[#18181B] text-white shadow-sm shadow-[#27272A]/10 border-[#27272A]" : "bg-[#1D4ED8] text-white shadow-sm shadow-[#1D4ED8]/25 border-[#1D4ED8]"
+                      : isDark ? "bg-[#0A0A0A] text-[#A1A1AA] border-[#27272A] hover:bg-[#27272A] hover:text-[#FFFFFF]" : "bg-[#f9fbff] text-[#0C2472] border-[#E3ECFC] hover:bg-[#E3ECFC]"
                   }`}>
                   {stage}
-                  {cnt > 0 && <span className={`text-badge-text px-2 py-0.5 rounded-full leading-none ${
-                    active ? "bg-[#f9fbff]/20 text-white" : "bg-slate-100 text-slate-600"
+                  {cnt > 0 && <span className={`text-[13px]/[16px] font-medium px-1.5 py-0.5 rounded-full leading-none ${
+                    active ? "bg-white/20 text-white" : "bg-[#1D4ED8]/10 text-[#0C2472]"
                   }`}>{cnt}</span>}
                 </button>
               );
@@ -331,11 +333,11 @@ export default function DealsPage() {
           {/* -- Toolbar -- */}
           <div className="flex items-center gap-2.5">
             {/* Search */}
-            <div className={`flex items-center gap-2 border rounded-xl px-3 py-2 w-72 focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+            <div className={`flex items-center gap-2 border rounded-xl px-3 py-2 w-72 focus-within:border-[#60A5FA] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#60A5FA] transition-all ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
               <MagnifyingGlass size={15} color="#94A3B8" weight="duotone" />
-              <InputBase placeholder="Search by deal name, account…" value={search}
+              <InputBase placeholder="Search deals…" value={search}
                 onChange={e => setSearch(e.target.value)}
-                sx={{ flex: 1, fontSize: "0.76rem", color: isDark ? "#D4D4D8" : "#334155", "& input::placeholder": { color: "#94A3B8", opacity: 1 } }}
+                sx={{ flex: 1, fontSize: "0.86rem", color: isDark ? "#D4D4D8" : "#334155", "& input::placeholder": { color: "#94A3B8", opacity: 1 } }}
               />
               {search && <button onClick={() => setSearch("")} className="text-slate-300 hover:text-slate-500 text-sm">✕</button>}
             </div>
@@ -343,7 +345,7 @@ export default function DealsPage() {
             {/* Filters */}
             <Button variant="outlined" size="small"
               startIcon={activeFilters.length > 0
-                ? <Badge badgeContent={activeFilters.length} color="primary" sx={{ "& .MuiBadge-badge": { fontSize: "0.55rem", height: 14, minWidth: 14 } }}>
+                ? <Badge badgeContent={activeFilters.length} color="primary" sx={{ "& .MuiBadge-badge": { fontSize: "0.65rem", height: 14, minWidth: 14 } }}>
                     <FunnelSimple size={14} weight="duotone" />
                   </Badge>
                 : <FunnelSimple size={14} weight="duotone" />
@@ -351,10 +353,10 @@ export default function DealsPage() {
               onClick={e => setFiltersAnchor(e.currentTarget)}
               sx={{
                 borderColor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#27272A" : "#E3ECFC",
-                color: activeFilters.length > 0 ? "#fff" : isDark ? "#9CA3AF" : "#0C2472",
+                color: activeFilters.length > 0 ? "#fff" : isDark ? "#E4E4E7" : "#0C2472",
                 bgcolor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#0F0F0F" : "#E3ECFC",
-                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px",
-                "&:hover": {
+                borderRadius:"9px", textTransform:"none", fontWeight:500, fontSize:"14px",
+                "&:hover":{
                   borderColor: activeFilters.length > 0 ? "#1640B8" : "#1D4ED8",
                   color: activeFilters.length > 0 ? "#fff" : "#0C2472",
                   bgcolor: activeFilters.length > 0 ? "#1640B8" : isDark ? "#0A0A0A" : "#DCE6FB",
@@ -369,10 +371,10 @@ export default function DealsPage() {
               onClick={() => setColumnsOpen(true)}
               sx={{
                 borderColor: isDark ? "#27272A" : "#E3ECFC",
-                color: isDark ? "#9CA3AF" : "#0C2472",
+                color: isDark ? "#E4E4E7" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
-                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px",
-                "&:hover": { borderColor: isDark ? "#3F3F46" : "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
+                borderRadius:"9px", textTransform:"none", fontWeight:500, fontSize:"14px",
+                "&:hover":{ borderColor:"#1D4ED8", color:"#0C2472", bgcolor: isDark ? "#0A0A0A" : "#DCE6FB" },
               }}>
               Columns
             </Button>
@@ -384,22 +386,22 @@ export default function DealsPage() {
               onClick={e => setSortAnchor(e.currentTarget)}
               sx={{
                 borderColor: isDark ? "#27272A" : "#E3ECFC",
-                color: isDark ? "#9CA3AF" : "#0C2472",
+                color: isDark ? "#E4E4E7" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
-                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px",
-                "&:hover": { borderColor: isDark ? "#3F3F46" : "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
+                borderRadius:"9px", textTransform:"none", fontWeight:500, fontSize:"14px",
+                "&:hover":{ borderColor:"#1D4ED8", color:"#0C2472", bgcolor: isDark ? "#0A0A0A" : "#DCE6FB" },
               }}>
               Sort{activeSorts.length > 0 ? ` (${activeSorts.length})` : ""}
             </Button>
 
-            {/* Filtered value */}
+            {/* Filtered value + Records count */}
             <div className="ml-auto flex items-center gap-3">
               {filtered.length !== ALL_DEALS.length && (
-                <span className="text-badge-text text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                <span className={`text-[13px]/[16px] font-medium px-2.5 py-1 rounded-full border ${isDark ? "text-[#34D399] bg-[#064E3B] border-[#047857]" : "text-emerald-600 bg-emerald-50 border-emerald-100"}`}>
                   ₹{(totalValue / 100000).toFixed(1)}L filtered
                 </span>
               )}
-              <span className={`text-caption px-3 py-1.5 rounded-lg ${isDark ? "text-[#71717A] bg-[#18181B]" : "text-slate-400 bg-[#f9fbff]"}`}>
+              <span className={`ml-auto text-[13px]/[16px] px-3 py-1.5 rounded-lg ${isDark ? "text-[#E4E4E7] bg-[#0A0A0A]" : "text-slate-400 bg-[#f9fbff]"}`}>
                 {filtered.length} of {ALL_DEALS.length} records
               </span>
             </div>
@@ -409,14 +411,14 @@ export default function DealsPage() {
           {selected.length > 0 && (
             <div className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border animate-slide-up shadow-sm ${isDark ? "bg-[#18181B] border-[#27272A]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
               <div className="flex items-center gap-2">
-                <span className="w-5 h-5 rounded-md bg-[#1D4ED8] text-white flex items-center justify-center text-badge-text">{selected.length}</span>
-                <span className={`text-button-sm font-semibold ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>selected</span>
+                <span className="w-5 h-5 rounded-md bg-[#1D4ED8] text-white flex items-center justify-center text-[13px]">{selected.length}</span>
+                <span className={`text-[14px]/[18px] font-semibold ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>selected</span>
               </div>
               <div className={`w-px h-4 ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
-              <button className={`text-button-sm font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Update Stage</button>
-              <button className={`text-button-sm font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Assign Owner</button>
-              <button onClick={() => setSelected([])} className={`ml-auto text-button-sm font-medium transition-colors ${isDark ? "text-[#9CA3AF] hover:text-[#A1A1AA]" : "text-slate-400 hover:text-slate-600"}`}>Clear</button>
-              <button className={`flex items-center gap-1.5 text-button-sm font-medium transition-colors ${isDark ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"}`}>
+              <button className={`text-[14px]/[18px] font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Update Stage</button>
+              <button className={`text-[14px]/[18px] font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Assign Owner</button>
+              <button onClick={() => setSelected([])} className={`ml-auto text-[14px]/[18px] font-medium transition-colors ${isDark ? "text-[#9CA3AF] hover:text-[#A1A1AA]" : "text-slate-400 hover:text-slate-600"}`}>Clear</button>
+              <button className={`flex items-center gap-1.5 text-[14px]/[18px] font-medium transition-colors ${isDark ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"}`}>
                 <Trash size={14} weight="duotone" /> Delete
               </button>
             </div>
@@ -430,7 +432,7 @@ export default function DealsPage() {
 
           {/* -- LIST (MUI DataGrid) -- */}
           {view === "list" && (
-            <div className="rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden" style={{ height: 600 }}>
+            <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`} style={{ height: 600 }}>
               <DataGrid<Deal>
                 rows={filtered}
                 columns={gridColumns}
@@ -448,11 +450,11 @@ export default function DealsPage() {
                 slots={{
                   noRowsOverlay: () => (
                     <div className="py-16 text-center">
-                      <div className="w-12 h-12 rounded-2xl bg-[#f9fbff] flex items-center justify-center mx-auto mb-3">
-                        <MagnifyingGlass size={22} color="#94A3B8" weight="duotone" />
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
+                        <MagnifyingGlass size={22} color={isDark ? "#E4E4E7" : "#94A3B8"} weight="duotone" />
                       </div>
-                      <p className="font-heading text-slate-500 text-sm font-semibold">No deals found</p>
-                      <p className="text-slate-300 text-xs mt-1">Try adjusting your search or stage filter</p>
+                      <p className={`font-heading text-sm font-semibold ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>No deals found</p>
+                      <p className={`text-xs mt-1 ${isDark ? "text-[#E4E4E7]" : "text-slate-300"}`}>Try adjusting your search or stage filter</p>
                     </div>
                   ),
                 }}
@@ -483,4 +485,3 @@ export default function DealsPage() {
     </div>
   );
 }
-
