@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useTheme } from "@/components/ThemeContext";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
@@ -29,6 +30,7 @@ const SAMPLE_REPORTS: Report[] = [
 ];
 
 export default function ReportsPage() {
+  const router = useRouter();
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const [search, setSearch] = useState("");
@@ -59,6 +61,7 @@ export default function ReportsPage() {
                 <p className={`text-[13px] mt-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Total Records: {filtered.length}</p>
               </div>
               <Button variant="contained" startIcon={<Plus size={16} weight="bold" />}
+                onClick={() => router.push("/reports/new/edit")}
                 sx={{ bgcolor: "#1D4ED8", color: "white", borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "14px", px: 2.5, boxShadow: "0 1px 8px #1D4ED833", "&:hover": { bgcolor: "#2563EB" } }}>
                 Create Report
               </Button>

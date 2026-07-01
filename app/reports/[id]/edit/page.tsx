@@ -1,5 +1,7 @@
 "use client";
 import { useState, use, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Sidebar from "@/components/layout/Sidebar";
 import TopBar from "@/components/layout/TopBar";
 import { useTheme } from "@/components/ThemeContext";
@@ -29,13 +31,15 @@ type StepType = "module" | "relatedModules" | "fieldsFilters" | "preview" | "sav
 
 export default function ReportEditPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const router = useRouter();
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const isNewReport = id === "new";
 
-  const [reportName] = useState("Deal 30");
-  const [primaryModule, setPrimaryModule] = useState<ModuleType>("Deals");
+  const [reportName] = useState(isNewReport ? "Untitled Report" : "Deal 30");
+  const [primaryModule, setPrimaryModule] = useState<ModuleType>("Leads");
   const [selectedRelatedModules, setSelectedRelatedModules] = useState<ModuleType[]>([]);
-  const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
+  const [selectedColumns, setSelectedColumns] = useState<string[]>(isNewReport ? [] : []);
   const [filters, setFilters] = useState<Filter[]>([]);
 
   // Stepper and modal states
@@ -50,9 +54,9 @@ export default function ReportEditPage({ params }: { params: Promise<{ id: strin
   const [tempFilterOperator, setTempFilterOperator] = useState<string>("");
   const [tempFilterValue, setTempFilterValue] = useState<string>("");
 
-  // Initialize with default fields on mount
+  // Initialize with default fields on mount (only for existing reports)
   useEffect(() => {
-    if (selectedColumns.length === 0) {
+    if (!isNewReport && selectedColumns.length === 0) {
       const combinedFieldsInit = getCombinedFields(primaryModule, selectedRelatedModules);
       const primaryFields = combinedFieldsInit.find(cf => cf.module === primaryModule)?.fields || [];
       const defaultFields = primaryFields.slice(0, 3).map(f => f.name);
@@ -60,7 +64,7 @@ export default function ReportEditPage({ params }: { params: Promise<{ id: strin
         setSelectedColumns(defaultFields);
       }
     }
-  }, []);
+  }, [isNewReport, primaryModule, selectedRelatedModules]);
 
   const relatedModules = getRelatedModules(primaryModule);
   const combinedFields = getCombinedFields(primaryModule, selectedRelatedModules);
@@ -228,20 +232,17 @@ export default function ReportEditPage({ params }: { params: Promise<{ id: strin
             {/* Header */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <button className={isDark ? "text-[#9CA3AF] hover:text-white" : "text-slate-500 hover:text-slate-700"}>
+                <button onClick={() => router.push('/reports')} className={isDark ? "text-[#9CA3AF] hover:text-white" : "text-slate-500 hover:text-slate-700"}>
                   <CaretLeft size={20} weight="duotone" />
                 </button>
                 <h1 className={`text-[20px] font-extrabold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-[#0C2472]"}`}>{reportName}</h1>
                 <span className={`text-[12px] font-semibold px-2.5 py-1 rounded-full ${isDark ? "bg-[#27272A] text-[#9CA3AF]" : "bg-[#E3ECFC] text-[#0C2472]"}`}>{primaryModule}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Button variant="text" sx={{ color: isDark ? "#A1A1AA" : "#64748B", textTransform: "none", fontWeight: 700, fontSize: "13px", borderRadius: "9px", px: 2, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+                <Button variant="text" onClick={() => router.push('/reports')} sx={{ color: isDark ? "#A1A1AA" : "#64748B", textTransform: "none", fontWeight: 700, fontSize: "13px", borderRadius: "9px", px: 2, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
                   Cancel
                 </Button>
-                <Button variant="outlined" sx={{ textTransform: "none", fontWeight: 700, fontSize: "13px", borderRadius: "9px", color: isDark ? "#D4D4D8" : "#0C2472", borderColor: isDark ? "#27272A" : "#E3ECFC", "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
-                  Run
-                </Button>
-                <Button variant="contained" sx={{ bgcolor: "#1D4ED8", color: "white", textTransform: "none", fontWeight: 700, fontSize: "13px", borderRadius: "9px", boxShadow: "0 1px 8px #1D4ED833", "&:hover": { bgcolor: "#2563EB" } }}>
+                <Button variant="contained" onClick={() => { alert('Report saved successfully!'); }} sx={{ bgcolor: "#1D4ED8", color: "white", textTransform: "none", fontWeight: 700, fontSize: "13px", borderRadius: "9px", boxShadow: "0 1px 8px #1D4ED833", "&:hover": { bgcolor: "#2563EB" } }}>
                   Save
                 </Button>
               </div>
