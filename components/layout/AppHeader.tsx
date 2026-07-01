@@ -10,8 +10,9 @@ import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Divider from "@mui/material/Divider";
-import { ListIcon, MagnifyingGlass, Bell, Plus, Command, UserCircleIcon, SignOutIcon } from "@phosphor-icons/react";
+import { ListIcon, MagnifyingGlass, Bell, Plus, Command, UserCircleIcon, SignOutIcon, Sun, Moon } from "@phosphor-icons/react";
 import { OWNER_AVATARS } from "@/lib/avatars";
+import { useTheme } from "@/components/ThemeContext";
 
 const EXPANDED_W = "260px";
 const COLLAPSED_W = "68px";
@@ -29,11 +30,12 @@ const PATH_TITLES: Record<string, string> = {
 };
 
 function UserMenu({
-  anchor, onClose, router,
+  anchor, onClose, router, isDark,
 }: {
   anchor: HTMLElement | null;
   onClose: () => void;
   router: ReturnType<typeof useRouter>;
+  isDark: boolean;
 }) {
   return (
     <Menu
@@ -49,8 +51,9 @@ function UserMenu({
           sx: {
             mt: 1.5, minWidth: 220,
             borderRadius: "16px",
-            border: "1px solid #E8EEFB",
-            boxShadow: "0 12px 40px rgba(0,0,0,0.12)",
+            border: `1px solid ${isDark ? "#27272A" : "#E8EEFB"}`,
+            bgcolor: isDark ? "#18181B" : "#ffffff",
+            boxShadow: isDark ? "0 12px 40px rgba(0,0,0,0.5)" : "0 12px 40px rgba(0,0,0,0.12)",
             overflow: "hidden",
           },
         },
@@ -58,19 +61,19 @@ function UserMenu({
     >
       {/* User info */}
       <div className="px-5 pt-4 pb-3">
-        <p className="text-[15px] font-bold text-[#0C2472] leading-tight">PM SDL</p>
-        <p className="text-[12px] text-slate-400 mt-0.5">Super Admin</p>
+        <p className={`text-[15px] font-bold leading-tight ${isDark ? "text-[#F4F4F5]" : "text-[#0C2472]"}`}>PM SDL</p>
+        <p className={`text-[12px] mt-0.5 ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>Super Admin</p>
       </div>
 
-      <Divider sx={{ borderColor: "#F1F5F9", mx: 0 }} />
+      <Divider sx={{ borderColor: isDark ? "#27272A" : "#F1F5F9", mx: 0 }} />
 
       <div className="py-1.5 px-1.5">
         <MenuItem
           onClick={() => router.push("/settings")}
           sx={{
             gap: 2, px: "14px", py: "10px", fontSize: "0.875rem", fontWeight: 500,
-            color: "#334155", borderRadius: "10px",
-            "&:hover": { bgcolor: "#EFF6FF", color: "#1D4ED8" },
+            color: isDark ? "#D4D4D8" : "#334155", borderRadius: "10px",
+            "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF", color: isDark ? "#60A5FA" : "#1D4ED8" },
           }}
         >
           <UserCircleIcon size={18} weight="duotone" />
@@ -81,8 +84,8 @@ function UserMenu({
           onClick={() => router.push("/login")}
           sx={{
             gap: 2, px: "14px", py: "10px", fontSize: "0.875rem", fontWeight: 500,
-            color: "#EF4444", borderRadius: "10px",
-            "&:hover": { bgcolor: "#FEF2F2", color: "#DC2626" },
+            color: isDark ? "#F87171" : "#EF4444", borderRadius: "10px",
+            "&:hover": { bgcolor: isDark ? "#27272A" : "#FEF2F2", color: isDark ? "#FCA5A5" : "#DC2626" },
           }}
         >
           <SignOutIcon size={18} weight="duotone" />
@@ -93,9 +96,35 @@ function UserMenu({
   );
 }
 
+function ThemeToggleButton({ isDark, onToggle }: { isDark: boolean; onToggle: () => void }) {
+  return (
+    <Tooltip title={isDark ? "Switch to Light mode" : "Switch to Dark mode"}>
+      <IconButton
+        onClick={onToggle}
+        size="small"
+        aria-label="Toggle dark mode"
+        sx={{
+          borderRadius: "9px",
+          border: `1.5px solid ${isDark ? "#27272A" : "#E3ECFC"}`,
+          bgcolor: isDark ? "#0A0A0A" : "#f9fbff",
+          "&:hover": { bgcolor: isDark ? "#18181B" : "#EFF6FF" },
+          transition: "all 0.2s ease",
+        }}
+      >
+        {isDark
+          ? <Sun size={17} color="#FBBF24" weight="duotone" />
+          : <Moon size={17} color="#64748B" weight="duotone" />
+        }
+      </IconButton>
+    </Tooltip>
+  );
+}
+
 export default function AppHeader() {
   const pathname  = usePathname();
   const router    = useRouter();
+  const { theme, toggle: toggleTheme } = useTheme();
+  const isDark = theme === "dark";
   const [collapsed, setCollapsed]         = useState(false);
   const [isMobile, setIsMobile]           = useState(false);
   const [search, setSearch]               = useState("");
@@ -156,15 +185,18 @@ export default function AppHeader() {
         style={{
           position: "fixed", top: 0, left: 0, right: 0,
           height: "64px", zIndex: 60,
-          backgroundColor: "#ffffff",
-          borderBottom: "1px solid #f1f5f9",
+          backgroundColor: isDark ? "#0A0A0A" : "#ffffff",
+          borderBottom: `1px solid ${isDark ? "#27272A" : "#f1f5f9"}`,
           display: "flex", alignItems: "center",
           padding: "0 16px", gap: "12px",
+          transition: "background-color 0.2s ease, border-color 0.2s ease",
         }}
       >
         <button
           onClick={toggle}
-          className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-xl text-slate-500 hover:text-[#1D4ED8] hover:bg-[#EFF6FF] transition-all duration-150"
+          className={`flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-150 ${
+            isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#262626]" : "text-slate-500 hover:text-[#1D4ED8] hover:bg-[#EFF6FF]"
+          }`}
           aria-label="Open menu"
         >
           <ListIcon size={20} weight="bold" />
@@ -172,15 +204,18 @@ export default function AppHeader() {
 
         <span className="flex-1" />
 
+        {/* Dark / Light toggle */}
+        <ThemeToggleButton isDark={isDark} onToggle={toggleTheme} />
+
         {/* Notifications */}
         <Tooltip title="3 unread notifications">
-          <IconButton size="small" sx={{ borderRadius: "10px", "&:hover": { bgcolor: "#F1F5F9" } }}>
+          <IconButton size="small" sx={{ borderRadius: "10px", "&:hover": { bgcolor: isDark ? "#262626" : "#F1F5F9" } }}>
             <Badge
               badgeContent={3}
               color="error"
               sx={{ "& .MuiBadge-badge": { fontSize: "0.55rem", height: 16, minWidth: 16, padding: "0 4px" } }}
             >
-              <Bell size={20} color="#64748B" weight="duotone" />
+              <Bell size={20} color={isDark ? "#9CA3AF" : "#64748B"} weight="duotone" />
             </Badge>
           </IconButton>
         </Tooltip>
@@ -191,11 +226,11 @@ export default function AppHeader() {
           sx={{
             width: 34, height: 34,
             bgcolor: "#1D4ED8", fontSize: "0.6rem", fontWeight: 800,
-            cursor: "pointer", border: "2px solid #E3ECFC",
+            cursor: "pointer", border: `2px solid ${isDark ? "#27272A" : "#E3ECFC"}`,
           }}
         >PM</Avatar>
 
-        <UserMenu anchor={avatarAnchor} onClose={() => setAvatarAnchor(null)} router={router} />
+        <UserMenu anchor={avatarAnchor} onClose={() => setAvatarAnchor(null)} router={router} isDark={isDark} />
       </header>
     );
   }
@@ -206,9 +241,10 @@ export default function AppHeader() {
       style={{
         position: "fixed", top: 0, left: 0, right: 0,
         height: "72px", zIndex: 60,
-        backgroundColor: "#E3ECFC",
-        borderBottom: "1px solid rgba(0,0,0,0.04)",
+        backgroundColor: isDark ? "#0A0A0A" : "#E3ECFC",
+        borderBottom: `1px solid ${isDark ? "#27272A" : "rgba(0,0,0,0.04)"}`,
         display: "flex", alignItems: "center",
+        transition: "background-color 0.2s ease, border-color 0.2s ease",
       }}
     >
       {/* Left: hamburger + logo — fixed 260px matching expanded sidebar */}
@@ -221,7 +257,9 @@ export default function AppHeader() {
       >
         <button
           onClick={toggle}
-          className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-slate-500 hover:text-[#1D4ED8] hover:bg-[#EFF6FF] transition-all duration-150"
+          className={`flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-150 ${
+            isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#262626]" : "text-slate-500 hover:text-[#1D4ED8] hover:bg-[#EFF6FF]"
+          }`}
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           <ListIcon size={18} weight="bold" />
@@ -247,19 +285,23 @@ export default function AppHeader() {
         </div>
 
         {/* Search */}
-        <div className="flex items-center gap-2 bg-[#f9fbff] border border-[#E3ECFC] rounded-xl px-3 py-1.5 w-60 focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#93C5FD] transition-all">
-          <MagnifyingGlass size={15} color="#94A3B8" weight="duotone" />
+        <div className={`flex items-center gap-2 border rounded-xl px-3 py-1.5 w-60 transition-all ${
+          isDark
+            ? "bg-[#0A0A0A] border-[#27272A] focus-within:border-[#60A5FA] focus-within:border-2 focus-within:shadow-[0_0_0_2px_rgba(96,165,250,0.3)]"
+            : "bg-[#f9fbff] border-[#E3ECFC] focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#93C5FD]"
+        }`}>
+          <MagnifyingGlass size={15} color={isDark ? "#71717A" : "#94A3B8"} weight="duotone" />
           <InputBase
             placeholder="Search leads, deals..."
             value={search}
             onChange={e => setSearch(e.target.value)}
             sx={{
-              flex: 1, fontSize: "0.78rem", color: "#334155",
-              "& input::placeholder": { color: "#94A3B8", opacity: 1 },
+              flex: 1, fontSize: "0.78rem", color: isDark ? "#D4D4D8" : "#334155",
+              "& input::placeholder": { color: isDark ? "#71717A" : "#94A3B8", opacity: 1 },
             }}
           />
           <Tooltip title="⌘K">
-            <Command size={13} color="#CBD5E1" weight="duotone" />
+            <Command size={13} color={isDark ? "#52525B" : "#CBD5E1"} weight="duotone" />
           </Tooltip>
         </div>
 
@@ -269,25 +311,29 @@ export default function AppHeader() {
           size="small"
           startIcon={<Plus size={16} weight="duotone" />}
           sx={{
-            bgcolor: "#1D4ED8", borderRadius: "9px", textTransform: "none",
+            bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "#fff",
+            borderRadius: "9px", textTransform: "none",
             fontWeight: 700, fontSize: "0.78rem", px: 2, py: 0.9,
-            boxShadow: "0 1px 8px 0 #1D4ED833", whiteSpace: "nowrap",
-            "&:hover": { bgcolor: "#60A5FA", boxShadow: "0 2px 14px 0 #60A5FA55" },
-            "&:active": { bgcolor: "#0C2472" },
+            boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", whiteSpace: "nowrap",
+            "&:hover": { bgcolor: isDark ? "#3F3F46" : "#60A5FA", boxShadow: isDark ? "none" : "0 2px 14px 0 #60A5FA55" },
+            "&:active": { bgcolor: isDark ? "#52525B" : "#0C2472" },
           }}
         >
           New Deal
         </Button>
 
+        {/* Dark / Light toggle */}
+        <ThemeToggleButton isDark={isDark} onToggle={toggleTheme} />
+
         {/* Notifications */}
         <Tooltip title="3 unread notifications">
-          <IconButton size="small" sx={{ borderRadius: "8px", "&:hover": { bgcolor: "#EFF6FF" } }}>
+          <IconButton size="small" sx={{ borderRadius: "8px", "&:hover": { bgcolor: isDark ? "#262626" : "#EFF6FF" } }}>
             <Badge
               badgeContent={3}
               color="error"
               sx={{ "& .MuiBadge-badge": { fontSize: "0.58rem", height: 15, minWidth: 15, padding: "0 3px" } }}
             >
-              <Bell size={20} color="#64748B" weight="duotone" />
+              <Bell size={20} color={isDark ? "#9CA3AF" : "#64748B"} weight="duotone" />
             </Badge>
           </IconButton>
         </Tooltip>
@@ -297,10 +343,10 @@ export default function AppHeader() {
           src={OWNER_AVATARS["PM SDL"]}
           onClick={e => setAvatarAnchor(e.currentTarget)}
           sx={{ width: 32, height: 32, bgcolor: "#1D4ED8", fontSize: "0.6rem", fontWeight: 800, cursor: "pointer" }}
-          className="ring-2 ring-transparent hover:ring-[#93C5FD] transition-all"
+          className={`ring-2 ring-transparent transition-all ${isDark ? "hover:ring-[#3F3F46]" : "hover:ring-[#93C5FD]"}`}
         >PM</Avatar>
 
-        <UserMenu anchor={avatarAnchor} onClose={() => setAvatarAnchor(null)} router={router} />
+        <UserMenu anchor={avatarAnchor} onClose={() => setAvatarAnchor(null)} router={router} isDark={isDark} />
       </div>
     </header>
   );
