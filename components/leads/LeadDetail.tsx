@@ -366,7 +366,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                           <Tooltip title={isDone ? "Completed" : isActive ? "Current stage" : "Click to set stage"}>
                             <button
                               onClick={() => setCurrentStatus(stage)}
-                              className={`flex items-center justify-center gap-1.5 flex-1 py-2 px-2 rounded-xl text-[12.5px] font-bold transition-all
+                              className={`flex items-center justify-center gap-1.5 flex-1 min-w-0 py-2 px-2 rounded-xl text-[12.5px] font-bold transition-all
                                 ${isActive  ? "bg-[#1D4ED8] text-white shadow-md shadow-[#1D4ED8]/25 scale-[1.02]" : ""}
                                 ${isDone    ? isDark ? "bg-[#27272A] text-[#D4D4D8] hover:bg-[#4B4B52]" : "bg-[#E3ECFC] text-[#1D4ED8] hover:bg-[#BFD3F5]" : ""}
                                 ${isPending ? isDark ? "bg-transparent text-[#ABABAD] border border-[#27272A] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "bg-transparent text-slate-400 border border-transparent hover:bg-[#E3ECFC] hover:text-[#1D4ED8]" : ""}

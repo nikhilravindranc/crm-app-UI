@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import Sidebar from "@/components/layout/Sidebar";
 import TopBar from "@/components/layout/TopBar";
 import IconButton from "@mui/material/IconButton";
@@ -13,6 +14,7 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
+import Menu from "@mui/material/Menu";
 import {
   Gear, User, UsersThree, Buildings, ShieldCheck, Lock,
   Envelope, Cube, House, UploadSimple, DownloadSimple,
@@ -21,7 +23,7 @@ import {
   Plus, Globe, Tree, CaretRight, CheckCircle,
   Eye, Square, Printer, Trash,
   Lightning, AddressBook, SquaresFour, UserPlus, ArrowLeft, Info,
-  DotsSixVertical, TextT, TextAlignLeft, ListBullets, CalendarBlank,
+  DotsSixVertical, DotsThreeVertical, TextT, TextAlignLeft, ListBullets, CalendarBlank,
   Hash, CurrencyDollar, CheckSquare, LinkSimple, ChartBar, X,
   ClockCounterClockwise,
 } from "@phosphor-icons/react";
@@ -2958,6 +2960,260 @@ function ModulesAndFieldsPanel() {
 }
 
 // ---------------------------------------------
+//  Customize Home page
+// ---------------------------------------------
+interface HomePage {
+  id: string; name: string; description: string;
+  sharedWith: string[]; created: string; lastModified: string; isActive: boolean;
+}
+const INITIAL_HOMEPAGES: HomePage[] = [{
+  id: "hp1", name: "Home Page V1", description: "",
+  sharedWith: ["Administrator", "VP of Operations", "Operations Manager", "Support Executive", "Team Leader", "Super Admin"],
+  created: "Jun 4, 2026", lastModified: "Jun 29, 2026", isActive: true,
+}];
+
+const ALL_ROLES = ["Administrator", "VP of Operations", "Operations Manager", "Support Executive", "Team Leader", "Super Admin"];
+
+function CreateHomePageDrawer({ open, onClose, onCreate, isDark }: {
+  open: boolean; onClose: () => void;
+  onCreate: (name: string, sharedWith: string[]) => void;
+  isDark: boolean;
+}) {
+  const [name, setName] = useState("");
+  const [sharedWith, setSharedWith] = useState<string[]>([...ALL_ROLES]);
+
+  const toggleRole = (role: string) =>
+    setSharedWith(prev => prev.includes(role) ? prev.filter(r => r !== role) : [...prev, role]);
+
+  const handleSubmit = () => {
+    if (name.trim()) { onCreate(name.trim(), sharedWith); setName(""); setSharedWith([...ALL_ROLES]); }
+  };
+  const handleClose = () => { onClose(); setName(""); setSharedWith([...ALL_ROLES]); };
+
+  const FX = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "10px", ...(isDark ? {} : { backgroundColor: "#EFF6FF" }), fontSize: "0.82rem",
+      "& fieldset": { borderColor: isDark ? "#3F3F46" : "#E3ECFC", borderWidth: 1.5 },
+      "&:hover fieldset": { borderColor: isDark ? "#9CA3AF" : "#E3ECFC" },
+      "&.Mui-focused fieldset": { borderColor: isDark ? "#71717A" : "#E3ECFC", borderWidth: 2 },
+      "&.Mui-focused": { boxShadow: isDark ? "none" : "0 0 0 2px #4A7AE8" },
+      "& input": { padding: "10px 14px" },
+    },
+    "& .MuiInputLabel-root": { fontSize: "0.79rem", ...(isDark ? {} : { color: "#6B7280" }) },
+    "& .MuiInputLabel-root.Mui-focused": { color: isDark ? "#A1A1AA" : "inherit" },
+  };
+
+  return (
+    <Drawer anchor="right" open={open} onClose={handleClose}
+      PaperProps={{ sx: { width: { xs: "100%", sm: 480 }, display: "flex", flexDirection: "column", bgcolor: isDark ? "#18181B" : "#F8FAFF", boxShadow: isDark ? "-12px 0 48px rgba(0,0,0,0.5)" : "-12px 0 48px rgba(12,36,114,0.12)" } }}>
+      <div className={`flex items-center justify-between px-6 py-4 border-b flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+        <div className="flex items-center gap-3">
+          <div className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-sm ${isDark ? "bg-[#27272A]" : "bg-[#1D4ED8]"}`}>
+            <House size={18} color={isDark ? "#A1A1AA" : "#fff"} weight="duotone" />
+          </div>
+          <span className={`font-heading text-[16px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Create Home Page</span>
+        </div>
+        <Tooltip title="Close">
+          <IconButton size="small" onClick={handleClose}
+            sx={{ borderRadius: "9px", border: `1.5px solid ${isDark ? "#3F3F46" : "#E3ECFC"}`, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+            <X size={17} color={isDark ? "#71717A" : "#64748B"} weight="duotone" />
+          </IconButton>
+        </Tooltip>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+        <div>
+          <div className="font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500">Home Page Details</div>
+          <TextField label="Home Page Name" value={name} onChange={e => setName(e.target.value)}
+            size="small" fullWidth sx={FX} />
+        </div>
+        <div>
+          <div className="font-heading text-[12px] font-bold mb-3 uppercase tracking-wider text-slate-500">Share With</div>
+          <div className="space-y-1">
+            {ALL_ROLES.map(role => (
+              <label key={role} className={`flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer transition-colors ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}>
+                <Checkbox size="small" checked={sharedWith.includes(role)} onChange={() => toggleRole(role)}
+                  sx={{ p: 0.3, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked": { color: "#1D4ED8" } }} />
+                <span className={`text-[14px] font-medium ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{role}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className={`flex items-center justify-end gap-3 px-6 py-4 border-t flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+        <Button variant="text" onClick={handleClose}
+          sx={{ color: isDark ? "#A1A1AA" : "#64748B", textTransform: "none", fontWeight: 600, fontSize: "0.82rem", borderRadius: "9px", px: 2.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+          Cancel
+        </Button>
+        <Button variant="contained" onClick={handleSubmit} disabled={!name.trim()}
+          sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB" }, "&:disabled": { bgcolor: isDark ? "#1C1C1E" : "#E2E8F0", color: isDark ? "#52525B" : "#CBD5E1" } }}>
+          Create
+        </Button>
+      </div>
+    </Drawer>
+  );
+}
+
+function CustomizeHomepagePanel() {
+  const router = useRouter();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+  const [homepages, setHomepages] = useState<HomePage[]>(INITIAL_HOMEPAGES);
+  const [menuAnchor, setMenuAnchor] = useState<{ el: HTMLElement; id: string } | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [renameId, setRenameId] = useState<string | null>(null);
+  const [renameName, setRenameName] = useState("");
+
+  const openMenu = (e: React.MouseEvent<HTMLElement>, id: string) => {
+    e.stopPropagation();
+    setMenuAnchor({ el: e.currentTarget, id });
+  };
+  const closeMenu = () => setMenuAnchor(null);
+
+  const handleMenuAction = (action: string) => {
+    const id = menuAnchor?.id;
+    closeMenu();
+    if (!id) return;
+    if (action === "edit") {
+      router.push(`/home/${id}/edit`);
+    } else if (action === "rename") {
+      const hp = homepages.find(h => h.id === id);
+      if (hp) { setRenameId(id); setRenameName(hp.name); }
+    } else if (action === "clone") {
+      const hp = homepages.find(h => h.id === id);
+      if (hp) {
+        const now = new Date().toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" });
+        setHomepages(prev => [...prev, { ...hp, id: `hp${Date.now()}`, name: `${hp.name} (Copy)`, isActive: false, created: now, lastModified: now }]);
+      }
+    }
+  };
+
+  const handleRenameSubmit = () => {
+    if (renameId && renameName.trim()) {
+      const now = new Date().toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" });
+      setHomepages(prev => prev.map(hp => hp.id === renameId ? { ...hp, name: renameName.trim(), lastModified: now } : hp));
+      setRenameId(null);
+    }
+  };
+
+  const handleCreate = (name: string, sharedWith: string[]) => {
+    const now = new Date().toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" });
+    setHomepages(prev => [...prev, { id: `hp${Date.now()}`, name, description: "", sharedWith, created: now, lastModified: now, isActive: true }]);
+    setCreateOpen(false);
+  };
+
+  const menuSx = {
+    mt: 0.5, borderRadius: "12px",
+    border: isDark ? "1px solid #27272A" : "1px solid #E3ECFC",
+    bgcolor: isDark ? "#1C1C1E" : "#fff",
+    boxShadow: isDark ? "0 8px 32px rgba(0,0,0,0.5)" : "0 8px 32px rgba(12,36,114,0.10)",
+    minWidth: 190,
+    "& .MuiMenuItem-root": {
+      fontSize: "14px", py: 1.2, px: 2.5,
+      color: isDark ? "#D4D4D8" : "#334155",
+      "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF", color: isDark ? "#F4F4F5" : "#1D4ED8" },
+    },
+  };
+
+  return (
+    <div className={`flex-1 flex flex-col overflow-hidden ${isDark ? "bg-[#0A0A0A]" : "bg-white"}`}>
+      {/* Header */}
+      <div className={`px-8 py-5 border-b flex items-start justify-between gap-6 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+        <div>
+          <div className={`text-[20px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Customize Home page</div>
+          <div className={`text-[13px] mt-1 max-w-lg leading-relaxed ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>
+            You can create custom homepages, making it easier for employees to complete their daily task efficiently.
+          </div>
+        </div>
+        <Button variant="contained" onClick={() => setCreateOpen(true)}
+          sx={{ bgcolor: "#1D4ED8", color: "white", borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "14px", px: 2.5, py: 1, boxShadow: "0 1px 8px #1D4ED833", "&:hover": { bgcolor: "#2563EB" }, "&:active": { bgcolor: "#0C2472" }, whiteSpace: "nowrap", flexShrink: 0 }}>
+          Create Home Page
+        </Button>
+      </div>
+
+      {/* Table */}
+      <div className="flex-1 overflow-auto">
+        <table className="w-full border-collapse text-left">
+          <thead>
+            <tr className={`border-b ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-white"}`}>
+              {["Name", "Description", "Shared With", "Created", "Last Modified", "Status"].map(col => (
+                <th key={col} className={`px-6 py-3 text-[12px] font-semibold ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{col}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {homepages.map(hp => (
+              <tr key={hp.id} className={`border-b transition-colors ${isDark ? "border-[#1C1C1E] hover:bg-[#111113]" : "border-[#EFF6FF] hover:bg-[#fafcff]"}`}>
+                {/* Name + 3-dot */}
+                <td className="px-6 py-4">
+                  {renameId === hp.id ? (
+                    <div className="flex items-center gap-2">
+                      <input value={renameName} onChange={e => setRenameName(e.target.value)}
+                        onKeyDown={e => { if (e.key === "Enter") handleRenameSubmit(); if (e.key === "Escape") setRenameId(null); }}
+                        autoFocus
+                        className={`px-2 py-1 text-[14px] border rounded-lg focus:outline-none w-40 ${isDark ? "bg-[#27272A] border-[#3F3F46] text-[#D4D4D8]" : "bg-white border-[#1D4ED8] text-slate-800"}`} />
+                      <button onClick={handleRenameSubmit} className="px-2 py-0.5 text-[11px] font-bold bg-[#1D4ED8] text-white rounded-md">Save</button>
+                      <button onClick={() => setRenameId(null)} className={`px-2 py-0.5 text-[11px] font-semibold border rounded-md ${isDark ? "border-[#3F3F46] text-[#9CA3AF]" : "border-[#E3ECFC] text-slate-500"}`}>Cancel</button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1.5 group">
+                      <button onClick={() => router.push(`/home/${hp.id}/edit`)} className={`text-[14px] font-semibold hover:underline ${isDark ? "text-[#60A5FA]" : "text-[#1D4ED8]"}`}>{hp.name}</button>
+                      <Tooltip title="Options">
+                        <IconButton size="small" onClick={e => openMenu(e, hp.id)}
+                          sx={{ p: 0.4, color: isDark ? "#52525B" : "#CBD5E1", "&:hover": { color: isDark ? "#D4D4D8" : "#334155", bgcolor: isDark ? "#27272A" : "#EFF6FF" }, borderRadius: "6px" }}>
+                          <DotsThreeVertical size={15} weight="bold" />
+                        </IconButton>
+                      </Tooltip>
+                    </div>
+                  )}
+                </td>
+                {/* Description */}
+                <td className={`px-6 py-4 text-[13px] ${hp.description ? (isDark ? "text-[#D4D4D8]" : "text-slate-600") : (isDark ? "text-[#3F3F46]" : "text-slate-300")}`}>
+                  {hp.description || "—"}
+                </td>
+                {/* Shared With */}
+                <td className={`px-6 py-4 text-[13px] max-w-xs ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>
+                  {hp.sharedWith.join(", ")}
+                </td>
+                {/* Created */}
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-2">
+                    <span className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{hp.created}</span>
+                    <Tooltip title="Date this home page was created">
+                      <button className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold transition-colors ${isDark ? "bg-[#27272A] text-[#71717A] hover:bg-[#3F3F46]" : "bg-slate-100 text-slate-400 hover:bg-slate-200"}`}>?</button>
+                    </Tooltip>
+                  </div>
+                </td>
+                {/* Last Modified */}
+                <td className={`px-6 py-4 text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{hp.lastModified}</td>
+                {/* Status */}
+                <td className="px-6 py-4">
+                  <GreenSwitch checked={hp.isActive} onChange={() => setHomepages(prev => prev.map(h => h.id === hp.id ? { ...h, isActive: !h.isActive } : h))} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Context menu */}
+      <Menu anchorEl={menuAnchor?.el} open={!!menuAnchor} onClose={closeMenu}
+        transformOrigin={{ horizontal: "left", vertical: "top" }}
+        anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
+        PaperProps={{ elevation: 4, sx: menuSx }}>
+        <MenuItem onClick={() => handleMenuAction("edit")}>Edit Dashboard</MenuItem>
+        <MenuItem onClick={() => handleMenuAction("rename")}>Rename Dashboard</MenuItem>
+        <MenuItem onClick={() => handleMenuAction("clone")}>Clone Dashboard</MenuItem>
+        <MenuItem onClick={() => handleMenuAction("permission")}>Dashboard Permission</MenuItem>
+      </Menu>
+
+      <CreateHomePageDrawer open={createOpen} onClose={() => setCreateOpen(false)} onCreate={handleCreate} isDark={isDark} />
+    </div>
+  );
+}
+
+// ---------------------------------------------
 //  Placeholder
 // ---------------------------------------------
 function PlaceholderPanel({ label }: { label: string }) {
@@ -3058,6 +3314,7 @@ export default function SettingsPage() {
       case "roles":        return <RolesPanel />;
       case "permission":   return <PermissionPanel />;
       case "modules":      return <ModulesAndFieldsPanel />;
+      case "homepage":     return <CustomizeHomepagePanel />;
       default:             return <PlaceholderPanel label={activeLabel} />;
     }
   };
