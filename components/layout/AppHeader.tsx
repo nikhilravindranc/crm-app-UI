@@ -229,21 +229,21 @@ export default function AppHeader() {
         <img
           src="/logo.png"
           alt="Social DNA Labs"
-          style={{ height: "30px", width: "auto", display: "block", flexShrink: 0 }}
+          style={{ height: "28px", width: "auto", display: "block", flexShrink: 0 }}
         />
       </div>
 
       {/* Right: title + controls */}
       <div className="flex flex-1 items-center gap-8 px-8 min-w-0">
         <div className="flex-1 min-w-0">
-          {title ? (
+          {/*{title ? (
             <div className="flex items-baseline gap-2 whitespace-nowrap">
               <h1 className="text-[18px] font-extrabold text-[#0C2472] leading-none tracking-tight m-0">{title}</h1>
               <span className="text-[11.5px] text-slate-400 font-medium">· {today}</span>
             </div>
           ) : (
             <p className="text-[12px] text-slate-400 font-medium whitespace-nowrap m-0">{today}</p>
-          )}
+          )} */}
         </div>
 
         {/* Search */}
