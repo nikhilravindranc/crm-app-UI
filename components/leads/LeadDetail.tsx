@@ -549,12 +549,12 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
               </div>
 
               {/* Right 1/3 */}
-              <div className="space-y-4 sticky top-4 self-start">
+              <div className="space-y-4 sticky top-[76px] lg:top-[100px] self-start">
 
                 {/* Related List */}
-                <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
-                  <div className="px-4 py-3.5 border-b border-[#EFF6FF]">
-                    <p className="font-heading text-[12px] font-bold text-slate-500 uppercase tracking-wider">Related List</p>
+                <div className={`rounded-2xl border shadow-sm overflow-hidden w-full ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+                  <div className={`px-4 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
+                    <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-[#ABABAD]" : "text-slate-500"}`}>Related List</p>
                   </div>
                   <div className="p-2 space-y-0.5">
                     {relatedItems.map(({ icon: Icon, label, count, color }) => (
@@ -576,14 +576,14 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                 </div>
 
                 {/* Lead Owner */}
-                <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm p-4 space-y-3">
-                  <p className="font-heading text-[12px] font-bold text-slate-500 uppercase tracking-wider">Ownership</p>
+                <div className={`rounded-2xl border shadow-sm p-4 space-y-3 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+                  <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-[#ABABAD]" : "text-slate-500"}`}>Ownership</p>
                   <div className="flex items-center gap-2.5">
                     <Avatar src={OWNER_AVATARS[lead.owner]} sx={{ width:32, height:32, bgcolor:lead.ownerColor, fontSize:"0.72rem", fontWeight:800 }}>
                       {lead.ownerInitials}
                     </Avatar>
                     <div>
-                      <p className="text-[14px] font-semibold text-slate-800">{lead.owner}</p>
+                      <p className={`text-[14px] font-semibold ${isDark ? "text-[#F4F4F5]" : "text-slate-800"}`}>{lead.owner}</p>
                       <p className={`text-[12px] ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>Lead Owner</p>
                     </div>
                   </div>
@@ -591,11 +591,11 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                   <div className="space-y-2">
                     <div className="flex justify-between text-[12px]">
                       <span className={`font-medium ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>Created</span>
-                      <span className="text-slate-700 font-semibold">{lead.created}</span>
+                      <span className={`font-semibold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{lead.created}</span>
                     </div>
                     <div className="flex justify-between text-[12px]">
                       <span className={`font-medium ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>Modified</span>
-                      <span className="text-slate-700 font-semibold">{lead.modified}</span>
+                      <span className={`font-semibold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{lead.modified}</span>
                     </div>
                   </div>
                 </div>
@@ -637,10 +637,10 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
               </div>
 
               {/* Side: related list still visible */}
-              <div className="space-y-4 sticky top-4 self-start">
-                <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
-                  <div className="px-4 py-3.5 border-b border-[#EFF6FF]">
-                    <p className="font-heading text-[12px] font-bold text-slate-500 uppercase tracking-wider">Related List</p>
+              <div className="space-y-4 sticky top-[76px] lg:top-[100px] self-start">
+                <div className={`rounded-2xl border shadow-sm overflow-hidden w-full ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+                  <div className={`px-4 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
+                    <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-[#ABABAD]" : "text-slate-500"}`}>Related List</p>
                   </div>
                   <div className="p-2 space-y-0.5">
                     {relatedItems.map(({ icon: Icon, label, count, color }) => (
