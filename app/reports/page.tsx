@@ -1,7 +1,5 @@
 "use client";
 import { useState } from "react";
-import Sidebar from "@/components/layout/Sidebar";
-import TopBar from "@/components/layout/TopBar";
 import { useTheme } from "@/components/ThemeContext";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
@@ -42,9 +40,9 @@ export default function ReportsPage() {
 
   return (
     <div className={`flex min-h-screen font-sans transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-[#EFF6FF]"}`}>
-      <Sidebar />
+   
       <div className={`sidebar-content flex-1 flex flex-col overflow-hidden transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
-        <TopBar />
+      
 
         <div className={`flex-1 overflow-auto ${isDark ? "bg-[#000000]" : "bg-white"}`}>
           {/* Header */}
@@ -117,6 +115,6 @@ export default function ReportsPage() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
   );
 }

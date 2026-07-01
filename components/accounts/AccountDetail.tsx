@@ -136,8 +136,8 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
     return (
       <div className="flex h-screen bg-transparent font-sans">
         <Sidebar />
-        <div className={`sidebar-content flex-1 flex flex-col min-h-screen overflow-auto transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
-          <TopBar />
+        <div className="sidebar-content flex-1 flex flex-col">
+          {/* <TopBar title="Accounts" /> */}
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
               <p className={`text-xl font-bold mb-2 ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>Account not found</p>
@@ -217,8 +217,8 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
     <div className="flex h-screen bg-transparent font-sans">
       <Sidebar />
 
-      <div className={`sidebar-content flex-1 flex flex-col min-h-screen overflow-auto transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
-        <TopBar />
+      <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-hidden">
+        {/* <TopBar title="Accounts" /> */}
 
         <main className="flex-1 px-6 py-5 space-y-4 animate-fade-in">
 

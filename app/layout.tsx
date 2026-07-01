@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import ThemeRegistry from "@/components/ThemeRegistry";
+import NavGuard from "@/components/layout/NavGuard";
 
 // ── Inter: universal font family ──────────────────────────────────
 const inter = Inter({
@@ -24,7 +25,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable} style={{ fontFamily: "var(--font-inter)" }}>
       <body suppressHydrationWarning>
-        <ThemeRegistry>{children}</ThemeRegistry>
+        <ThemeRegistry>
+          <NavGuard />
+          {children}
+        </ThemeRegistry>
       </body>
     </html>
   );

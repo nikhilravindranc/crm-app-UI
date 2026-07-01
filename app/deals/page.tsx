@@ -2,8 +2,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Sidebar from "@/components/layout/Sidebar";
-import TopBar from "@/components/layout/TopBar";
 import NewDealDrawer from "@/components/deals/NewDealDrawer";
 import DealGridView from "@/components/deals/DealGridView";
 import DealKanbanView from "@/components/deals/DealKanbanView";
@@ -251,13 +249,9 @@ export default function DealsPage() {
   ];
 
   return (
-    <div className="flex h-screen bg-transparent font-sans">
-      <Sidebar />
+    <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
 
-      <div className={`sidebar-content flex-1 flex flex-col min-h-screen overflow-auto transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
-        <TopBar />
-
-        <main className="flex-1 px-4 md:px-8 py-3 md:py-4 space-y-3 animate-fade-in">
+      <main className="flex-1 px-8 py-6 space-y-5 animate-fade-in">
 
           {/* -- Breadcrumb + Header -- */}
           <div className="flex items-start justify-between">
@@ -463,7 +457,6 @@ export default function DealsPage() {
             </div>
           )}
         </main>
-      </div>
 
       {/* -- Panels -- */}
       <NewDealDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
