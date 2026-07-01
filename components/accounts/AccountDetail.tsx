@@ -217,7 +217,7 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
     <div className="flex h-screen bg-transparent font-sans">
       <Sidebar />
 
-      <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-hidden">
+      <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
         {/* <TopBar title="Accounts" /> */}
 
         <main className="flex-1 px-6 py-5 space-y-4 animate-fade-in">
