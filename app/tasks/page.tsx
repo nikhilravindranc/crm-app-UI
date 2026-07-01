@@ -14,7 +14,7 @@ import { getDataGridSx, ROWS_PER_PAGE_OPTIONS } from "@/lib/dataGridStyles";
 import { useRouter } from "next/navigation";
 import {
   House, CaretRight, Plus, MagnifyingGlass, FunnelSimple,
-  ArrowsDownUp, DotsThreeVertical, Trash, CaretDown, List,
+  DotsThreeVertical, Trash, List, GridFour,
   ClipboardText, CheckCircle, PencilSimple, Copy,
   Tag, CalendarBlank, Pulse, Flag, User, LinkSimple, UserCircle,
 } from "@phosphor-icons/react";
@@ -76,12 +76,13 @@ const PRIORITY_CFG: Record<string, { bg: string; text: string }> = {
 // ---------------------------------------------
 //  Helpers
 // ---------------------------------------------
-function ColHeader({ label, icon: Icon, isDark = false }: { label: string; icon?: ElementType; isDark?: boolean }) {
+function ColHeader({ label, icon: Icon }: { label: string; icon?: ElementType }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   return (
-    <div className={`font-heading flex items-center gap-1.5 text-table-header uppercase tracking-wide cursor-pointer transition-colors group select-none ${isDark ? "text-[#9CA3AF] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+    <div className={`flex items-center gap-1.5 font-heading text-[14px]/[18px] font-semibold uppercase tracking-wide select-none ${isDark ? "text-[#E4E4E7]" : "text-[#737373]"}`}>
       {Icon && <Icon size={13} weight="duotone" />}
       {label}
-      <ArrowsDownUp size={12} weight="duotone" className={`opacity-30 group-hover:opacity-100 transition-opacity ${isDark ? "text-[#9CA3AF]" : "text-[#60A5FA]"}`} />
     </div>
   );
 }
@@ -94,13 +95,14 @@ export default function TasksPage() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
-  const [selected, setSelected]         = useState<number[]>([]);
-  const [search, setSearch]             = useState("");
-  const [drawerOpen, setDrawerOpen]     = useState(false);
+  const [selected, setSelected]           = useState<number[]>([]);
+  const [search, setSearch]               = useState("");
+  const [drawerOpen, setDrawerOpen]       = useState(false);
   const [filtersAnchor, setFiltersAnchor] = useState<HTMLElement | null>(null);
   const [activeFilters, setActiveFilters] = useState<FilterRow[]>([]);
-  const [moreAnchor, setMoreAnchor]     = useState<HTMLElement | null>(null);
-  const [activeFilter, setActiveFilter] = useState<TaskStatus | "All">("All");
+  const [moreAnchor, setMoreAnchor]       = useState<HTMLElement | null>(null);
+  const [activeFilter, setActiveFilter]   = useState<TaskStatus | "All">("All");
+  const [view, setView]                   = useState<"list" | "grid">("list");
 
   const TASK_FILTER_COLUMNS = [
     { value: "subject",   label: "Task · Subject"    },
@@ -147,81 +149,87 @@ export default function TasksPage() {
   const gridColumns: GridColDef<TaskRecord>[] = [
     {
       field: "type", headerName: "Type", flex: 0.8, minWidth: 80, sortable: false,
-      renderHeader: () => <ColHeader label="Type" icon={Tag} isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Type" icon={Tag} />,
       renderCell: (params) => (
-        <p className={`text-table-cell font-medium truncate mb-0 ${isDark ? "text-[#71717A]" : "text-slate-600"}`}>
-          {params.row.type || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
+        <p className={`text-[15px]/[20px] truncate mb-0 ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
+          {params.row.type || <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>}
         </p>
       ),
     },
     {
       field: "subject", headerName: "Subject", flex: 1.8, minWidth: 200, sortable: false,
-      renderHeader: () => <ColHeader label="Subject" icon={ClipboardText} isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Subject" icon={ClipboardText} />,
       renderCell: (params) => (
-        <Link href={`/tasks/${params.row.id}`} className={`font-heading text-table-cell font-medium truncate hover:underline ${isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]"}`} onClick={e => e.stopPropagation()}>
+        <Link href={`/tasks/${params.row.id}`}
+          className={`font-heading text-[15px]/[20px] font-medium truncate hover:underline ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}
+          onClick={e => e.stopPropagation()}>
           {params.row.subject}
         </Link>
       ),
     },
     {
       field: "dueDate", headerName: "Due Date", flex: 1, minWidth: 100, sortable: false,
-      renderHeader: () => <ColHeader label="Due Date" icon={CalendarBlank} isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Due Date" icon={CalendarBlank} />,
       renderCell: (params) => (
-        <p className={`text-table-cell truncate mb-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
-          {params.row.dueDate || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
+        <p className={`text-[13px]/[16px] truncate mb-0 ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>
+          {params.row.dueDate || <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>}
         </p>
       ),
     },
     {
       field: "status", headerName: "Status", flex: 1.2, minWidth: 120, sortable: false,
-      renderHeader: () => <ColHeader label="Status" icon={Pulse} isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Status" icon={Pulse} />,
       renderCell: (params) => {
         const rawCfg    = params.row.status ? STATUS_CFG[params.row.status] : null;
         const statusCfg = isDark && params.row.status ? STATUS_CFG_DARK[params.row.status] : rawCfg;
         return statusCfg ? (
-          <span className="self-center inline-flex items-center gap-1.5 text-badge-text px-2 py-[3px] rounded-full leading-none"
+          <span className="self-center inline-flex items-center gap-1.5 text-[13px] font-medium px-2 py-[3px] rounded-full leading-none"
             style={{ backgroundColor: statusCfg.bg, color: statusCfg.text }}>
             <span className="w-[5px] h-[5px] rounded-full flex-shrink-0" style={{ backgroundColor: statusCfg.dot }} />
             {params.row.status}
           </span>
-        ) : <span className={`text-table-cell ${isDark ? "text-[#3F3F46]" : "text-slate-200"}`}>—</span>;
+        ) : <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>;
       },
     },
     {
       field: "priority", headerName: "Priority", flex: 0.9, minWidth: 90, sortable: false,
-      renderHeader: () => <ColHeader label="Priority" icon={Flag} isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Priority" icon={Flag} />,
       renderCell: (params) => {
         const priCfg = params.row.priority ? PRIORITY_CFG[params.row.priority] : null;
         return priCfg ? (
-          <span className="self-center inline-flex items-center gap-1 text-badge-text px-2 py-[3px] rounded-full leading-none"
+          <span className="self-center inline-flex items-center gap-1 text-[13px] font-medium px-2 py-[3px] rounded-full leading-none"
             style={{ backgroundColor: priCfg.bg, color: priCfg.text }}>
             {params.row.priority}
           </span>
-        ) : <span className={`text-table-cell ${isDark ? "text-[#3F3F46]" : "text-slate-200"}`}>—</span>;
+        ) : <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>;
       },
     },
     {
       field: "contact", headerName: "Contact", flex: 1.5, minWidth: 150, sortable: false,
-      renderHeader: () => <ColHeader label="Contact" icon={User} isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Contact" icon={User} />,
       renderCell: (params) => (
-        <p className={`text-table-cell truncate mb-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
-          {params.row.contact || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
+        <p className={`text-[15px]/[20px] truncate mb-0 ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
+          {params.row.contact || <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>}
         </p>
       ),
     },
     {
       field: "relatedTo", headerName: "Related To", flex: 1.7, minWidth: 170, sortable: false,
-      renderHeader: () => <ColHeader label="Related To" icon={LinkSimple} isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Related To" icon={LinkSimple} />,
       renderCell: (params) => (
-        <p className={`text-table-cell truncate mb-0 ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
-          {params.row.relatedTo || <span className={isDark ? "text-[#3F3F46]" : "text-slate-200"}>—</span>}
+        <p className={`text-[15px]/[20px] truncate mb-0 ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
+          {params.row.relatedTo || <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>}
         </p>
       ),
     },
     {
       field: "taskOwner", headerName: "Task Owner", flex: 2, minWidth: 200, sortable: false,
-      renderHeader: () => <ColHeader label="Task Owner" icon={UserCircle} isDark={isDark} />,
-      renderCell: (params) => <p className={`text-table-cell-secondary truncate mb-0 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{params.row.taskOwner}</p>,
+      renderHeader: () => <ColHeader label="Task Owner" icon={UserCircle} />,
+      renderCell: (params) => (
+        <p className={`text-[13px]/[16px] truncate mb-0 ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>
+          {params.row.taskOwner || <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>}
+        </p>
+      ),
     },
     {
       field: "actions", headerName: "", width: 50, sortable: false, disableColumnMenu: true,
@@ -230,7 +238,7 @@ export default function TasksPage() {
           <Tooltip title="Actions">
             <IconButton size="small" onClick={e => e.stopPropagation()}
               sx={{ borderRadius: "6px", p: 0.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#E3ECFC" } }}>
-              <DotsThreeVertical size={15} color={isDark ? "#9CA3AF" : "#94A3B8"} weight="duotone" />
+              <DotsThreeVertical size={15} color="#94A3B8" weight="duotone" />
             </IconButton>
           </Tooltip>
         </div>
@@ -246,29 +254,41 @@ export default function TasksPage() {
           {/* -- Breadcrumb + Header -- */}
           <div className="flex items-start justify-between">
             <div>
-              <div className="flex items-center gap-1 text-caption text-slate-400 mb-2">
+              <div className={`flex items-center gap-1.5 text-[13.5px]/[18px] mb-1 ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>
                 <House size={16} weight="duotone" />
                 <CaretRight size={12} weight="duotone" />
                 <Link href="/tasks" className={`transition-colors font-medium ${isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#1D4ED8]"}`}>Tasks</Link>
               </div>
               <div className="flex items-center gap-2.5">
-                <h1 className="font-heading text-h1 text-slate-900 tracking-tight">Tasks</h1>
-                <span className="flex items-center gap-1.5 text-button-sm text-slate-400">
-                  <List size={13} weight="duotone" />
-                </span>
-                <span className="text-badge-text text-slate-400 bg-[#f9fbff] border border-[#E3ECFC] px-2 py-0.5 rounded-full shadow-sm">
-                  Total Records: {ALL_TASKS.length}
+                <h1 className="font-heading text-[22px]/[28px] font-semibold text-slate-900 tracking-tight m-0">Tasks</h1>
+                <span className={`text-[13px]/[16px] font-medium border px-2.5 py-1 rounded-full shadow-sm flex items-center ${isDark ? "bg-[#0A0A0A] border-[#27272A] text-[#E4E4E7]" : "bg-[#f9fbff] border-[#E3ECFC] text-slate-400"}`}>
+                  {ALL_TASKS.length} total
                 </span>
               </div>
             </div>
 
             <div className="flex items-center gap-2 mt-1">
+              {/* View toggle */}
+              <div className={`flex items-center rounded-xl p-0.5 gap-0.5 shadow-sm border ${isDark ? "bg-[#000000] border-[#27272A]" : "bg-white border-slate-100"}`}>
+                {([{ k: "list", Icon: List, label: "List" }, { k: "grid", Icon: GridFour, label: "Grid" }] as { k: string; Icon: ElementType; label: string }[]).map(({ k, Icon, label }) => (
+                  <button key={k} onClick={() => setView(k as "list" | "grid")}
+                    className={`flex items-center gap-1.5 px-2.5 py-[7px] rounded-lg text-[14px]/[18px] font-medium transition-all ${
+                      view === k
+                        ? isDark ? "bg-[#18181B] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]"
+                        : isDark ? "text-[#E4E4E7] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "bg-[#f9fbff] text-slate-400 hover:bg-[#E3ECFC]"
+                    }`}>
+                    <Icon size={14} weight="duotone" />{label}
+                  </button>
+                ))}
+              </div>
+
               <Button variant="contained"
                 startIcon={<Plus size={16} weight="bold" />}
                 onClick={() => setDrawerOpen(true)}
-                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px", px: 2, py: 0.85, boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB", boxShadow: isDark ? "none" : "0 2px 14px #60A5FA55" }, "&:active": { bgcolor: isDark ? "#9CA3AF" : "#0C2472" } }}>
+                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "15px", px: 2, py: 0.85, boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB", boxShadow: isDark ? "none" : "0 2px 14px 0 #60A5FA55" }, "&:active": { bgcolor: isDark ? "#52525B" : "#0C2472" } }}>
                 New Task
               </Button>
+
               <Tooltip title="More options">
                 <IconButton size="small" onClick={e => setMoreAnchor(e.currentTarget)}
                   sx={{ borderRadius: "8px", p: 0.8, bgcolor: isDark ? "#0A0A0A" : "#f9fbff", border: isDark ? "1px solid #27272A" : "1px solid #E3ECFC", "&:hover": { bgcolor: isDark ? "#27272A" : "#E3ECFC" } }}>
@@ -286,14 +306,14 @@ export default function TasksPage() {
               if (tab !== "All" && cnt === 0) return null;
               return (
                 <button key={tab} onClick={() => setActiveFilter(tab)}
-                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-button-sm whitespace-nowrap transition-all flex-shrink-0 border ${
+                  className={`flex items-center gap-1.5 px-3 py-[7px] rounded-xl text-[14px]/[18px] font-medium whitespace-nowrap transition-all flex-shrink-0 border ${
                     active
-                      ? isDark ? "bg-[#27272A] text-[#D4D4D8] border-[#3F3F46] shadow-sm" : "bg-[#0C2472] text-white border-[#0C2472] shadow-sm shadow-[#0C2472]/20"
-                      : isDark ? "bg-[#111113] text-[#71717A] border-[#27272A] hover:bg-[#27272A] hover:text-[#A1A1AA] hover:border-[#3F3F46]" : "bg-[#f9fbff] text-slate-600 border-[#E3ECFC] hover:bg-[#EFF6FF]"
+                      ? isDark ? "bg-[#18181B] text-white shadow-sm shadow-[#27272A]/10 border-[#27272A]" : "bg-[#1D4ED8] text-white shadow-sm shadow-[#1D4ED8]/25 border-[#1D4ED8]"
+                      : isDark ? "bg-[#0A0A0A] text-[#A1A1AA] border-[#27272A] hover:bg-[#27272A] hover:text-[#FFFFFF]" : "bg-[#f9fbff] text-[#0C2472] border-[#E3ECFC] hover:bg-[#E3ECFC]"
                   }`}>
                   {tab}
                   {tab !== "All" && cnt > 0 && (
-                    <span className={`text-badge-text px-1.5 py-0.5 rounded-full leading-none ${
+                    <span className={`text-[12px] px-1.5 py-0.5 rounded-full leading-none ${
                       active
                         ? isDark ? "bg-white/10 text-[#A1A1AA]" : "bg-white/20 text-white"
                         : isDark ? "bg-[#27272A] text-[#9CA3AF]" : "bg-slate-100 text-slate-600"
@@ -306,26 +326,23 @@ export default function TasksPage() {
 
           {/* -- Toolbar -- */}
           <div className="flex items-center gap-2.5">
-            <div className={`flex items-center gap-2 border rounded-xl px-3 py-2 w-72 focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+            <div className={`flex items-center gap-2 border rounded-xl px-3 py-2 w-72 focus-within:border-[#60A5FA] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#60A5FA] transition-all ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
               <MagnifyingGlass size={15} color="#94A3B8" weight="duotone" />
               <InputBase placeholder="Search tasks…" value={search}
                 onChange={e => setSearch(e.target.value)}
-                sx={{ flex: 1, fontSize: "0.76rem", color: isDark ? "#8A9FB5" : "#334155", "& input::placeholder": { color: "#94A3B8", opacity: 1 } }}
+                sx={{ flex: 1, fontSize: "0.86rem", color: isDark ? "#D4D4D8" : "#334155", "& input::placeholder": { color: "#94A3B8", opacity: 1 } }}
               />
               {search && <button onClick={() => setSearch("")} className="text-slate-300 hover:text-slate-500 text-sm">✕</button>}
             </div>
 
             <Button variant="outlined" size="small"
-              startIcon={activeFilters.length > 0
-                ? <span className="relative"><FunnelSimple size={14} weight="duotone" /></span>
-                : <FunnelSimple size={14} weight="duotone" />
-              }
+              startIcon={<FunnelSimple size={14} weight="duotone" />}
               onClick={e => setFiltersAnchor(e.currentTarget)}
               sx={{
                 borderColor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#27272A" : "#E3ECFC",
-                color: activeFilters.length > 0 ? "#fff" : isDark ? "#5A7089" : "#0C2472",
+                color: activeFilters.length > 0 ? "#fff" : isDark ? "#E4E4E7" : "#0C2472",
                 bgcolor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#0F0F0F" : "#E3ECFC",
-                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "13px",
+                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px",
                 "&:hover": {
                   borderColor: activeFilters.length > 0 ? "#1640B8" : "#1D4ED8",
                   color: activeFilters.length > 0 ? "#fff" : "#0C2472",
@@ -335,7 +352,7 @@ export default function TasksPage() {
               Filters{activeFilters.length > 0 ? ` (${activeFilters.length})` : ""}
             </Button>
 
-            <span className={`ml-auto text-caption px-3 py-1.5 rounded-lg ${isDark ? "text-[#71717A] bg-[#18181B]" : "text-slate-400 bg-[#f9fbff]"}`}>
+            <span className={`ml-auto text-[13px]/[16px] px-3 py-1.5 rounded-lg ${isDark ? "text-[#E4E4E7] bg-[#0A0A0A]" : "text-slate-400 bg-[#f9fbff]"}`}>
               {filtered.length} of {ALL_TASKS.length} records
             </span>
           </div>
@@ -344,21 +361,21 @@ export default function TasksPage() {
           {selected.length > 0 && (
             <div className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border shadow-sm ${isDark ? "bg-[#18181B] border-[#27272A]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
               <div className="flex items-center gap-2">
-                <span className="w-5 h-5 rounded-md bg-[#1D4ED8] text-white flex items-center justify-center text-badge-text">{selected.length}</span>
-                <span className={`text-button-sm font-semibold ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>selected</span>
+                <span className="w-5 h-5 rounded-md bg-[#1D4ED8] text-white flex items-center justify-center text-[12px]">{selected.length}</span>
+                <span className={`text-[14px] font-semibold ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>selected</span>
               </div>
               <div className={`w-px h-4 ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
-              <button className={`text-button-sm font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Update Status</button>
-              <button className={`text-button-sm font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Assign Owner</button>
-              <button onClick={() => setSelected([])} className={`ml-auto text-button-sm font-medium transition-colors ${isDark ? "text-[#9CA3AF] hover:text-[#A1A1AA]" : "text-slate-400 hover:text-slate-600"}`}>Clear</button>
-              <button className={`flex items-center gap-1.5 text-button-sm font-medium transition-colors ${isDark ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"}`}>
+              <button className={`text-[14px] font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Update Status</button>
+              <button className={`text-[14px] font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Assign Owner</button>
+              <button onClick={() => setSelected([])} className={`ml-auto text-[14px] font-medium transition-colors ${isDark ? "text-[#9CA3AF] hover:text-[#A1A1AA]" : "text-slate-400 hover:text-slate-600"}`}>Clear</button>
+              <button className={`flex items-center gap-1.5 text-[14px] font-medium transition-colors ${isDark ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"}`}>
                 <Trash size={14} weight="duotone" /> Delete
               </button>
             </div>
           )}
 
           {/* -- Table (MUI DataGrid) -- */}
-          <div className="rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden" style={{ height: 600 }}>
+          <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`} style={{ height: 600 }}>
             <DataGrid<TaskRecord>
               rows={filtered}
               columns={gridColumns}
@@ -403,9 +420,9 @@ export default function TasksPage() {
       <Menu anchorEl={moreAnchor} open={Boolean(moreAnchor)} onClose={() => setMoreAnchor(null)}
         PaperProps={{ sx: { borderRadius: "12px", border: `1px solid ${isDark ? "#27272A" : "#E3ECFC"}`, boxShadow: isDark ? "0 8px 32px rgba(0,0,0,0.4)" : "0 8px 32px rgba(12,36,114,0.10)", minWidth: 160 } }}>
         {[
-          { label: "Export",     icon: Copy,          color: isDark ? "#D4D4D8" : "#334155" },
-          { label: "Import",     icon: PencilSimple,  color: isDark ? "#D4D4D8" : "#334155" },
-          { label: "Delete All", icon: Trash,         color: "#EF4444" },
+          { label: "Export",     icon: Copy,         color: isDark ? "#D4D4D8" : "#334155" },
+          { label: "Import",     icon: PencilSimple, color: isDark ? "#D4D4D8" : "#334155" },
+          { label: "Delete All", icon: Trash,        color: "#EF4444" },
         ].map(opt => (
           <MenuItem key={opt.label} onClick={() => setMoreAnchor(null)}
             sx={{ mx: 0.5, borderRadius: "8px", py: 1, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
@@ -421,4 +438,3 @@ export default function TasksPage() {
     </div>
   );
 }
-

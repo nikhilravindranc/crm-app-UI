@@ -156,7 +156,7 @@ function SectionCard({ icon: Icon, title, children, action }: {
         <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
           <Icon size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
         </div>
-        <span className={`font-heading text-[12px] font-bold uppercase tracking-wider flex-1 ${isDark ? "text-slate-500" : "text-slate-500"}`}>{title}</span>
+        <p className={`font-heading text-[12px] font-bold uppercase tracking-[0.12em] flex-1 ${isDark ? "text-[#D4D4D8]" : "text-[#1D4ED8]"}`}>{title}</p>
         {action}
       </div>
       <div className="px-5 py-4">{children}</div>
@@ -169,10 +169,10 @@ function KV({ label, value, editable }: { label: string; value?: string | number
   const isDark = theme === "dark";
   const display = value !== undefined && value !== "" ? String(value) : "—";
   return (
-    <div className={`py-2.5 border-b last:border-0 flex items-start justify-between group ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
+    <div className={`py-2 border-b last:border-0 flex items-start justify-between group ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
       <div className="flex-1">
-        <div className={`text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{label}</div>
-        <div className={`text-[14px] font-medium whitespace-pre-line ${display === "—" ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>{display}</div>
+        <p className={`font-heading text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>{label}</p>
+        <p className={`text-[14px] font-medium whitespace-pre-line ${display === "—" ? (isDark ? "text-[#3F3F46] italic" : "text-slate-300 italic") : (isDark ? "text-[#D4D4D8]" : "text-slate-800")}`}>{display}</p>
       </div>
       {editable && (
         <IconButton size="small"
@@ -197,15 +197,15 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
   const isDark = theme === "dark";
   const task = TASKS_DETAIL[taskId];
 
-  const [activeTab, setActiveTab] = useState<"overview" | "timeline">("overview");
-  const [note, setNote] = useState("");
-  const [notes, setNotes] = useState<{ text: string; at: string }[]>([]);
-  const [attachView, setAttachView] = useState<"grid" | "list">("grid");
-  const [moreAnchor, setMoreAnchor] = useState<null | HTMLElement>(null);
+  const [activeTab, setActiveTab]     = useState<"overview" | "timeline">("overview");
+  const [note, setNote]               = useState("");
+  const [notes, setNotes]             = useState<{ text: string; at: string }[]>([]);
+  const [attachView, setAttachView]   = useState<"grid" | "list">("grid");
+  const [moreAnchor, setMoreAnchor]   = useState<null | HTMLElement>(null);
 
   if (!task) {
     return (
-      <div className={`flex h-screen font-sans ${isDark ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
+      <div className="flex h-screen bg-transparent font-sans">
         <Sidebar />
         <div className="sidebar-content flex-1 flex flex-col">
           {/* <TopBar title="Tasks" /> */}
@@ -226,7 +226,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
     setNote("");
   };
 
-  const statusCfg = (isDark ? STATUS_CFG_DARK : STATUS_CFG)[task.status];
+  const statusCfg   = (isDark ? STATUS_CFG_DARK : STATUS_CFG)[task.status];
   const priorityCfg = (isDark ? PRIORITY_CFG_DARK : PRIORITY_CFG)[task.priority];
 
   const relatedItems = [
@@ -238,81 +238,109 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
     <div className="space-y-4">
       <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <div className={`px-4 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
-          <span className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-500"}`}>Related List</span>
+          <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-[#ABABAD]" : "text-slate-500"}`}>Related List</p>
         </div>
         <div className="p-2 space-y-0.5">
           {relatedItems.map(({ label, icon: Icon, count, color }) => (
             <button key={label} onClick={() => onItemClick(label)}
-              className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-xl transition-colors ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}>
+              className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-xl group transition-colors ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}>
               <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: color + "20" }}>
                 <Icon size={14} color={color} weight="duotone" />
               </div>
-              <span className={`flex-1 text-left text-[14px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>{label}</span>
+              <span className={`flex-1 min-w-0 truncate text-left text-[14px] font-medium ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{label}</span>
               {count > 0 && (
-                <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded-full ${isDark ? "bg-[#27272A] text-[#A1A1AA]" : "bg-[#E3ECFC] text-[#1D4ED8]"}`}>{count}</span>
+                <span className="text-[12px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>
               )}
-              <CaretRight size={14} color={isDark ? "#3F3F46" : "#E2E8F0"} weight="duotone" />
+              <CaretRight size={14} color="#E2E8F0" weight="duotone" />
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Ownership / details panel */}
+      <div className={`rounded-2xl border shadow-sm p-4 space-y-3 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+        <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-[#ABABAD]" : "text-slate-500"}`}>Details</p>
+        {[
+          { label: "Due Date",    value: task.dueDate   || "—" },
+          { label: "Task Owner",  value: task.taskOwner || "—" },
+          { label: "Created By",  value: task.createdBy || "—" },
+        ].map(({ label, value }) => (
+          <div key={label} className="flex justify-between text-[12px]">
+            <span className={`font-medium ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>{label}</span>
+            <span className={`font-semibold text-right max-w-[140px] truncate ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{value}</span>
+          </div>
+        ))}
       </div>
     </div>
   );
 
   return (
-    <div className={`flex h-screen font-sans ${isDark ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
+    <div className="flex h-screen bg-transparent font-sans">
       <Sidebar />
 
       <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-hidden">
         {/* <TopBar title="Tasks" /> */}
 
-        {/* ── Breadcrumb ── */}
-        <div className={`flex items-center gap-1.5 px-8 py-3 border-b text-[12px] ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#E3ECFC] border-[#E3ECFC]"}`}>
-          <Link href="/" className={`transition-colors ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
-            <House size={13} weight="duotone" />
-          </Link>
-          <CaretRight size={11} color={isDark ? "#3F3F46" : "#E2E8F0"} />
-          <Link href="/tasks" className={`font-medium transition-colors ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>Tasks</Link>
-          <CaretRight size={11} color={isDark ? "#3F3F46" : "#E2E8F0"} />
-          <span className={`font-semibold ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>{task.refId}</span>
-        </div>
+        <main className="flex-1 px-6 py-5 space-y-4 animate-fade-in">
 
-        {/* ── Body ── */}
-        <div className="flex-1 overflow-y-auto px-6 py-5">
+          {/* ── Breadcrumb ── */}
+          <div className={`flex items-center gap-1.5 text-[13.5px] ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>
+            <House size={16} weight="duotone" />
+            <CaretRight size={12} weight="duotone" />
+            <Link href="/tasks" className="hover:text-[#1D4ED8] transition-colors font-medium">Tasks</Link>
+            <CaretRight size={12} weight="duotone" />
+            <span className="text-[#1D4ED8] font-semibold truncate max-w-[240px]">{task.subject}</span>
+          </div>
 
-          {/* ── Header row ── */}
-          <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-3">
-              <div className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-sm flex-shrink-0 ${isDark ? "bg-[#27272A]" : "bg-[#1D4ED8]"}`}>
-                <ClipboardText size={18} color={isDark ? "#71717A" : "#fff"} weight="duotone" />
+          {/* ── Header card ── */}
+          <div className={`rounded-2xl border shadow-sm px-5 py-4 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-sm flex-shrink-0 ${isDark ? "bg-[#27272A]" : "bg-[#1D4ED8]"}`}>
+                  <ClipboardText size={18} color={isDark ? "#71717A" : "#fff"} weight="duotone" />
+                </div>
+                <div>
+                  <h1 className={`text-[20px] font-extrabold tracking-tight leading-tight mb-0 ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>{task.subject}</h1>
+                  <p className={`text-[12px] mt-0.5 ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>{task.type} · #{task.refId}</p>
+                </div>
               </div>
-              <div>
-                <h1 className={`font-heading text-[18px] font-bold tracking-tight leading-tight mb-0 ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>{task.subject}</h1>
-                <span className={`text-[12px] ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>{task.type} · {task.refId}</span>
+              <div className="flex items-center gap-2">
+                {statusCfg && (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-semibold"
+                    style={{ backgroundColor: statusCfg.bg, color: statusCfg.text }}>
+                    <span className="w-1.5 h-1.5 rounded-full inline-block flex-shrink-0" style={{ backgroundColor: statusCfg.dot }} />
+                    {task.status}
+                  </span>
+                )}
+                {priorityCfg && (
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-semibold"
+                    style={{ backgroundColor: priorityCfg.bg, color: priorityCfg.text }}>
+                    {task.priority}
+                  </span>
+                )}
+                <Button size="small" variant="outlined" startIcon={<PencilSimple size={13} weight="duotone" />}
+                  sx={{ borderColor: isDark ? "#27272A" : "#E3ECFC", color: isDark ? "#B4B5B6" : "#1D4ED8", borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.84rem", bgcolor: isDark ? "#0F0F0F" : "transparent", "&:hover": { borderColor: "#1D4ED8", color: "#1D4ED8", bgcolor: isDark ? "#0A0A0A" : "#EFF6FF" } }}>
+                  Edit
+                </Button>
+                <Tooltip title="More actions">
+                  <IconButton size="small" onClick={e => setMoreAnchor(e.currentTarget)}
+                    sx={{ border: `1.5px solid ${isDark ? "#27272A" : "#E3ECFC"}`, borderRadius: "9px", bgcolor: isDark ? "#0F0F0F" : "transparent", p: 0.8, "&:hover": { borderColor: "#1D4ED8", bgcolor: isDark ? "#0A0A0A" : "#EFF6FF" } }}>
+                    <DotsThreeVertical size={16} weight="bold" color={isDark ? "#B4B5B6" : "#64748B"} />
+                  </IconButton>
+                </Tooltip>
               </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button size="small" variant="outlined" startIcon={<PencilSimple size={13} weight="duotone" />}
-                sx={{ borderColor: isDark ? "#3F3F46" : "#E3ECFC", color: isDark ? "#A1A1AA" : "#0C2472", bgcolor: isDark ? "#27272A" : "#f9fbff", borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.78rem", "&:hover": { borderColor: isDark ? "#9CA3AF" : "#E3ECFC", bgcolor: isDark ? "#3F3F46" : "#EFF6FF" } }}>
-                Edit
-              </Button>
-              <Tooltip title="More actions">
-                <IconButton size="small" onClick={e => setMoreAnchor(e.currentTarget)}
-                  sx={{ border: `1.5px solid ${isDark ? "#3F3F46" : "#E3ECFC"}`, borderRadius: "9px", bgcolor: isDark ? "#27272A" : "#f9fbff", p: 0.8, "&:hover": { bgcolor: isDark ? "#3F3F46" : "#EFF6FF" } }}>
-                  <DotsThreeVertical size={16} weight="bold" color={isDark ? "#71717A" : "#64748B"} />
-                </IconButton>
-              </Tooltip>
             </div>
           </div>
 
-          {/* ── Tabs ── */}
-          <div className="flex items-center gap-2 mb-5">
+          {/* ── Tab bar ── */}
+          <div className={`flex items-center gap-1 border rounded-xl p-1 w-fit shadow-sm ${isDark ? "bg-[#000000] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
             {(["overview", "timeline"] as const).map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
-                className={`px-4 py-1.5 rounded-full text-[14px] font-semibold capitalize transition-all ${
+                className={`px-4 py-1.5 rounded-lg text-[14px] font-semibold capitalize transition-all ${
                   activeTab === tab
-                    ? isDark ? "bg-[#3F3F46] text-[#F4F4F5] shadow-sm" : "bg-[#1D4ED8] text-white shadow-sm"
-                    : isDark ? "bg-[#1C1C1E] text-[#71717A] hover:bg-[#27272A]" : "bg-[#f9fbff] text-slate-500 hover:bg-[#E3ECFC]"
+                    ? "bg-[#1D4ED8] text-white shadow-sm"
+                    : isDark ? "text-[#B4B5B6] bg-[#0A0A0A] hover:bg-[#27272A] hover:text-[#D4D4D8]"
+                    : "text-[#0C2472] bg-[#E3ECFC] hover:bg-[#1D4ED8]/10"
                 }`}>
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
               </button>
@@ -321,9 +349,9 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
 
           {activeTab === "overview" && (
             <div className="grid grid-cols-3 gap-4 items-start">
-              <div className="col-span-2 space-y-5">
+              <div className="col-span-2 space-y-5 min-w-0">
 
-                {/* ── Quick Info ── */}
+                {/* ── Quick Info card ── */}
                 <div className={`rounded-2xl border shadow-sm divide-y ${isDark ? "bg-[#1C1C1E] border-[#27272A] divide-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC] divide-[#EFF6FF]"}`}>
                   {[
                     { label: "Type",     value: task.type },
@@ -397,7 +425,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
                         {note.trim() && (
                           <div className="flex justify-end px-3 pb-2">
                             <Button size="small" variant="contained" onClick={addNote}
-                              sx={{ bgcolor: isDark ? "#27272A" : "inherit", color: isDark ? "#F4F4F5" : undefined, borderRadius: "8px", textTransform: "none", fontWeight: 700, fontSize: "0.73rem", "&:hover": { bgcolor: isDark ? "#3F3F46" : "inherit" } }}>
+                              sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "8px", textTransform: "none", fontWeight: 700, fontSize: "0.73rem", boxShadow: "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#60A5FA", boxShadow: "0 2px 14px 0 #60A5FA55" }, "&:active": { bgcolor: isDark ? "#52525B" : "#0C2472" } }}>
                               Save Note
                             </Button>
                           </div>
@@ -405,8 +433,8 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
                       </div>
                       {notes.map((n, i) => (
                         <div key={i} className={`rounded-xl px-4 py-3 border ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
-                          <div className={`text-[14px] ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{n.text}</div>
-                          <div className={`text-[12px] mt-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{n.at}</div>
+                          <p className={`text-[14px] ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{n.text}</p>
+                          <p className={`text-[12px] mt-1 ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>{n.at}</p>
                         </div>
                       ))}
                     </div>
@@ -427,7 +455,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
                           ))}
                         </div>
                         <Button size="small" variant="outlined"
-                          sx={{ borderColor: isDark ? "#3F3F46" : "#E3ECFC", color: isDark ? "#A1A1AA" : "#0C2472", bgcolor: isDark ? "#27272A" : "#E3ECFC", borderRadius: "8px", textTransform: "none", fontWeight: 600, fontSize: "0.73rem", "&:hover": { borderColor: isDark ? "#9CA3AF" : "#E3ECFC", bgcolor: isDark ? "#3F3F46" : "#f9fbff" } }}>
+                          sx={{ borderColor: isDark ? "#27272A" : "#E3ECFC", color: isDark ? "#B4B5B6" : "#1D4ED8", bgcolor: isDark ? "#0F0F0F" : "transparent", borderRadius: "8px", textTransform: "none", fontWeight: 600, fontSize: "0.73rem", "&:hover": { borderColor: "#1D4ED8", color: "#1D4ED8", bgcolor: isDark ? "#0A0A0A" : "#EFF6FF" } }}>
                           Attach
                         </Button>
                       </div>
@@ -440,11 +468,13 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
 
               </div>{/* end col-span-2 */}
 
-              <RelatedListPanel
-                onItemClick={label =>
-                  document.getElementById(`section-${label.toLowerCase()}`)?.scrollIntoView({ behavior: "smooth", block: "start" })
-                }
-              />
+              <div className="sticky top-4 self-start">
+                <RelatedListPanel
+                  onItemClick={label =>
+                    document.getElementById(`section-${label.toLowerCase()}`)?.scrollIntoView({ behavior: "smooth", block: "start" })
+                  }
+                />
+              </div>
 
             </div>
           )}
@@ -452,62 +482,56 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
           {activeTab === "timeline" && (
             <div className="grid grid-cols-3 gap-4 items-start">
               <div className="col-span-2">
-                <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
-                  <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
-                    <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
-                      <ClipboardText size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
-                    </div>
-                    <span className={`font-heading text-[12px] font-bold uppercase tracking-wider flex-1 ${isDark ? "text-slate-500" : "text-slate-500"}`}>Activity Timeline</span>
-                  </div>
-                  <div className="px-5 py-4">
-                    {task.timeline.length === 0 ? (
-                      <div className={`text-[14px] text-center py-6 ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>No activity yet</div>
-                    ) : (
-                      <div className="relative">
-                        <div className={`absolute left-[11px] top-2 bottom-2 w-px ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
-                        <div className="space-y-5">
-                          {task.timeline.map((entry, i) => (
-                            <div key={i} className="flex items-start gap-4 pl-7 relative">
-                              <div className={`absolute left-0 top-1 w-[22px] h-[22px] rounded-full border-2 flex items-center justify-center flex-shrink-0 ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
-                                <ClipboardText size={10} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
-                              </div>
-                              <div className="flex-1">
-                                <div className={`text-[14px] font-semibold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{entry.event}</div>
-                                <div className={`text-[12px] mt-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{entry.by}</div>
-                              </div>
-                              <div className="text-right flex-shrink-0">
-                                <div className={`text-[12px] font-medium ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
-                                  {new Date(entry.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }).toUpperCase()}
-                                </div>
-                                <div className={`text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{entry.time}</div>
-                              </div>
+                <SectionCard icon={ClipboardText} title="Activity Timeline">
+                  {task.timeline.length === 0 ? (
+                    <div className={`text-[14px] text-center py-6 ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>No activity yet</div>
+                  ) : (
+                    <div className="relative">
+                      <div className={`absolute left-[11px] top-2 bottom-2 w-px ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
+                      <div className="space-y-5">
+                        {task.timeline.map((entry, i) => (
+                          <div key={i} className="flex items-start gap-4 pl-7 relative">
+                            <div className={`absolute left-0 top-1 w-[22px] h-[22px] rounded-full border-2 flex items-center justify-center flex-shrink-0 ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
+                              <ClipboardText size={10} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
                             </div>
-                          ))}
-                        </div>
+                            <div className="flex-1">
+                              <div className={`text-[14px] font-semibold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{entry.event}</div>
+                              <div className={`text-[12px] mt-0.5 ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>{entry.by}</div>
+                            </div>
+                            <div className="text-right flex-shrink-0">
+                              <div className={`text-[12px] font-medium ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
+                                {new Date(entry.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }).toUpperCase()}
+                              </div>
+                              <div className={`text-[12px] ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>{entry.time}</div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    )}
-                  </div>
-                </div>
+                    </div>
+                  )}
+                </SectionCard>
               </div>
 
-              <RelatedListPanel onItemClick={() => setActiveTab("overview")} />
+              <div className="sticky top-4 self-start">
+                <RelatedListPanel onItemClick={() => setActiveTab("overview")} />
+              </div>
 
             </div>
           )}
 
-        </div>{/* end body */}
-      </div>{/* end sidebar-content */}
+        </main>
+      </div>
 
       {/* ── More menu ── */}
       <Menu anchorEl={moreAnchor} open={Boolean(moreAnchor)} onClose={() => setMoreAnchor(null)}
         PaperProps={{ sx: { borderRadius: "12px", border: `1px solid ${isDark ? "#27272A" : "#E3ECFC"}`, bgcolor: isDark ? "#1C1C1E" : "#fff", boxShadow: isDark ? "0 8px 32px rgba(0,0,0,0.5)" : "0 8px 32px rgba(29,78,216,0.10)", minWidth: 170 } }}>
         <MenuItem onClick={() => setMoreAnchor(null)}
-          sx={{ fontSize: "0.8rem", gap: 1.5, py: 1, color: isDark ? "#A1A1AA" : "inherit", "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+          sx={{ fontSize: "0.8rem", gap: 1.5, py: 1, mx: 0.5, borderRadius: "8px", color: isDark ? "#A1A1AA" : "inherit", "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
           <ListItemIcon sx={{ minWidth: 0 }}><Copy size={14} color="#64748B" weight="duotone" /></ListItemIcon>
           <ListItemText primaryTypographyProps={{ fontSize: "0.8rem" }}>Duplicate</ListItemText>
         </MenuItem>
         <MenuItem onClick={() => setMoreAnchor(null)}
-          sx={{ fontSize: "0.8rem", gap: 1.5, py: 1, color: "#DC2626", "&:hover": { bgcolor: isDark ? "#27272A" : "#FEF2F2" } }}>
+          sx={{ fontSize: "0.8rem", gap: 1.5, py: 1, mx: 0.5, borderRadius: "8px", color: "#DC2626", "&:hover": { bgcolor: isDark ? "#27272A" : "#FEF2F2" } }}>
           <ListItemIcon sx={{ minWidth: 0 }}><Trash size={14} color="#DC2626" weight="duotone" /></ListItemIcon>
           <ListItemText primaryTypographyProps={{ fontSize: "0.8rem", color: "#DC2626" }}>Delete</ListItemText>
         </MenuItem>

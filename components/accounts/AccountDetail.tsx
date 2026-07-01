@@ -8,11 +8,12 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import InputBase from "@mui/material/InputBase";
+import Avatar from "@mui/material/Avatar";
 import {
   House, CaretRight, PencilSimple, DotsThreeVertical,
   Note, ClipboardText, Paperclip, ClockCounterClockwise,
   Plus, GridFour, List, Buildings, MapPin, Tag,
-  Handshake, UserCircle,
+  Handshake, UserCircle, Phone, EnvelopeSimple,
 } from "@phosphor-icons/react";
 import { useTheme } from "@/components/ThemeContext";
 
@@ -76,6 +77,9 @@ const ACCOUNTS_DETAIL: Record<number, AccountRecord> = {
   14: { id:14, name:"dd", accountOwner:"Admin", accountOwnerEmail:"admin@mailinator.com", phone:"", accountType:"", rating:"", accountSite:"", fax:"", parentAccount:"", website:"", tickerSymbol:"", ownership:"", industry:"", employees:"", sicCode:"", billingAddress:"", shippingAddress:"", description:"", createdBy:"admin@mailinator.com", createdAt:"Mon, Jul 28, 2025 10:14 AM", modifiedBy:"pm@socialdnalabs.com", modifiedAt:"Mon, Mar 16, 2026 07:45 PM", relatedDeals:[], relatedContacts:[], memberAccounts:[], timeline:[{ date:"2025-07-28", time:"10:14 am", field:"Created", to:"dd", by:"admin@mailinator.com" }] },
 };
 
+const AVATAR_PAL = ["#7C3AED", "#10B981", "#F59E0B", "#DB2777"];
+const avatarColor = (n: string) => AVATAR_PAL[n.split("").reduce((a, c) => a + c.charCodeAt(0), 0) % AVATAR_PAL.length];
+
 // ─────────────────────────────────────────────
 //  Sub-components (theme-aware)
 // ─────────────────────────────────────────────
@@ -91,7 +95,7 @@ function SectionCard({ icon: Icon, title, children, action, id }: {
         <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
           <Icon size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
         </div>
-        <p className={`font-heading text-[12px] font-bold uppercase tracking-wider flex-1 ${isDark ? "text-slate-500" : "text-slate-500"}`}>{title}</p>
+        <p className={`font-heading text-[12px] font-bold uppercase tracking-[0.12em] flex-1 ${isDark ? "text-[#D4D4D8]" : "text-[#1D4ED8]"}`}>{title}</p>
         {action}
       </div>
       <div className="px-5 py-4">{children}</div>
@@ -99,14 +103,16 @@ function SectionCard({ icon: Icon, title, children, action, id }: {
   );
 }
 
-function KV({ label, value, fullWidth }: { label: string; value?: string; fullWidth?: boolean }) {
+function KV({ label, value, fullWidth, blue }: { label: string; value?: string; fullWidth?: boolean; blue?: boolean }) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  const display = value !== undefined && value !== "" ? value : "—";
+  const display = value !== undefined && value !== "" ? value : undefined;
   return (
-    <div className={`py-2.5 border-b last:border-0 ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"} ${fullWidth ? "col-span-2" : ""}`}>
-      <p className={`text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{label}</p>
-      <p className={`text-[14px] font-medium ${display === "—" ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>{display}</p>
+    <div className={`py-2 border-b border-[#EFF6FF] last:border-0 ${fullWidth ? "col-span-2" : ""}`}>
+      <p className={`font-heading text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>{label}</p>
+      <p className={`text-[14px] font-medium ${!display ? (isDark ? "text-[#3F3F46] italic" : "text-slate-300 italic") : blue ? "text-inherit" : (isDark ? "text-[#D4D4D8]" : "text-slate-800")}`}>
+        {display || "—"}
+      </p>
     </div>
   );
 }
@@ -124,10 +130,11 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
   const [note, setNote] = useState("");
   const [notes, setNotes] = useState<{ text: string; at: string }[]>([]);
   const [attachView, setAttachView] = useState<"grid" | "list">("grid");
+  const [moreAnchor, setMoreAnchor] = useState(false);
 
   if (!account) {
     return (
-      <div className={`flex h-screen font-sans ${isDark ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
+      <div className="flex h-screen bg-transparent font-sans">
         <Sidebar />
         <div className="sidebar-content flex-1 flex flex-col">
           {/* <TopBar title="Accounts" /> */}
@@ -162,64 +169,127 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
     { label: "Member Accounts", icon: Buildings,     count: account.memberAccounts.length,  color: "#64748B" },
   ];
 
+  const avColor = avatarColor(account.name);
+
   const RelatedListPanel = ({ onClickItem }: { onClickItem: (label: string) => void }) => (
     <div className="space-y-4">
       <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
         <div className={`px-4 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
-          <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-500"}`}>Related List</p>
+          <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-[#ABABAD]" : "text-slate-500"}`}>Related List</p>
         </div>
         <div className="p-2 space-y-0.5">
           {relatedItems.map(({ label, icon: Icon, count, color }) => (
             <button key={label} onClick={() => onClickItem(label)}
-              className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-xl transition-colors ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}>
+              className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-xl group transition-colors ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}>
               <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: color + "20" }}>
                 <Icon size={14} color={color} weight="duotone" />
               </div>
-              <span className={`flex-1 text-left text-[14px] font-medium ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>{label}</span>
+              <span className={`flex-1 min-w-0 truncate text-left text-[14px] font-medium ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{label}</span>
               {count > 0 && (
-                <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded-full ${isDark ? "bg-[#27272A] text-[#A1A1AA]" : "bg-[#E3ECFC] text-[#1D4ED8]"}`}>{count}</span>
+                <span className="text-[12px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>
               )}
-              <CaretRight size={14} color={isDark ? "#3F3F46" : "#E2E8F0"} weight="duotone" />
+              <CaretRight size={14} color="#E2E8F0" weight="duotone" />
             </button>
           ))}
+        </div>
+      </div>
+
+      {/* Ownership panel */}
+      <div className={`rounded-2xl border shadow-sm p-4 space-y-3 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+        <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-[#ABABAD]" : "text-slate-500"}`}>Ownership</p>
+        <div className="flex justify-between text-[12px]">
+          <span className={`font-medium ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>Created</span>
+          <span className={`font-semibold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{account.createdAt}</span>
+        </div>
+        <div className="flex justify-between text-[12px]">
+          <span className={`font-medium ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>Modified</span>
+          <span className={`font-semibold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{account.modifiedAt}</span>
+        </div>
+        <div className="flex justify-between text-[12px]">
+          <span className={`font-medium ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>Owner</span>
+          <span className={`font-semibold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{account.accountOwner}</span>
         </div>
       </div>
     </div>
   );
 
-  const thBtn = `bgcolor: isDark ? "#27272A" : "inherit"`;
-
   return (
-    <div className={`flex h-screen font-sans ${isDark ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
+    <div className="flex h-screen bg-transparent font-sans">
       <Sidebar />
 
       <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-hidden">
         {/* <TopBar title="Accounts" /> */}
 
-        {/* ── Breadcrumb ── */}
-        <div className={`flex items-center gap-1.5 px-8 py-3 border-b text-[12px] ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#E3ECFC] border-[#E3ECFC]"}`}>
-          <Link href="/" className={`transition-colors ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
-            <House size={13} weight="duotone" />
-          </Link>
-          <CaretRight size={11} color={isDark ? "#3F3F46" : "#E2E8F0"} />
-          <Link href="/accounts" className={`font-medium transition-colors ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
-            Accounts
-          </Link>
-          <CaretRight size={11} color={isDark ? "#3F3F46" : "#E2E8F0"} />
-          <span className={`font-semibold ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>{account.name}</span>
-        </div>
+        <main className="flex-1 px-6 py-5 space-y-4 animate-fade-in">
 
-        {/* ── Body ── */}
-        <div className="flex-1 overflow-y-auto px-6 py-5">
+          {/* ── Breadcrumb ── */}
+          <div className={`flex items-center gap-1.5 text-[13.5px] ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>
+            <House size={16} weight="duotone" />
+            <CaretRight size={12} weight="duotone" />
+            <Link href="/accounts" className="hover:text-[#1D4ED8] transition-colors font-medium">Accounts</Link>
+            <CaretRight size={12} weight="duotone" />
+            <span className="text-[#1D4ED8] font-semibold truncate max-w-[240px]">{account.name}</span>
+          </div>
 
-          {/* ── Tabs ── */}
-          <div className="flex items-center gap-2 mb-5">
+          {/* ── Header card ── */}
+          <div className={`rounded-2xl border shadow-sm px-5 py-4 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+            <div className="flex items-start gap-4">
+              {/* Avatar */}
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-[1.2rem] font-extrabold flex-shrink-0"
+                style={{ backgroundColor: avColor, boxShadow: "0 4px 14px 0 rgba(12,36,114,0.2)" }}>
+                {account.name.substring(0, 2).toUpperCase()}
+              </div>
+
+              {/* Name + meta */}
+              <div className="flex-1 min-w-0">
+                <h1 className={`text-[20px] font-extrabold tracking-tight m-0 ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>{account.name}</h1>
+                <p className={`text-[12px] mt-0.5 ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>
+                  ID #{account.id} · {account.accountOwnerEmail}
+                </p>
+                <div className="flex items-center gap-3 mt-2 flex-wrap">
+                  {account.phone && (
+                    <span className={`flex items-center gap-1 text-[13px] ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
+                      <Phone size={13} weight="duotone" color="#94A3B8" />
+                      {account.phone}
+                    </span>
+                  )}
+                  {account.accountType && (
+                    <span className={`text-[12px] px-2 py-0.5 rounded-full font-medium ${isDark ? "bg-[#27272A] text-[#A1A1AA]" : "bg-[#E3ECFC] text-[#0C2472]"}`}>
+                      {account.accountType}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <Button variant="outlined" size="small"
+                  sx={{ borderColor: isDark ? "#27272A" : "#E3ECFC", color: isDark ? "#B4B5B6" : "#1D4ED8", borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.84rem", bgcolor: isDark ? "#0F0F0F" : "transparent", "&:hover": { borderColor: "#1D4ED8", color: "#1D4ED8", bgcolor: isDark ? "#0A0A0A" : "#EFF6FF" } }}>
+                  Send Email
+                </Button>
+                <Button variant="contained" size="small"
+                  startIcon={<PencilSimple size={14} weight="bold" />}
+                  sx={{ bgcolor: "#1D4ED8", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.84rem", boxShadow: "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: "#60A5FA", boxShadow: "0 2px 14px 0 #60A5FA55" }, "&:active": { bgcolor: "#0C2472" } }}>
+                  Edit
+                </Button>
+                <IconButton size="small"
+                  onClick={() => setMoreAnchor(v => !v)}
+                  sx={{ borderRadius: "8px", border: isDark ? "1.5px solid #27272A" : "1.5px solid #E3ECFC", bgcolor: moreAnchor ? (isDark ? "#27272A" : "#EFF6FF") : (isDark ? "#0A0A0A" : "transparent"), "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+                  <DotsThreeVertical size={16} color={isDark ? "#A1A1AA" : "#475569"} weight="bold" />
+                </IconButton>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Tab bar ── */}
+          <div className={`flex items-center gap-1 border rounded-xl p-1 w-fit shadow-sm ${isDark ? "bg-[#000000] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
             {(["overview", "timeline"] as const).map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
-                className={`px-4 py-1.5 rounded-full text-[14px] font-semibold capitalize transition-all ${
+                className={`px-4 py-1.5 rounded-lg text-[14px] font-semibold capitalize transition-all ${
                   activeTab === tab
-                    ? isDark ? "bg-[#3F3F46] text-[#F4F4F5] shadow-sm" : "bg-[#1D4ED8] text-white shadow-sm"
-                    : isDark ? "bg-[#1C1C1E] text-[#71717A] hover:bg-[#27272A]" : "bg-[#f9fbff] text-slate-500 hover:bg-[#E3ECFC]"
+                    ? "bg-[#1D4ED8] text-white shadow-sm"
+                    : isDark ? "text-[#B4B5B6] bg-[#0A0A0A] hover:bg-[#27272A] hover:text-[#D4D4D8]"
+                    : "text-[#0C2472] bg-[#E3ECFC] hover:bg-[#1D4ED8]/10"
                 }`}>
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
               </button>
@@ -229,23 +299,7 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
           {/* ══════════════ OVERVIEW TAB ══════════════ */}
           {activeTab === "overview" && (
             <div className="grid grid-cols-3 gap-4 items-start">
-            <div className="col-span-2 space-y-5">
-                {/* ── Quick info card ── */}
-                <div className={`rounded-2xl border shadow-sm divide-y ${isDark ? "bg-[#1C1C1E] border-[#27272A] divide-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC] divide-[#EFF6FF]"}`}>
-                  {[
-                    { label: "Account Name",  value: account.name },
-                    { label: "Account Owner", value: account.accountOwner },
-                    { label: "Phone",         value: account.phone },
-                    { label: "Account Type",  value: account.accountType },
-                  ].map(({ label, value }) => (
-                    <div key={label} className="flex items-center px-5 py-3">
-                      <span className={`text-[12px] font-medium w-40 flex-shrink-0 ${isDark ? "text-slate-400" : "text-slate-500"}`}>{label}:</span>
-                      <span className={`flex-1 text-[14px] font-semibold ${value ? (isDark ? "text-[#D4D4D8]" : "text-slate-700") : (isDark ? "text-[#3F3F46]" : "text-slate-300")}`}>
-                        {value || "—"}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+              <div className="col-span-2 space-y-5 min-w-0">
 
                 {/* ── Account Information ── */}
                 <SectionCard icon={Buildings} title="Account Information"
@@ -270,8 +324,8 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
                     <KV label="Industry"       value={account.industry} />
                     <KV label="Employees"      value={account.employees} />
                     <KV label="SIC Code"       value={account.sicCode} />
-                    <KV label="Created by"     value={`${account.createdBy}\n${account.createdAt}`} />
-                    <KV label="Modified by"    value={`${account.modifiedBy}\n${account.modifiedAt}`} />
+                    <KV label="Created by"     value={`${account.createdBy} · ${account.createdAt}`} />
+                    <KV label="Modified by"    value={`${account.modifiedBy} · ${account.modifiedAt}`} />
                   </div>
                 </SectionCard>
 
@@ -285,7 +339,7 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
 
                 {/* ── Description ── */}
                 <SectionCard icon={Tag} title="Description">
-                  <KV label="Description" value={account.description} />
+                  <KV label="Description" value={account.description} fullWidth />
                 </SectionCard>
 
                 {/* ── Tasks ── */}
@@ -332,12 +386,12 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
                           placeholder="Add a note…"
                           value={note}
                           onChange={e => setNote(e.target.value)}
-                          sx={{ px: 2, py: 1.5, fontSize: "0.8rem", color: isDark ? "#D4D4D8" : "#334155", "& textarea::placeholder": { color: isDark ? "#3F3F46" : "#E2E8F0", opacity: 1 } }}
+                          sx={{ px: 2, py: 1.5, fontSize: "0.8rem", color: isDark ? "#D4D4D8" : "#334155", "& textarea::placeholder": { color: isDark ? "#3F3F46" : "#94A3B8", opacity: 1 } }}
                         />
                         {note.trim() && (
                           <div className="flex justify-end px-3 pb-2">
                             <Button size="small" variant="contained" onClick={addNote}
-                              sx={{ bgcolor: isDark ? "#27272A" : "inherit", color: isDark ? "#F4F4F5" : undefined, borderRadius: "8px", textTransform: "none", fontWeight: 700, fontSize: "0.73rem", "&:hover": { bgcolor: isDark ? "#3F3F46" : "inherit" } }}>
+                              sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "8px", textTransform: "none", fontWeight: 700, fontSize: "0.73rem", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB" } }}>
                               Save Note
                             </Button>
                           </div>
@@ -346,7 +400,7 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
                       {notes.map((n, i) => (
                         <div key={i} className={`rounded-xl px-4 py-3 border ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
                           <p className={`text-[14px] ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{n.text}</p>
-                          <p className={`text-[12px] mt-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{n.at}</p>
+                          <p className={`text-[12px] mt-1 ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>{n.at}</p>
                         </div>
                       ))}
                     </div>
@@ -512,91 +566,95 @@ export default function AccountDetail({ accountId }: { accountId: number }) {
                   </SectionCard>
                 </div>
 
-            </div>{/* end col-span-2 */}
+              </div>{/* end col-span-2 */}
 
-            <RelatedListPanel onClickItem={label =>
-              document.getElementById(`section-${label.toLowerCase().replace(/\s+/g, "-")}`)?.scrollIntoView({ behavior: "smooth", block: "start" })
-            } />
-          </div>
+              <div className="sticky top-4 self-start">
+                <RelatedListPanel onClickItem={label =>
+                  document.getElementById(`section-${label.toLowerCase().replace(/\s+/g, "-")}`)?.scrollIntoView({ behavior: "smooth", block: "start" })
+                } />
+              </div>
+            </div>
           )}
 
           {/* ══════════════ TIMELINE TAB ══════════════ */}
           {activeTab === "timeline" && (
             <div className="grid grid-cols-3 gap-4 items-start">
-            <div className="col-span-2">
-            <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
-                <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
-                  <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
-                    <ClockCounterClockwise size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
-                  </div>
-                  <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-slate-500"}`}>History</p>
-                </div>
-
-                {account.timeline.length === 0 ? (
-                  <div className="py-12 flex flex-col items-center justify-center gap-2">
-                    <ClockCounterClockwise size={28} color={isDark ? "#27272A" : "#E2E8F0"} weight="duotone" />
-                    <p className={`text-[14px] ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>No history yet</p>
-                  </div>
-                ) : (() => {
-                  const grouped: Record<string, TimelineEntry[]> = {};
-                  account.timeline.forEach(e => {
-                    if (!grouped[e.date]) grouped[e.date] = [];
-                    grouped[e.date].push(e);
-                  });
-                  const sortedDates = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
-
-                  return (
-                    <div className="px-6 py-5 space-y-6">
-                      {sortedDates.map(date => (
-                        <div key={date}>
-                          <div className="flex items-center gap-3 mb-4">
-                            <span className={`text-[12px] font-semibold whitespace-nowrap ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
-                              {new Date(date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
-                            </span>
-                            <div className={`flex-1 h-px ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
-                          </div>
-                          <div className="space-y-0">
-                            {grouped[date].map((entry, i) => {
-                              const isLast = i === grouped[date].length - 1 && date === sortedDates[sortedDates.length - 1];
-                              return (
-                                <div key={i} className="flex gap-4">
-                                  <div className="w-16 flex-shrink-0 text-right">
-                                    <span className={`text-[12px] font-medium ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{entry.time}</span>
-                                  </div>
-                                  <div className="flex flex-col items-center flex-shrink-0">
-                                    <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center z-10 flex-shrink-0 ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
-                                      <PencilSimple size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
-                                    </div>
-                                    {!isLast && <div className={`w-px flex-1 my-1 min-h-[24px] ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />}
-                                  </div>
-                                  <div className="pb-5 flex-1 min-w-0 overflow-hidden">
-                                    {entry.field && (
-                                      <p className={`text-[14px] leading-relaxed break-words ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>
-                                        <span className="font-bold">{entry.field}:</span>{" "}
-                                        {entry.from
-                                          ? <span className={isDark ? "text-[#71717A]" : "text-slate-500"}>{entry.from} → {entry.to}</span>
-                                          : <span className={isDark ? "text-[#71717A]" : "text-slate-500"}>{entry.to}</span>
-                                        }
-                                      </p>
-                                    )}
-                                    <p className={`text-[12px] mt-0.5 break-all ${isDark ? "text-[#9CA3AF]" : "text-inherit"}`}>by {entry.by}</p>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      ))}
+              <div className="col-span-2">
+                <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+                  <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
+                    <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
+                      <ClockCounterClockwise size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
                     </div>
-                  );
-                })()}
-              </div>
-            </div>{/* end col-span-2 */}
+                    <p className={`font-heading text-[12px] font-bold uppercase tracking-[0.12em] ${isDark ? "text-[#D4D4D8]" : "text-[#1D4ED8]"}`}>History</p>
+                  </div>
 
-            <RelatedListPanel onClickItem={() => setActiveTab("overview")} />
-          </div>
+                  {account.timeline.length === 0 ? (
+                    <div className="py-12 flex flex-col items-center justify-center gap-2">
+                      <ClockCounterClockwise size={28} color={isDark ? "#27272A" : "#E2E8F0"} weight="duotone" />
+                      <p className={`text-[14px] ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>No history yet</p>
+                    </div>
+                  ) : (() => {
+                    const grouped: Record<string, TimelineEntry[]> = {};
+                    account.timeline.forEach(e => {
+                      if (!grouped[e.date]) grouped[e.date] = [];
+                      grouped[e.date].push(e);
+                    });
+                    const sortedDates = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
+
+                    return (
+                      <div className="px-6 py-5 space-y-6">
+                        {sortedDates.map(date => (
+                          <div key={date}>
+                            <div className="flex items-center gap-3 mb-4">
+                              <span className={`text-[12px] font-semibold whitespace-nowrap ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>
+                                {new Date(date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
+                              </span>
+                              <div className={`flex-1 h-px ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
+                            </div>
+                            <div className="space-y-0">
+                              {grouped[date].map((entry, i) => {
+                                const isLast = i === grouped[date].length - 1 && date === sortedDates[sortedDates.length - 1];
+                                return (
+                                  <div key={i} className="flex gap-4">
+                                    <div className="w-16 flex-shrink-0 text-right">
+                                      <span className={`text-[12px] font-medium ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{entry.time}</span>
+                                    </div>
+                                    <div className="flex flex-col items-center flex-shrink-0">
+                                      <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center z-10 flex-shrink-0 ${isDark ? "bg-[#27272A] border-[#3F3F46]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
+                                        <PencilSimple size={13} color={isDark ? "#9CA3AF" : "#1D4ED8"} weight="duotone" />
+                                      </div>
+                                      {!isLast && <div className={`w-px flex-1 my-1 min-h-[20px] ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />}
+                                    </div>
+                                    <div className="pb-5 flex-1 min-w-0 overflow-hidden">
+                                      {entry.field && (
+                                        <p className={`text-[14px] leading-relaxed break-words ${isDark ? "text-[#A1A1AA]" : "text-slate-700"}`}>
+                                          <span className="font-bold">{entry.field}:</span>{" "}
+                                          {entry.from
+                                            ? <span className={isDark ? "text-[#71717A]" : "text-slate-500"}>{entry.from} → {entry.to}</span>
+                                            : <span className={isDark ? "text-[#71717A]" : "text-slate-500"}>{entry.to}</span>
+                                          }
+                                        </p>
+                                      )}
+                                      <p className={`text-[12px] mt-0.5 break-all ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>by {entry.by}</p>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>{/* end col-span-2 */}
+
+              <div className="sticky top-4 self-start">
+                <RelatedListPanel onClickItem={() => setActiveTab("overview")} />
+              </div>
+            </div>
           )}
-        </div>
+        </main>
       </div>
     </div>
   );

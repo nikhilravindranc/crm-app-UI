@@ -341,7 +341,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
             <div className="grid grid-cols-3 gap-4 items-start">
 
               {/* Left 2/3 */}
-              <div className="col-span-2 space-y-4">
+              <div className="col-span-2 space-y-4 min-w-0">
 
                 {/* ── Stage Pipeline (clickable) ── */}
                 <div className={`rounded-2xl border shadow-sm p-5 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
@@ -366,7 +366,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                           <Tooltip title={isDone ? "Completed" : isActive ? "Current stage" : "Click to set stage"}>
                             <button
                               onClick={() => setCurrentStatus(stage)}
-                              className={`flex items-center justify-center gap-1.5 flex-1 py-2 px-2 rounded-xl text-[12.5px] font-bold transition-all
+                              className={`flex items-center justify-center gap-1.5 flex-1 min-w-0 py-2 px-2 rounded-xl text-[12.5px] font-bold transition-all
                                 ${isActive  ? "bg-[#1D4ED8] text-white shadow-md shadow-[#1D4ED8]/25 scale-[1.02]" : ""}
                                 ${isDone    ? isDark ? "bg-[#27272A] text-[#D4D4D8] hover:bg-[#4B4B52]" : "bg-[#E3ECFC] text-[#1D4ED8] hover:bg-[#BFD3F5]" : ""}
                                 ${isPending ? isDark ? "bg-transparent text-[#ABABAD] border border-[#27272A] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "bg-transparent text-slate-400 border border-transparent hover:bg-[#E3ECFC] hover:text-[#1D4ED8]" : ""}
@@ -549,7 +549,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
               </div>
 
               {/* Right 1/3 */}
-              <div className="space-y-4">
+              <div className="space-y-4 sticky top-4 self-start">
 
                 {/* Related List */}
                 <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
@@ -565,7 +565,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                         <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor:color+"20" }}>
                           <Icon size={14} color={color} weight="duotone" />
                         </div>
-                        <span className="flex-1 text-left text-[14px] font-medium text-slate-700 transition-colors">{label}</span>
+                        <span className="flex-1 text-left text-[14px] font-medium text-slate-700 transition-colors min-w-0 truncate">{label}</span>
                         {count > 0 && (
                           <span className="text-[12px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>
                         )}
@@ -637,7 +637,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
               </div>
 
               {/* Side: related list still visible */}
-              <div className="space-y-4">
+              <div className="space-y-4 sticky top-4 self-start">
                 <div className="bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden">
                   <div className="px-4 py-3.5 border-b border-[#EFF6FF]">
                     <p className="font-heading text-[12px] font-bold text-slate-500 uppercase tracking-wider">Related List</p>
@@ -649,7 +649,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                         <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor:color+"20" }}>
                           <Icon size={14} color={color} weight="duotone" />
                         </div>
-                        <span className="flex-1 text-left text-[14px] font-medium text-slate-700">{label}</span>
+                        <span className="flex-1 text-left text-[14px] font-medium text-slate-700 min-w-0 truncate">{label}</span>
                         {count>0 && <span className="text-[12px] font-bold bg-[#E3ECFC] text-[#1D4ED8] px-1.5 py-0.5 rounded-full">{count}</span>}
                         <CaretRight size={14} color="#E2E8F0" weight="duotone" />
                       </button>

@@ -83,12 +83,13 @@ const DEFAULT_VISIBLE = new Set(["accountName", "accountOwner", "phone", "accoun
 const AVATAR_PAL = ["#7C3AED", "#10B981", "#F59E0B", "#DB2777"];
 const avatarColor = (n: string) => AVATAR_PAL[n.split("").reduce((a, c) => a + c.charCodeAt(0), 0) % AVATAR_PAL.length];
 
-function ColHeader({ label, icon: Icon, isDark = false }: { label: string; icon?: ElementType; isDark?: boolean }) {
+function ColHeader({ label, icon: Icon }: { label: string; icon?: ElementType }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   return (
-    <div className={`font-heading flex items-center gap-1.5 text-table-header uppercase tracking-wide cursor-pointer transition-colors group select-none ${isDark ? "text-[#9CA3AF] hover:text-[#D4D4D8]" : "text-[#0C2472]"}`}>
+    <div className={`flex items-center gap-1.5 font-heading text-[14px]/[18px] font-semibold uppercase tracking-wide select-none ${isDark ? "text-[#E4E4E7]" : "text-[#737373]"}`}>
       {Icon && <Icon size={13} weight="duotone" />}
       {label}
-      <ArrowsDownUp size={12} weight="duotone" className={`opacity-30 group-hover:opacity-100 transition-opacity ${isDark ? "text-[#9CA3AF]" : "text-[#60A5FA]"}`} />
     </div>
   );
 }
@@ -117,11 +118,13 @@ export default function AccountsPage() {
     return !q || a.name.toLowerCase().includes(q) || a.ownerName.toLowerCase().includes(q);
   });
 
+  const sorted = filtered;
+
   // -- DataGrid column builders, keyed by COL_DEFS.key
   const COLUMN_BUILDERS: Record<string, GridColDef<Account>> = {
     accountName: {
       field: "accountName", headerName: "Account Name", flex: 1.8, minWidth: 180, sortable: false,
-      renderHeader: () => <ColHeader label="Account Name" icon={Buildings} isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Account Name" icon={Buildings} />,
       renderCell: (params) => {
         const acc = params.row;
         return (
@@ -130,21 +133,21 @@ export default function AccountsPage() {
               style={{ backgroundColor: avatarColor(acc.name) }}>
               {acc.name.substring(0, 2).toUpperCase()}
             </div>
-            <p className="m-0 font-heading text-table-cell font-medium text-[#1D4ED8] truncate hover:underline cursor-pointer">{acc.name}</p>
+            <p className={`m-0 font-heading text-[15px]/[20px] font-medium truncate hover:underline cursor-pointer ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}>{acc.name}</p>
           </div>
         );
       },
     },
     accountOwner: {
       field: "accountOwner", headerName: "Account Owner", flex: 1.5, minWidth: 150, sortable: false,
-      renderHeader: () => <ColHeader label="Account Owner" icon={UserCircle} isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Account Owner" icon={UserCircle} />,
       renderCell: (params) => {
         const acc = params.row;
         return (
           <Tooltip title={`${acc.ownerName} · ${acc.ownerEmail}`} placement="top">
             <div className="flex items-center gap-1.5 min-w-0">
               <Avatar src={OWNER_AVATARS[acc.ownerName]} sx={{ width: 20, height: 20, bgcolor: avatarColor(acc.ownerName), fontSize: "0.48rem", fontWeight: 800, flexShrink: 0 }}>{acc.ownerInitials}</Avatar>
-              <span className="text-table-cell-secondary text-slate-500 truncate">{acc.ownerEmail}</span>
+              <span className={`text-[15px]/[20px] truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>{acc.ownerEmail}</span>
             </div>
           </Tooltip>
         );
@@ -152,39 +155,43 @@ export default function AccountsPage() {
     },
     phone: {
       field: "phone", headerName: "Phone", flex: 1.1, minWidth: 110, sortable: false,
-      renderHeader: () => <ColHeader label="Phone" icon={Phone} isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Phone" icon={Phone} />,
       renderCell: (params) => (
-        <div className="text-table-cell text-slate-500 font-mono truncate">
+        <div className={`text-[15px]/[20px] truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>
           {params.row.phone
             ? <span className="flex items-center gap-1"><Phone size={11} color="#94A3B8" weight="duotone" />{params.row.phone}</span>
-            : <span className="text-slate-200">—</span>}
+            : <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>}
         </div>
       ),
     },
     accountType: {
       field: "accountType", headerName: "Account Type", flex: 1.1, minWidth: 110, sortable: false,
-      renderHeader: () => <ColHeader label="Account Type" icon={Briefcase} isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Account Type" icon={Briefcase} />,
       renderCell: (params) => {
-        const typCfg = TYPE_CFG[params.row.accountType] || { bg: "#EFF6FF", text: "#475569", dot: "#94A3B8" };
-        return params.row.accountType ? (
-          <span className="self-center inline-flex items-center gap-1.5 text-badge-text px-2 py-[3px] rounded-full leading-none"
-            style={{ backgroundColor: typCfg.bg, color: typCfg.text }}>
-            <span className="w-[5px] h-[5px] rounded-full" style={{ backgroundColor: typCfg.dot }} />
+        const typCfg = TYPE_CFG[params.row.accountType];
+        if (!typCfg) return <span className={isDark ? "text-[#52525B]" : "text-slate-200"}>—</span>;
+        return (
+          <span className="self-center inline-flex items-center gap-1.5 text-[13px] px-2 py-[3px] rounded-full leading-none"
+            style={{
+              backgroundColor: isDark ? typCfg.bgDark : typCfg.bg,
+              color: isDark ? typCfg.textDark : typCfg.text,
+            }}>
+            <span className="w-[5px] h-[5px] rounded-full" style={{ backgroundColor: isDark ? typCfg.textDark : typCfg.dot }} />
             {params.row.accountType}
           </span>
-        ) : <span className="text-slate-200 text-table-cell">—</span>;
+        );
       },
     },
     modifiedBy: {
       field: "modifiedBy", headerName: "Modified by", flex: 1.5, minWidth: 150, sortable: false,
-      renderHeader: () => <ColHeader label="Modified by" icon={PencilSimple} isDark={isDark} />,
+      renderHeader: () => <ColHeader label="Modified by" icon={PencilSimple} />,
       renderCell: (params) => {
         const acc = params.row;
         return (
           <Tooltip title={`${acc.modifiedByName} · ${acc.modifiedByEmail}`} placement="top">
             <div className="flex items-center gap-1.5 min-w-0">
               <Avatar src={OWNER_AVATARS[acc.modifiedByName]} sx={{ width: 20, height: 20, bgcolor: avatarColor(acc.modifiedByName), fontSize: "0.48rem", fontWeight: 800, flexShrink: 0 }}>{acc.modifiedByName.substring(0, 2).toUpperCase()}</Avatar>
-              <span className="text-table-cell-secondary text-slate-500 truncate">{acc.modifiedByEmail}</span>
+              <span className={`text-[15px]/[20px] truncate ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>{acc.modifiedByEmail}</span>
             </div>
           </Tooltip>
         );
@@ -192,13 +199,13 @@ export default function AccountsPage() {
     },
     creation: {
       field: "creation", headerName: "Creation", flex: 1.4, minWidth: 140, sortable: false,
-      renderHeader: () => <ColHeader label="Creation" icon={CalendarBlank} isDark={isDark} />,
-      renderCell: (params) => <p className="m-0 text-table-cell-secondary text-slate-400 truncate">{params.row.creation}</p>,
+      renderHeader: () => <ColHeader label="Creation" icon={CalendarBlank} />,
+      renderCell: (params) => <p className={`m-0 text-[13px]/[16px] truncate ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>{params.row.creation}</p>,
     },
     modified: {
       field: "modified", headerName: "Modified", flex: 1.4, minWidth: 140, sortable: false,
-      renderHeader: () => <ColHeader label="Modified" icon={CalendarBlank} isDark={isDark} />,
-      renderCell: (params) => <p className="m-0 text-table-cell-secondary text-slate-400 truncate">{params.row.modified}</p>,
+      renderHeader: () => <ColHeader label="Modified" icon={CalendarBlank} />,
+      renderCell: (params) => <p className={`m-0 text-[13px]/[16px] truncate ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>{params.row.modified}</p>,
     },
   };
 
@@ -226,14 +233,14 @@ export default function AccountsPage() {
           {/* -- Breadcrumb + Header -- */}
           <div className="flex items-start justify-between">
             <div>
-              <div className="flex items-center gap-1 text-caption text-slate-400 mb-2">
+              <div className={`flex items-center gap-1.5 text-[13.5px]/[18px] mb-1 ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>
                 <House size={16} weight="duotone" />
                 <CaretRight size={12} weight="duotone" />
                 <Link href="/accounts" className={`transition-colors font-medium ${isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#1D4ED8]"}`}>Accounts</Link>
               </div>
               <div className="flex items-center gap-2.5">
-                <h1 className="font-heading text-h1 text-slate-900 tracking-tight">Accounts</h1>
-                <span className="text-badge-text text-slate-400 bg-[#f9fbff] border border-[#E3ECFC] px-2 py-0.5 rounded-full shadow-sm">
+                <h1 className="font-heading text-[22px]/[28px] font-semibold text-slate-900 tracking-tight m-0">Accounts</h1>
+                <span className={`text-[13px]/[16px] font-medium border px-2.5 py-1 rounded-full shadow-sm flex items-center ${isDark ? "bg-[#0A0A0A] border-[#27272A] text-[#E4E4E7]" : "bg-[#f9fbff] border-[#E3ECFC] text-slate-400"}`}>
                   {ALL_ACCOUNTS.length} total
                 </span>
               </div>
@@ -241,16 +248,16 @@ export default function AccountsPage() {
 
             <div className="flex items-center gap-2 mt-1">
               {/* View toggle */}
-              <div className={`flex items-center border rounded-xl p-0.5 gap-0.5 shadow-sm ${isDark ? "bg-[#000000] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+              <div className={`flex items-center rounded-xl p-0.5 gap-0.5 shadow-sm border ${isDark ? "bg-[#000000] border-[#27272A]" : "bg-white border-slate-100"}`}>
                 {[
                   { k: "list", Icon: List,     label: "List" },
                   { k: "grid", Icon: GridFour, label: "Grid" },
                 ].map(({ k, Icon, label }) => (
                   <button key={k} onClick={() => setView(k as typeof view)}
-                    className={`flex items-center gap-1.5 px-2.5 py-[7px] rounded-lg text-button-sm transition-all ${
+                    className={`flex items-center gap-1.5 px-2.5 py-[7px] rounded-lg text-[14px]/[18px] font-medium transition-all ${
                       view === k
                         ? isDark ? "bg-[#18181B] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]"
-                        : isDark ? "text-[#9CA3AF] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "text-slate-400 hover:text-slate-600"
+                        : isDark ? "text-[#E4E4E7] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "bg-[#f9fbff] text-slate-400 hover:bg-[#E3ECFC]"
                     }`}>
                     <Icon size={14} weight="duotone" />{label}
                   </button>
@@ -260,7 +267,7 @@ export default function AccountsPage() {
               <Button variant="contained"
                 startIcon={<Plus size={16} weight="bold" />}
                 onClick={() => setDrawerOpen(true)}
-                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px", px: 2, py: 0.85, boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB", boxShadow: isDark ? "none" : "0 2px 14px #60A5FA55" }, "&:active": { bgcolor: isDark ? "#9CA3AF" : "#0C2472" } }}>
+                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "15px", px: 2, py: 0.85, boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB", boxShadow: isDark ? "none" : "0 2px 14px 0 #60A5FA55" }, "&:active": { bgcolor: isDark ? "#52525B" : "#0C2472" } }}>
                 New Account
               </Button>
             </div>
@@ -268,13 +275,13 @@ export default function AccountsPage() {
 
           {/* -- Toolbar -- */}
           <div className="flex items-center gap-2.5">
-            <div className={`flex items-center gap-2 border rounded-xl px-3 py-2 w-72 focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+            <div className={`flex items-center gap-2 border rounded-xl px-3 py-2 w-72 focus-within:border-[#60A5FA] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#60A5FA] transition-all ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
               <MagnifyingGlass size={15} color="#94A3B8" weight="duotone" />
-              <InputBase placeholder="Search by account name, owner…" value={search}
+              <InputBase placeholder="Search accounts…" value={search}
                 onChange={e => setSearch(e.target.value)}
-                sx={{ flex: 1, fontSize: "0.76rem", color: isDark ? "#D4D4D8" : "#334155", "& input::placeholder": { color: "#94A3B8", opacity: 1 } }}
+                sx={{ flex: 1, fontSize: "0.86rem", color: isDark ? "#D4D4D8" : "#334155", "& input::placeholder": { color: "#94A3B8", opacity: 1 } }}
               />
-              {search && <button onClick={() => setSearch("")} className="text-slate-300 hover:text-slate-500 text-sm">?</button>}
+              {search && <button onClick={() => setSearch("")} className={`text-sm transition-colors ${isDark ? "text-[#52525B] hover:text-[#A1A1AA]" : "text-slate-300 hover:text-slate-500"}`}>✕</button>}
             </div>
 
             <Button variant="outlined" size="small"
@@ -287,7 +294,7 @@ export default function AccountsPage() {
               onClick={e => setFiltersAnchor(e.currentTarget)}
               sx={{
                 borderColor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#27272A" : "#E3ECFC",
-                color: activeFilters.length > 0 ? "#fff" : isDark ? "#9CA3AF" : "#0C2472",
+                color: activeFilters.length > 0 ? "#fff" : isDark ? "#E4E4E7" : "#0C2472",
                 bgcolor: activeFilters.length > 0 ? "#1D4ED8" : isDark ? "#0F0F0F" : "#E3ECFC",
                 borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px",
                 "&:hover": {
@@ -304,10 +311,10 @@ export default function AccountsPage() {
               onClick={() => setColumnsOpen(true)}
               sx={{
                 borderColor: isDark ? "#27272A" : "#E3ECFC",
-                color: isDark ? "#9CA3AF" : "#0C2472",
+                color: isDark ? "#E4E4E7" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
                 borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px",
-                "&:hover": { borderColor: isDark ? "#3F3F46" : "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
+                "&:hover": { borderColor: "#1D4ED8", color: "#0C2472", bgcolor: isDark ? "#0A0A0A" : "#DCE6FB" },
               }}>
               Columns
             </Button>
@@ -318,16 +325,16 @@ export default function AccountsPage() {
               onClick={e => setSortAnchor(e.currentTarget)}
               sx={{
                 borderColor: isDark ? "#27272A" : "#E3ECFC",
-                color: isDark ? "#9CA3AF" : "#0C2472",
+                color: isDark ? "#E4E4E7" : "#0C2472",
                 bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
                 borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px",
-                "&:hover": { borderColor: isDark ? "#3F3F46" : "#E3ECFC", bgcolor: isDark ? "#0A0A0A" : "#f9fbff" },
+                "&:hover": { borderColor: "#1D4ED8", color: "#0C2472", bgcolor: isDark ? "#0A0A0A" : "#DCE6FB" },
               }}>
               Sort{activeSorts.length > 0 ? ` (${activeSorts.length})` : ""}
             </Button>
 
-            <span className={`ml-auto text-caption px-3 py-1.5 rounded-lg ${isDark ? "text-[#71717A] bg-[#18181B]" : "text-slate-400 bg-[#f9fbff]"}`}>
-              {filtered.length} of {ALL_ACCOUNTS.length} records
+            <span className={`ml-auto text-[13px]/[16px] px-3 py-1.5 rounded-lg ${isDark ? "text-[#E4E4E7] bg-[#0A0A0A]" : "text-slate-400 bg-[#f9fbff]"}`}>
+              {sorted.length} of {ALL_ACCOUNTS.length} records
             </span>
           </div>
 
@@ -335,14 +342,14 @@ export default function AccountsPage() {
           {selected.length > 0 && (
             <div className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border animate-slide-up shadow-sm ${isDark ? "bg-[#18181B] border-[#27272A]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
               <div className="flex items-center gap-2">
-                <span className="w-5 h-5 rounded-md bg-[#1D4ED8] text-white flex items-center justify-center text-badge-text">{selected.length}</span>
-                <span className={`text-button-sm font-semibold ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>selected</span>
+                <span className="w-5 h-5 rounded-md bg-[#1D4ED8] text-white flex items-center justify-center text-[12px]">{selected.length}</span>
+                <span className={`text-[14px] font-semibold ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>selected</span>
               </div>
               <div className={`w-px h-4 ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
-              <button className={`text-button-sm font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Assign Owner</button>
-              <button className={`text-button-sm font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Update Type</button>
-              <button onClick={() => setSelected([])} className={`ml-auto text-button-sm font-medium transition-colors ${isDark ? "text-[#9CA3AF] hover:text-[#A1A1AA]" : "text-slate-400 hover:text-slate-600"}`}>Clear</button>
-              <button className={`flex items-center gap-1.5 text-button-sm font-medium transition-colors ${isDark ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"}`}>
+              <button className={`text-[14px] font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Assign Owner</button>
+              <button className={`text-[14px] font-medium transition-colors ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA]" : "text-[#1D4ED8] hover:text-[#0C2472]"}`}>Update Type</button>
+              <button onClick={() => setSelected([])} className={`ml-auto text-[14px] font-medium transition-colors ${isDark ? "text-[#9CA3AF] hover:text-[#A1A1AA]" : "text-slate-400 hover:text-slate-600"}`}>Clear</button>
+              <button className={`flex items-center gap-1.5 text-[14px] font-medium transition-colors ${isDark ? "text-red-400 hover:text-red-300" : "text-red-600 hover:text-red-700"}`}>
                 <Trash size={14} weight="duotone" /> Delete
               </button>
             </div>
@@ -358,7 +365,7 @@ export default function AccountsPage() {
 
           {/* -- LIST VIEW (MUI DataGrid) -- */}
           {view === "list" && (
-            <div className="rounded-2xl border border-[#E3ECFC] shadow-sm overflow-hidden" style={{ height: 600 }}>
+            <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`} style={{ height: 600 }}>
               <DataGrid<Account>
                 rows={filtered}
                 columns={gridColumns}
@@ -376,11 +383,11 @@ export default function AccountsPage() {
                 slots={{
                   noRowsOverlay: () => (
                     <div className="py-16 text-center">
-                      <div className="w-12 h-12 rounded-2xl bg-[#f9fbff] flex items-center justify-center mx-auto mb-3">
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 ${isDark ? "bg-[#0A0A0A]" : "bg-[#f9fbff]"}`}>
                         <Buildings size={22} color="#94A3B8" weight="duotone" />
                       </div>
-                      <p className="font-heading text-slate-500 text-sm font-semibold">No accounts found</p>
-                      <p className="text-slate-300 text-xs mt-1">Try adjusting your search or filters</p>
+                      <p className={`font-heading text-sm font-semibold ${isDark ? "text-[#A1A1AA]" : "text-slate-500"}`}>No accounts found</p>
+                      <p className={`text-xs mt-1 ${isDark ? "text-[#52525B]" : "text-slate-300"}`}>Try adjusting your search or filters</p>
                     </div>
                   ),
                 }}
@@ -409,4 +416,3 @@ export default function AccountsPage() {
     </div>
   );
 }
-

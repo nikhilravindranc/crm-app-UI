@@ -11,6 +11,7 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
+import Menu from "@mui/material/Menu";
 import {
   Gear, User, UsersThree, Buildings, ShieldCheck, Lock,
   Envelope, Cube, House, UploadSimple, DownloadSimple,
@@ -19,7 +20,7 @@ import {
   Plus, Globe, Tree, CaretRight, CheckCircle,
   Eye, Square, Printer, Trash,
   Lightning, AddressBook, SquaresFour, UserPlus, ArrowLeft, Info,
-  DotsSixVertical, TextT, TextAlignLeft, ListBullets, CalendarBlank,
+  DotsSixVertical, DotsThreeVertical, TextT, TextAlignLeft, ListBullets, CalendarBlank,
   Hash, CurrencyDollar, CheckSquare, LinkSimple, ChartBar, X,
   ClockCounterClockwise,
 } from "@phosphor-icons/react";
@@ -1605,7 +1606,7 @@ function FieldCell({ field }: { field: LField }) {
         {field.required && <span className="text-red-500 text-[12px] ml-0.5">*</span>}
       </div>
       <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
-        {field.prefix && <span className="text-[12px] text-slate-400">{field.prefix} ·</span>}
+        {field.prefix && <span className="text-[12px] text-slate-600">{field.prefix} ·</span>}
         {field.type && <span className="text-[12px] text-inherit">{field.type}</span>}
         <span className="text-slate-300 group-hover:text-slate-500 text-[11px] font-bold">···</span>
       </div>
@@ -1620,6 +1621,10 @@ function LayoutEditor({ module, layoutName, onClose }: {
   const [bcEnabled, setBcEnabled] = useState(true);
   const [nfOpen, setNfOpen]     = useState(true);
   const [unusedOpen, setUnusedOpen] = useState(true);
+  const [bcCustomizeOpen, setBcCustomizeOpen] = useState(false);
+  const [bcFields, setBcFields] = useState(DV_BC_FIELDS);
+  const [bcDragIdx, setBcDragIdx] = useState<number|null>(null);
+  const [bcDropIdx, setBcDropIdx] = useState<number|null>(null);
   const modDef = MODULE_DEFS.find(m => m.key === module);
 
   return (
@@ -1648,7 +1653,8 @@ function LayoutEditor({ module, layoutName, onClose }: {
         <div className="w-[260px] flex-shrink-0 border-r border-[#E3ECFC] bg-[#f9fbff] overflow-y-auto">
           {tab === "create" && (<>
             <button onClick={() => setNfOpen(p=>!p)}
-              className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold text-slate-400 uppercase tracking-wider hover:bg-[#EFF6FF]">
+              className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold uppercase tracking-wider hover:bg-[#EFF6FF]"
+              style={{ color: "#0C2472" }}>
               <span>New Fields</span>
               {nfOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
             </button>
@@ -1658,8 +1664,9 @@ function LayoutEditor({ module, layoutName, onClose }: {
                   const Icon = ft.icon;
                   return (
                     <div key={ft.label}
-                      className="flex items-center gap-1.5 px-2 py-1.5 border border-[#E3ECFC] rounded-lg bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF] cursor-grab transition-colors text-[14px] font-medium text-slate-600">
-                      <Icon size={11} color="#94A3B8" weight="duotone" />
+                      className="flex items-center gap-1.5 px-2 py-1.5 border border-[#E3ECFC] rounded-lg bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF] cursor-grab transition-colors text-[14px] font-medium"
+                      style={{ color: "#0C2472" }}>
+                      <Icon size={11} color="#0C2472" weight="duotone" />
                       {ft.label}
                     </div>
                   );
@@ -1672,11 +1679,12 @@ function LayoutEditor({ module, layoutName, onClose }: {
               </button>
             </div>
             <button onClick={() => setUnusedOpen(p=>!p)}
-              className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold text-slate-400 uppercase tracking-wider hover:bg-[#EFF6FF]">
+              className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold uppercase tracking-wider hover:bg-[#EFF6FF]"
+              style={{ color: "#0C2472" }}>
               <span>Unused Items</span>
               {unusedOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
             </button>
-            {unusedOpen && <div className="px-4 pb-2 text-[12px] text-slate-300">No unused items.</div>}
+            {unusedOpen && <div className="px-4 pb-2 text-[12px] text-slate-600">No unused items.</div>}
           </>)}
 
           {tab === "quickCreate" && (
@@ -1689,9 +1697,9 @@ function LayoutEditor({ module, layoutName, onClose }: {
               </div>
               {Object.entries(QC_AVAILABLE).map(([sec, flds]) => (
                 <div key={sec} className="px-3 pt-3">
-                  <div className="text-[12px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 px-1">{sec}</div>
+                  <div className="text-[12px] font-bold uppercase tracking-wider mb-1.5 px-1" style={{ color: "#0C2472" }}>{sec}</div>
                   {flds.map(f => (
-                    <div key={f} className="flex items-center gap-2 px-2 py-1.5 mb-0.5 border border-[#E3ECFC] rounded-lg bg-white text-[12px] text-slate-600 cursor-grab hover:border-[#1D4ED8] hover:bg-[#EFF6FF] transition-colors">
+                    <div key={f} className="flex items-center gap-2 px-2 py-1.5 mb-0.5 border border-[#E3ECFC] rounded-lg bg-white text-[12px] cursor-grab hover:border-[#1D4ED8] hover:bg-[#EFF6FF] transition-colors" style={{ color: "#0C2472" }}>
                       <DotsSixVertical size={11} color="#E2E8F0"/>
                       {f}
                     </div>
@@ -1704,11 +1712,12 @@ function LayoutEditor({ module, layoutName, onClose }: {
           {tab === "detailView" && (
             <div>
               <button onClick={() => setUnusedOpen(p=>!p)}
-                className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold text-slate-400 uppercase tracking-wider hover:bg-[#EFF6FF] border-b border-[#E3ECFC]">
+                className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold uppercase tracking-wider hover:bg-[#EFF6FF] border-b border-[#E3ECFC]"
+                style={{ color: "#0C2472" }}>
                 <span>Unused Related List</span>
                 {unusedOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
               </button>
-              {unusedOpen && <div className="px-4 py-3 text-[12px] text-slate-400">No more related lists available.</div>}
+              {unusedOpen && <div className="px-4 py-3 text-[12px] text-slate-600">No more related lists available.</div>}
             </div>
           )}
         </div>
@@ -1807,7 +1816,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                   <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Business Card</span>
                   <div className="flex items-center gap-3">
                     <GreenSwitch checked={bcEnabled} onChange={() => setBcEnabled(p=>!p)}/>
-                    <button className="text-[14px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>
+                    <button onClick={() => setBcCustomizeOpen(true)} className="text-[14px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>
                   </div>
                 </div>
                 <div className="divide-y divide-[#EFF6FF]">
@@ -1820,9 +1829,9 @@ function LayoutEditor({ module, layoutName, onClose }: {
                   ))}
                 </div>
                 <div className="px-4 py-2.5 border-t border-[#EFF6FF]">
-                  <div className="flex items-center gap-1.5 text-[12px] text-slate-400">
+                  <div className="flex items-center gap-1.5 text-[12px] text-slate-600">
                     <Info size={11} weight="duotone"/>
-                    You can add up to <span className="font-bold text-slate-600 mx-0.5">5 fields</span> to your Business Card.
+                    You can add up to <span className="font-bold text-slate-700 mx-0.5">5 fields</span> to your Business Card.
                   </div>
                 </div>
               </div>
@@ -1831,7 +1840,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                 <div className="px-4 py-2.5 border-b border-[#E3ECFC]">
                   <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Details</span>
                 </div>
-                <div className="mx-3 my-3 px-4 py-3 text-[14px] text-slate-400 bg-[#fafcff] rounded-lg border border-[#E3ECFC]">
+                <div className="mx-3 my-3 px-4 py-3 text-[14px] text-slate-600 bg-[#fafcff] rounded-lg border border-[#E3ECFC]">
                   Fields customized in the Create page will appear here.
                 </div>
               </div>
@@ -1856,7 +1865,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                       </div>
                     </div>
                     {item.standard ? (
-                      <div className="text-center py-2 text-[12px] text-slate-400 bg-[#fafcff] rounded-lg border border-[#E3ECFC]">
+                      <div className="text-center py-2 text-[12px] text-slate-600 bg-[#fafcff] rounded-lg border border-[#E3ECFC]">
                         This is a standard {item.name} section.
                       </div>
                     ) : (
@@ -1874,6 +1883,65 @@ function LayoutEditor({ module, layoutName, onClose }: {
           )}
         </div>
       </div>
+
+      {/* Business Card Customize Modal */}
+      {bcCustomizeOpen && (
+        <div className="absolute inset-0 z-50 bg-black/40 flex items-center justify-center">
+          <div className="bg-white rounded-2xl shadow-xl w-[420px] max-h-[80vh] overflow-hidden flex flex-col">
+            <div className="px-6 py-4 border-b border-[#E3ECFC] flex items-center justify-between">
+              <div>
+                <h3 className="text-[16px] font-bold text-slate-900">Customize Business Card</h3>
+                <p className="text-[12px] text-slate-500 mt-0.5">Drag to reorder · Max 5 fields</p>
+              </div>
+              <button onClick={() => { setBcCustomizeOpen(false); setBcDragIdx(null); setBcDropIdx(null); }} className="text-slate-400 hover:text-slate-600">
+                <X size={18} weight="bold" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-6 py-4 space-y-2">
+              {bcFields.map((field, idx) => (
+                <div
+                  key={idx}
+                  draggable
+                  onDragStart={() => setBcDragIdx(idx)}
+                  onDragOver={e => { e.preventDefault(); setBcDropIdx(idx); }}
+                  onDrop={() => {
+                    if (bcDragIdx === null || bcDragIdx === idx) return;
+                    const reordered = [...bcFields];
+                    const [moved] = reordered.splice(bcDragIdx, 1);
+                    reordered.splice(idx, 0, moved);
+                    setBcFields(reordered);
+                    setBcDragIdx(null);
+                    setBcDropIdx(null);
+                  }}
+                  onDragEnd={() => { setBcDragIdx(null); setBcDropIdx(null); }}
+                  className={`flex items-center gap-3 px-3 py-3 border rounded-xl transition-all cursor-grab active:cursor-grabbing select-none
+                    ${bcDragIdx === idx ? "opacity-40 border-dashed border-[#1D4ED8] bg-[#EFF6FF]" : bcDropIdx === idx ? "border-[#1D4ED8] bg-[#EFF6FF] shadow-sm" : "border-[#E3ECFC] bg-[#f9fbff] hover:border-[#A5B4FC] hover:bg-[#EFF6FF]"}`}
+                >
+                  <DotsSixVertical size={16} color={bcDropIdx === idx ? "#1D4ED8" : "#94A3B8"} weight="bold" />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[14px] font-medium text-slate-800">{field.label}</div>
+                    <div className="text-[11px] text-slate-400 capitalize">{field.type}</div>
+                  </div>
+                  <span className="text-[11px] font-semibold text-slate-400 bg-slate-100 rounded px-1.5 py-0.5">{idx + 1}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="px-6 py-4 border-t border-[#E3ECFC] flex items-center justify-between">
+              <span className="text-[12px] text-slate-400">{bcFields.length}/5 fields</span>
+              <div className="flex items-center gap-2">
+                <button onClick={() => { setBcCustomizeOpen(false); setBcDragIdx(null); setBcDropIdx(null); }} className="px-4 py-2 text-[14px] font-medium text-slate-600 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">
+                  Cancel
+                </button>
+                <button onClick={() => { setBcCustomizeOpen(false); setBcDragIdx(null); setBcDropIdx(null); }} className="px-4 py-2 text-[14px] font-medium text-white bg-[#1D4ED8] rounded-lg hover:bg-[#2563EB] transition-colors">
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1890,7 +1958,11 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
   const [sections, setSections]   = useState<BSection[]>([]);
   const [qcFields, setQcFields]   = useState<BField[]>([]);
   const [qcDragOver, setQcDragOver] = useState(false);
-  const [dvBcEnabled, setDvBcEnabled] = useState(false);
+  const [dvBcEnabled, setDvBcEnabled] = useState(true);
+  const [dvBcCustomizeOpen, setDvBcCustomizeOpen] = useState(false);
+  const [dvBcFields, setDvBcFields] = useState(DV_BC_FIELDS.map((f,i) => ({ id: i+1, label: f.label, type: f.type })));
+  const [dvBcDragIdx, setDvBcDragIdx] = useState<number|null>(null);
+  const [dvBcDropIdx, setDvBcDropIdx] = useState<number|null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [dragField, setDragField] = useState<string|null>(null);
   const [dragOverSection, setDragOverSection] = useState<number|null>(null);
@@ -1967,16 +2039,18 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
           {tab === "detailView" ? (
             <>
               <button onClick={() => setUnusedOpen(p=>!p)}
-                className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold text-slate-400 uppercase tracking-wider hover:bg-[#EFF6FF] border-b border-[#E3ECFC]">
+                className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold uppercase tracking-wider hover:bg-[#EFF6FF] border-b border-[#E3ECFC]"
+                style={{ color: "#0C2472" }}>
                 <span>Unused Related List</span>
                 {unusedOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
               </button>
-              {unusedOpen && <div className="px-4 py-3 text-[14px] text-slate-400">No more related lists available.</div>}
+              {unusedOpen && <div className="px-4 py-3 text-[14px] text-slate-600">No more related lists available.</div>}
             </>
           ) : (
             <>
               <button onClick={() => setNfOpen(p=>!p)}
-                className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold text-slate-400 uppercase tracking-wider hover:bg-[#EFF6FF]">
+                className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold uppercase tracking-wider hover:bg-[#EFF6FF]"
+                style={{ color: "#0C2472" }}>
                 <span>New Fields</span>
                 {nfOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
               </button>
@@ -1998,9 +2072,10 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
                           title={canDragFields ? undefined : "Add a section first"}
                           className={`flex items-center gap-1.5 px-2 py-1.5 border rounded-lg transition-colors text-[14px] font-medium ${
                             canDragFields
-                              ? "border-[#E3ECFC] bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF] cursor-grab active:cursor-grabbing text-slate-600"
+                              ? "border-[#E3ECFC] bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF] cursor-grab active:cursor-grabbing"
                               : "border-[#EFF6FF] bg-slate-50 text-slate-300 cursor-not-allowed"
-                          }`}>
+                          }`}
+                          style={canDragFields ? { color: "#0C2472" } : {}}>
                           <Icon size={11} color={canDragFields ? "#1D4ED8" : "#CBD5E1"} weight="duotone" />
                           {ft.label}
                         </div>
@@ -2116,34 +2191,29 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
                   <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Business Card</span>
                   <div className="flex items-center gap-3">
                     <GreenSwitch checked={dvBcEnabled} onChange={() => setDvBcEnabled(p=>!p)}/>
-                    {dvBcEnabled && <button className="text-[14px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>}
+                    {dvBcEnabled && <button onClick={() => setDvBcCustomizeOpen(true)} className="text-[14px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>}
                   </div>
                 </div>
                 {dvBcEnabled ? (
-                  allFields.length === 0 ? (
-                    <div className="px-4 py-3 text-[14px] text-slate-400 bg-[#fafcff]">
-                      Add fields in the Create tab to feature them on the Business Card.
+                  <>
+                    <div className="divide-y divide-[#EFF6FF]">
+                      {dvBcFields.map(f => (
+                        <div key={f.id} className="flex items-center gap-3 px-4 py-2.5">
+                          <DotsSixVertical size={13} color="#E2E8F0"/>
+                          <span className="text-[14px] text-slate-700 flex-1">{f.label}</span>
+                          <span className="text-[12px] text-slate-400">{f.type}</span>
+                        </div>
+                      ))}
                     </div>
-                  ) : (
-                    <>
-                      <div className="divide-y divide-[#EFF6FF]">
-                        {allFields.slice(0,5).map(f => (
-                          <div key={f.id} className="flex items-center gap-3 px-4 py-2.5">
-                            <DotsSixVertical size={13} color="#E2E8F0"/>
-                            <span className="text-[14px] text-slate-700 flex-1">{f.label}</span>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="px-4 py-2.5 border-t border-[#EFF6FF]">
-                        <div className="flex items-center gap-1.5 text-[14px] text-slate-400">
+                    <div className="px-4 py-2.5 border-t border-[#EFF6FF]">
+                      <div className="flex items-center gap-1.5 text-[14px] text-slate-600">
                           <Info size={11} weight="duotone"/>
-                          You can add up to <span className="font-bold text-slate-600 mx-0.5">5 fields</span> to your Business Card.
+                          You can add up to <span className="font-bold text-slate-700 mx-0.5">5 fields</span> to your Business Card.
                         </div>
                       </div>
                     </>
-                  )
                 ) : (
-                  <div className="px-4 py-3 text-[14px] text-slate-400">
+                  <div className="px-4 py-3 text-[14px] text-slate-600">
                     Business Card cannot be customized as it is hidden.<br/>
                     Turn it on to customize the fields to be shown in details page.
                   </div>
@@ -2155,7 +2225,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
                   <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Details</span>
                 </div>
                 {allFields.length === 0 ? (
-                  <div className="mx-3 my-3 px-4 py-3 text-[14px] text-slate-400 bg-[#fafcff] rounded-lg border border-[#E3ECFC]">
+                  <div className="mx-3 my-3 px-4 py-3 text-[14px] text-slate-600 bg-[#fafcff] rounded-lg border border-[#E3ECFC]">
                     Fields customized in the Create page will appear here.
                   </div>
                 ) : (
@@ -2174,7 +2244,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
                 <div className="px-4 py-2.5 border-b border-[#E3ECFC]">
                   <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Related List</span>
                 </div>
-                <div className="px-4 py-3 text-[14px] text-slate-400">No related lists added yet.</div>
+                <div className="px-4 py-3 text-[14px] text-slate-600">No related lists added yet.</div>
               </div>
             </div>
           )}
@@ -2221,6 +2291,69 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
           </div>
         </div>
       )}
+
+      {/* Business Card Customize Modal - NewLayoutBuilder */}
+      {dvBcCustomizeOpen && (
+        <div className="absolute inset-0 z-50 bg-black/40 flex items-center justify-center">
+          <div className="bg-white rounded-2xl shadow-xl w-[420px] max-h-[80vh] overflow-hidden flex flex-col">
+            <div className="px-6 py-4 border-b border-[#E3ECFC] flex items-center justify-between">
+              <div>
+                <h3 className="text-[16px] font-bold text-slate-900">Customize Business Card</h3>
+                <p className="text-[12px] text-slate-500 mt-0.5">Drag to reorder · Max 5 fields</p>
+              </div>
+              <button onClick={() => { setDvBcCustomizeOpen(false); setDvBcDragIdx(null); setDvBcDropIdx(null); }} className="text-slate-400 hover:text-slate-600">
+                <X size={18} weight="bold" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-6 py-4 space-y-2">
+              {dvBcFields.length === 0 ? (
+                <div className="text-center py-10 text-[13px] text-slate-400">
+                  Add fields in the Create tab to customize the Business Card.
+                </div>
+              ) : dvBcFields.map((field, idx) => (
+                <div
+                  key={field.id}
+                  draggable
+                  onDragStart={() => setDvBcDragIdx(idx)}
+                  onDragOver={e => { e.preventDefault(); setDvBcDropIdx(idx); }}
+                  onDrop={() => {
+                    if (dvBcDragIdx === null || dvBcDragIdx === idx) return;
+                    const reordered = [...dvBcFields];
+                    const [moved] = reordered.splice(dvBcDragIdx, 1);
+                    reordered.splice(idx, 0, moved);
+                    setDvBcFields(reordered);
+                    setDvBcDragIdx(null);
+                    setDvBcDropIdx(null);
+                  }}
+                  onDragEnd={() => { setDvBcDragIdx(null); setDvBcDropIdx(null); }}
+                  className={`flex items-center gap-3 px-3 py-3 border rounded-xl transition-all cursor-grab active:cursor-grabbing select-none
+                    ${dvBcDragIdx === idx ? "opacity-40 border-dashed border-[#1D4ED8] bg-[#EFF6FF]" : dvBcDropIdx === idx ? "border-[#1D4ED8] bg-[#EFF6FF] shadow-sm" : "border-[#E3ECFC] bg-[#f9fbff] hover:border-[#A5B4FC] hover:bg-[#EFF6FF]"}`}
+                >
+                  <DotsSixVertical size={16} color={dvBcDropIdx === idx ? "#1D4ED8" : "#94A3B8"} weight="bold" />
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[14px] font-medium text-slate-800">{field.label}</div>
+                    {'type' in field && <div className="text-[11px] text-slate-400 capitalize">{(field as any).type}</div>}
+                  </div>
+                  <span className="text-[11px] font-semibold text-slate-400 bg-slate-100 rounded px-1.5 py-0.5">{idx + 1}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="px-6 py-4 border-t border-[#E3ECFC] flex items-center justify-between">
+              <span className="text-[12px] text-slate-400">{dvBcFields.length}/5 fields</span>
+              <div className="flex items-center gap-2">
+                <button onClick={() => { setDvBcCustomizeOpen(false); setDvBcDragIdx(null); setDvBcDropIdx(null); }} className="px-4 py-2 text-[14px] font-medium text-slate-600 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">
+                  Cancel
+                </button>
+                <button onClick={() => { setDvBcCustomizeOpen(false); setDvBcDragIdx(null); setDvBcDropIdx(null); }} className="px-4 py-2 text-[14px] font-medium text-white bg-[#1D4ED8] rounded-lg hover:bg-[#2563EB] transition-colors">
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -2242,6 +2375,99 @@ const MODULE_LAYOUTS: Record<string, { name: string; sharedTo: string; lastMod: 
   new:      [],
 };
 
+const MODULE_FIELDS: Record<string, { name: string; dataType: string; custom: boolean; layout: string }[]> = {
+  leads: [
+    { name:"Address",         dataType:"Link",   custom:false, layout:"Base Layout" },
+    { name:"Annual Revenue",  dataType:"Int",    custom:false, layout:"Base Layout" },
+    { name:"Company",         dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Created By",      dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Description",     dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Email",           dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Email Opt out",   dataType:"Check",  custom:false, layout:"Base Layout" },
+    { name:"Fax",             dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"First Name",      dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Industry",        dataType:"Select", custom:false, layout:"Base Layout" },
+    { name:"Last Name",       dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Lead Owner",      dataType:"Lookup", custom:false, layout:"Base Layout" },
+    { name:"Lead Source",     dataType:"Select", custom:false, layout:"Base Layout" },
+    { name:"Lead Status",     dataType:"Select", custom:false, layout:"Base Layout" },
+    { name:"Mobile",          dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Modified By",     dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"No of Employees", dataType:"Select", custom:false, layout:"Base Layout" },
+    { name:"Phone",           dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Rating",          dataType:"Select", custom:false, layout:"Base Layout" },
+    { name:"Secondary Email", dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Skype ID",        dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Title",           dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Twitter",         dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Website",         dataType:"Lookup", custom:false, layout:"Base Layout" },
+  ],
+  deals: [
+    { name:"Account Name",    dataType:"Lookup", custom:false, layout:"Base Layout" },
+    { name:"Amount",          dataType:"Int",    custom:false, layout:"Base Layout" },
+    { name:"Closing Date",    dataType:"Date",   custom:false, layout:"Base Layout" },
+    { name:"Contact Name",    dataType:"Lookup", custom:false, layout:"Base Layout" },
+    { name:"Created By",      dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Deal Name",       dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Deal Owner",      dataType:"Lookup", custom:false, layout:"Base Layout" },
+    { name:"Description",     dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Lead Source",     dataType:"Select", custom:false, layout:"Base Layout" },
+    { name:"Modified By",     dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Probability",     dataType:"Int",    custom:false, layout:"Base Layout" },
+    { name:"Stage",           dataType:"Select", custom:false, layout:"Base Layout" },
+    { name:"Type",            dataType:"Select", custom:false, layout:"Base Layout" },
+  ],
+  contacts: [
+    { name:"Account Name",    dataType:"Lookup", custom:false, layout:"Base Layout" },
+    { name:"Created By",      dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Department",      dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Description",     dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Email",           dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Email Opt out",   dataType:"Check",  custom:false, layout:"Base Layout" },
+    { name:"Fax",             dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"First Name",      dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Last Name",       dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Lead Source",     dataType:"Select", custom:false, layout:"Base Layout" },
+    { name:"Mobile",          dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Modified By",     dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Phone",           dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Reporting To",    dataType:"Lookup", custom:false, layout:"Base Layout" },
+    { name:"Secondary Email", dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Skype ID",        dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Title",           dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Twitter",         dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Website",         dataType:"Lookup", custom:false, layout:"Base Layout" },
+  ],
+  accounts: [
+    { name:"Account Name",    dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Account Owner",   dataType:"Lookup", custom:false, layout:"Base Layout" },
+    { name:"Account Site",    dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Account Type",    dataType:"Select", custom:false, layout:"Base Layout" },
+    { name:"Annual Revenue",  dataType:"Int",    custom:false, layout:"Base Layout" },
+    { name:"Created By",      dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Description",     dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Email",           dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Fax",             dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Industry",        dataType:"Select", custom:false, layout:"Base Layout" },
+    { name:"Modified By",     dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"No of Employees", dataType:"Int",    custom:false, layout:"Base Layout" },
+    { name:"Phone",           dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Rating",          dataType:"Select", custom:false, layout:"Base Layout" },
+    { name:"Website",         dataType:"Lookup", custom:false, layout:"Base Layout" },
+  ],
+  tasks: [
+    { name:"Assigned To",     dataType:"Lookup", custom:false, layout:"Base Layout" },
+    { name:"Contact Name",    dataType:"Lookup", custom:false, layout:"Base Layout" },
+    { name:"Created By",      dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Description",     dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Due Date",        dataType:"Date",   custom:false, layout:"Base Layout" },
+    { name:"Modified By",     dataType:"Text",   custom:false, layout:"Base Layout" },
+    { name:"Priority",        dataType:"Select", custom:false, layout:"Base Layout" },
+    { name:"Status",          dataType:"Select", custom:false, layout:"Base Layout" },
+    { name:"Subject",         dataType:"Text",   custom:false, layout:"Base Layout" },
+  ],
+};
+
 function GreenSwitch({ checked, onChange }: { checked: boolean; onChange?: () => void }) {
   return (
     <button onClick={onChange}
@@ -2257,14 +2483,31 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
 }) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  const [tab, setTab]     = useState<"layouts"|"fields">("layouts");
-  const [search, setSearch] = useState("");
+  const [tab, setTab]           = useState<"layouts"|"fields">("layouts");
+  const [fieldSubTab, setFieldSubTab] = useState<"listing"|"permissions">("listing");
+  const [search, setSearch]     = useState("");
+  const [fieldSearch, setFieldSearch] = useState("");
+  const [fieldLayout, setFieldLayout] = useState("all");
+  const [permRole, setPermRole]   = useState("Super Admin");
+  const [permSearch, setPermSearch] = useState("");
+  const [permissions, setPermissions] = useState<Record<string, "rw"|"ro"|"hide">>({});
   const [showCreateLayoutModal, setShowCreateLayoutModal] = useState(false);
+  const [showCreateEditModal, setShowCreateEditModal] = useState(false);
+  const [createEditLayout, setCreateEditLayout] = useState("");
   const mod     = MODULE_DEFS.find(m => m.key === modKey);
   const layouts = MODULE_LAYOUTS[modKey] ?? [];
+  const allModFields = MODULE_FIELDS[modKey] ?? [];
   const title   = modKey === "new" ? "add" : (mod?.label ?? modKey);
 
+  const getPerm = (name: string) => permissions[`${permRole}:${name}`] ?? "rw";
+  const setPerm = (name: string, val: "rw"|"ro"|"hide") =>
+    setPermissions(p => ({ ...p, [`${permRole}:${name}`]: val }));
+
   const filteredMods = MODULE_DEFS.filter(m => !search || m.label.toLowerCase().includes(search.toLowerCase()));
+  const filteredFields = allModFields.filter(f =>
+    (!fieldSearch || f.name.toLowerCase().includes(fieldSearch.toLowerCase())) &&
+    (fieldLayout === "all" || f.layout === fieldLayout)
+  );
 
   return (
     <div className="flex-1 flex overflow-hidden bg-white">
@@ -2377,7 +2620,153 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
             </>
           )}
           {tab === "fields" && (
-            <div className="text-center py-12 text-slate-300 text-[14px]">No fields configured yet.</div>
+            <div>
+              {/* Sub-tabs */}
+              <div className="flex items-center gap-1 mb-5 border-b border-[#E3ECFC]">
+                {(["listing","permissions"] as const).map(st => (
+                  <button key={st} onClick={() => setFieldSubTab(st)}
+                    className={`px-4 py-2 text-[13px] font-semibold capitalize transition-all border-b-2 -mb-px ${
+                      fieldSubTab === st ? "border-[#1D4ED8] text-[#1D4ED8] bg-[#EFF6FF] rounded-t-md" : "border-transparent text-slate-500 hover:text-slate-700"
+                    }`}>
+                    {st === "listing" ? "Field Listing" : "Field Permissions"}
+                  </button>
+                ))}
+              </div>
+
+              {fieldSubTab === "listing" && (
+                <>
+                  {/* Toolbar */}
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="flex-1 relative">
+                      <MagnifyingGlass size={13} weight="duotone" color="#94A3B8" className="absolute left-3 top-1/2 -translate-y-1/2" />
+                      <input
+                        value={fieldSearch}
+                        onChange={e => setFieldSearch(e.target.value)}
+                        placeholder="Search Fields or Data Types"
+                        className="w-full pl-8 pr-3 py-2 text-[13px] border border-[#E3ECFC] rounded-lg bg-white text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-[#1D4ED8]"
+                      />
+                    </div>
+                    <div className="relative">
+                      <select
+                        value={fieldLayout}
+                        onChange={e => setFieldLayout(e.target.value)}
+                        className="appearance-none pl-3 pr-8 py-2 text-[13px] border border-[#E3ECFC] rounded-lg bg-white text-slate-700 focus:outline-none focus:border-[#1D4ED8] cursor-pointer"
+                      >
+                        <option value="all">All Layouts</option>
+                        {layouts.map(l => <option key={l.name} value={l.name}>{l.name}</option>)}
+                      </select>
+                      <CaretDown size={10} weight="bold" color="#94A3B8" className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
+                    <Button variant="contained" size="small"
+                      onClick={() => { setCreateEditLayout(layouts[0]?.name ?? ""); setShowCreateEditModal(true); }}
+                      sx={{ bgcolor:"#1D4ED8", color:"white", borderRadius:"8px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.9, whiteSpace:"nowrap", boxShadow:"0 1px 6px #1D4ED833", "&:hover":{ bgcolor:"#2563EB" } }}>
+                      Create and Edit Fields
+                    </Button>
+                  </div>
+
+                  {/* Table */}
+                  <div className="border border-[#E3ECFC] rounded-xl overflow-hidden">
+                    <table className="w-full border-collapse text-left">
+                      <thead>
+                        <tr className="bg-[#f9fbff] border-b border-[#E3ECFC]">
+                          <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">Fields</th>
+                          <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">Data Type</th>
+                          <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">Custom Field</th>
+                          <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">Layouts</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredFields.length === 0 ? (
+                          <tr><td colSpan={4} className="px-4 py-10 text-center text-[14px] text-slate-300">No fields found.</td></tr>
+                        ) : filteredFields.map((f, i) => (
+                          <tr key={i} className="border-b border-[#EFF6FF] last:border-0 hover:bg-[#fafcff] transition-colors">
+                            <td className="px-4 py-3 text-[13px] text-slate-700 font-medium">{f.name}</td>
+                            <td className="px-4 py-3 text-[13px] text-slate-500">{f.dataType}</td>
+                            <td className="px-4 py-3 text-[13px] text-slate-400">{f.custom ? "Yes" : ""}</td>
+                            <td className="px-4 py-3 text-[13px] font-semibold text-[#1D4ED8] cursor-pointer hover:underline">{f.layout}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              )}
+
+              {fieldSubTab === "permissions" && (
+                <div>
+                  {/* Toolbar */}
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="relative">
+                      <select
+                        value={permRole}
+                        onChange={e => setPermRole(e.target.value)}
+                        className="appearance-none pl-3 pr-8 py-2 text-[13px] border border-[#E3ECFC] rounded-lg bg-white text-slate-700 focus:outline-none focus:border-[#1D4ED8] cursor-pointer min-w-[160px]"
+                      >
+                        {["Super Admin","Administrator","Operations Manager","Support Executive","VP of Operations"].map(r => (
+                          <option key={r} value={r}>{r}</option>
+                        ))}
+                      </select>
+                      <CaretDown size={10} weight="bold" color="#94A3B8" className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
+                    <div className="flex-1 relative">
+                      <MagnifyingGlass size={13} weight="duotone" color="#94A3B8" className="absolute left-3 top-1/2 -translate-y-1/2" />
+                      <input
+                        value={permSearch}
+                        onChange={e => setPermSearch(e.target.value)}
+                        placeholder="Search Fields"
+                        className="w-full pl-8 pr-3 py-2 text-[13px] border border-[#E3ECFC] rounded-lg bg-white text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-[#1D4ED8]"
+                      />
+                    </div>
+                    <button className="px-4 py-2 text-[13px] font-bold text-white bg-[#1D4ED8] rounded-lg hover:bg-[#2563EB] transition-colors">
+                      Save
+                    </button>
+                    <button onClick={() => { setCreateEditLayout(layouts[0]?.name ?? ""); setShowCreateEditModal(true); }} className="px-4 py-2 text-[13px] font-semibold text-[#1D4ED8] border border-[#1D4ED8] rounded-lg hover:bg-[#EFF6FF] transition-colors whitespace-nowrap">
+                      Create and Edit Fields
+                    </button>
+                  </div>
+
+                  {/* Table */}
+                  <div className="border border-[#E3ECFC] rounded-xl overflow-hidden">
+                    <table className="w-full border-collapse text-left">
+                      <thead>
+                        <tr className="bg-[#f9fbff] border-b border-[#E3ECFC]">
+                          <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider w-[40%]">Fields</th>
+                          <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider text-center">Read and Write</th>
+                          <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider text-center">Read Only</th>
+                          <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider text-center">Don't Show</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {allModFields
+                          .filter(f => !permSearch || f.name.toLowerCase().includes(permSearch.toLowerCase()))
+                          .map((f, i) => {
+                            const perm = getPerm(f.name);
+                            return (
+                              <tr key={i} className="border-b border-[#EFF6FF] last:border-0 hover:bg-[#fafcff] transition-colors">
+                                <td className="px-4 py-3 text-[13px] text-slate-600">{f.name}</td>
+                                {(["rw","ro","hide"] as const).map(val => (
+                                  <td key={val} className="px-4 py-3 text-center">
+                                    <button
+                                      onClick={() => setPerm(f.name, val)}
+                                      className="w-5 h-5 rounded-full border-2 flex items-center justify-center mx-auto transition-colors"
+                                      style={{
+                                        borderColor: perm === val ? "#1D4ED8" : "#CBD5E1",
+                                        backgroundColor: perm === val ? "#1D4ED8" : "transparent",
+                                      }}
+                                    >
+                                      {perm === val && <span className="w-2 h-2 rounded-full bg-white block" />}
+                                    </button>
+                                  </td>
+                                ))}
+                              </tr>
+                            );
+                          })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>
@@ -2388,6 +2777,47 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
           onClose={() => setShowCreateLayoutModal(false)}
           onContinue={() => { setShowCreateLayoutModal(false); onOpenLayout("__NEW__"); }}
         />
+      )}
+
+      {/* Create and Edit Fields Modal */}
+      {showCreateEditModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
+          <div className="w-[500px] bg-white rounded-2xl shadow-2xl p-6">
+            <div className="text-[17px] font-extrabold text-slate-900 mb-5">
+              Create and Edit Fields in Layout Editor
+            </div>
+            <FormControl fullWidth size="small" sx={{ mb: 5 }}>
+              <InputLabel sx={{ fontSize: "0.8rem", color: "#1D4ED8" }}>Select Layout</InputLabel>
+              <Select
+                value={createEditLayout}
+                label="Select Layout"
+                onChange={e => setCreateEditLayout(e.target.value)}
+                sx={{
+                  borderRadius: "10px", fontSize: "0.8rem",
+                  "& .MuiOutlinedInput-notchedOutline": { borderColor: "#1D4ED8" },
+                  "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: "#1D4ED8" },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: "#1D4ED8" },
+                }}>
+                {layouts.map(l => (
+                  <MenuItem key={l.name} value={l.name} sx={{ fontSize: "0.8rem" }}>{l.name}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowCreateEditModal(false)}
+                className="px-5 py-2 text-[14px] font-semibold text-slate-500 hover:text-slate-700 transition-colors">
+                Cancel
+              </button>
+              <button
+                disabled={!createEditLayout}
+                onClick={() => { setShowCreateEditModal(false); onOpenLayout(createEditLayout); }}
+                className="px-5 py-2 rounded-lg text-[14px] font-bold text-white bg-[#1D4ED8] hover:bg-[#2563EB] disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
@@ -2527,6 +2957,260 @@ function ModulesAndFieldsPanel() {
 }
 
 // ---------------------------------------------
+//  Customize Home page
+// ---------------------------------------------
+interface HomePage {
+  id: string; name: string; description: string;
+  sharedWith: string[]; created: string; lastModified: string; isActive: boolean;
+}
+const INITIAL_HOMEPAGES: HomePage[] = [{
+  id: "hp1", name: "Home Page V1", description: "",
+  sharedWith: ["Administrator", "VP of Operations", "Operations Manager", "Support Executive", "Team Leader", "Super Admin"],
+  created: "Jun 4, 2026", lastModified: "Jun 29, 2026", isActive: true,
+}];
+
+const ALL_ROLES = ["Administrator", "VP of Operations", "Operations Manager", "Support Executive", "Team Leader", "Super Admin"];
+
+function CreateHomePageDrawer({ open, onClose, onCreate, isDark }: {
+  open: boolean; onClose: () => void;
+  onCreate: (name: string, sharedWith: string[]) => void;
+  isDark: boolean;
+}) {
+  const [name, setName] = useState("");
+  const [sharedWith, setSharedWith] = useState<string[]>([...ALL_ROLES]);
+
+  const toggleRole = (role: string) =>
+    setSharedWith(prev => prev.includes(role) ? prev.filter(r => r !== role) : [...prev, role]);
+
+  const handleSubmit = () => {
+    if (name.trim()) { onCreate(name.trim(), sharedWith); setName(""); setSharedWith([...ALL_ROLES]); }
+  };
+  const handleClose = () => { onClose(); setName(""); setSharedWith([...ALL_ROLES]); };
+
+  const FX = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "10px", ...(isDark ? {} : { backgroundColor: "#EFF6FF" }), fontSize: "0.82rem",
+      "& fieldset": { borderColor: isDark ? "#3F3F46" : "#E3ECFC", borderWidth: 1.5 },
+      "&:hover fieldset": { borderColor: isDark ? "#9CA3AF" : "#E3ECFC" },
+      "&.Mui-focused fieldset": { borderColor: isDark ? "#71717A" : "#E3ECFC", borderWidth: 2 },
+      "&.Mui-focused": { boxShadow: isDark ? "none" : "0 0 0 2px #4A7AE8" },
+      "& input": { padding: "10px 14px" },
+    },
+    "& .MuiInputLabel-root": { fontSize: "0.79rem", ...(isDark ? {} : { color: "#6B7280" }) },
+    "& .MuiInputLabel-root.Mui-focused": { color: isDark ? "#A1A1AA" : "inherit" },
+  };
+
+  return (
+    <Drawer anchor="right" open={open} onClose={handleClose}
+      PaperProps={{ sx: { width: { xs: "100%", sm: 480 }, display: "flex", flexDirection: "column", bgcolor: isDark ? "#18181B" : "#F8FAFF", boxShadow: isDark ? "-12px 0 48px rgba(0,0,0,0.5)" : "-12px 0 48px rgba(12,36,114,0.12)" } }}>
+      <div className={`flex items-center justify-between px-6 py-4 border-b flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+        <div className="flex items-center gap-3">
+          <div className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-sm ${isDark ? "bg-[#27272A]" : "bg-[#1D4ED8]"}`}>
+            <House size={18} color={isDark ? "#A1A1AA" : "#fff"} weight="duotone" />
+          </div>
+          <span className={`font-heading text-[16px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Create Home Page</span>
+        </div>
+        <Tooltip title="Close">
+          <IconButton size="small" onClick={handleClose}
+            sx={{ borderRadius: "9px", border: `1.5px solid ${isDark ? "#3F3F46" : "#E3ECFC"}`, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+            <X size={17} color={isDark ? "#71717A" : "#64748B"} weight="duotone" />
+          </IconButton>
+        </Tooltip>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+        <div>
+          <div className="font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500">Home Page Details</div>
+          <TextField label="Home Page Name" value={name} onChange={e => setName(e.target.value)}
+            size="small" fullWidth sx={FX} />
+        </div>
+        <div>
+          <div className="font-heading text-[12px] font-bold mb-3 uppercase tracking-wider text-slate-500">Share With</div>
+          <div className="space-y-1">
+            {ALL_ROLES.map(role => (
+              <label key={role} className={`flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer transition-colors ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}>
+                <Checkbox size="small" checked={sharedWith.includes(role)} onChange={() => toggleRole(role)}
+                  sx={{ p: 0.3, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked": { color: "#1D4ED8" } }} />
+                <span className={`text-[14px] font-medium ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{role}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className={`flex items-center justify-end gap-3 px-6 py-4 border-t flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+        <Button variant="text" onClick={handleClose}
+          sx={{ color: isDark ? "#A1A1AA" : "#64748B", textTransform: "none", fontWeight: 600, fontSize: "0.82rem", borderRadius: "9px", px: 2.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+          Cancel
+        </Button>
+        <Button variant="contained" onClick={handleSubmit} disabled={!name.trim()}
+          sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB" }, "&:disabled": { bgcolor: isDark ? "#1C1C1E" : "#E2E8F0", color: isDark ? "#52525B" : "#CBD5E1" } }}>
+          Create
+        </Button>
+      </div>
+    </Drawer>
+  );
+}
+
+function CustomizeHomepagePanel() {
+  const router = useRouter();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+  const [homepages, setHomepages] = useState<HomePage[]>(INITIAL_HOMEPAGES);
+  const [menuAnchor, setMenuAnchor] = useState<{ el: HTMLElement; id: string } | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [renameId, setRenameId] = useState<string | null>(null);
+  const [renameName, setRenameName] = useState("");
+
+  const openMenu = (e: React.MouseEvent<HTMLElement>, id: string) => {
+    e.stopPropagation();
+    setMenuAnchor({ el: e.currentTarget, id });
+  };
+  const closeMenu = () => setMenuAnchor(null);
+
+  const handleMenuAction = (action: string) => {
+    const id = menuAnchor?.id;
+    closeMenu();
+    if (!id) return;
+    if (action === "edit") {
+      router.push(`/home/${id}/edit`);
+    } else if (action === "rename") {
+      const hp = homepages.find(h => h.id === id);
+      if (hp) { setRenameId(id); setRenameName(hp.name); }
+    } else if (action === "clone") {
+      const hp = homepages.find(h => h.id === id);
+      if (hp) {
+        const now = new Date().toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" });
+        setHomepages(prev => [...prev, { ...hp, id: `hp${Date.now()}`, name: `${hp.name} (Copy)`, isActive: false, created: now, lastModified: now }]);
+      }
+    }
+  };
+
+  const handleRenameSubmit = () => {
+    if (renameId && renameName.trim()) {
+      const now = new Date().toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" });
+      setHomepages(prev => prev.map(hp => hp.id === renameId ? { ...hp, name: renameName.trim(), lastModified: now } : hp));
+      setRenameId(null);
+    }
+  };
+
+  const handleCreate = (name: string, sharedWith: string[]) => {
+    const now = new Date().toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" });
+    setHomepages(prev => [...prev, { id: `hp${Date.now()}`, name, description: "", sharedWith, created: now, lastModified: now, isActive: true }]);
+    setCreateOpen(false);
+  };
+
+  const menuSx = {
+    mt: 0.5, borderRadius: "12px",
+    border: isDark ? "1px solid #27272A" : "1px solid #E3ECFC",
+    bgcolor: isDark ? "#1C1C1E" : "#fff",
+    boxShadow: isDark ? "0 8px 32px rgba(0,0,0,0.5)" : "0 8px 32px rgba(12,36,114,0.10)",
+    minWidth: 190,
+    "& .MuiMenuItem-root": {
+      fontSize: "14px", py: 1.2, px: 2.5,
+      color: isDark ? "#D4D4D8" : "#334155",
+      "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF", color: isDark ? "#F4F4F5" : "#1D4ED8" },
+    },
+  };
+
+  return (
+    <div className={`flex-1 flex flex-col overflow-hidden ${isDark ? "bg-[#0A0A0A]" : "bg-white"}`}>
+      {/* Header */}
+      <div className={`px-8 py-5 border-b flex items-start justify-between gap-6 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+        <div>
+          <div className={`text-[20px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Customize Home page</div>
+          <div className={`text-[13px] mt-1 max-w-lg leading-relaxed ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>
+            You can create custom homepages, making it easier for employees to complete their daily task efficiently.
+          </div>
+        </div>
+        <Button variant="contained" onClick={() => setCreateOpen(true)}
+          sx={{ bgcolor: "#1D4ED8", color: "white", borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "14px", px: 2.5, py: 1, boxShadow: "0 1px 8px #1D4ED833", "&:hover": { bgcolor: "#2563EB" }, "&:active": { bgcolor: "#0C2472" }, whiteSpace: "nowrap", flexShrink: 0 }}>
+          Create Home Page
+        </Button>
+      </div>
+
+      {/* Table */}
+      <div className="flex-1 overflow-auto">
+        <table className="w-full border-collapse text-left">
+          <thead>
+            <tr className={`border-b ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-white"}`}>
+              {["Name", "Description", "Shared With", "Created", "Last Modified", "Status"].map(col => (
+                <th key={col} className={`px-6 py-3 text-[12px] font-semibold ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{col}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {homepages.map(hp => (
+              <tr key={hp.id} className={`border-b transition-colors ${isDark ? "border-[#1C1C1E] hover:bg-[#111113]" : "border-[#EFF6FF] hover:bg-[#fafcff]"}`}>
+                {/* Name + 3-dot */}
+                <td className="px-6 py-4">
+                  {renameId === hp.id ? (
+                    <div className="flex items-center gap-2">
+                      <input value={renameName} onChange={e => setRenameName(e.target.value)}
+                        onKeyDown={e => { if (e.key === "Enter") handleRenameSubmit(); if (e.key === "Escape") setRenameId(null); }}
+                        autoFocus
+                        className={`px-2 py-1 text-[14px] border rounded-lg focus:outline-none w-40 ${isDark ? "bg-[#27272A] border-[#3F3F46] text-[#D4D4D8]" : "bg-white border-[#1D4ED8] text-slate-800"}`} />
+                      <button onClick={handleRenameSubmit} className="px-2 py-0.5 text-[11px] font-bold bg-[#1D4ED8] text-white rounded-md">Save</button>
+                      <button onClick={() => setRenameId(null)} className={`px-2 py-0.5 text-[11px] font-semibold border rounded-md ${isDark ? "border-[#3F3F46] text-[#9CA3AF]" : "border-[#E3ECFC] text-slate-500"}`}>Cancel</button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1.5 group">
+                      <button onClick={() => router.push(`/home/${hp.id}/edit`)} className={`text-[14px] font-semibold hover:underline ${isDark ? "text-[#60A5FA]" : "text-[#1D4ED8]"}`}>{hp.name}</button>
+                      <Tooltip title="Options">
+                        <IconButton size="small" onClick={e => openMenu(e, hp.id)}
+                          sx={{ p: 0.4, color: isDark ? "#52525B" : "#CBD5E1", "&:hover": { color: isDark ? "#D4D4D8" : "#334155", bgcolor: isDark ? "#27272A" : "#EFF6FF" }, borderRadius: "6px" }}>
+                          <DotsThreeVertical size={15} weight="bold" />
+                        </IconButton>
+                      </Tooltip>
+                    </div>
+                  )}
+                </td>
+                {/* Description */}
+                <td className={`px-6 py-4 text-[13px] ${hp.description ? (isDark ? "text-[#D4D4D8]" : "text-slate-600") : (isDark ? "text-[#3F3F46]" : "text-slate-300")}`}>
+                  {hp.description || "—"}
+                </td>
+                {/* Shared With */}
+                <td className={`px-6 py-4 text-[13px] max-w-xs ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>
+                  {hp.sharedWith.join(", ")}
+                </td>
+                {/* Created */}
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-2">
+                    <span className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{hp.created}</span>
+                    <Tooltip title="Date this home page was created">
+                      <button className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold transition-colors ${isDark ? "bg-[#27272A] text-[#71717A] hover:bg-[#3F3F46]" : "bg-slate-100 text-slate-400 hover:bg-slate-200"}`}>?</button>
+                    </Tooltip>
+                  </div>
+                </td>
+                {/* Last Modified */}
+                <td className={`px-6 py-4 text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{hp.lastModified}</td>
+                {/* Status */}
+                <td className="px-6 py-4">
+                  <GreenSwitch checked={hp.isActive} onChange={() => setHomepages(prev => prev.map(h => h.id === hp.id ? { ...h, isActive: !h.isActive } : h))} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Context menu */}
+      <Menu anchorEl={menuAnchor?.el} open={!!menuAnchor} onClose={closeMenu}
+        transformOrigin={{ horizontal: "left", vertical: "top" }}
+        anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
+        PaperProps={{ elevation: 4, sx: menuSx }}>
+        <MenuItem onClick={() => handleMenuAction("edit")}>Edit Dashboard</MenuItem>
+        <MenuItem onClick={() => handleMenuAction("rename")}>Rename Dashboard</MenuItem>
+        <MenuItem onClick={() => handleMenuAction("clone")}>Clone Dashboard</MenuItem>
+        <MenuItem onClick={() => handleMenuAction("permission")}>Dashboard Permission</MenuItem>
+      </Menu>
+
+      <CreateHomePageDrawer open={createOpen} onClose={() => setCreateOpen(false)} onCreate={handleCreate} isDark={isDark} />
+    </div>
+  );
+}
+
+// ---------------------------------------------
 //  Placeholder
 // ---------------------------------------------
 function PlaceholderPanel({ label }: { label: string }) {
@@ -2627,6 +3311,7 @@ export default function SettingsPage() {
       case "roles":        return <RolesPanel />;
       case "permission":   return <PermissionPanel />;
       case "modules":      return <ModulesAndFieldsPanel />;
+      case "homepage":     return <CustomizeHomepagePanel />;
       default:             return <PlaceholderPanel label={activeLabel} />;
     }
   };
