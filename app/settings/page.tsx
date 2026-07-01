@@ -25,6 +25,7 @@ import {
   ClockCounterClockwise,
 } from "@phosphor-icons/react";
 import { useTheme } from "@/components/ThemeContext";
+import { useRouter } from "next/navigation";
 
 // ---------------------------------------------
 //  Nav structure
