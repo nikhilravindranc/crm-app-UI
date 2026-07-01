@@ -276,5 +276,6 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
           </main>
         </div>
       </div>
+      </div>
   );
 }
