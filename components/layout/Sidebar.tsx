@@ -134,7 +134,7 @@ export default function Sidebar() {
                   href={href}
                   onClick={closeDrawer}
                   className={`
-                    flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13.5px] font-medium
+                    flex items-center gap-3 px-3 py-2.5 rounded-xl text-[16px] font-medium
                     transition-all duration-150 group
                     ${active
                       ? "bg-white text-[#1D4ED8]"
@@ -166,7 +166,7 @@ export default function Sidebar() {
             <Link
               href="/settings"
               onClick={closeDrawer}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13.5px] font-medium text-slate-600 hover:bg-white hover:text-[#1D4ED8] transition-all duration-150 group"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[16px] font-medium text-slate-600 hover:bg-white hover:text-[#1D4ED8] transition-all duration-150 group"
             >
               <GearSixIcon size={19} weight="duotone" className="text-slate-400 flex-shrink-0 group-hover:text-[#1D4ED8]" />
               Settings
@@ -214,7 +214,7 @@ export default function Sidebar() {
               key={href}
               href={href}
               className={`
-                flex items-center rounded-lg text-[13px] font-medium
+                flex items-center rounded-lg text-[16px] font-medium
                 transition-all duration-150 group relative
                 ${collapsed
                   ? "justify-center w-10 h-10 mx-auto"
@@ -276,7 +276,7 @@ export default function Sidebar() {
         ) : (
           <Link
             href="/settings"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium text-slate-600 hover:bg-[#EFF6FF] hover:text-[#1D4ED8] transition-all duration-150"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[16px] font-medium text-slate-600 hover:bg-[#EFF6FF] hover:text-[#1D4ED8] transition-all duration-150"
           >
             <GearSixIcon size={18} weight="duotone" className="text-slate-400 flex-shrink-0" />
             Settings
