@@ -118,7 +118,7 @@ export default function Sidebar() {
               <img
                 src="/logo.png"
                 alt="EVOQ CRM"
-                style={{ height: "30px", width: "auto" }}
+                style={{ height: "28px", width: "auto" }}
                 onError={e => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
               />
             </div>
