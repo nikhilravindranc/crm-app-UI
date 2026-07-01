@@ -10,6 +10,7 @@ import {
   GearSixIcon, XIcon,
 } from "@phosphor-icons/react";
 import { OWNER_AVATARS } from "@/lib/avatars";
+import { useTheme } from "@/components/ThemeContext";
 
 const MOBILE_BP = 1024;
 
@@ -26,6 +27,8 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname    = usePathname();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [isMobile,    setIsMobile]    = useState(false);
   const [collapsed,   setCollapsed]   = useState(false); // desktop
   const [drawerOpen,  setDrawerOpen]  = useState(false); // mobile
@@ -94,18 +97,20 @@ export default function Sidebar() {
             position: "fixed", top: 0, left: 0,
             width: "280px", height: "100vh",
             zIndex: 100,
-            backgroundColor: "#EFF6FF",
-            boxShadow: "4px 0 24px rgba(0,0,0,0.12)",
+            backgroundColor: isDark ? "#000000" : "#EFF6FF",
+            boxShadow: isDark ? "4px 0 24px rgba(0,0,0,0.5)" : "4px 0 24px rgba(0,0,0,0.12)",
             display: "flex", flexDirection: "column",
             transform: drawerOpen ? "translateX(0)" : "translateX(-100%)",
             transition: "transform 0.28s cubic-bezier(0.4, 0, 0.2, 1)",
           }}
         >
           {/* Header: close + brand */}
-          <div className="flex items-center gap-3 px-4 py-4 border-b border-[#E3ECFC]">
+          <div className={`flex items-center gap-3 px-4 py-4 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
             <button
               onClick={closeDrawer}
-              className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-[#E3ECFC] transition-all duration-150 flex-shrink-0"
+              className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-150 flex-shrink-0 ${
+                isDark ? "text-[#71717A] hover:text-[#F4F4F5] hover:bg-[#27272A]" : "text-slate-400 hover:text-slate-700 hover:bg-[#E3ECFC]"
+              }`}
               aria-label="Close menu"
             >
               <XIcon size={18} weight="bold" />
@@ -136,25 +141,31 @@ export default function Sidebar() {
                   className={`
                     flex items-center gap-3 px-3 py-2.5 rounded-xl text-[16px] font-medium
                     transition-all duration-150 group
-                    ${active
-                      ? "bg-white text-[#1D4ED8]"
-                      : "text-slate-600 hover:bg-white hover:text-[#1D4ED8]"
+                    ${isDark
+                      ? (active ? "bg-[#18181B] text-[#60A5FA]" : "text-[#A1A1AA] hover:bg-[#18181B] hover:text-[#60A5FA]")
+                      : (active ? "bg-white text-[#1D4ED8]" : "text-slate-600 hover:bg-white hover:text-[#1D4ED8]")
                     }
                   `}
                 >
                   <Icon
                     size={19}
                     weight="duotone"
-                    className={`flex-shrink-0 transition-colors ${active ? "text-[#1D4ED8]" : "text-slate-400 group-hover:text-[#1D4ED8]"}`}
+                    className={`flex-shrink-0 transition-colors ${
+                      isDark
+                        ? (active ? "text-[#60A5FA]" : "text-[#71717A] group-hover:text-[#60A5FA]")
+                        : (active ? "text-[#1D4ED8]" : "text-slate-400 group-hover:text-[#1D4ED8]")
+                    }`}
                   />
                   <span className="flex-1 truncate">{label}</span>
                   {badge && !active && (
-                    <span className="text-[10px] font-bold bg-[#1D4ED8]/10 text-[#1D4ED8] px-1.5 py-0.5 rounded-full leading-none">
+                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none ${
+                      isDark ? "bg-[#60A5FA]/15 text-[#60A5FA]" : "bg-[#1D4ED8]/10 text-[#1D4ED8]"
+                    }`}>
                       {badge}
                     </span>
                   )}
                   {active && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#1D4ED8] flex-shrink-0" />
+                    <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${isDark ? "bg-[#60A5FA]" : "bg-[#1D4ED8]"}`} />
                   )}
                 </Link>
               );
@@ -162,26 +173,28 @@ export default function Sidebar() {
           </nav>
 
           {/* Bottom: settings + profile */}
-          <div className="px-3 pb-4 border-t border-[#E3ECFC] pt-3 space-y-0.5">
+          <div className={`px-3 pb-4 border-t pt-3 space-y-0.5 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
             <Link
               href="/settings"
               onClick={closeDrawer}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[16px] font-medium text-slate-600 hover:bg-white hover:text-[#1D4ED8] transition-all duration-150 group"
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[16px] font-medium transition-all duration-150 group ${
+                isDark ? "text-[#A1A1AA] hover:bg-[#18181B] hover:text-[#60A5FA]" : "text-slate-600 hover:bg-white hover:text-[#1D4ED8]"
+              }`}
             >
-              <GearSixIcon size={19} weight="duotone" className="text-slate-400 flex-shrink-0 group-hover:text-[#1D4ED8]" />
+              <GearSixIcon size={19} weight="duotone" className={`flex-shrink-0 ${isDark ? "text-[#71717A] group-hover:text-[#60A5FA]" : "text-slate-400 group-hover:text-[#1D4ED8]"}`} />
               Settings
             </Link>
-            <div className="flex items-center gap-2.5 mt-1 px-3 py-2 rounded-xl bg-white border border-[#E3ECFC]">
+            <div className={`flex items-center gap-2.5 mt-1 px-3 py-2 rounded-xl border ${isDark ? "bg-[#18181B] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
               <div className="relative flex-shrink-0">
                 <Avatar
                   src={OWNER_AVATARS["PM SDL"]}
                   sx={{ width: 30, height: 30, bgcolor: "#1D4ED8", fontSize: "0.6rem", fontWeight: 800 }}
                 >PM</Avatar>
-                <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-400 border-2 border-white" />
+                <span className={`absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-400 border-2 ${isDark ? "border-[#18181B]" : "border-white"}`} />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[12px] font-semibold text-[#0C2472] truncate">PM SDL</p>
-                <p className="text-[10px] text-slate-400 truncate">Admin · dmops@socialdnalabs.com</p>
+                <p className={`text-[12px] font-semibold truncate ${isDark ? "text-[#F4F4F5]" : "text-[#0C2472]"}`}>PM SDL</p>
+                <p className={`text-[10px] truncate ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>Admin · dmops@socialdnalabs.com</p>
               </div>
             </div>
           </div>
@@ -195,13 +208,13 @@ export default function Sidebar() {
   ═══════════════════════════════════════════ */
   return (
     <aside
-      className="fixed left-0 flex flex-col z-50 select-none border-r border-[#E3ECFC] overflow-hidden"
+      className={`fixed left-0 flex flex-col z-50 select-none border-r overflow-hidden ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}
       style={{
         top: "72px",
         height: "calc(100vh - 72px)",
-        backgroundColor: "#E3ECFC",
+        backgroundColor: isDark ? "#000000" : "#E3ECFC",
         width: collapsed ? "68px" : "260px",
-        transition: "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        transition: "width 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease, border-color 0.2s ease",
       }}
     >
       {/* Navigation */}
@@ -220,32 +233,38 @@ export default function Sidebar() {
                   ? "justify-center w-10 h-10 mx-auto"
                   : "gap-3 px-3 py-2.5 w-full"
                 }
-                ${active
-                  ? "bg-[#EFF6FF] text-[#1D4ED8]"
-                  : "text-slate-600 hover:bg-[#EFF6FF] hover:text-[#1D4ED8]"
+                ${isDark
+                  ? (active ? "bg-[#18181B] text-[#60A5FA]" : "text-[#A1A1AA] hover:bg-[#18181B] hover:text-[#60A5FA]")
+                  : (active ? "bg-[#EFF6FF] text-[#1D4ED8]" : "text-slate-600 hover:bg-[#EFF6FF] hover:text-[#1D4ED8]")
                 }
               `}
             >
               <Icon
                 size={18}
                 weight="duotone"
-                className={`flex-shrink-0 transition-colors ${active ? "text-[#1D4ED8]" : "text-slate-400 group-hover:text-[#1D4ED8]"}`}
+                className={`flex-shrink-0 transition-colors ${
+                  isDark
+                    ? (active ? "text-[#60A5FA]" : "text-[#71717A] group-hover:text-[#60A5FA]")
+                    : (active ? "text-[#1D4ED8]" : "text-slate-400 group-hover:text-[#1D4ED8]")
+                }`}
               />
               {!collapsed && (
                 <>
                   <span className="flex-1 truncate">{label}</span>
                   {badge && !active && (
-                    <span className="text-[10px] font-bold bg-[#1D4ED8]/10 text-[#1D4ED8] px-1.5 py-0.5 rounded-full leading-none">
+                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none ${
+                      isDark ? "bg-[#60A5FA]/15 text-[#60A5FA]" : "bg-[#1D4ED8]/10 text-[#1D4ED8]"
+                    }`}>
                       {badge}
                     </span>
                   )}
                   {active && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#1D4ED8] flex-shrink-0" />
+                    <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${isDark ? "bg-[#60A5FA]" : "bg-[#1D4ED8]"}`} />
                   )}
                 </>
               )}
               {collapsed && badge && !active && (
-                <span className="absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-[#1D4ED8] border-2 border-white" />
+                <span className={`absolute top-0.5 right-0.5 w-2 h-2 rounded-full border-2 ${isDark ? "bg-[#60A5FA] border-[#000000]" : "bg-[#1D4ED8] border-white"}`} />
               )}
             </Link>
           );
@@ -261,13 +280,15 @@ export default function Sidebar() {
       </nav>
 
       {/* Bottom: Settings + Profile */}
-      <div className="px-2 pb-3 border-t border-[#E3ECFC] pt-2 space-y-0.5 flex-shrink-0">
+      <div className={`px-2 pb-3 border-t pt-2 space-y-0.5 flex-shrink-0 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
         {collapsed ? (
           <Tooltip title="Settings" placement="right" arrow>
             <span className="flex justify-center">
               <Link
                 href="/settings"
-                className="flex items-center justify-center w-10 h-10 rounded-lg text-slate-400 hover:text-[#1D4ED8] hover:bg-[#EFF6FF] transition-all duration-150"
+                className={`flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-150 ${
+                  isDark ? "text-[#71717A] hover:text-[#60A5FA] hover:bg-[#18181B]" : "text-slate-400 hover:text-[#1D4ED8] hover:bg-[#EFF6FF]"
+                }`}
               >
                 <GearSixIcon size={18} weight="duotone" />
               </Link>
@@ -276,9 +297,11 @@ export default function Sidebar() {
         ) : (
           <Link
             href="/settings"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[16px] font-medium text-slate-600 hover:bg-[#EFF6FF] hover:text-[#1D4ED8] transition-all duration-150"
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[16px] font-medium transition-all duration-150 ${
+              isDark ? "text-[#A1A1AA] hover:bg-[#18181B] hover:text-[#60A5FA]" : "text-slate-600 hover:bg-[#EFF6FF] hover:text-[#1D4ED8]"
+            }`}
           >
-            <GearSixIcon size={18} weight="duotone" className="text-slate-400 flex-shrink-0" />
+            <GearSixIcon size={18} weight="duotone" className={`flex-shrink-0 ${isDark ? "text-[#71717A]" : "text-slate-400"}`} />
             Settings
           </Link>
         )}
@@ -291,22 +314,22 @@ export default function Sidebar() {
                   src={OWNER_AVATARS["PM SDL"]}
                   sx={{ width: 34, height: 34, bgcolor: "#1D4ED8", fontSize: "0.6rem", fontWeight: 800, cursor: "pointer" }}
                 >PM</Avatar>
-                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-white" />
+                <span className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 ${isDark ? "border-[#000000]" : "border-white"}`} />
               </div>
             </span>
           </Tooltip>
         ) : (
-          <div className="flex items-center gap-2.5 mt-1 px-3 py-2 rounded-lg bg-[#EFF6FF] border border-[#E3ECFC]">
+          <div className={`flex items-center gap-2.5 mt-1 px-3 py-2 rounded-lg border ${isDark ? "bg-[#18181B] border-[#27272A]" : "bg-[#EFF6FF] border-[#E3ECFC]"}`}>
             <div className="relative flex-shrink-0">
               <Avatar
                 src={OWNER_AVATARS["PM SDL"]}
                 sx={{ width: 30, height: 30, bgcolor: "#1D4ED8", fontSize: "0.6rem", fontWeight: 800 }}
               >PM</Avatar>
-              <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-400 border-2 border-white" />
+              <span className={`absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-400 border-2 ${isDark ? "border-[#18181B]" : "border-white"}`} />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[12px] font-semibold text-[#0C2472] truncate">PM SDL</p>
-              <p className="text-[10px] text-slate-400 truncate">Admin · dmops@socialdnalabs.com</p>
+              <p className={`text-[12px] font-semibold truncate ${isDark ? "text-[#F4F4F5]" : "text-[#0C2472]"}`}>PM SDL</p>
+              <p className={`text-[10px] truncate ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>Admin · dmops@socialdnalabs.com</p>
             </div>
           </div>
         )}

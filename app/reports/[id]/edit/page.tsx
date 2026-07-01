@@ -135,7 +135,7 @@ export default function ReportEditPage({ params }: { params: Promise<{ id: strin
       { dealName: "Future Systems", amount: 45000, stage: "Qualified", accountName: "Future Systems", createdDate: "2024-06-01" },
     ];
 
-    const sampleAccounts = {
+    const sampleAccounts: Record<string, { accountName: string; industry: string; employees: number }> = {
       "Acme Corp": { accountName: "Acme Corp", industry: "Technology", employees: 250 },
       "Tech Solutions Inc": { accountName: "Tech Solutions Inc", industry: "Software", employees: 120 },
       "Global Industries": { accountName: "Global Industries", industry: "Manufacturing", employees: 5000 },
@@ -155,7 +155,6 @@ export default function ReportEditPage({ params }: { params: Promise<{ id: strin
         else if (col === "stage") row[col] = deal.stage;
         else if (col === "accountName") row[col] = deal.accountName;
         else if (col === "createdDate") row[col] = deal.createdDate;
-        else if (col === "accountName" && accounts[deal.accountName]) row[col] = accounts[deal.accountName].accountName;
         else if (col === "industry" && accounts[deal.accountName]) row[col] = accounts[deal.accountName].industry;
         else if (col === "employees" && accounts[deal.accountName]) row[col] = accounts[deal.accountName].employees;
       });
@@ -210,7 +209,7 @@ export default function ReportEditPage({ params }: { params: Promise<{ id: strin
   };
 
   const isStepCompleted = (step: StepType): boolean => {
-    if (step === "module") return primaryModule !== "";
+    if (step === "module") return Boolean(primaryModule);
     if (step === "relatedModules") return true; // Optional step
     if (step === "fieldsFilters") return selectedColumns.length > 0;
     if (step === "preview") return true;
@@ -630,7 +629,6 @@ export default function ReportEditPage({ params }: { params: Promise<{ id: strin
                   <Select
                     value={tempFilterField}
                     onChange={(e) => setTempFilterField(e.target.value)}
-                    placeholder="Select field"
                   >
                     <MenuItem value="">Select field to filter</MenuItem>
                     {getAvailableFilterFields().map(field => (
@@ -644,7 +642,6 @@ export default function ReportEditPage({ params }: { params: Promise<{ id: strin
                     <Select
                       value={tempFilterOperator}
                       onChange={(e) => setTempFilterOperator(e.target.value)}
-                      placeholder="Select operator"
                     >
                       <MenuItem value="">Select operator</MenuItem>
                       {getFilterOperators(tempFilterField).map(op => (
