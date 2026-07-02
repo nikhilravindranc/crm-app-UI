@@ -1603,12 +1603,12 @@ function FieldCell({ field }: { field: LField }) {
   return (
     <div className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-white hover:border-[#4A7AE8] transition-colors cursor-pointer group">
       <div className="flex items-center gap-0.5 min-w-0">
-        <span className="text-[14px] font-medium text-slate-700 truncate">{field.label}</span>
-        {field.required && <span className="text-red-500 text-[12px] ml-0.5">*</span>}
+        <span className="text-[15px] font-medium text-slate-700 truncate">{field.label}</span>
+        {field.required && <span className="text-red-500 text-[13px] ml-0.5">*</span>}
       </div>
       <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
-        {field.prefix && <span className="text-[12px] text-slate-600">{field.prefix} ·</span>}
-        {field.type && <span className="text-[12px] text-inherit">{field.type}</span>}
+        {field.prefix && <span className="text-[13px] text-slate-600">{field.prefix} ·</span>}
+        {field.type && <span className="text-[13px] text-inherit">{field.type}</span>}
         <span className="text-slate-300 group-hover:text-slate-500 text-[11px] font-bold">···</span>
       </div>
     </div>
@@ -1632,29 +1632,29 @@ function LayoutEditor({ module, layoutName, onClose }: {
     <div className="absolute inset-0 z-30 bg-white flex flex-col overflow-hidden">
       {/* Top bar */}
       <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#E3ECFC] flex-shrink-0">
-        <button onClick={onClose} className="flex items-center gap-1.5 text-[14px] font-semibold text-slate-600 transition-colors">
+        <button onClick={onClose} className="flex items-center gap-1.5 text-[15px] font-semibold text-slate-600 transition-colors">
           <ArrowLeft size={14} weight="bold" />
           {modDef?.label ?? module}
         </button>
-        <button className="flex items-center gap-1.5 px-2.5 py-1 border border-[#E3ECFC] rounded-lg text-[14px] font-semibold text-slate-700 hover:border-[#1D4ED8] bg-white transition-colors">
+        <button className="flex items-center gap-1.5 px-2.5 py-1 border border-[#E3ECFC] rounded-lg text-[15px] font-semibold text-slate-700 hover:border-[#1D4ED8] bg-white transition-colors">
           {layoutName} <CaretDown size={11} weight="bold" />
         </button>
         <IconButton size="small" sx={{ p:0.5, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
           <Gear size={14} weight="duotone" />
         </IconButton>
         <div className="flex-1" />
-        <button onClick={onClose} className="px-3 py-1.5 text-[14px] font-semibold text-slate-500 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">Cancel</button>
-        <button className="px-3 py-1.5 text-[14px] font-semibold text-slate-500 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">Save and Close</button>
-        <button className="px-4 py-1.5 text-[14px] font-bold text-white bg-[#1D4ED8] rounded-lg hover:bg-[#60A5FA] transition-colors">Save</button>
+        <button onClick={onClose} className="px-3 py-1.5 text-[15px] font-semibold text-slate-500 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">Cancel</button>
+        <button className="px-3 py-1.5 text-[15px] font-semibold text-slate-500 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">Save and Close</button>
+        <button className="px-4 py-1.5 text-[15px] font-bold text-white bg-[#1D4ED8] rounded-lg hover:bg-[#60A5FA] transition-colors">Save</button>
       </div>
 
       {/* Body */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left sidebar */}
-        <div className="w-[260px] flex-shrink-0 border-r border-[#E3ECFC] bg-[#f9fbff] overflow-y-auto">
+        <div className="w-[300px] flex-shrink-0 border-r border-[#E3ECFC] bg-[#f9fbff] overflow-y-auto">
           {tab === "create" && (<>
             <button onClick={() => setNfOpen(p=>!p)}
-              className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold uppercase tracking-wider hover:bg-[#EFF6FF]"
+              className="flex items-center justify-between w-full px-4 py-2.5 text-[13px] font-bold uppercase tracking-wider hover:bg-[#EFF6FF]"
               style={{ color: "#0C2472" }}>
               <span>New Fields</span>
               {nfOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
@@ -1665,42 +1665,42 @@ function LayoutEditor({ module, layoutName, onClose }: {
                   const Icon = ft.icon;
                   return (
                     <div key={ft.label}
-                      className="flex items-center gap-1.5 px-2 py-1.5 border border-[#E3ECFC] rounded-lg bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF] cursor-grab transition-colors text-[14px] font-medium"
+                      className="flex items-center gap-1.5 px-2 py-1.5 border border-[#E3ECFC] rounded-lg bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF] cursor-grab transition-colors text-[15px] font-medium whitespace-nowrap overflow-hidden"
                       style={{ color: "#0C2472" }}>
-                      <Icon size={11} color="#0C2472" weight="duotone" />
-                      {ft.label}
+                      <Icon size={11} color="#0C2472" weight="duotone" className="flex-shrink-0" />
+                      <span className="truncate">{ft.label}</span>
                     </div>
                   );
                 })}
               </div>
             )}
             <div className="px-3 pb-3">
-              <button className="flex items-center gap-1.5 w-full px-3 py-2 border border-dashed border-[#4A7AE8] rounded-lg text-[11.5px] font-bold text-[#1D4ED8] hover:bg-[#EFF6FF] transition-colors justify-center">
+              <button className="flex items-center gap-1.5 w-full px-3 py-2 border border-dashed border-[#4A7AE8] rounded-lg text-[12.5px] font-bold text-[#1D4ED8] hover:bg-[#EFF6FF] transition-colors justify-center">
                 <Plus size={11} weight="bold"/> NEW SECTION
               </button>
             </div>
             <button onClick={() => setUnusedOpen(p=>!p)}
-              className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold uppercase tracking-wider hover:bg-[#EFF6FF]"
+              className="flex items-center justify-between w-full px-4 py-2.5 text-[13px] font-bold uppercase tracking-wider hover:bg-[#EFF6FF]"
               style={{ color: "#0C2472" }}>
               <span>Unused Items</span>
               {unusedOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
             </button>
-            {unusedOpen && <div className="px-4 pb-2 text-[12px] text-slate-600">No unused items.</div>}
+            {unusedOpen && <div className="px-4 pb-2 text-[13px] text-slate-600">No unused items.</div>}
           </>)}
 
           {tab === "quickCreate" && (
             <div>
               <div className="flex items-center justify-between px-4 py-3 border-b border-[#E3ECFC]">
-                <span className="text-[14px] font-bold text-slate-700">Available Fields</span>
+                <span className="text-[15px] font-bold text-slate-700">Available Fields</span>
                 <IconButton size="small" sx={{ p:0.4, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
                   <MagnifyingGlass size={13} weight="duotone"/>
                 </IconButton>
               </div>
               {Object.entries(QC_AVAILABLE).map(([sec, flds]) => (
                 <div key={sec} className="px-3 pt-3">
-                  <div className="text-[12px] font-bold uppercase tracking-wider mb-1.5 px-1" style={{ color: "#0C2472" }}>{sec}</div>
+                  <div className="text-[13px] font-bold uppercase tracking-wider mb-1.5 px-1" style={{ color: "#0C2472" }}>{sec}</div>
                   {flds.map(f => (
-                    <div key={f} className="flex items-center gap-2 px-2 py-1.5 mb-0.5 border border-[#E3ECFC] rounded-lg bg-white text-[12px] cursor-grab hover:border-[#1D4ED8] hover:bg-[#EFF6FF] transition-colors" style={{ color: "#0C2472" }}>
+                    <div key={f} className="flex items-center gap-2 px-2 py-1.5 mb-0.5 border border-[#E3ECFC] rounded-lg bg-white text-[13px] cursor-grab hover:border-[#1D4ED8] hover:bg-[#EFF6FF] transition-colors" style={{ color: "#0C2472" }}>
                       <DotsSixVertical size={11} color="#E2E8F0"/>
                       {f}
                     </div>
@@ -1713,12 +1713,12 @@ function LayoutEditor({ module, layoutName, onClose }: {
           {tab === "detailView" && (
             <div>
               <button onClick={() => setUnusedOpen(p=>!p)}
-                className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold uppercase tracking-wider hover:bg-[#EFF6FF] border-b border-[#E3ECFC]"
+                className="flex items-center justify-between w-full px-4 py-2.5 text-[13px] font-bold uppercase tracking-wider hover:bg-[#EFF6FF] border-b border-[#E3ECFC]"
                 style={{ color: "#0C2472" }}>
                 <span>Unused Related List</span>
                 {unusedOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
               </button>
-              {unusedOpen && <div className="px-4 py-3 text-[12px] text-slate-600">No more related lists available.</div>}
+              {unusedOpen && <div className="px-4 py-3 text-[13px] text-slate-600">No more related lists available.</div>}
             </div>
           )}
         </div>
@@ -1732,7 +1732,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                 const labels = { create:"Create", quickCreate:"Quick Create", detailView:"Detail View" };
                 return (
                   <button key={t} onClick={() => setTab(t)}
-                    className={`px-5 py-2.5 text-[14px] font-semibold transition-all border-b-2 -mb-px ${
+                    className={`px-5 py-2.5 text-[15px] font-semibold transition-all border-b-2 -mb-px ${
                       tab===t ? "border-[#1D4ED8] text-[#1D4ED8]" : "border-transparent text-slate-400 hover:text-slate-600"
                     }`}>
                     {labels[t]}
@@ -1740,7 +1740,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                 );
               })}
             </div>
-            <button className="text-[14px] font-semibold text-[#1D4ED8] hover:underline pb-2.5">Preview</button>
+            <button className="text-[15px] font-semibold text-[#1D4ED8] hover:underline pb-2.5">Preview</button>
           </div>
 
           {/* CREATE */}
@@ -1750,7 +1750,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                 <div key={section.title} className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
                   <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#E3ECFC] bg-[#fafcff]">
                     <DotsSixVertical size={14} color="#E2E8F0"/>
-                    <span className="text-[12px] font-bold text-slate-700 flex-1">{section.title}</span>
+                    <span className="text-[13px] font-bold text-slate-700 flex-1">{section.title}</span>
                     <IconButton size="small" sx={{ p:0.3, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
                       <Gear size={13} weight="duotone"/>
                     </IconButton>
@@ -1759,9 +1759,9 @@ function LayoutEditor({ module, layoutName, onClose }: {
                     <div className="p-3 space-y-1.5">
                       {section.fields.slice(0,-2).map((f,i) => (
                         <div key={i} className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-[#fafcff] hover:border-[#4A7AE8] transition-colors cursor-pointer group">
-                          <span className="text-[14px] font-medium text-slate-700">{f.label}</span>
+                          <span className="text-[15px] font-medium text-slate-700">{f.label}</span>
                           <div className="flex items-center gap-1.5">
-                            {f.type && <span className="text-[12px] text-inherit">{f.type}</span>}
+                            {f.type && <span className="text-[13px] text-inherit">{f.type}</span>}
                             <span className="text-slate-300 group-hover:text-slate-500 text-[11px] font-bold">···</span>
                           </div>
                         </div>
@@ -1769,7 +1769,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                       <div className="grid grid-cols-2 gap-1.5">
                         {section.fields.slice(-2).map((f,i) => (
                           <div key={i} className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-[#fafcff] hover:border-[#4A7AE8] transition-colors cursor-pointer group">
-                            <span className="text-[14px] font-medium text-slate-700">{f.label}</span>
+                            <span className="text-[15px] font-medium text-slate-700">{f.label}</span>
                             <span className="text-slate-300 group-hover:text-slate-500 text-[11px] font-bold">···</span>
                           </div>
                         ))}
@@ -1795,8 +1795,8 @@ function LayoutEditor({ module, layoutName, onClose }: {
               <div className="w-[500px] bg-white rounded-xl border border-[#E3ECFC] overflow-hidden shadow-sm">
                 {QC_ACTIVE.map((f,i) => (
                   <div key={i} className="flex items-center px-4 py-2.5 border-b border-[#EFF6FF] last:border-0 group">
-                    <span className="text-[14px] text-slate-700 w-36 flex-shrink-0">{f.label}</span>
-                    <span className="flex-1 text-[14px] text-inherit">{f.type}</span>
+                    <span className="text-[15px] text-slate-700 w-36 flex-shrink-0">{f.label}</span>
+                    <span className="flex-1 text-[15px] text-inherit">{f.type}</span>
                     {f.removable && (
                       <button className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors opacity-60 hover:opacity-100">
                         <X size={11} color="#94A3B8" weight="bold"/>
@@ -1814,23 +1814,23 @@ function LayoutEditor({ module, layoutName, onClose }: {
               {/* Business Card */}
               <div className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-3 border-b border-[#E3ECFC]">
-                  <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Business Card</span>
+                  <span className="text-[13px] font-bold text-slate-500 uppercase tracking-wider">Business Card</span>
                   <div className="flex items-center gap-3">
                     <GreenSwitch checked={bcEnabled} onChange={() => setBcEnabled(p=>!p)}/>
-                    <button onClick={() => setBcCustomizeOpen(true)} className="text-[14px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>
+                    <button onClick={() => setBcCustomizeOpen(true)} className="text-[15px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>
                   </div>
                 </div>
                 <div className="divide-y divide-[#EFF6FF]">
                   {DV_BC_FIELDS.map((f,i) => (
                     <div key={i} className="flex items-center gap-3 px-4 py-2.5">
                       <DotsSixVertical size={13} color="#E2E8F0"/>
-                      <span className="text-[14px] text-slate-700 flex-1">{f.label}</span>
-                      <span className="text-[12px] text-inherit">{f.type}</span>
+                      <span className="text-[15px] text-slate-700 flex-1">{f.label}</span>
+                      <span className="text-[13px] text-inherit">{f.type}</span>
                     </div>
                   ))}
                 </div>
                 <div className="px-4 py-2.5 border-t border-[#EFF6FF]">
-                  <div className="flex items-center gap-1.5 text-[12px] text-slate-600">
+                  <div className="flex items-center gap-1.5 text-[13px] text-slate-600">
                     <Info size={11} weight="duotone"/>
                     You can add up to <span className="font-bold text-slate-700 mx-0.5">5 fields</span> to your Business Card.
                   </div>
@@ -1839,16 +1839,16 @@ function LayoutEditor({ module, layoutName, onClose }: {
               {/* Details */}
               <div className="bg-white rounded-xl border border-[#E3ECFC]">
                 <div className="px-4 py-2.5 border-b border-[#E3ECFC]">
-                  <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Details</span>
+                  <span className="text-[13px] font-bold text-slate-500 uppercase tracking-wider">Details</span>
                 </div>
-                <div className="mx-3 my-3 px-4 py-3 text-[14px] text-slate-600 bg-[#fafcff] rounded-lg border border-[#E3ECFC]">
+                <div className="mx-3 my-3 px-4 py-3 text-[15px] text-slate-600 bg-[#fafcff] rounded-lg border border-[#E3ECFC]">
                   Fields customized in the Create page will appear here.
                 </div>
               </div>
               {/* Related List */}
               <div className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
                 <div className="px-4 py-2.5 border-b border-[#E3ECFC]">
-                  <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Related List</span>
+                  <span className="text-[13px] font-bold text-slate-500 uppercase tracking-wider">Related List</span>
                 </div>
                 {[
                   { name:"Notes",       standard:true,  customize:false },
@@ -1857,23 +1857,23 @@ function LayoutEditor({ module, layoutName, onClose }: {
                 ].map(item => (
                   <div key={item.name} className="px-4 py-3 border-b border-[#EFF6FF] last:border-0">
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[14px] font-bold text-slate-700">{item.name}</span>
+                      <span className="text-[15px] font-bold text-slate-700">{item.name}</span>
                       <div className="flex items-center gap-1">
-                        {item.customize && <button className="text-[14px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>}
+                        {item.customize && <button className="text-[15px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>}
                         <IconButton size="small" sx={{ p:0.3, color:"#94A3B8", "&:hover":{color:"#EF4444"}, borderRadius:"6px" }}>
                           <Trash size={13} weight="duotone"/>
                         </IconButton>
                       </div>
                     </div>
                     {item.standard ? (
-                      <div className="text-center py-2 text-[12px] text-slate-600 bg-[#fafcff] rounded-lg border border-[#E3ECFC]">
+                      <div className="text-center py-2 text-[13px] text-slate-600 bg-[#fafcff] rounded-lg border border-[#E3ECFC]">
                         This is a standard {item.name} section.
                       </div>
                     ) : (
                       <div className="border border-[#E3ECFC] rounded-lg overflow-hidden">
                         <div className="grid grid-cols-2 bg-[#fafcff] border-b border-[#E3ECFC]">
-                          <div className="px-4 py-2 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">Title</div>
-                          <div className="px-4 py-2 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider border-l border-[#E3ECFC]">Status</div>
+                          <div className="px-4 py-2 text-[12.5px] font-bold text-slate-500 uppercase tracking-wider">Title</div>
+                          <div className="px-4 py-2 text-[12.5px] font-bold text-slate-500 uppercase tracking-wider border-l border-[#E3ECFC]">Status</div>
                         </div>
                       </div>
                     )}
@@ -1891,8 +1891,8 @@ function LayoutEditor({ module, layoutName, onClose }: {
           <div className="bg-white rounded-2xl shadow-xl w-[420px] max-h-[80vh] overflow-hidden flex flex-col">
             <div className="px-6 py-4 border-b border-[#E3ECFC] flex items-center justify-between">
               <div>
-                <h3 className="text-[16px] font-bold text-slate-900">Customize Business Card</h3>
-                <p className="text-[12px] text-slate-500 mt-0.5">Drag to reorder · Max 5 fields</p>
+                <h3 className="text-[17px] font-bold text-slate-900">Customize Business Card</h3>
+                <p className="text-[13px] text-slate-500 mt-0.5">Drag to reorder · Max 5 fields</p>
               </div>
               <button onClick={() => { setBcCustomizeOpen(false); setBcDragIdx(null); setBcDropIdx(null); }} className="text-slate-400 hover:text-slate-600">
                 <X size={18} weight="bold" />
@@ -1921,21 +1921,21 @@ function LayoutEditor({ module, layoutName, onClose }: {
                 >
                   <DotsSixVertical size={16} color={bcDropIdx === idx ? "#1D4ED8" : "#94A3B8"} weight="bold" />
                   <div className="flex-1 min-w-0">
-                    <div className="text-[14px] font-medium text-slate-800">{field.label}</div>
-                    <div className="text-[11px] text-slate-400 capitalize">{field.type}</div>
+                    <div className="text-[15px] font-medium text-slate-800">{field.label}</div>
+                    <div className="text-[12px] text-slate-400 capitalize">{field.type}</div>
                   </div>
-                  <span className="text-[11px] font-semibold text-slate-400 bg-slate-100 rounded px-1.5 py-0.5">{idx + 1}</span>
+                  <span className="text-[12px] font-semibold text-slate-400 bg-slate-100 rounded px-1.5 py-0.5">{idx + 1}</span>
                 </div>
               ))}
             </div>
 
             <div className="px-6 py-4 border-t border-[#E3ECFC] flex items-center justify-between">
-              <span className="text-[12px] text-slate-400">{bcFields.length}/5 fields</span>
+              <span className="text-[13px] text-slate-400">{bcFields.length}/5 fields</span>
               <div className="flex items-center gap-2">
-                <button onClick={() => { setBcCustomizeOpen(false); setBcDragIdx(null); setBcDropIdx(null); }} className="px-4 py-2 text-[14px] font-medium text-slate-600 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">
+                <button onClick={() => { setBcCustomizeOpen(false); setBcDragIdx(null); setBcDropIdx(null); }} className="px-4 py-2 text-[15px] font-medium text-slate-600 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">
                   Cancel
                 </button>
-                <button onClick={() => { setBcCustomizeOpen(false); setBcDragIdx(null); setBcDropIdx(null); }} className="px-4 py-2 text-[14px] font-medium text-white bg-[#1D4ED8] rounded-lg hover:bg-[#2563EB] transition-colors">
+                <button onClick={() => { setBcCustomizeOpen(false); setBcDragIdx(null); setBcDropIdx(null); }} className="px-4 py-2 text-[15px] font-medium text-white bg-[#1D4ED8] rounded-lg hover:bg-[#2563EB] transition-colors">
                   Save
                 </button>
               </div>
@@ -2036,7 +2036,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
       {/* Body */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left sidebar */}
-        <div className="w-[260px] flex-shrink-0 border-r border-[#E3ECFC] bg-[#f9fbff] overflow-y-auto">
+        <div className="w-[300px] flex-shrink-0 border-r border-[#E3ECFC] bg-[#f9fbff] overflow-y-auto">
           {tab === "detailView" ? (
             <>
               <button onClick={() => setUnusedOpen(p=>!p)}
@@ -2071,14 +2071,14 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
                           onDragStart={() => canDragFields && setDragField(ft.label)}
                           onDragEnd={() => setDragField(null)}
                           title={canDragFields ? undefined : "Add a section first"}
-                          className={`flex items-center gap-1.5 px-2 py-1.5 border rounded-lg transition-colors text-[14px] font-medium ${
+                          className={`flex items-center gap-1.5 px-2 py-1.5 border rounded-lg transition-colors text-[14px] font-medium whitespace-nowrap overflow-hidden ${
                             canDragFields
                               ? "border-[#E3ECFC] bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF] cursor-grab active:cursor-grabbing"
                               : "border-[#EFF6FF] bg-slate-50 text-slate-300 cursor-not-allowed"
                           }`}
                           style={canDragFields ? { color: "#0C2472" } : {}}>
-                          <Icon size={11} color={canDragFields ? "#1D4ED8" : "#CBD5E1"} weight="duotone" />
-                          {ft.label}
+                          <Icon size={11} color={canDragFields ? "#1D4ED8" : "#CBD5E1"} weight="duotone" className="flex-shrink-0" />
+                          <span className="truncate">{ft.label}</span>
                         </div>
                       );
                     })}
@@ -2299,8 +2299,8 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
           <div className="bg-white rounded-2xl shadow-xl w-[420px] max-h-[80vh] overflow-hidden flex flex-col">
             <div className="px-6 py-4 border-b border-[#E3ECFC] flex items-center justify-between">
               <div>
-                <h3 className="text-[16px] font-bold text-slate-900">Customize Business Card</h3>
-                <p className="text-[12px] text-slate-500 mt-0.5">Drag to reorder · Max 5 fields</p>
+                <h3 className="text-[17px] font-bold text-slate-900">Customize Business Card</h3>
+                <p className="text-[13px] text-slate-500 mt-0.5">Drag to reorder · Max 5 fields</p>
               </div>
               <button onClick={() => { setDvBcCustomizeOpen(false); setDvBcDragIdx(null); setDvBcDropIdx(null); }} className="text-slate-400 hover:text-slate-600">
                 <X size={18} weight="bold" />
@@ -2513,9 +2513,9 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
   return (
     <div className="flex-1 flex overflow-hidden bg-white">
       {/* Sub-sidebar */}
-      <div className="w-[200px] flex-shrink-0 border-r border-[#E3ECFC] bg-[#f9fbff] flex flex-col">
+      <div className="w-[220px] flex-shrink-0 border-r border-[#E3ECFC] bg-[#f9fbff] flex flex-col">
         <div className="flex items-center justify-between px-3 py-3 border-b border-[#E3ECFC]">
-          <button onClick={onBack} className="flex items-center gap-1 text-[12px] font-semibold text-slate-600 transition-colors">
+          <button onClick={onBack} className="flex items-center gap-1 text-[13px] font-semibold text-slate-600 transition-colors">
             <ArrowLeft size={13} weight="bold" />
             Modules
           </button>
@@ -2529,11 +2529,11 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
             const isActive = modKey === m.key;
             return (
               <button key={m.key} onClick={() => onSelect(m.key)}
-                className={`flex items-center gap-2.5 w-full px-3 py-2.5 text-[14px] font-medium transition-colors ${
+                className={`flex items-center gap-2.5 w-full px-3 py-2.5 text-[15px] font-medium transition-colors min-h-[40px] ${
                   isActive ? "bg-[#1D4ED8] text-white" : "text-slate-600 hover:bg-[#EFF6FF]"
                 }`}>
                 <Icon size={13} color={isActive ? "#fff" : m.color} weight="duotone" />
-                {m.label}
+                <span className="truncate">{m.label}</span>
               </button>
             );
           })}
@@ -2566,7 +2566,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
         <div className="px-6 border-b border-[#E3ECFC] flex items-center gap-1">
           {(["layouts","fields"] as const).map(t => (
             <button key={t} onClick={() => setTab(t)}
-              className={`px-4 py-2.5 text-[14px] font-semibold capitalize transition-all border-b-2 -mb-px ${
+              className={`px-4 py-2.5 text-[15px] font-semibold capitalize transition-all border-b-2 -mb-px ${
                 tab === t ? "border-[#1D4ED8] text-[#1D4ED8]" : "border-transparent text-slate-400 hover:text-slate-600"
               }`}>
               {t.charAt(0).toUpperCase() + t.slice(1)}
@@ -2591,21 +2591,21 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
                 <table className="w-full border-collapse text-left">
                   <thead>
                     <tr className="bg-[#f9fbff] border-b border-[#E3ECFC]">
-                      <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">Name</th>
-                      <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">Shared To</th>
-                      <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">Last Modified</th>
-                      <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider text-right">Status</th>
+                      <th className="px-4 py-3 text-[12.5px] font-bold text-slate-500 uppercase tracking-wider">Name</th>
+                      <th className="px-4 py-3 text-[12.5px] font-bold text-slate-500 uppercase tracking-wider">Shared To</th>
+                      <th className="px-4 py-3 text-[12.5px] font-bold text-slate-500 uppercase tracking-wider">Last Modified</th>
+                      <th className="px-4 py-3 text-[12.5px] font-bold text-slate-500 uppercase tracking-wider text-right">Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     {layouts.length === 0 ? (
-                      <tr><td colSpan={4} className="px-4 py-8 text-center text-[14px] text-slate-300">No records found.</td></tr>
+                      <tr><td colSpan={4} className="px-4 py-8 text-center text-[15px] text-slate-300">No records found.</td></tr>
                     ) : layouts.map((l, i) => (
                       <tr key={i} className="border-b border-[#EFF6FF] last:border-0 hover:bg-[#fafcff] transition-colors">
-                        <td className="px-4 py-3 text-[14px] font-semibold text-[#1D4ED8] cursor-pointer hover:underline" onClick={() => onOpenLayout(l.name)}>{l.name}</td>
-                        <td className="px-4 py-3 text-[12px] text-slate-500">{l.sharedTo}</td>
+                        <td className="px-4 py-3 text-[15px] font-semibold text-[#1D4ED8] cursor-pointer hover:underline" onClick={() => onOpenLayout(l.name)}>{l.name}</td>
+                        <td className="px-4 py-3 text-[13px] text-slate-500">{l.sharedTo}</td>
                         <td className="px-4 py-3">
-                          <div className="flex items-center gap-1.5 text-[12px] text-slate-500">
+                          <div className="flex items-center gap-1.5 text-[13px] text-slate-500">
                             <User size={12} weight="duotone" />
                             {l.lastMod}
                           </div>
@@ -2626,7 +2626,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
               <div className="flex items-center gap-1 mb-5 border-b border-[#E3ECFC]">
                 {(["listing","permissions"] as const).map(st => (
                   <button key={st} onClick={() => setFieldSubTab(st)}
-                    className={`px-4 py-2 text-[13px] font-semibold capitalize transition-all border-b-2 -mb-px ${
+                    className={`px-4 py-2 text-[14px] font-semibold capitalize transition-all border-b-2 -mb-px ${
                       fieldSubTab === st ? "border-[#1D4ED8] text-[#1D4ED8] bg-[#EFF6FF] rounded-t-md" : "border-transparent text-slate-500 hover:text-slate-700"
                     }`}>
                     {st === "listing" ? "Field Listing" : "Field Permissions"}
@@ -2670,21 +2670,21 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
                     <table className="w-full border-collapse text-left">
                       <thead>
                         <tr className="bg-[#f9fbff] border-b border-[#E3ECFC]">
-                          <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">Fields</th>
-                          <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">Data Type</th>
-                          <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">Custom Field</th>
-                          <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider">Layouts</th>
+                          <th className="px-4 py-3 text-[12.5px] font-bold text-slate-500 uppercase tracking-wider">Fields</th>
+                          <th className="px-4 py-3 text-[12.5px] font-bold text-slate-500 uppercase tracking-wider">Data Type</th>
+                          <th className="px-4 py-3 text-[12.5px] font-bold text-slate-500 uppercase tracking-wider">Custom Field</th>
+                          <th className="px-4 py-3 text-[12.5px] font-bold text-slate-500 uppercase tracking-wider">Layouts</th>
                         </tr>
                       </thead>
                       <tbody>
                         {filteredFields.length === 0 ? (
-                          <tr><td colSpan={4} className="px-4 py-10 text-center text-[14px] text-slate-300">No fields found.</td></tr>
+                          <tr><td colSpan={4} className="px-4 py-10 text-center text-[15px] text-slate-300">No fields found.</td></tr>
                         ) : filteredFields.map((f, i) => (
                           <tr key={i} className="border-b border-[#EFF6FF] last:border-0 hover:bg-[#fafcff] transition-colors">
-                            <td className="px-4 py-3 text-[13px] text-slate-700 font-medium">{f.name}</td>
-                            <td className="px-4 py-3 text-[13px] text-slate-500">{f.dataType}</td>
-                            <td className="px-4 py-3 text-[13px] text-slate-400">{f.custom ? "Yes" : ""}</td>
-                            <td className="px-4 py-3 text-[13px] font-semibold text-[#1D4ED8] cursor-pointer hover:underline">{f.layout}</td>
+                            <td className="px-4 py-3 text-[14px] text-slate-700 font-medium">{f.name}</td>
+                            <td className="px-4 py-3 text-[14px] text-slate-500">{f.dataType}</td>
+                            <td className="px-4 py-3 text-[14px] text-slate-400">{f.custom ? "Yes" : ""}</td>
+                            <td className="px-4 py-3 text-[14px] font-semibold text-[#1D4ED8] cursor-pointer hover:underline">{f.layout}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -2908,11 +2908,11 @@ function ModulesAndFieldsPanel() {
       <table className="w-full border-collapse text-left">
         <thead>
           <tr className={isDark ? "bg-[#111113] border-b border-[#27272A]" : "bg-[#f9fbff] border-b border-[#E3ECFC]"}>
-            <th className={`px-6 py-3 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Displayed In Tabs As</th>
-            <th className={`px-6 py-3 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Module Name</th>
-            <th className={`px-6 py-3 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Shared To</th>
-            <th className={`px-6 py-3 text-[11.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Last Modified</th>
-            <th className={`px-6 py-3 text-[11.5px] font-bold uppercase tracking-wider text-center ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Status</th>
+            <th className={`px-6 py-3 text-[12.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Displayed In Tabs As</th>
+            <th className={`px-6 py-3 text-[12.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Module Name</th>
+            <th className={`px-6 py-3 text-[12.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Shared To</th>
+            <th className={`px-6 py-3 text-[12.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Last Modified</th>
+            <th className={`px-6 py-3 text-[12.5px] font-bold uppercase tracking-wider text-center ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Status</th>
           </tr>
         </thead>
         <tbody>
@@ -2923,17 +2923,17 @@ function ModulesAndFieldsPanel() {
               <tr key={mod.key} className={`border-b transition-colors ${isDark ? "border-[#18181B] hover:bg-[#111113]" : "border-[#EFF6FF] hover:bg-[#fafcff]"}`}>
                 <td className="px-6 py-4">
                   <button onClick={() => { setSelectedMod(mod.key); setView("detail"); }}
-                    className={`flex items-center gap-2 text-[14px] font-semibold hover:underline ${isDark ? "text-[#60A5FA]" : "text-[#1D4ED8]"}`}>
+                    className={`flex items-center gap-2 text-[15px] font-semibold hover:underline ${isDark ? "text-[#60A5FA]" : "text-[#1D4ED8]"}`}>
                     <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ backgroundColor: mod.color + "18" }}>
                       <Icon size={12} color={mod.color} weight="duotone" />
                     </div>
                     {mod.label}
                   </button>
                 </td>
-                <td className={`px-6 py-4 text-[14px] ${isDark ? "text-[#D4D4D8]" : "text-slate-600"}`}>{mod.label}</td>
-                <td className={`px-6 py-4 text-[12px] ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{mod.sharedTo}</td>
+                <td className={`px-6 py-4 text-[15px] ${isDark ? "text-[#D4D4D8]" : "text-slate-600"}`}>{mod.label}</td>
+                <td className={`px-6 py-4 text-[13px] ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>{mod.sharedTo}</td>
                 <td className="px-6 py-4">
-                  <div className={`flex items-center gap-1.5 text-[12px] ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
+                  <div className={`flex items-center gap-1.5 text-[13px] ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>
                     <User size={12} weight="duotone" />
                     {mod.lastMod}
                   </div>
@@ -3240,7 +3240,7 @@ function SettingsSidebar({ activeItem, setActiveItem, isDark = false }: {
   const toggle = (key: string) => setCollapsed(p => ({ ...p, [key]: !p[key] }));
 
   return (
-    <div className={`w-full md:w-[220px] flex-shrink-0 border-b md:border-b-0 md:border-r flex flex-col overflow-y-auto max-h-[260px] md:max-h-none transition-colors duration-300 ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+    <div className={`w-full md:w-[240px] flex-shrink-0 border-b md:border-b-0 md:border-r flex flex-col overflow-y-auto max-h-[260px] md:max-h-none transition-colors duration-300 ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
       <div className={`px-4 pt-5 pb-4 border-b transition-colors duration-300 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-xl bg-[#1D4ED8] flex items-center justify-center shadow-sm flex-shrink-0">
@@ -3259,8 +3259,8 @@ function SettingsSidebar({ activeItem, setActiveItem, isDark = false }: {
           return (
             <div key={section.key}>
               <button onClick={() => toggle(section.key)}
-                className={`flex items-center justify-between w-full px-2 py-1.5 rounded-lg transition-colors group ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}>
-                <span className={`font-heading text-[12px] font-bold uppercase tracking-widest transition-colors ${isDark ? "text-[#475569] group-hover:text-[#64748B]" : "text-slate-400 group-hover:text-slate-500"}`}>
+                className={`flex items-center justify-between w-full px-2 py-1.5 rounded-lg transition-colors group min-h-[32px] ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}>
+                <span className={`font-heading text-[13px] font-bold uppercase tracking-widest transition-colors truncate ${isDark ? "text-[#475569] group-hover:text-[#64748B]" : "text-slate-400 group-hover:text-slate-500"}`}>
                   {section.label}
                 </span>
                 {isOpen ? <CaretUp size={10} color={isDark ? "#475569" : "#E2E8F0"} weight="bold" /> : <CaretDown size={10} color={isDark ? "#475569" : "#E2E8F0"} weight="bold" />}
@@ -3273,14 +3273,14 @@ function SettingsSidebar({ activeItem, setActiveItem, isDark = false }: {
                     const isActive = activeItem === item.key;
                     return (
                       <button key={item.key} onClick={() => setActiveItem(item.key)}
-                        className={`relative flex items-center gap-2 w-full px-3 py-2 rounded-xl text-[14px] font-medium transition-all ${
+                        className={`relative flex items-center gap-2 w-full px-3 py-2.5 rounded-xl text-[15px] font-medium transition-all min-h-[36px] ${
                           isActive
                             ? isDark ? "bg-[#27272A] text-[#D4D4D8] font-semibold" : "bg-[#EFF6FF] text-[#1D4ED8] font-semibold"
                             : isDark ? "text-[#9CA3AF] hover:bg-[#27272A] hover:text-[#FFFFFF]" : "text-slate-500 hover:bg-[#EFF6FF]/60 hover:text-slate-700"
                         }`}>
                         {isActive && <span className={`absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full ${isDark ? "bg-[#9CA3AF]" : "bg-[#1D4ED8]"}`} />}
                         <IIcon size={13} color={isActive ? (isDark ? "#6B8BA3" : "#1D4ED8") : "#94A3B8"} weight="duotone" />
-                        {item.label}
+                        <span className="truncate">{item.label}</span>
                       </button>
                     );
                   })}
@@ -3319,8 +3319,10 @@ export default function SettingsPage() {
 
   return (
     <div className="sidebar-content flex-1 flex overflow-hidden bg-[#EFF6FF] font-sans">
-      <SettingsSidebar activeItem={activeItem} setActiveItem={setActiveItem} />
-      {content()}
+      <div className="relative flex-1 flex overflow-hidden">
+        <SettingsSidebar activeItem={activeItem} setActiveItem={setActiveItem} />
+        {content()}
+      </div>
     </div>
   );
 }
