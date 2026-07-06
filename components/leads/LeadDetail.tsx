@@ -211,7 +211,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
       <Sidebar />
 
       <div className={`sidebar-content flex-1 flex flex-col min-h-screen overflow-auto transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
-        <TopBar />
+        {/* <TopBar /> */}
 
         <main className="flex-1 px-6 py-5 space-y-4 animate-fade-in">
 

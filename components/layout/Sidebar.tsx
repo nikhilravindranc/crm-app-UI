@@ -178,7 +178,7 @@ export default function Sidebar() {
               href="/settings"
               onClick={closeDrawer}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[16px] font-medium transition-all duration-150 group ${
-                isDark ? "text-[#A1A1AA] hover:bg-[#18181B] hover:text-[#60A5FA]" : "text-slate-600 hover:bg-white hover:text-[#1D4ED8]"
+                isDark ? "text-[#A1A1AA] hover:bg-[#27272A] hover:text-[#60A5FA]" : "text-slate-600 hover:bg-white hover:text-[#1D4ED8]"
               }`}
             >
               <GearSixIcon size={19} weight="duotone" className={`flex-shrink-0 ${isDark ? "text-[#71717A] group-hover:text-[#60A5FA]" : "text-slate-400 group-hover:text-[#1D4ED8]"}`} />
@@ -194,7 +194,7 @@ export default function Sidebar() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className={`text-[12px] font-semibold truncate ${isDark ? "text-[#F4F4F5]" : "text-[#0C2472]"}`}>PM SDL</p>
-                <p className={`text-[10px] truncate ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>Admin · dmops@socialdnalabs.com</p>
+                <p className={`text-[11px] truncate ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Admin · dmops@socialdnalabs.com</p>
               </div>
             </div>
           </div>
@@ -287,7 +287,7 @@ export default function Sidebar() {
               <Link
                 href="/settings"
                 className={`flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-150 ${
-                  isDark ? "text-[#71717A] hover:text-[#60A5FA] hover:bg-[#18181B]" : "text-slate-400 hover:text-[#1D4ED8] hover:bg-[#EFF6FF]"
+                  isDark ? "text-[#71717A] hover:text-[#60A5FA] hover:bg-[#27272A]" : "text-slate-400 hover:text-[#1D4ED8] hover:bg-[#EFF6FF]"
                 }`}
               >
                 <GearSixIcon size={18} weight="duotone" />
@@ -298,7 +298,7 @@ export default function Sidebar() {
           <Link
             href="/settings"
             className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[16px] font-medium transition-all duration-150 ${
-              isDark ? "text-[#A1A1AA] hover:bg-[#18181B] hover:text-[#60A5FA]" : "text-slate-600 hover:bg-[#EFF6FF] hover:text-[#1D4ED8]"
+              isDark ? "text-[#A1A1AA] hover:bg-[#27272A] hover:text-[#60A5FA]" : "text-slate-600 hover:bg-[#EFF6FF] hover:text-[#1D4ED8]"
             }`}
           >
             <GearSixIcon size={18} weight="duotone" className={`flex-shrink-0 ${isDark ? "text-[#71717A]" : "text-slate-400"}`} />
