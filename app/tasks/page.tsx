@@ -9,18 +9,20 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import Checkbox from "@mui/material/Checkbox";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { getDataGridSx, ROWS_PER_PAGE_OPTIONS } from "@/lib/dataGridStyles";
 import { useRouter } from "next/navigation";
 import {
   House, CaretRight, Plus, MagnifyingGlass, FunnelSimple,
-  DotsThreeVertical, Trash, List, GridFour,
+  DotsThreeVertical, Trash, List, GridFour, Columns, SortAscending, CaretDown,
   ClipboardText, CheckCircle, PencilSimple, Copy,
   Tag, CalendarBlank, Pulse, Flag, User, LinkSimple, UserCircle,
 } from "@phosphor-icons/react";
 import type { ElementType } from "react";
 import NewTaskDrawer from "@/components/tasks/NewTaskDrawer";
 import FiltersDrawer, { type FilterRow } from "@/components/leads/FiltersDrawer";
+import SortPopover, { type SortRow } from "@/components/leads/SortPopover";
 import { useTheme } from "@/components/ThemeContext";
 
 // ---------------------------------------------
@@ -103,6 +105,9 @@ export default function TasksPage() {
   const [moreAnchor, setMoreAnchor]       = useState<HTMLElement | null>(null);
   const [activeFilter, setActiveFilter]   = useState<TaskStatus | "All">("All");
   const [view, setView]                   = useState<"list" | "grid">("list");
+  const [sortAnchor,    setSortAnchor]    = useState<HTMLElement | null>(null);
+  const [activeSorts,   setActiveSorts]   = useState<SortRow[]>([]);
+  const [columnsAnchor, setColumnsAnchor] = useState<HTMLElement | null>(null);
 
   const TASK_FILTER_COLUMNS = [
     { value: "subject",   label: "Task · Subject"    },
@@ -114,6 +119,36 @@ export default function TasksPage() {
     { value: "relatedTo", label: "Task · Related To" },
     { value: "taskOwner", label: "Task · Task Owner" },
   ];
+
+  const TASK_SORT_COLUMNS = [
+    { value: "subject",   label: "Subject"    },
+    { value: "type",      label: "Type"       },
+    { value: "dueDate",   label: "Due Date"   },
+    { value: "status",    label: "Status"     },
+    { value: "priority",  label: "Priority"   },
+    { value: "contact",   label: "Contact"    },
+    { value: "relatedTo", label: "Related To" },
+    { value: "taskOwner", label: "Task Owner" },
+  ];
+
+  const TASK_COLUMN_TOGGLES: { key: keyof TaskRecord; label: string }[] = [
+    { key: "type",      label: "Type"       },
+    { key: "subject",   label: "Subject"    },
+    { key: "dueDate",   label: "Due Date"   },
+    { key: "status",    label: "Status"     },
+    { key: "priority",  label: "Priority"   },
+    { key: "contact",   label: "Contact"    },
+    { key: "relatedTo", label: "Related To" },
+    { key: "taskOwner", label: "Task Owner" },
+  ];
+  const [visibleColumns, setVisibleColumns] = useState<Set<string>>(
+    new Set(TASK_COLUMN_TOGGLES.map(c => c.key as string))
+  );
+  const toggleColumn = (key: string) => setVisibleColumns(prev => {
+    const next = new Set(prev);
+    if (next.has(key)) { if (next.size > 1) next.delete(key); } else next.add(key);
+    return next;
+  });
 
   const STATUS_TABS: (TaskStatus | "All")[] = ["All", "To-Do", "In Progress", "Backlog", "Completed"];
 
@@ -140,6 +175,16 @@ export default function TasksPage() {
     });
 
     return matchStatus && matchSearch && matchFilters;
+  });
+
+  const sorted = activeSorts.length === 0 ? filtered : [...filtered].sort((a, b) => {
+    for (const s of activeSorts) {
+      const av = (a as unknown as Record<string, string>)[s.column] ?? "";
+      const bv = (b as unknown as Record<string, string>)[s.column] ?? "";
+      const cmp = av.localeCompare(bv, undefined, { numeric: true, sensitivity: "base" });
+      if (cmp !== 0) return s.dir === "asc" ? cmp : -cmp;
+    }
+    return 0;
   });
 
   const statusCounts: Record<string, number> = { All: ALL_TASKS.length };
@@ -352,10 +397,57 @@ export default function TasksPage() {
               Filters{activeFilters.length > 0 ? ` (${activeFilters.length})` : ""}
             </Button>
 
+            {/* Columns button */}
+            <Button variant="outlined" size="small"
+              startIcon={<Columns size={14} weight="duotone" />}
+              onClick={e => setColumnsAnchor(e.currentTarget)}
+              sx={{
+                borderColor: isDark ? "#27272A" : "#E3ECFC",
+                color: isDark ? "#E4E4E7" : "#0C2472",
+                bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
+                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px",
+                "&:hover": { borderColor: "#1D4ED8", color: "#0C2472", bgcolor: isDark ? "#0A0A0A" : "#DCE6FB" },
+              }}>
+              Columns
+            </Button>
+
+            {/* Sort button */}
+            <Button variant="outlined" size="small"
+              startIcon={<SortAscending size={14} weight="duotone" />}
+              endIcon={<CaretDown size={11} weight="duotone" />}
+              onClick={e => setSortAnchor(e.currentTarget)}
+              sx={{
+                borderColor: isDark ? "#27272A" : "#E3ECFC",
+                color: isDark ? "#E4E4E7" : "#0C2472",
+                bgcolor: isDark ? "#0F0F0F" : "#E3ECFC",
+                borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "14px",
+                "&:hover": { borderColor: "#1D4ED8", color: "#0C2472", bgcolor: isDark ? "#0A0A0A" : "#DCE6FB" },
+              }}>
+              Sort{activeSorts.length > 0 ? ` (${activeSorts.length})` : ""}
+            </Button>
+
             <span className={`ml-auto text-[13px]/[16px] px-3 py-1.5 rounded-lg ${isDark ? "text-[#E4E4E7] bg-[#0A0A0A]" : "text-slate-400 bg-[#f9fbff]"}`}>
-              {filtered.length} of {ALL_TASKS.length} records
+              {sorted.length} of {ALL_TASKS.length} records
             </span>
           </div>
+
+          <Menu anchorEl={columnsAnchor} open={Boolean(columnsAnchor)} onClose={() => setColumnsAnchor(null)}
+            PaperProps={{ sx: { borderRadius: "12px", border: `1px solid ${isDark ? "#27272A" : "#E3ECFC"}`, boxShadow: isDark ? "0 8px 32px rgba(0,0,0,0.4)" : "0 8px 32px rgba(12,36,114,0.10)", minWidth: 190 } }}>
+            {TASK_COLUMN_TOGGLES.map(col => (
+              <MenuItem key={col.key} onClick={() => toggleColumn(col.key as string)}
+                sx={{ mx: 0.5, borderRadius: "8px", py: 0.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+                <Checkbox size="small" checked={visibleColumns.has(col.key as string)}
+                  sx={{ p: 0.5, color: isDark ? "#3F3F46" : "#CBD5E1", "&.Mui-checked": { color: "#1D4ED8" } }} />
+                <ListItemText primary={col.label} primaryTypographyProps={{ fontSize: "13.5px", color: isDark ? "#D4D4D8" : "#334155" }} />
+              </MenuItem>
+            ))}
+          </Menu>
+
+          <SortPopover
+            anchor={sortAnchor} onClose={() => setSortAnchor(null)}
+            sorts={activeSorts} onChange={setActiveSorts}
+            columns={TASK_SORT_COLUMNS}
+          />
 
           {/* -- Bulk action bar -- */}
           {selected.length > 0 && (
@@ -377,8 +469,8 @@ export default function TasksPage() {
           {/* -- Table (MUI DataGrid) -- */}
           <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`} style={{ height: 600 }}>
             <DataGrid<TaskRecord>
-              rows={filtered}
-              columns={gridColumns}
+              rows={sorted}
+              columns={gridColumns.filter(c => c.field === "actions" || visibleColumns.has(c.field))}
               getRowId={row => row.id}
               checkboxSelection
               disableRowSelectionOnClick
