@@ -179,7 +179,7 @@ function KV({ label, value, link, editable, onSave }: {
   return (
     <div className={`py-2.5 border-b last:border-0 flex items-start justify-between group ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
       <div className="flex-1 min-w-0">
-        <div className={`text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{label}</div>
+        <div className={`text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>{label}</div>
         {isEditing ? (
           <div className="flex items-center gap-1.5 -mx-2">
             <input
@@ -203,7 +203,7 @@ function KV({ label, value, link, editable, onSave }: {
         ) : (
           <div
             title={empty ? undefined : editValue}
-            className={`text-[14px] font-medium leading-snug truncate ${link ? (isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]") : empty ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>
+            className={`text-[14px] font-bold leading-snug truncate ${link ? (isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]") : empty ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>
             {empty ? "—" : editValue}
           </div>
         )}
@@ -1630,6 +1630,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
   const [bcFields, setBcFields] = useState(DV_BC_FIELDS);
   const [bcDragIdx, setBcDragIdx] = useState<number|null>(null);
   const [bcDropIdx, setBcDropIdx] = useState<number|null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const modDef = MODULE_DEFS.find(m => m.key === module);
 
   return (
@@ -1746,7 +1747,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
                 );
               })}
             </div>
-            <button className={`text-[15px] font-semibold hover:underline pb-2.5 ${isDark ? "text-[#60A5FA]" : "text-[#1D4ED8]"}`}>Preview</button>
+            <button onClick={() => setPreviewOpen(true)} className={`text-[15px] font-semibold hover:underline pb-2.5 ${isDark ? "text-[#60A5FA]" : "text-[#1D4ED8]"}`}>Preview</button>
           </div>
 
           {/* CREATE */}
@@ -1949,6 +1950,43 @@ function LayoutEditor({ module, layoutName, onClose }: {
                   Save
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Preview */}
+      {previewOpen && (
+        <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/40">
+          <div className={`w-[480px] max-h-[80%] rounded-2xl shadow-2xl overflow-hidden flex flex-col ${isDark ? "bg-[#0A0A0A]" : "bg-white"}`}>
+            <div className={`flex items-center justify-between px-5 py-3.5 border-b flex-shrink-0 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+              <span className={`text-[15.5px] font-extrabold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
+                {layoutName.trim() || "Untitled Layout"} &middot; Preview
+              </span>
+              <IconButton size="small" onClick={() => setPreviewOpen(false)} sx={{ p:0.4, color: isDark ? "#71717A" : "#94A3B8", "&:hover":{color: isDark ? "#60A5FA" : "#1D4ED8"}, borderRadius:"6px" }}>
+                <X size={14} weight="bold"/>
+              </IconButton>
+            </div>
+            <div className={`flex-1 overflow-y-auto px-5 py-5 space-y-5 ${isDark ? "bg-[#000000]" : "bg-[#F8FAFC]"}`}>
+              {LEADS_CREATE_SECTIONS.map(section => (
+                <div key={section.title}>
+                  <div className={`text-[12px] font-bold uppercase tracking-wider mb-2 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{section.title}</div>
+                  {section.fields.length === 0 ? (
+                    <div className={`text-[14px] italic ${isDark ? "text-[#52525B]" : "text-slate-300"}`}>No fields in this section.</div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3">
+                      {section.fields.map(f => (
+                        <div key={f.label} className={f.fullWidth ? "col-span-2" : undefined}>
+                          <label className={`block text-[11.5px] font-semibold mb-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{f.label}{f.required && <span className="text-red-500"> *</span>}</label>
+                          <div className={`px-3 py-2 rounded-lg border text-[14px] ${isDark ? "border-[#27272A] bg-[#18181B] text-[#52525B]" : "border-[#E3ECFC] bg-white text-slate-300"}`}>
+                            {f.prefix ? `${f.prefix} ` : ""}{f.label.toLowerCase()}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </div>
