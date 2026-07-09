@@ -17,6 +17,8 @@ const kpis = [
     spark: "#2F6FED",
     icon: <Users size={18} weight="duotone" />,
     sparkData: [120, 145, 132, 155, 148, 168, 175, 180, 192, 210, 225, 234],
+    sourceReportId: "r3",
+    sourceReportName: "Deal List",
   },
   {
     title: "Active Leads",
@@ -26,6 +28,8 @@ const kpis = [
     spark: "#2E9E7B",
     icon: <Lightning size={18} weight="duotone" />,
     sparkData: [98, 105, 115, 108, 125, 130, 120, 138, 142, 155, 148, 160],
+    sourceReportId: "r3",
+    sourceReportName: "Deal List",
   },
   {
     title: "Open Deals",
@@ -35,6 +39,8 @@ const kpis = [
     spark: "#E0883F",
     icon: <Handshake size={18} weight="duotone" />,
     sparkData: [88, 92, 85, 98, 102, 95, 108, 115, 112, 118, 125, 130],
+    sourceReportId: "r1",
+    sourceReportName: "Deal 30",
   },
   {
     title: "Booked Revenue",
@@ -44,6 +50,8 @@ const kpis = [
     spark: "#DB5E8C",
     icon: <Wallet size={18} weight="duotone" />,
     sparkData: [180, 195, 188, 210, 205, 218, 222, 225, 228, 230, 232, 235],
+    sourceReportId: "r4",
+    sourceReportName: "Account Wise Deal Summary",
   },
 ];
 

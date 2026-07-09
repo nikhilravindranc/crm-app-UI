@@ -11,6 +11,7 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import { ArrowSquareOut, TrendUp, TrendDown, Minus } from "@phosphor-icons/react";
 import { OWNER_AVATARS } from "@/lib/avatars";
+import SourceReportLink from "@/components/shared/SourceReportLink";
 
 type Deal = {
   id: string; name: string; amount: number;
@@ -110,6 +111,7 @@ export default function RecentDeals({ isDark = false }: { isDark?: boolean }) {
           </TableBody>
         </Table>
       </TableContainer>
+      <SourceReportLink reportId="r1" reportName="Deal 30" isDark={isDark} className="rounded-b-2xl" />
     </div>
   );
 }

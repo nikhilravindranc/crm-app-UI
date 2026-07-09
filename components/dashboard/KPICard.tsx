@@ -1,5 +1,7 @@
 ﻿"use client";
 import { ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import { FileText, ArrowSquareOut } from "@phosphor-icons/react";
 
 interface KPICardProps {
   title: string;
@@ -10,6 +12,8 @@ interface KPICardProps {
   spark: string;         // deeper coordinating shade for the sparkline
   sparkData: number[];
   isDark?: boolean;
+  sourceReportId?: string;
+  sourceReportName?: string;
 }
 
 export default function KPICard({
@@ -21,7 +25,10 @@ export default function KPICard({
   spark,
   sparkData,
   isDark = false,
+  sourceReportId,
+  sourceReportName,
 }: KPICardProps) {
+  const router = useRouter();
   const isPositive = trend >= 0;
 
   const W = 76;
@@ -92,6 +99,15 @@ export default function KPICard({
           </svg>
         </div>
       </div>
+
+      {sourceReportId && sourceReportName && (
+        <button onClick={(e) => { e.stopPropagation(); router.push(`/reports/${sourceReportId}`); }}
+          className={`w-full flex items-center justify-center gap-1 mt-4 pt-3 border-t text-[10.5px] font-bold transition-colors ${isDark ? "border-white/10 text-[#71717A] hover:text-[#93C5FD]" : "border-black/5 text-[#4A5675] hover:text-[#1D4ED8]"}`}>
+          <FileText size={11} weight="duotone" />
+          <span>Source Report: {sourceReportName}</span>
+          <ArrowSquareOut size={10} weight="bold" />
+        </button>
+      )}
     </div>
   );
 }

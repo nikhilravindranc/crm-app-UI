@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import InputBase from "@mui/material/InputBase";
@@ -25,7 +25,7 @@ import {
   ClockCounterClockwise,
 } from "@phosphor-icons/react";
 import { useTheme } from "@/components/ThemeContext";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 // ---------------------------------------------
 //  Nav structure
@@ -54,7 +54,7 @@ const SECTIONS = [
     key: "customization", label: "Customization", icon: Cube,
     items: [
       { key: "modules",  label: "Modules and Fields",  icon: Cube  },
-      { key: "homepage", label: "Customize Home page", icon: House },
+      { key: "homepage", label: "Dashboard Customization", icon: House },
     ],
   },
   {
@@ -1275,7 +1275,7 @@ const PERM_MODULES = [
   "Leads","Deals","Contacts","Accounts","Tasks",
   "Users","Organizations","Roles","Permissions",
   "Modules and Fields","Import","Export","Data Backup",
-  "Reports","Customize Home page",
+  "Reports","Dashboard Customization",
 ];
 
 const PERM_ROLES = [
@@ -3025,12 +3025,21 @@ interface HomePage {
   sharedWith: string[]; created: string; lastModified: string; isActive: boolean;
 }
 const INITIAL_HOMEPAGES: HomePage[] = [{
-  id: "hp1", name: "Home Page V1", description: "",
+  id: "hp1", name: "Dashboard V1", description: "",
   sharedWith: ["Administrator", "VP of Operations", "Operations Manager", "Support Executive", "Team Leader", "Super Admin"],
   created: "Jun 4, 2026", lastModified: "Jun 29, 2026", isActive: true,
 }];
 
 const ALL_ROLES = ["Administrator", "VP of Operations", "Operations Manager", "Support Executive", "Team Leader", "Super Admin"];
+
+// Complementary card palette — same soft-pastel fills used by Dashboard KPICards
+const HOMEPAGE_CARD_PALETTE = [
+  { fill: "#D6E4F9" }, // Lavender
+  { fill: "#D0E5E0" }, // Sage
+  { fill: "#FAE3D0" }, // Peach
+  { fill: "#F5D9E1" }, // Blush
+  { fill: "#E2E4EA" }, // Slate
+];
 
 function CreateHomePageDrawer({ open, onClose, onCreate, isDark }: {
   open: boolean; onClose: () => void;
@@ -3069,7 +3078,7 @@ function CreateHomePageDrawer({ open, onClose, onCreate, isDark }: {
           <div className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-sm ${isDark ? "bg-[#27272A]" : "bg-[#1D4ED8]"}`}>
             <House size={18} color={isDark ? "#A1A1AA" : "#fff"} weight="duotone" />
           </div>
-          <span className={`font-heading text-[16px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Create Home Page</span>
+          <span className={`font-heading text-[16px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Create Dashboard</span>
         </div>
         <Tooltip title="Close">
           <IconButton size="small" onClick={handleClose}
@@ -3081,8 +3090,8 @@ function CreateHomePageDrawer({ open, onClose, onCreate, isDark }: {
 
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
         <div>
-          <div className="font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500">Home Page Details</div>
-          <TextField label="Home Page Name" value={name} onChange={e => setName(e.target.value)}
+          <div className="font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500">Dashboard Details</div>
+          <TextField label="Dashboard Name" value={name} onChange={e => setName(e.target.value)}
             size="small" fullWidth sx={FX} />
         </div>
         <div>
@@ -3113,11 +3122,33 @@ function CreateHomePageDrawer({ open, onClose, onCreate, isDark }: {
   );
 }
 
+const HOMEPAGES_STORAGE_KEY = "dashboards-list";
+
+function loadHomepages(): HomePage[] {
+  if (typeof window === "undefined") return INITIAL_HOMEPAGES;
+  try {
+    const raw = localStorage.getItem(HOMEPAGES_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : INITIAL_HOMEPAGES;
+  } catch {
+    return INITIAL_HOMEPAGES;
+  }
+}
+
 function CustomizeHomepagePanel() {
   const router = useRouter();
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const [homepages, setHomepages] = useState<HomePage[]>(INITIAL_HOMEPAGES);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    setHomepages(loadHomepages());
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (hydrated) localStorage.setItem(HOMEPAGES_STORAGE_KEY, JSON.stringify(homepages));
+  }, [homepages, hydrated]);
   const [menuAnchor, setMenuAnchor] = useState<{ el: HTMLElement; id: string } | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [renameId, setRenameId] = useState<string | null>(null);
@@ -3157,8 +3188,11 @@ function CustomizeHomepagePanel() {
 
   const handleCreate = (name: string, sharedWith: string[]) => {
     const now = new Date().toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" });
-    setHomepages(prev => [...prev, { id: `hp${Date.now()}`, name, description: "", sharedWith, created: now, lastModified: now, isActive: true }]);
+    const newId = `hp${Date.now()}`;
+    setHomepages(prev => [...prev, { id: newId, name, description: "", sharedWith, created: now, lastModified: now, isActive: true }]);
     setCreateOpen(false);
+    // New dashboards start blank — the user builds the layout themselves in the editor.
+    router.push(`/home/${newId}/edit?new=true`);
   };
 
   const menuSx = {
@@ -3179,80 +3213,95 @@ function CustomizeHomepagePanel() {
       {/* Header */}
       <div className={`px-8 py-5 border-b flex items-start justify-between gap-6 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
         <div>
-          <div className={`text-[20px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Customize Home page</div>
+          <div className={`text-[20px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Dashboard Customization</div>
           <div className={`text-[13px] mt-1 max-w-lg leading-relaxed ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>
-            You can create custom homepages, making it easier for employees to complete their daily task efficiently.
+            You can create custom dashboards, making it easier for employees to complete their daily task efficiently.
           </div>
         </div>
         <Button variant="contained" onClick={() => setCreateOpen(true)}
           sx={{ bgcolor: "#1D4ED8", color: "white", borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "14px", px: 2.5, py: 1, boxShadow: "0 1px 8px #1D4ED833", "&:hover": { bgcolor: "#2563EB" }, "&:active": { bgcolor: "#0C2472" }, whiteSpace: "nowrap", flexShrink: 0 }}>
-          Create Home Page
+          Create Dashboard
         </Button>
       </div>
 
-      {/* Table */}
-      <div className="flex-1 overflow-auto">
-        <table className="w-full border-collapse text-left">
-          <thead>
-            <tr className={`border-b ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-white"}`}>
-              {["Name", "Description", "Shared With", "Created", "Last Modified", "Status"].map(col => (
-                <th key={col} className={`px-6 py-3 text-[12px] font-semibold ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{col}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {homepages.map(hp => (
-              <tr key={hp.id} className={`border-b transition-colors ${isDark ? "border-[#1C1C1E] hover:bg-[#111113]" : "border-[#EFF6FF] hover:bg-[#fafcff]"}`}>
-                {/* Name + 3-dot */}
-                <td className="px-6 py-4">
-                  {renameId === hp.id ? (
-                    <div className="flex items-center gap-2">
-                      <input value={renameName} onChange={e => setRenameName(e.target.value)}
-                        onKeyDown={e => { if (e.key === "Enter") handleRenameSubmit(); if (e.key === "Escape") setRenameId(null); }}
-                        autoFocus
-                        className={`px-2 py-1 text-[14px] border rounded-lg focus:outline-none w-40 ${isDark ? "bg-[#27272A] border-[#3F3F46] text-[#D4D4D8]" : "bg-white border-[#1D4ED8] text-slate-800"}`} />
-                      <button onClick={handleRenameSubmit} className="px-2 py-0.5 text-[11px] font-bold bg-[#1D4ED8] text-white rounded-md">Save</button>
-                      <button onClick={() => setRenameId(null)} className={`px-2 py-0.5 text-[11px] font-semibold border rounded-md ${isDark ? "border-[#3F3F46] text-[#9CA3AF]" : "border-[#E3ECFC] text-slate-500"}`}>Cancel</button>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-1.5 group">
-                      <button onClick={() => router.push(`/home/${hp.id}/edit`)} className={`text-[14px] font-semibold hover:underline ${isDark ? "text-[#60A5FA]" : "text-[#1D4ED8]"}`}>{hp.name}</button>
-                      <Tooltip title="Options">
-                        <IconButton size="small" onClick={e => openMenu(e, hp.id)}
-                          sx={{ p: 0.4, color: isDark ? "#52525B" : "#CBD5E1", "&:hover": { color: isDark ? "#D4D4D8" : "#334155", bgcolor: isDark ? "#27272A" : "#EFF6FF" }, borderRadius: "6px" }}>
-                          <DotsThreeVertical size={15} weight="bold" />
-                        </IconButton>
-                      </Tooltip>
-                    </div>
-                  )}
-                </td>
-                {/* Description */}
-                <td className={`px-6 py-4 text-[13px] ${hp.description ? (isDark ? "text-[#D4D4D8]" : "text-slate-600") : (isDark ? "text-[#3F3F46]" : "text-slate-300")}`}>
-                  {hp.description || "—"}
-                </td>
-                {/* Shared With */}
-                <td className={`px-6 py-4 text-[13px] max-w-xs ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>
-                  {hp.sharedWith.join(", ")}
-                </td>
-                {/* Created */}
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    <span className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{hp.created}</span>
-                    <Tooltip title="Date this home page was created">
-                      <button className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold transition-colors ${isDark ? "bg-[#27272A] text-[#71717A] hover:bg-[#3F3F46]" : "bg-slate-100 text-slate-400 hover:bg-slate-200"}`}>?</button>
+      {/* Widget preview cards — matches Dashboard KPICard visual language */}
+      <div className="flex-1 overflow-auto p-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {homepages.map((hp, i) => {
+            const palette = HOMEPAGE_CARD_PALETTE[i % HOMEPAGE_CARD_PALETTE.length];
+            return (
+              <div key={hp.id}
+                className="rounded-2xl p-6 relative overflow-hidden border hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
+                style={{
+                  backgroundColor: isDark ? "#18181B" : palette.fill,
+                  borderColor: isDark ? "#27272A" : "rgba(255,255,255,0.5)",
+                  boxShadow: "0 6px 24px rgba(15,23,42,0.06)",
+                }}
+                onClick={() => router.push(`/home/${hp.id}/edit`)}>
+                {/* Header: icon + status + menu */}
+                <div className="flex items-start justify-between gap-3 mb-4">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${isDark ? "bg-black/30 text-[#A1A1AA]" : "bg-[#f9fbff]/70 text-[#0C2472]"}`}>
+                    <House size={18} weight="duotone" />
+                  </div>
+                  <div className="flex items-center gap-1 flex-shrink-0" onClick={e => e.stopPropagation()}>
+                    <GreenSwitch checked={hp.isActive} onChange={() => setHomepages(prev => prev.map(h => h.id === hp.id ? { ...h, isActive: !h.isActive } : h))} />
+                    <Tooltip title="Options">
+                      <IconButton size="small" onClick={e => openMenu(e, hp.id)}
+                        sx={{ p: 0.4, color: isDark ? "#71717A" : "#4A5675", "&:hover": { color: isDark ? "#D4D4D8" : "#0C2472", bgcolor: isDark ? "#27272A" : "rgba(255,255,255,0.5)" }, borderRadius: "6px" }}>
+                        <DotsThreeVertical size={15} weight="bold" />
+                      </IconButton>
                     </Tooltip>
                   </div>
-                </td>
-                {/* Last Modified */}
-                <td className={`px-6 py-4 text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{hp.lastModified}</td>
-                {/* Status */}
-                <td className="px-6 py-4">
-                  <GreenSwitch checked={hp.isActive} onChange={() => setHomepages(prev => prev.map(h => h.id === hp.id ? { ...h, isActive: !h.isActive } : h))} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+
+                {/* Name */}
+                {renameId === hp.id ? (
+                  <div className="flex items-center gap-2 mb-2" onClick={e => e.stopPropagation()}>
+                    <input value={renameName} onChange={e => setRenameName(e.target.value)}
+                      onKeyDown={e => { if (e.key === "Enter") handleRenameSubmit(); if (e.key === "Escape") setRenameId(null); }}
+                      autoFocus
+                      className={`px-2 py-1 text-[14px] border rounded-lg focus:outline-none w-full ${isDark ? "bg-[#27272A] border-[#3F3F46] text-[#D4D4D8]" : "bg-white border-[#1D4ED8] text-slate-800"}`} />
+                    <button onClick={handleRenameSubmit} className="px-2 py-0.5 text-[11px] font-bold bg-[#1D4ED8] text-white rounded-md flex-shrink-0">Save</button>
+                  </div>
+                ) : (
+                  <p className={`text-[16px] font-extrabold tracking-tight leading-none mb-2 truncate ${isDark ? "text-[#FFFFFF]" : "text-[#0C2472]"}`}>
+                    {hp.name}
+                  </p>
+                )}
+
+                {/* Description */}
+                <p className={`text-[12.5px] leading-relaxed mb-4 line-clamp-2 ${hp.description ? (isDark ? "text-[#D4D4D8]" : "text-[#4A5675]") : (isDark ? "text-[#52525B]" : "text-slate-400")}`}>
+                  {hp.description || "No description"}
+                </p>
+
+                {/* Shared with chips */}
+                <div className="flex flex-wrap gap-1.5 mb-4">
+                  {hp.sharedWith.slice(0, 3).map(role => (
+                    <span key={role} className={`text-[10.5px] font-bold px-2 py-1 rounded-full ${isDark ? "bg-black/40 text-[#A1A1AA]" : "bg-[#f9fbff]/70 text-[#0C2472]"}`}>{role}</span>
+                  ))}
+                  {hp.sharedWith.length > 3 && (
+                    <span className={`text-[10.5px] font-bold px-2 py-1 rounded-full ${isDark ? "bg-black/40 text-[#A1A1AA]" : "bg-[#f9fbff]/70 text-[#0C2472]"}`}>+{hp.sharedWith.length - 3}</span>
+                  )}
+                </div>
+
+                {/* Footer: created / modified */}
+                <div className={`flex items-center justify-between text-[11px] font-semibold pt-3 border-t ${isDark ? "border-white/10 text-[#71717A]" : "border-black/5 text-[#4A5675]"}`}>
+                  <span>Created {hp.created}</span>
+                  <span>Modified {hp.lastModified}</span>
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Add new homepage tile */}
+          <button onClick={() => setCreateOpen(true)}
+            className={`rounded-2xl p-6 border-2 border-dashed flex flex-col items-center justify-center gap-2 min-h-[220px] transition-all duration-200 hover:shadow-lg ${isDark ? "border-[#27272A] hover:border-[#3F3F46] hover:bg-[#111113] text-[#71717A]" : "border-[#E3ECFC] hover:border-[#93C5FD] hover:bg-[#f9fbff] text-[#4A5675]"}`}>
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isDark ? "bg-[#18181B]" : "bg-[#EFF6FF]"}`}>
+              <Plus size={18} weight="bold" />
+            </div>
+            <span className="text-[13px] font-bold">Create Home Page</span>
+          </button>
+        </div>
       </div>
 
       {/* Context menu */}
@@ -3422,7 +3471,7 @@ function SettingsSidebar({ activeItem, setActiveItem, isDark = false }: {
           return (
             <div key={section.key}>
               <button onClick={() => toggle(section.key)}
-                className={`flex items-center justify-between w-full px-2 py-1.5 rounded-lg transition-colors group min-h-[32px] ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}>
+                className={`flex items-center justify-between w-full px-2 py-1.5 rounded-lg transition-colors group min-h-[32px] outline-none ${isDark ? "hover:bg-[#1D4ED8]/15" : "hover:bg-[#EFF6FF]"}`}>
                 <span className={`font-heading text-[13px] font-bold uppercase tracking-widest transition-colors truncate ${isDark ? "text-[#475569] group-hover:text-[#64748B]" : "text-slate-400 group-hover:text-slate-500"}`}>
                   {section.label}
                 </span>
@@ -3435,8 +3484,12 @@ function SettingsSidebar({ activeItem, setActiveItem, isDark = false }: {
                     const IIcon = item.icon;
                     const isActive = activeItem === item.key;
                     return (
-                      <button key={item.key} onClick={() => setActiveItem(item.key)}
-                        className={`relative flex items-center gap-2 w-full px-3 py-2.5 rounded-xl text-[15px] font-medium transition-all min-h-[36px] ${
+                      <button key={item.key}
+                        onClick={(e) => { setActiveItem(item.key); e.currentTarget.blur(); }}
+                        style={{ WebkitTapHighlightColor: "transparent" }}
+                        className={`relative flex items-center gap-2 w-full px-3 py-2.5 rounded-xl text-[15px] font-medium transition-all min-h-[36px] outline-none focus:outline-none focus:bg-none focus-visible:ring-2 ${
+                          isDark ? "focus-visible:ring-[#3B82F6]" : "focus-visible:ring-[#1D4ED8]"
+                        } ${
                           isActive
                             ? isDark ? "bg-[#27272A] text-[#F4F4F5] font-semibold" : "bg-[#EFF6FF] text-[#1D4ED8] font-semibold"
                             : isDark ? "text-[#9CA3AF] hover:bg-[#27272A] hover:text-[#FFFFFF]" : "text-slate-500 hover:bg-[#EFF6FF]/60 hover:text-slate-700"
@@ -3463,8 +3516,9 @@ function SettingsSidebar({ activeItem, setActiveItem, isDark = false }: {
 export default function SettingsPage() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const searchParams = useSearchParams();
 
-  const [activeItem, setActiveItem] = useState("personal");
+  const [activeItem, setActiveItem] = useState(searchParams.get("tab") || "personal");
   const activeLabel = SECTIONS.flatMap(s => s.items).find(i => i.key === activeItem)?.label ?? "";
 
   const content = () => {
