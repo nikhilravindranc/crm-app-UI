@@ -32,7 +32,7 @@ export default function WidgetCard({
     <div
       className={`rounded-2xl border h-full backdrop-blur-xl transition-all duration-200 hover:shadow-lg ${noPadding ? "overflow-hidden" : "p-6"} ${className}`}
       style={{
-        backgroundColor: isDark ? "#0A0A0A" : "rgba(255, 255, 255, 0.6)",
+        backgroundColor: isDark ? "#18181B" : "rgba(255, 255, 255, 0.6)",
         borderColor: isDark ? "#27272A" : "rgba(255,255,255,0.3)",
         boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08)",
       }}
