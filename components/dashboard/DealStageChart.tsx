@@ -1,4 +1,5 @@
 "use client";
+import SourceReportLink from "@/components/shared/SourceReportLink";
 import {
   BarChart,
   Bar,
@@ -48,7 +49,7 @@ export default function DealStageChart({ isDark = false }: { isDark?: boolean })
   return (
     <div className="rounded-2xl p-6 border h-full backdrop-blur-xl transition-colors duration-300"
       style={{
-        backgroundColor: isDark ? "#0A0A0A" : "rgba(255, 255, 255, 0.6)",
+        backgroundColor: isDark ? "#18181B" : "rgba(255, 255, 255, 0.6)",
         borderColor: isDark ? "#27272A" : "rgba(255,255,255,0.3)",
         boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08)",
       }}>
@@ -86,6 +87,7 @@ export default function DealStageChart({ isDark = false }: { isDark?: boolean })
           </Bar>
         </BarChart>
       </ResponsiveContainer>
+      <SourceReportLink reportId="r2" reportName="Deal with Stage" isDark={isDark} className="-mx-6 -mb-6 mt-4 rounded-b-2xl" />
     </div>
   );
 }

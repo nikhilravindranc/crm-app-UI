@@ -4,13 +4,12 @@ import { usePathname, useRouter } from "next/navigation";
 import IconButton from "@mui/material/IconButton";
 import Badge from "@mui/material/Badge";
 import InputBase from "@mui/material/InputBase";
-import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Divider from "@mui/material/Divider";
-import { ListIcon, MagnifyingGlass, Bell, Plus, Command, UserCircleIcon, SignOutIcon, Sun, Moon } from "@phosphor-icons/react";
+import { ListIcon, MagnifyingGlass, Bell, Command, UserCircleIcon, SignOutIcon, Sun, Moon } from "@phosphor-icons/react";
 import { OWNER_AVATARS } from "@/lib/avatars";
 import { useTheme } from "@/components/ThemeContext";
 
@@ -304,23 +303,6 @@ export default function AppHeader() {
             <Command size={13} color={isDark ? "#52525B" : "#CBD5E1"} weight="duotone" />
           </Tooltip>
         </div>
-
-        {/* New Deal */}
-        <Button
-          variant="contained"
-          size="small"
-          startIcon={<Plus size={16} weight="duotone" />}
-          sx={{
-            bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "#fff",
-            borderRadius: "9px", textTransform: "none",
-            fontWeight: 700, fontSize: "0.78rem", px: 2, py: 0.9,
-            boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", whiteSpace: "nowrap",
-            "&:hover": { bgcolor: isDark ? "#3F3F46" : "#60A5FA", boxShadow: isDark ? "none" : "0 2px 14px 0 #60A5FA55" },
-            "&:active": { bgcolor: isDark ? "#52525B" : "#0C2472" },
-          }}
-        >
-          New Deal
-        </Button>
 
         {/* Dark / Light toggle */}
         <ThemeToggleButton isDark={isDark} onToggle={toggleTheme} />
