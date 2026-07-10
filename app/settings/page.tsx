@@ -3023,6 +3023,9 @@ function ModulesAndFieldsPanel() {
 interface HomePage {
   id: string; name: string; description: string;
   sharedWith: string[]; created: string; lastModified: string; isActive: boolean;
+  shareMode?: "private" | "all" | "roles";
+  filters?: { region: string; dateRange: string; owner: string };
+  locked?: boolean;
 }
 const INITIAL_HOMEPAGES: HomePage[] = [{
   id: "hp1", name: "Dashboard V1", description: "",
@@ -3041,21 +3044,49 @@ const HOMEPAGE_CARD_PALETTE = [
   { fill: "#E2E4EA" }, // Slate
 ];
 
+const STEPPER_STEPS = [
+  { key: "name",    label: "Name Dashboard" },
+  { key: "share",   label: "Share Options" },
+  { key: "filters", label: "Global Filters" },
+  { key: "lock",    label: "Lock / Unlock" },
+  { key: "preview", label: "Save & Preview" },
+];
+
+const REGION_OPTIONS = ["All Regions", "North America", "EMEA", "APAC", "LATAM"];
+const DATE_RANGE_OPTIONS = ["Last 7 Days", "Last 30 Days", "Last Quarter", "Year to Date", "Custom"];
+const OWNER_OPTIONS = ["All Owners", "Me", "My Team", ...ALL_ROLES];
+
 function CreateHomePageDrawer({ open, onClose, onCreate, isDark }: {
   open: boolean; onClose: () => void;
-  onCreate: (name: string, sharedWith: string[]) => void;
+  onCreate: (name: string, sharedWith: string[], shareMode: "private" | "all" | "roles", filters: { region: string; dateRange: string; owner: string }, locked: boolean) => void;
   isDark: boolean;
 }) {
+  const [step, setStep] = useState(0);
   const [name, setName] = useState("");
+  const [shareMode, setShareMode] = useState<"private" | "all" | "roles">("all");
   const [sharedWith, setSharedWith] = useState<string[]>([...ALL_ROLES]);
+  const [region, setRegion] = useState(REGION_OPTIONS[0]);
+  const [dateRange, setDateRange] = useState(DATE_RANGE_OPTIONS[1]);
+  const [owner, setOwner] = useState(OWNER_OPTIONS[0]);
+  const [locked, setLocked] = useState(false);
 
   const toggleRole = (role: string) =>
     setSharedWith(prev => prev.includes(role) ? prev.filter(r => r !== role) : [...prev, role]);
 
-  const handleSubmit = () => {
-    if (name.trim()) { onCreate(name.trim(), sharedWith); setName(""); setSharedWith([...ALL_ROLES]); }
+  const resetState = () => {
+    setStep(0); setName(""); setShareMode("all"); setSharedWith([...ALL_ROLES]);
+    setRegion(REGION_OPTIONS[0]); setDateRange(DATE_RANGE_OPTIONS[1]); setOwner(OWNER_OPTIONS[0]);
+    setLocked(false);
   };
-  const handleClose = () => { onClose(); setName(""); setSharedWith([...ALL_ROLES]); };
+
+  const handleSubmit = () => {
+    if (!name.trim()) return;
+    onCreate(name.trim(), shareMode === "roles" ? sharedWith : [], shareMode, { region, dateRange, owner }, locked);
+    resetState();
+  };
+  const handleClose = () => { onClose(); resetState(); };
+
+  const canAdvance = step !== 0 || !!name.trim();
 
   const FX = {
     "& .MuiOutlinedInput-root": {
@@ -3069,6 +3100,12 @@ function CreateHomePageDrawer({ open, onClose, onCreate, isDark }: {
     "& .MuiInputLabel-root": { fontSize: "0.79rem", ...(isDark ? {} : { color: "#6B7280" }) },
     "& .MuiInputLabel-root.Mui-focused": { color: isDark ? "#A1A1AA" : "inherit" },
   };
+
+  const SHARE_MODES: { key: "private" | "all" | "roles"; label: string; desc: string; icon: React.ElementType }[] = [
+    { key: "private", label: "Private", desc: "Only visible to you", icon: Lock },
+    { key: "all", label: "All Users", desc: "Visible to everyone in the org", icon: Globe },
+    { key: "roles", label: "Specific Roles", desc: "Choose which roles can view this", icon: UsersThree },
+  ];
 
   return (
     <Drawer anchor="right" open={open} onClose={handleClose}
@@ -3088,35 +3125,199 @@ function CreateHomePageDrawer({ open, onClose, onCreate, isDark }: {
         </Tooltip>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
-        <div>
-          <div className="font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500">Dashboard Details</div>
-          <TextField label="Dashboard Name" value={name} onChange={e => setName(e.target.value)}
-            size="small" fullWidth sx={FX} />
-        </div>
-        <div>
-          <div className="font-heading text-[12px] font-bold mb-3 uppercase tracking-wider text-slate-500">Share With</div>
-          <div className="space-y-1">
-            {ALL_ROLES.map(role => (
-              <label key={role} className={`flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer transition-colors ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}>
-                <Checkbox size="small" checked={sharedWith.includes(role)} onChange={() => toggleRole(role)}
-                  sx={{ p: 0.3, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked": { color: "#1D4ED8" } }} />
-                <span className={`text-[14px] font-medium ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{role}</span>
-              </label>
-            ))}
-          </div>
+      {/* Stepper header */}
+      <div className={`px-6 py-4 border-b flex-shrink-0 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+        <div className="flex items-center">
+          {STEPPER_STEPS.map((s, i) => (
+            <div key={s.key} className="flex items-center flex-1 last:flex-none">
+              <div className="flex flex-col items-center gap-1.5 flex-shrink-0">
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-bold transition-colors ${
+                  i < step
+                    ? "bg-[#1D4ED8] text-white"
+                    : i === step
+                      ? isDark ? "bg-[#1D4ED8]/20 text-[#93C5FD] ring-2 ring-[#1D4ED8]" : "bg-[#1D4ED8]/10 text-[#1D4ED8] ring-2 ring-[#1D4ED8]"
+                      : isDark ? "bg-[#27272A] text-[#71717A]" : "bg-[#E3ECFC] text-slate-400"
+                }`}>
+                  {i < step ? <CheckCircle size={15} weight="bold" /> : i + 1}
+                </div>
+                <span className={`text-[10px] font-semibold text-center max-w-[70px] leading-tight ${
+                  i === step ? (isDark ? "text-[#F4F4F5]" : "text-slate-900") : (isDark ? "text-[#71717A]" : "text-slate-400")
+                }`}>{s.label}</span>
+              </div>
+              {i < STEPPER_STEPS.length - 1 && (
+                <div className={`flex-1 h-[2px] mx-1.5 mb-4 rounded-full transition-colors ${
+                  i < step ? "bg-[#1D4ED8]" : isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"
+                }`} />
+              )}
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className={`flex items-center justify-end gap-3 px-6 py-4 border-t flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
-        <Button variant="text" onClick={handleClose}
-          sx={{ color: isDark ? "#A1A1AA" : "#64748B", textTransform: "none", fontWeight: 600, fontSize: "0.82rem", borderRadius: "9px", px: 2.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
-          Cancel
-        </Button>
-        <Button variant="contained" onClick={handleSubmit} disabled={!name.trim()}
-          sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB" }, "&:disabled": { bgcolor: isDark ? "#1C1C1E" : "#E2E8F0", color: isDark ? "#52525B" : "#CBD5E1" } }}>
-          Create
-        </Button>
+      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+        {/* Step 1 — Name Dashboard */}
+        {step === 0 && (
+          <div>
+            <div className="font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500">Dashboard Details</div>
+            <TextField label="Dashboard Name" placeholder="e.g. Sales Performance Overview" value={name} onChange={e => setName(e.target.value)}
+              size="small" fullWidth autoFocus sx={FX} />
+            <p className={`text-[12px] mt-2.5 ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>Give your dashboard a clear, descriptive name so it's easy to find later.</p>
+          </div>
+        )}
+
+        {/* Step 2 — Share Options */}
+        {step === 1 && (
+          <div className="space-y-5">
+            <div>
+              <div className="font-heading text-[12px] font-bold mb-3 uppercase tracking-wider text-slate-500">Who can access this dashboard?</div>
+              <div className="space-y-2">
+                {SHARE_MODES.map(mode => (
+                  <button key={mode.key} type="button" onClick={() => setShareMode(mode.key)}
+                    className={`w-full flex items-start gap-3 px-4 py-3 rounded-xl border text-left transition-colors ${
+                      shareMode === mode.key
+                        ? isDark ? "border-[#1D4ED8] bg-[#1D4ED8]/10" : "border-[#1D4ED8] bg-[#1D4ED8]/5"
+                        : isDark ? "border-[#27272A] hover:bg-[#27272A]" : "border-[#E3ECFC] hover:bg-[#EFF6FF]"
+                    }`}>
+                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                      shareMode === mode.key ? "bg-[#1D4ED8]" : isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"
+                    }`}>
+                      <mode.icon size={17} weight="duotone" color={shareMode === mode.key ? "#fff" : isDark ? "#A1A1AA" : "#64748B"} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className={`text-[14px] font-semibold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>{mode.label}</div>
+                      <div className={`text-[12px] mt-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{mode.desc}</div>
+                    </div>
+                    {shareMode === mode.key && <CheckCircle size={18} weight="fill" color="#1D4ED8" className="flex-shrink-0 mt-0.5" />}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {shareMode === "roles" && (
+              <div>
+                <div className="font-heading text-[12px] font-bold mb-3 uppercase tracking-wider text-slate-500">Select Roles</div>
+                <div className="space-y-1">
+                  {ALL_ROLES.map(role => (
+                    <label key={role} className={`flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer transition-colors ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}>
+                      <Checkbox size="small" checked={sharedWith.includes(role)} onChange={() => toggleRole(role)}
+                        sx={{ p: 0.3, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked": { color: "#1D4ED8" } }} />
+                      <span className={`text-[14px] font-medium ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{role}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Step 3 — Global Filters */}
+        {step === 2 && (
+          <div className="space-y-5">
+            <div>
+              <div className="font-heading text-[12px] font-bold mb-1 uppercase tracking-wider text-slate-500">Global Filters</div>
+              <p className={`text-[12px] mb-4 ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>These filters apply across every widget on the dashboard by default. Viewers can still adjust them unless locked.</p>
+            </div>
+            <FormControl size="small" fullWidth sx={FX}>
+              <InputLabel>Region</InputLabel>
+              <Select label="Region" value={region} onChange={e => setRegion(e.target.value)}
+                MenuProps={{ PaperProps: { sx: { bgcolor: isDark ? "#1C1C1E" : "#fff" } } }}>
+                {REGION_OPTIONS.map(r => <MenuItem key={r} value={r}>{r}</MenuItem>)}
+              </Select>
+            </FormControl>
+            <FormControl size="small" fullWidth sx={FX}>
+              <InputLabel>Date Range</InputLabel>
+              <Select label="Date Range" value={dateRange} onChange={e => setDateRange(e.target.value)}
+                MenuProps={{ PaperProps: { sx: { bgcolor: isDark ? "#1C1C1E" : "#fff" } } }}>
+                {DATE_RANGE_OPTIONS.map(d => <MenuItem key={d} value={d}>{d}</MenuItem>)}
+              </Select>
+            </FormControl>
+            <FormControl size="small" fullWidth sx={FX}>
+              <InputLabel>Owner</InputLabel>
+              <Select label="Owner" value={owner} onChange={e => setOwner(e.target.value)}
+                MenuProps={{ PaperProps: { sx: { bgcolor: isDark ? "#1C1C1E" : "#fff" } } }}>
+                {OWNER_OPTIONS.map(o => <MenuItem key={o} value={o}>{o}</MenuItem>)}
+              </Select>
+            </FormControl>
+          </div>
+        )}
+
+        {/* Step 4 — Lock / Unlock */}
+        {step === 3 && (
+          <div>
+            <div className="font-heading text-[12px] font-bold mb-1 uppercase tracking-wider text-slate-500">Lock Dashboard</div>
+            <p className={`text-[12px] mb-4 ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>Locking prevents viewers from changing filters or rearranging widgets — the dashboard shows exactly as designed.</p>
+            <div className={`flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl border ${isDark ? "border-[#27272A] bg-[#111113]" : "border-[#E3ECFC] bg-[#f9fbff]"}`}>
+              <div className="flex items-center gap-3">
+                <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${locked ? "bg-[#1D4ED8]" : isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`}>
+                  <Lock size={17} weight="duotone" color={locked ? "#fff" : isDark ? "#A1A1AA" : "#64748B"} />
+                </div>
+                <div>
+                  <div className={`text-[14px] font-semibold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>{locked ? "Locked" : "Unlocked"}</div>
+                  <div className={`text-[12px] mt-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{locked ? "Viewers cannot edit filters or layout" : "Viewers can adjust filters and layout"}</div>
+                </div>
+              </div>
+              <button type="button" role="switch" aria-checked={locked} onClick={() => setLocked(v => !v)}
+                className={`relative w-11 h-6 rounded-full flex-shrink-0 transition-colors ${locked ? "bg-[#1D4ED8]" : isDark ? "bg-[#3F3F46]" : "bg-[#CBD5E1]"}`}>
+                <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${locked ? "translate-x-[22px]" : "translate-x-0.5"}`} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 5 — Save & Preview */}
+        {step === 4 && (
+          <div className="space-y-4">
+            <div className="font-heading text-[12px] font-bold mb-1 uppercase tracking-wider text-slate-500">Review & Confirm</div>
+            <div className={`rounded-xl border divide-y ${isDark ? "border-[#27272A] divide-[#27272A] bg-[#111113]" : "border-[#E3ECFC] divide-[#E3ECFC] bg-[#f9fbff]"}`}>
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className={`text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Name</span>
+                <span className={`text-[13px] font-semibold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>{name || "—"}</span>
+              </div>
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className={`text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Share</span>
+                <span className={`text-[13px] font-semibold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
+                  {shareMode === "private" ? "Private" : shareMode === "all" ? "All Users" : `${sharedWith.length} Role${sharedWith.length === 1 ? "" : "s"}`}
+                </span>
+              </div>
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className={`text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Filters</span>
+                <span className={`text-[13px] font-semibold text-right ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>{region} · {dateRange} · {owner}</span>
+              </div>
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className={`text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Status</span>
+                <span className={`text-[13px] font-semibold flex items-center gap-1.5 ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
+                  <Lock size={13} weight="duotone" />{locked ? "Locked" : "Unlocked"}
+                </span>
+              </div>
+            </div>
+            <p className={`text-[12px] ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>Saving will open the dashboard editor where you can build out the layout and preview it live.</p>
+          </div>
+        )}
+      </div>
+
+      <div className={`flex items-center justify-between gap-3 px-6 py-4 border-t flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+        {step === 0 ? (
+          <Button variant="text" onClick={handleClose}
+            sx={{ color: isDark ? "#A1A1AA" : "#64748B", textTransform: "none", fontWeight: 600, fontSize: "0.82rem", borderRadius: "9px", px: 2.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+            Cancel
+          </Button>
+        ) : (
+          <Button variant="text" startIcon={<ArrowLeft size={15} weight="bold" />} onClick={() => setStep(s => s - 1)}
+            sx={{ color: isDark ? "#A1A1AA" : "#64748B", textTransform: "none", fontWeight: 600, fontSize: "0.82rem", borderRadius: "9px", px: 2.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+            Back
+          </Button>
+        )}
+        {step < STEPPER_STEPS.length - 1 ? (
+          <Button variant="contained" endIcon={<CaretRight size={15} weight="bold" />} onClick={() => setStep(s => s + 1)} disabled={!canAdvance}
+            sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB" }, "&:disabled": { bgcolor: isDark ? "#1C1C1E" : "#E2E8F0", color: isDark ? "#52525B" : "#CBD5E1" } }}>
+            Next
+          </Button>
+        ) : (
+          <Button variant="contained" onClick={handleSubmit} disabled={!name.trim()}
+            sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB" }, "&:disabled": { bgcolor: isDark ? "#1C1C1E" : "#E2E8F0", color: isDark ? "#52525B" : "#CBD5E1" } }}>
+            Save & Preview
+          </Button>
+        )}
       </div>
     </Drawer>
   );
@@ -3186,10 +3387,10 @@ function CustomizeHomepagePanel() {
     }
   };
 
-  const handleCreate = (name: string, sharedWith: string[]) => {
+  const handleCreate = (name: string, sharedWith: string[], shareMode: "private" | "all" | "roles", filters: { region: string; dateRange: string; owner: string }, locked: boolean) => {
     const now = new Date().toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" });
     const newId = `hp${Date.now()}`;
-    setHomepages(prev => [...prev, { id: newId, name, description: "", sharedWith, created: now, lastModified: now, isActive: true }]);
+    setHomepages(prev => [...prev, { id: newId, name, description: "", sharedWith, created: now, lastModified: now, isActive: true, shareMode, filters, locked }]);
     setCreateOpen(false);
     // New dashboards start blank — the user builds the layout themselves in the editor.
     router.push(`/home/${newId}/edit?new=true`);
