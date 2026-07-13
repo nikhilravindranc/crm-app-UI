@@ -3044,11 +3044,12 @@ const HOMEPAGE_CARD_PALETTE = [
   { fill: "#E2E4EA" }, // Slate
 ];
 
+// Stepper config for Create Dashboard flow
 const STEPPER_STEPS = [
-  { key: "name",    label: "Name Dashboard" },
-  { key: "share",   label: "Share Options" },
+  { key: "name", label: "Name Dashboard" },
+  { key: "share", label: "Share Options" },
   { key: "filters", label: "Global Filters" },
-  { key: "lock",    label: "Lock / Unlock" },
+  { key: "lock", label: "Lock / Unlock" },
   { key: "preview", label: "Save & Preview" },
 ];
 
@@ -3392,7 +3393,6 @@ function CustomizeHomepagePanel() {
     const newId = `hp${Date.now()}`;
     setHomepages(prev => [...prev, { id: newId, name, description: "", sharedWith, created: now, lastModified: now, isActive: true, shareMode, filters, locked }]);
     setCreateOpen(false);
-    // New dashboards start blank — the user builds the layout themselves in the editor.
     router.push(`/home/${newId}/edit?new=true`);
   };
 
@@ -3692,8 +3692,8 @@ function SettingsSidebar({ activeItem, setActiveItem, isDark = false }: {
                           isDark ? "focus-visible:ring-[#3B82F6]" : "focus-visible:ring-[#1D4ED8]"
                         } ${
                           isActive
-                            ? isDark ? "bg-[#27272A] text-[#F4F4F5] font-semibold" : "bg-[#EFF6FF] text-[#1D4ED8] font-semibold"
-                            : isDark ? "text-[#9CA3AF] hover:bg-[#27272A] hover:text-[#FFFFFF]" : "text-slate-500 hover:bg-[#EFF6FF]/60 hover:text-slate-700"
+                            ? isDark ? "bg-[#27272A] text-[#D4D4D8] font-semibold" : "bg-[#EFF6FF] text-[#1D4ED8] font-semibold"
+                            : isDark ? "text-[#9CA3AF] hover:bg-[#1D4ED8]/15 hover:text-[#93C5FD]" : "text-slate-500 hover:bg-[#EFF6FF]/60 hover:text-slate-700"
                         }`}>
                         {isActive && <span className={`absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full ${isDark ? "bg-[#9CA3AF]" : "bg-[#1D4ED8]"}`} />}
                         <IIcon size={13} color={isActive ? (isDark ? "#6B8BA3" : "#1D4ED8") : "#94A3B8"} weight="duotone" />
