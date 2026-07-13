@@ -14,7 +14,7 @@ import InputLabel from "@mui/material/InputLabel";
 import Menu from "@mui/material/Menu";
 import {
   Gear, User, UsersThree, Buildings, ShieldCheck, Lock,
-  Envelope, Cube, House, UploadSimple, DownloadSimple,
+  Envelope, Cube, House, UploadSimple, DownloadSimple, Upload,
   HardDrive, CaretUp, CaretDown, Camera, PencilSimple,
   Phone, IdentificationCard, MapPin, MagnifyingGlass,
   Plus, Globe, Tree, CaretRight, CheckCircle,
@@ -179,7 +179,7 @@ function KV({ label, value, link, editable, onSave }: {
   return (
     <div className={`py-2.5 border-b last:border-0 flex items-start justify-between group ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
       <div className="flex-1 min-w-0">
-        <div className={`text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>{label}</div>
+        <div className={`text-[11.5px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>{label}</div>
         {isEditing ? (
           <div className="flex items-center gap-1.5 -mx-2">
             <input
@@ -201,7 +201,9 @@ function KV({ label, value, link, editable, onSave }: {
             </button>
           </div>
         ) : (
-          <div className={`text-[14px] font-medium leading-snug ${link ? (isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]") : empty ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>
+          <div
+            title={empty ? undefined : editValue}
+            className={`text-[14px] font-bold leading-snug truncate ${link ? (isDark ? "text-[#A1A1AA]" : "text-[#1D4ED8]") : empty ? (isDark ? "text-[#3F3F46]" : "text-slate-300") : (isDark ? "text-[#D4D4D8]" : "text-slate-700")}`}>
             {empty ? "—" : editValue}
           </div>
         )}
@@ -504,7 +506,7 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
           <h3 className={`font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500`}>More Information</h3>
           <div className="space-y-3">
             <FormControl size="small" fullWidth sx={FX}>
-              <InputLabel>Gender</InputLabel>
+              <InputLabel shrink>Gender</InputLabel>
               <Select label="Gender" value={formData.gender} onChange={e => handleChange("gender", e.target.value)} displayEmpty>
                 <MenuItem value="" sx={{ fontSize: "0.82rem", color: "#94A3B8" }}><em>Select gender</em></MenuItem>
                 <MenuItem value="Male" sx={{ fontSize: "0.82rem" }}>Male</MenuItem>
@@ -1599,17 +1601,17 @@ const DV_BC_FIELDS = [
   { label:"Lead Owner", type:"lookup"    },
 ];
 
-function FieldCell({ field }: { field: LField }) {
+function FieldCell({ field, isDark = false }: { field: LField; isDark?: boolean }) {
   return (
-    <div className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-white hover:border-[#4A7AE8] transition-colors cursor-pointer group">
+    <div className={`flex items-center justify-between px-3 py-2 border rounded-lg transition-colors cursor-pointer group ${isDark ? "border-[#27272A] bg-[#111113] hover:border-[#60A5FA]" : "border-[#E3ECFC] bg-white hover:border-[#4A7AE8]"}`}>
       <div className="flex items-center gap-0.5 min-w-0">
-        <span className="text-[15px] font-medium text-slate-700 truncate">{field.label}</span>
+        <span className={`text-[15px] font-medium truncate ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{field.label}</span>
         {field.required && <span className="text-red-500 text-[13px] ml-0.5">*</span>}
       </div>
       <div className="flex items-center gap-1.5 flex-shrink-0 ml-2">
-        {field.prefix && <span className="text-[13px] text-slate-600">{field.prefix} ·</span>}
+        {field.prefix && <span className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-600"}`}>{field.prefix} ·</span>}
         {field.type && <span className="text-[13px] text-inherit">{field.type}</span>}
-        <span className="text-slate-300 group-hover:text-slate-500 text-[11px] font-bold">···</span>
+        <span className={`text-[11px] font-bold ${isDark ? "text-[#3F3F46] group-hover:text-[#71717A]" : "text-slate-300 group-hover:text-slate-500"}`}>···</span>
       </div>
     </div>
   );
@@ -1618,6 +1620,8 @@ function FieldCell({ field }: { field: LField }) {
 function LayoutEditor({ module, layoutName, onClose }: {
   module:string; layoutName:string; onClose:()=>void;
 }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [tab, setTab]           = useState<"create"|"quickCreate"|"detailView">("create");
   const [bcEnabled, setBcEnabled] = useState(true);
   const [nfOpen, setNfOpen]     = useState(true);
@@ -1626,36 +1630,37 @@ function LayoutEditor({ module, layoutName, onClose }: {
   const [bcFields, setBcFields] = useState(DV_BC_FIELDS);
   const [bcDragIdx, setBcDragIdx] = useState<number|null>(null);
   const [bcDropIdx, setBcDropIdx] = useState<number|null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const modDef = MODULE_DEFS.find(m => m.key === module);
 
   return (
-    <div className="absolute inset-0 z-30 bg-white flex flex-col overflow-hidden">
+    <div className={`absolute inset-0 z-30 flex flex-col overflow-hidden ${isDark ? "bg-[#000000]" : "bg-white"}`}>
       {/* Top bar */}
-      <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#E3ECFC] flex-shrink-0">
-        <button onClick={onClose} className="flex items-center gap-1.5 text-[15px] font-semibold text-slate-600 transition-colors">
+      <div className={`flex items-center gap-2 px-4 py-2.5 border-b flex-shrink-0 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+        <button onClick={onClose} className={`flex items-center gap-1.5 text-[15px] font-semibold transition-colors ${isDark ? "text-[#D4D4D8] hover:text-[#F4F4F5]" : "text-slate-600"}`}>
           <ArrowLeft size={14} weight="bold" />
           {modDef?.label ?? module}
         </button>
-        <button className="flex items-center gap-1.5 px-2.5 py-1 border border-[#E3ECFC] rounded-lg text-[15px] font-semibold text-slate-700 hover:border-[#1D4ED8] bg-white transition-colors">
+        <button className={`flex items-center gap-1.5 px-2.5 py-1 border rounded-lg text-[15px] font-semibold transition-colors ${isDark ? "border-[#3F3F46] text-[#D4D4D8] hover:border-[#60A5FA] bg-[#18181B]" : "border-[#E3ECFC] text-slate-700 hover:border-[#1D4ED8] bg-white"}`}>
           {layoutName} <CaretDown size={11} weight="bold" />
         </button>
-        <IconButton size="small" sx={{ p:0.5, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
+        <IconButton size="small" sx={{ p:0.5, color: isDark ? "#71717A" : "#94A3B8", "&:hover":{color: isDark ? "#60A5FA" : "#1D4ED8"}, borderRadius:"6px" }}>
           <Gear size={14} weight="duotone" />
         </IconButton>
         <div className="flex-1" />
-        <button onClick={onClose} className="px-3 py-1.5 text-[15px] font-semibold text-slate-500 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">Cancel</button>
-        <button className="px-3 py-1.5 text-[15px] font-semibold text-slate-500 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">Save and Close</button>
+        <button onClick={onClose} className={`px-3 py-1.5 text-[15px] font-semibold border rounded-lg transition-colors ${isDark ? "text-[#9CA3AF] border-[#3F3F46] hover:bg-[#18181B]" : "text-slate-500 border-[#E3ECFC] hover:bg-slate-50"}`}>Cancel</button>
+        <button className={`px-3 py-1.5 text-[15px] font-semibold border rounded-lg transition-colors ${isDark ? "text-[#9CA3AF] border-[#3F3F46] hover:bg-[#18181B]" : "text-slate-500 border-[#E3ECFC] hover:bg-slate-50"}`}>Save and Close</button>
         <button className="px-4 py-1.5 text-[15px] font-bold text-white bg-[#1D4ED8] rounded-lg hover:bg-[#60A5FA] transition-colors">Save</button>
       </div>
 
       {/* Body */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left sidebar */}
-        <div className="w-[300px] flex-shrink-0 border-r border-[#E3ECFC] bg-[#f9fbff] overflow-y-auto">
+        <div className={`w-[300px] flex-shrink-0 border-r overflow-y-auto ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-[#f9fbff]"}`}>
           {tab === "create" && (<>
             <button onClick={() => setNfOpen(p=>!p)}
-              className="flex items-center justify-between w-full px-4 py-2.5 text-[13px] font-bold uppercase tracking-wider hover:bg-[#EFF6FF]"
-              style={{ color: "#0C2472" }}>
+              className={`flex items-center justify-between w-full px-4 py-2.5 text-[13px] font-bold uppercase tracking-wider ${isDark ? "hover:bg-[#18181B]" : "hover:bg-[#EFF6FF]"}`}
+              style={{ color: isDark ? "#93C5FD" : "#0C2472" }}>
               <span>New Fields</span>
               {nfOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
             </button>
@@ -1665,9 +1670,9 @@ function LayoutEditor({ module, layoutName, onClose }: {
                   const Icon = ft.icon;
                   return (
                     <div key={ft.label}
-                      className="flex items-center gap-1.5 px-2 py-1.5 border border-[#E3ECFC] rounded-lg bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF] cursor-grab transition-colors text-[15px] font-medium whitespace-nowrap overflow-hidden"
-                      style={{ color: "#0C2472" }}>
-                      <Icon size={11} color="#0C2472" weight="duotone" className="flex-shrink-0" />
+                      className={`flex items-center gap-1.5 px-2 py-1.5 border rounded-lg cursor-grab transition-colors text-[15px] font-medium whitespace-nowrap overflow-hidden ${isDark ? "border-[#3F3F46] bg-[#18181B] hover:border-[#60A5FA] hover:bg-[#1E293B]" : "border-[#E3ECFC] bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF]"}`}
+                      style={{ color: isDark ? "#93C5FD" : "#0C2472" }}>
+                      <Icon size={11} color={isDark ? "#93C5FD" : "#0C2472"} weight="duotone" className="flex-shrink-0" />
                       <span className="truncate">{ft.label}</span>
                     </div>
                   );
@@ -1675,33 +1680,33 @@ function LayoutEditor({ module, layoutName, onClose }: {
               </div>
             )}
             <div className="px-3 pb-3">
-              <button className="flex items-center gap-1.5 w-full px-3 py-2 border border-dashed border-[#4A7AE8] rounded-lg text-[12.5px] font-bold text-[#1D4ED8] hover:bg-[#EFF6FF] transition-colors justify-center">
+              <button className={`flex items-center gap-1.5 w-full px-3 py-2 border border-dashed rounded-lg text-[12.5px] font-bold transition-colors justify-center ${isDark ? "border-[#60A5FA] text-[#60A5FA] hover:bg-[#18181B]" : "border-[#4A7AE8] text-[#1D4ED8] hover:bg-[#EFF6FF]"}`}>
                 <Plus size={11} weight="bold"/> NEW SECTION
               </button>
             </div>
             <button onClick={() => setUnusedOpen(p=>!p)}
-              className="flex items-center justify-between w-full px-4 py-2.5 text-[13px] font-bold uppercase tracking-wider hover:bg-[#EFF6FF]"
-              style={{ color: "#0C2472" }}>
+              className={`flex items-center justify-between w-full px-4 py-2.5 text-[13px] font-bold uppercase tracking-wider ${isDark ? "hover:bg-[#18181B]" : "hover:bg-[#EFF6FF]"}`}
+              style={{ color: isDark ? "#93C5FD" : "#0C2472" }}>
               <span>Unused Items</span>
               {unusedOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
             </button>
-            {unusedOpen && <div className="px-4 pb-2 text-[13px] text-slate-600">No unused items.</div>}
+            {unusedOpen && <div className={`px-4 pb-2 text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-600"}`}>No unused items.</div>}
           </>)}
 
           {tab === "quickCreate" && (
             <div>
-              <div className="flex items-center justify-between px-4 py-3 border-b border-[#E3ECFC]">
-                <span className="text-[15px] font-bold text-slate-700">Available Fields</span>
-                <IconButton size="small" sx={{ p:0.4, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
+              <div className={`flex items-center justify-between px-4 py-3 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+                <span className={`text-[15px] font-bold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>Available Fields</span>
+                <IconButton size="small" sx={{ p:0.4, color: isDark ? "#71717A" : "#94A3B8", "&:hover":{color: isDark ? "#60A5FA" : "#1D4ED8"}, borderRadius:"6px" }}>
                   <MagnifyingGlass size={13} weight="duotone"/>
                 </IconButton>
               </div>
               {Object.entries(QC_AVAILABLE).map(([sec, flds]) => (
                 <div key={sec} className="px-3 pt-3">
-                  <div className="text-[13px] font-bold uppercase tracking-wider mb-1.5 px-1" style={{ color: "#0C2472" }}>{sec}</div>
+                  <div className="text-[13px] font-bold uppercase tracking-wider mb-1.5 px-1" style={{ color: isDark ? "#93C5FD" : "#0C2472" }}>{sec}</div>
                   {flds.map(f => (
-                    <div key={f} className="flex items-center gap-2 px-2 py-1.5 mb-0.5 border border-[#E3ECFC] rounded-lg bg-white text-[13px] cursor-grab hover:border-[#1D4ED8] hover:bg-[#EFF6FF] transition-colors" style={{ color: "#0C2472" }}>
-                      <DotsSixVertical size={11} color="#E2E8F0"/>
+                    <div key={f} className={`flex items-center gap-2 px-2 py-1.5 mb-0.5 border rounded-lg text-[13px] cursor-grab transition-colors ${isDark ? "border-[#3F3F46] bg-[#18181B] hover:border-[#60A5FA] hover:bg-[#1E293B]" : "border-[#E3ECFC] bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF]"}`} style={{ color: isDark ? "#93C5FD" : "#0C2472" }}>
+                      <DotsSixVertical size={11} color={isDark ? "#3F3F46" : "#E2E8F0"}/>
                       {f}
                     </div>
                   ))}
@@ -1713,64 +1718,66 @@ function LayoutEditor({ module, layoutName, onClose }: {
           {tab === "detailView" && (
             <div>
               <button onClick={() => setUnusedOpen(p=>!p)}
-                className="flex items-center justify-between w-full px-4 py-2.5 text-[13px] font-bold uppercase tracking-wider hover:bg-[#EFF6FF] border-b border-[#E3ECFC]"
-                style={{ color: "#0C2472" }}>
+                className={`flex items-center justify-between w-full px-4 py-2.5 text-[13px] font-bold uppercase tracking-wider border-b ${isDark ? "hover:bg-[#18181B] border-[#27272A]" : "hover:bg-[#EFF6FF] border-[#E3ECFC]"}`}
+                style={{ color: isDark ? "#93C5FD" : "#0C2472" }}>
                 <span>Unused Related List</span>
                 {unusedOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
               </button>
-              {unusedOpen && <div className="px-4 py-3 text-[13px] text-slate-600">No more related lists available.</div>}
+              {unusedOpen && <div className={`px-4 py-3 text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-600"}`}>No more related lists available.</div>}
             </div>
           )}
         </div>
 
         {/* Main area */}
-        <div className="flex-1 overflow-y-auto bg-[#F8FAFC]">
+        <div className={`flex-1 overflow-y-auto ${isDark ? "bg-[#000000]" : "bg-[#F8FAFC]"}`}>
           {/* Tab bar */}
-          <div className="flex items-center justify-between px-6 pt-4 border-b border-[#E3ECFC] bg-white mb-0">
+          <div className={`flex items-center justify-between px-6 pt-4 border-b mb-0 ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-white"}`}>
             <div className="flex items-center">
               {(["create","quickCreate","detailView"] as const).map(t => {
                 const labels = { create:"Create", quickCreate:"Quick Create", detailView:"Detail View" };
                 return (
                   <button key={t} onClick={() => setTab(t)}
                     className={`px-5 py-2.5 text-[15px] font-semibold transition-all border-b-2 -mb-px ${
-                      tab===t ? "border-[#1D4ED8] text-[#1D4ED8]" : "border-transparent text-slate-400 hover:text-slate-600"
+                      tab===t
+                        ? isDark ? "border-[#60A5FA] text-[#60A5FA]" : "border-[#1D4ED8] text-[#1D4ED8]"
+                        : isDark ? "border-transparent text-[#71717A] hover:text-[#D4D4D8]" : "border-transparent text-slate-400 hover:text-slate-600"
                     }`}>
                     {labels[t]}
                   </button>
                 );
               })}
             </div>
-            <button className="text-[15px] font-semibold text-[#1D4ED8] hover:underline pb-2.5">Preview</button>
+            <button onClick={() => setPreviewOpen(true)} className={`text-[15px] font-semibold hover:underline pb-2.5 ${isDark ? "text-[#60A5FA]" : "text-[#1D4ED8]"}`}>Preview</button>
           </div>
 
           {/* CREATE */}
           {tab === "create" && (
             <div className="px-6 py-5 space-y-4">
               {LEADS_CREATE_SECTIONS.map(section => (
-                <div key={section.title} className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
-                  <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#E3ECFC] bg-[#fafcff]">
-                    <DotsSixVertical size={14} color="#E2E8F0"/>
-                    <span className="text-[13px] font-bold text-slate-700 flex-1">{section.title}</span>
-                    <IconButton size="small" sx={{ p:0.3, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
+                <div key={section.title} className={`rounded-xl border overflow-hidden ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
+                  <div className={`flex items-center gap-2 px-4 py-2.5 border-b ${isDark ? "border-[#27272A] bg-[#111113]" : "border-[#E3ECFC] bg-[#fafcff]"}`}>
+                    <DotsSixVertical size={14} color={isDark ? "#3F3F46" : "#E2E8F0"}/>
+                    <span className={`text-[13px] font-bold flex-1 ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{section.title}</span>
+                    <IconButton size="small" sx={{ p:0.3, color: isDark ? "#71717A" : "#94A3B8", "&:hover":{color: isDark ? "#60A5FA" : "#1D4ED8"}, borderRadius:"6px" }}>
                       <Gear size={13} weight="duotone"/>
                     </IconButton>
                   </div>
                   {section.addressLayout ? (
                     <div className="p-3 space-y-1.5">
                       {section.fields.slice(0,-2).map((f,i) => (
-                        <div key={i} className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-[#fafcff] hover:border-[#4A7AE8] transition-colors cursor-pointer group">
-                          <span className="text-[15px] font-medium text-slate-700">{f.label}</span>
+                        <div key={i} className={`flex items-center justify-between px-3 py-2 border rounded-lg transition-colors cursor-pointer group ${isDark ? "border-[#27272A] bg-[#111113] hover:border-[#60A5FA]" : "border-[#E3ECFC] bg-[#fafcff] hover:border-[#4A7AE8]"}`}>
+                          <span className={`text-[15px] font-medium ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{f.label}</span>
                           <div className="flex items-center gap-1.5">
                             {f.type && <span className="text-[13px] text-inherit">{f.type}</span>}
-                            <span className="text-slate-300 group-hover:text-slate-500 text-[11px] font-bold">···</span>
+                            <span className={`text-[11px] font-bold ${isDark ? "text-[#3F3F46] group-hover:text-[#71717A]" : "text-slate-300 group-hover:text-slate-500"}`}>···</span>
                           </div>
                         </div>
                       ))}
                       <div className="grid grid-cols-2 gap-1.5">
                         {section.fields.slice(-2).map((f,i) => (
-                          <div key={i} className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-[#fafcff] hover:border-[#4A7AE8] transition-colors cursor-pointer group">
-                            <span className="text-[15px] font-medium text-slate-700">{f.label}</span>
-                            <span className="text-slate-300 group-hover:text-slate-500 text-[11px] font-bold">···</span>
+                          <div key={i} className={`flex items-center justify-between px-3 py-2 border rounded-lg transition-colors cursor-pointer group ${isDark ? "border-[#27272A] bg-[#111113] hover:border-[#60A5FA]" : "border-[#E3ECFC] bg-[#fafcff] hover:border-[#4A7AE8]"}`}>
+                            <span className={`text-[15px] font-medium ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{f.label}</span>
+                            <span className={`text-[11px] font-bold ${isDark ? "text-[#3F3F46] group-hover:text-[#71717A]" : "text-slate-300 group-hover:text-slate-500"}`}>···</span>
                           </div>
                         ))}
                       </div>
@@ -1779,8 +1786,8 @@ function LayoutEditor({ module, layoutName, onClose }: {
                     <div className="p-3 grid grid-cols-2 gap-1.5">
                       {section.fields.map((f,i) => (
                         f.fullWidth
-                          ? <div key={i} className="col-span-2"><FieldCell field={f}/></div>
-                          : <FieldCell key={i} field={f}/>
+                          ? <div key={i} className="col-span-2"><FieldCell field={f} isDark={isDark}/></div>
+                          : <FieldCell key={i} field={f} isDark={isDark}/>
                       ))}
                     </div>
                   )}
@@ -1792,14 +1799,14 @@ function LayoutEditor({ module, layoutName, onClose }: {
           {/* QUICK CREATE */}
           {tab === "quickCreate" && (
             <div className="px-6 py-5 flex justify-center">
-              <div className="w-[500px] bg-white rounded-xl border border-[#E3ECFC] overflow-hidden shadow-sm">
+              <div className={`w-[500px] rounded-xl border overflow-hidden shadow-sm ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
                 {QC_ACTIVE.map((f,i) => (
-                  <div key={i} className="flex items-center px-4 py-2.5 border-b border-[#EFF6FF] last:border-0 group">
-                    <span className="text-[15px] text-slate-700 w-36 flex-shrink-0">{f.label}</span>
+                  <div key={i} className={`flex items-center px-4 py-2.5 border-b last:border-0 group ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
+                    <span className={`text-[15px] w-36 flex-shrink-0 ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{f.label}</span>
                     <span className="flex-1 text-[15px] text-inherit">{f.type}</span>
                     {f.removable && (
-                      <button className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors opacity-60 hover:opacity-100">
-                        <X size={11} color="#94A3B8" weight="bold"/>
+                      <button className={`w-5 h-5 flex items-center justify-center rounded-full transition-colors opacity-60 hover:opacity-100 ${isDark ? "hover:bg-[#27272A]" : "hover:bg-slate-100"}`}>
+                        <X size={11} color={isDark ? "#71717A" : "#94A3B8"} weight="bold"/>
                       </button>
                     )}
                   </div>
@@ -1812,68 +1819,68 @@ function LayoutEditor({ module, layoutName, onClose }: {
           {tab === "detailView" && (
             <div className="px-6 py-5 space-y-4">
               {/* Business Card */}
-              <div className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
-                <div className="flex items-center justify-between px-4 py-3 border-b border-[#E3ECFC]">
-                  <span className="text-[13px] font-bold text-slate-500 uppercase tracking-wider">Business Card</span>
+              <div className={`rounded-xl border overflow-hidden ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
+                <div className={`flex items-center justify-between px-4 py-3 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+                  <span className={`text-[13px] font-bold uppercase tracking-wider ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Business Card</span>
                   <div className="flex items-center gap-3">
                     <GreenSwitch checked={bcEnabled} onChange={() => setBcEnabled(p=>!p)}/>
-                    <button onClick={() => setBcCustomizeOpen(true)} className="text-[15px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>
+                    <button onClick={() => setBcCustomizeOpen(true)} className={`text-[15px] font-semibold hover:underline ${isDark ? "text-[#60A5FA]" : "text-[#1D4ED8]"}`}>Customize</button>
                   </div>
                 </div>
-                <div className="divide-y divide-[#EFF6FF]">
+                <div className={`divide-y ${isDark ? "divide-[#27272A]" : "divide-[#EFF6FF]"}`}>
                   {DV_BC_FIELDS.map((f,i) => (
                     <div key={i} className="flex items-center gap-3 px-4 py-2.5">
-                      <DotsSixVertical size={13} color="#E2E8F0"/>
-                      <span className="text-[15px] text-slate-700 flex-1">{f.label}</span>
+                      <DotsSixVertical size={13} color={isDark ? "#3F3F46" : "#E2E8F0"}/>
+                      <span className={`text-[15px] flex-1 ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{f.label}</span>
                       <span className="text-[13px] text-inherit">{f.type}</span>
                     </div>
                   ))}
                 </div>
-                <div className="px-4 py-2.5 border-t border-[#EFF6FF]">
-                  <div className="flex items-center gap-1.5 text-[13px] text-slate-600">
+                <div className={`px-4 py-2.5 border-t ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
+                  <div className={`flex items-center gap-1.5 text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-600"}`}>
                     <Info size={11} weight="duotone"/>
-                    You can add up to <span className="font-bold text-slate-700 mx-0.5">5 fields</span> to your Business Card.
+                    You can add up to <span className={`font-bold mx-0.5 ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>5 fields</span> to your Business Card.
                   </div>
                 </div>
               </div>
               {/* Details */}
-              <div className="bg-white rounded-xl border border-[#E3ECFC]">
-                <div className="px-4 py-2.5 border-b border-[#E3ECFC]">
-                  <span className="text-[13px] font-bold text-slate-500 uppercase tracking-wider">Details</span>
+              <div className={`rounded-xl border ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
+                <div className={`px-4 py-2.5 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+                  <span className={`text-[13px] font-bold uppercase tracking-wider ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Details</span>
                 </div>
-                <div className="mx-3 my-3 px-4 py-3 text-[15px] text-slate-600 bg-[#fafcff] rounded-lg border border-[#E3ECFC]">
+                <div className={`mx-3 my-3 px-4 py-3 text-[15px] rounded-lg border ${isDark ? "text-[#9CA3AF] bg-[#111113] border-[#27272A]" : "text-slate-600 bg-[#fafcff] border-[#E3ECFC]"}`}>
                   Fields customized in the Create page will appear here.
                 </div>
               </div>
               {/* Related List */}
-              <div className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
-                <div className="px-4 py-2.5 border-b border-[#E3ECFC]">
-                  <span className="text-[13px] font-bold text-slate-500 uppercase tracking-wider">Related List</span>
+              <div className={`rounded-xl border overflow-hidden ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
+                <div className={`px-4 py-2.5 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+                  <span className={`text-[13px] font-bold uppercase tracking-wider ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Related List</span>
                 </div>
                 {[
                   { name:"Notes",       standard:true,  customize:false },
                   { name:"Attachments", standard:true,  customize:false },
                   { name:"Tasks",       standard:false, customize:true  },
                 ].map(item => (
-                  <div key={item.name} className="px-4 py-3 border-b border-[#EFF6FF] last:border-0">
+                  <div key={item.name} className={`px-4 py-3 border-b last:border-0 ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[15px] font-bold text-slate-700">{item.name}</span>
+                      <span className={`text-[15px] font-bold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{item.name}</span>
                       <div className="flex items-center gap-1">
-                        {item.customize && <button className="text-[15px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>}
-                        <IconButton size="small" sx={{ p:0.3, color:"#94A3B8", "&:hover":{color:"#EF4444"}, borderRadius:"6px" }}>
+                        {item.customize && <button className={`text-[15px] font-semibold hover:underline ${isDark ? "text-[#60A5FA]" : "text-[#1D4ED8]"}`}>Customize</button>}
+                        <IconButton size="small" sx={{ p:0.3, color: isDark ? "#71717A" : "#94A3B8", "&:hover":{color:"#EF4444"}, borderRadius:"6px" }}>
                           <Trash size={13} weight="duotone"/>
                         </IconButton>
                       </div>
                     </div>
                     {item.standard ? (
-                      <div className="text-center py-2 text-[13px] text-slate-600 bg-[#fafcff] rounded-lg border border-[#E3ECFC]">
+                      <div className={`text-center py-2 text-[13px] rounded-lg border ${isDark ? "text-[#9CA3AF] bg-[#111113] border-[#27272A]" : "text-slate-600 bg-[#fafcff] border-[#E3ECFC]"}`}>
                         This is a standard {item.name} section.
                       </div>
                     ) : (
-                      <div className="border border-[#E3ECFC] rounded-lg overflow-hidden">
-                        <div className="grid grid-cols-2 bg-[#fafcff] border-b border-[#E3ECFC]">
-                          <div className="px-4 py-2 text-[12.5px] font-bold text-slate-500 uppercase tracking-wider">Title</div>
-                          <div className="px-4 py-2 text-[12.5px] font-bold text-slate-500 uppercase tracking-wider border-l border-[#E3ECFC]">Status</div>
+                      <div className={`rounded-lg overflow-hidden border ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+                        <div className={`grid grid-cols-2 border-b ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#fafcff] border-[#E3ECFC]"}`}>
+                          <div className={`px-4 py-2 text-[12.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Title</div>
+                          <div className={`px-4 py-2 text-[12.5px] font-bold uppercase tracking-wider border-l ${isDark ? "text-[#9CA3AF] border-[#27272A]" : "text-slate-500 border-[#E3ECFC]"}`}>Status</div>
                         </div>
                       </div>
                     )}
@@ -1888,13 +1895,13 @@ function LayoutEditor({ module, layoutName, onClose }: {
       {/* Business Card Customize Modal */}
       {bcCustomizeOpen && (
         <div className="absolute inset-0 z-50 bg-black/40 flex items-center justify-center">
-          <div className="bg-white rounded-2xl shadow-xl w-[420px] max-h-[80vh] overflow-hidden flex flex-col">
-            <div className="px-6 py-4 border-b border-[#E3ECFC] flex items-center justify-between">
+          <div className={`rounded-2xl shadow-xl w-[420px] max-h-[80vh] overflow-hidden flex flex-col ${isDark ? "bg-[#0A0A0A]" : "bg-white"}`}>
+            <div className={`px-6 py-4 border-b flex items-center justify-between ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
               <div>
-                <h3 className="text-[17px] font-bold text-slate-900">Customize Business Card</h3>
-                <p className="text-[13px] text-slate-500 mt-0.5">Drag to reorder · Max 5 fields</p>
+                <h3 className={`text-[17px] font-bold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Customize Business Card</h3>
+                <p className={`text-[13px] mt-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Drag to reorder · Max 5 fields</p>
               </div>
-              <button onClick={() => { setBcCustomizeOpen(false); setBcDragIdx(null); setBcDropIdx(null); }} className="text-slate-400 hover:text-slate-600">
+              <button onClick={() => { setBcCustomizeOpen(false); setBcDragIdx(null); setBcDropIdx(null); }} className={isDark ? "text-[#71717A] hover:text-[#D4D4D8]" : "text-slate-400 hover:text-slate-600"}>
                 <X size={18} weight="bold" />
               </button>
             </div>
@@ -1917,28 +1924,69 @@ function LayoutEditor({ module, layoutName, onClose }: {
                   }}
                   onDragEnd={() => { setBcDragIdx(null); setBcDropIdx(null); }}
                   className={`flex items-center gap-3 px-3 py-3 border rounded-xl transition-all cursor-grab active:cursor-grabbing select-none
-                    ${bcDragIdx === idx ? "opacity-40 border-dashed border-[#1D4ED8] bg-[#EFF6FF]" : bcDropIdx === idx ? "border-[#1D4ED8] bg-[#EFF6FF] shadow-sm" : "border-[#E3ECFC] bg-[#f9fbff] hover:border-[#A5B4FC] hover:bg-[#EFF6FF]"}`}
+                    ${bcDragIdx === idx
+                      ? isDark ? "opacity-40 border-dashed border-[#60A5FA] bg-[#18181B]" : "opacity-40 border-dashed border-[#1D4ED8] bg-[#EFF6FF]"
+                      : bcDropIdx === idx
+                        ? isDark ? "border-[#60A5FA] bg-[#18181B] shadow-sm" : "border-[#1D4ED8] bg-[#EFF6FF] shadow-sm"
+                        : isDark ? "border-[#27272A] bg-[#111113] hover:border-[#60A5FA] hover:bg-[#18181B]" : "border-[#E3ECFC] bg-[#f9fbff] hover:border-[#A5B4FC] hover:bg-[#EFF6FF]"}`}
                 >
-                  <DotsSixVertical size={16} color={bcDropIdx === idx ? "#1D4ED8" : "#94A3B8"} weight="bold" />
+                  <DotsSixVertical size={16} color={bcDropIdx === idx ? (isDark ? "#60A5FA" : "#1D4ED8") : (isDark ? "#71717A" : "#94A3B8")} weight="bold" />
                   <div className="flex-1 min-w-0">
-                    <div className="text-[15px] font-medium text-slate-800">{field.label}</div>
-                    <div className="text-[12px] text-slate-400 capitalize">{field.type}</div>
+                    <div className={`text-[15px] font-medium ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>{field.label}</div>
+                    <div className={`text-[12px] capitalize ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>{field.type}</div>
                   </div>
-                  <span className="text-[12px] font-semibold text-slate-400 bg-slate-100 rounded px-1.5 py-0.5">{idx + 1}</span>
+                  <span className={`text-[12px] font-semibold rounded px-1.5 py-0.5 ${isDark ? "text-[#9CA3AF] bg-[#27272A]" : "text-slate-400 bg-slate-100"}`}>{idx + 1}</span>
                 </div>
               ))}
             </div>
 
-            <div className="px-6 py-4 border-t border-[#E3ECFC] flex items-center justify-between">
-              <span className="text-[13px] text-slate-400">{bcFields.length}/5 fields</span>
+            <div className={`px-6 py-4 border-t flex items-center justify-between ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+              <span className={`text-[13px] ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>{bcFields.length}/5 fields</span>
               <div className="flex items-center gap-2">
-                <button onClick={() => { setBcCustomizeOpen(false); setBcDragIdx(null); setBcDropIdx(null); }} className="px-4 py-2 text-[15px] font-medium text-slate-600 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">
+                <button onClick={() => { setBcCustomizeOpen(false); setBcDragIdx(null); setBcDropIdx(null); }} className={`px-4 py-2 text-[15px] font-medium border rounded-lg transition-colors ${isDark ? "text-[#9CA3AF] border-[#3F3F46] hover:bg-[#18181B]" : "text-slate-600 border-[#E3ECFC] hover:bg-slate-50"}`}>
                   Cancel
                 </button>
                 <button onClick={() => { setBcCustomizeOpen(false); setBcDragIdx(null); setBcDropIdx(null); }} className="px-4 py-2 text-[15px] font-medium text-white bg-[#1D4ED8] rounded-lg hover:bg-[#2563EB] transition-colors">
                   Save
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Preview */}
+      {previewOpen && (
+        <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/40">
+          <div className={`w-[480px] max-h-[80%] rounded-2xl shadow-2xl overflow-hidden flex flex-col ${isDark ? "bg-[#0A0A0A]" : "bg-white"}`}>
+            <div className={`flex items-center justify-between px-5 py-3.5 border-b flex-shrink-0 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+              <span className={`text-[15.5px] font-extrabold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
+                {layoutName.trim() || "Untitled Layout"} &middot; Preview
+              </span>
+              <IconButton size="small" onClick={() => setPreviewOpen(false)} sx={{ p:0.4, color: isDark ? "#71717A" : "#94A3B8", "&:hover":{color: isDark ? "#60A5FA" : "#1D4ED8"}, borderRadius:"6px" }}>
+                <X size={14} weight="bold"/>
+              </IconButton>
+            </div>
+            <div className={`flex-1 overflow-y-auto px-5 py-5 space-y-5 ${isDark ? "bg-[#000000]" : "bg-[#F8FAFC]"}`}>
+              {LEADS_CREATE_SECTIONS.map(section => (
+                <div key={section.title}>
+                  <div className={`text-[12px] font-bold uppercase tracking-wider mb-2 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{section.title}</div>
+                  {section.fields.length === 0 ? (
+                    <div className={`text-[14px] italic ${isDark ? "text-[#52525B]" : "text-slate-300"}`}>No fields in this section.</div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3">
+                      {section.fields.map(f => (
+                        <div key={f.label} className={f.fullWidth ? "col-span-2" : undefined}>
+                          <label className={`block text-[11.5px] font-semibold mb-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{f.label}{f.required && <span className="text-red-500"> *</span>}</label>
+                          <div className={`px-3 py-2 rounded-lg border text-[14px] ${isDark ? "border-[#27272A] bg-[#18181B] text-[#52525B]" : "border-[#E3ECFC] bg-white text-slate-300"}`}>
+                            {f.prefix ? `${f.prefix} ` : ""}{f.label.toLowerCase()}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -1951,6 +1999,8 @@ interface BField { id:number; label:string; }
 interface BSection { id:number; title:string; fields:BField[]; }
 
 function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void; }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [tab, setTab]             = useState<"create"|"quickCreate"|"detailView">("create");
   const [layoutName, setLayoutName] = useState("");
   const [nameTouched, setNameTouched] = useState(false);
@@ -2002,63 +2052,63 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
   const requireName = () => { if (!layoutName.trim()) setNameTouched(true); };
 
   return (
-    <div className="absolute inset-0 z-30 bg-white flex flex-col overflow-hidden">
+    <div className={`absolute inset-0 z-30 flex flex-col overflow-hidden ${isDark ? "bg-[#000000]" : "bg-white"}`}>
       {/* Top bar */}
-      <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#E3ECFC] flex-shrink-0">
-        <button onClick={onClose} className="flex items-center gap-1.5 text-[14px] font-semibold text-slate-600 transition-colors">
+      <div className={`flex items-center gap-2 px-4 py-2.5 border-b flex-shrink-0 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+        <button onClick={onClose} className={`flex items-center gap-1.5 text-[14px] font-semibold transition-colors ${isDark ? "text-[#D4D4D8] hover:text-[#F4F4F5]" : "text-slate-600"}`}>
           <ArrowLeft size={14} weight="bold" />
           {modDef?.label ?? module}
         </button>
-        <span className="text-[14px] font-semibold text-slate-400">add</span>
+        <span className={`text-[14px] font-semibold ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>add</span>
         <div className="relative">
           <input
             value={layoutName}
             onChange={e => setLayoutName(e.target.value)}
             onBlur={requireName}
             placeholder="Layout Name"
-            className={`px-3 py-1.5 rounded-lg text-[14px] font-semibold text-slate-700 w-40 outline-none transition-colors border ${
-              nameTouched && !layoutName.trim() ? "border-red-400" : "border-[#E3ECFC] focus:border-[#1D4ED8]"
-            }`}
+            className={`px-3 py-1.5 rounded-lg text-[14px] font-semibold w-40 outline-none transition-colors border ${
+              nameTouched && !layoutName.trim() ? "border-red-400" : isDark ? "border-[#3F3F46] focus:border-[#60A5FA]" : "border-[#E3ECFC] focus:border-[#1D4ED8]"
+            } ${isDark ? "bg-[#18181B] text-[#F4F4F5] placeholder:text-[#71717A]" : "bg-white text-slate-700 placeholder:text-slate-400"}`}
           />
           {nameTouched && !layoutName.trim() && (
             <div className="absolute left-0 top-full mt-0.5 text-[12px] text-red-500 font-medium whitespace-nowrap">Layout Name is required</div>
           )}
         </div>
-        <IconButton size="small" sx={{ p:0.5, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
+        <IconButton size="small" sx={{ p:0.5, color: isDark ? "#71717A" : "#94A3B8", "&:hover":{color: isDark ? "#60A5FA" : "#1D4ED8"}, borderRadius:"6px" }}>
           <Gear size={14} weight="duotone" />
         </IconButton>
         <div className="flex-1" />
-        <button onClick={onClose} className="px-3 py-1.5 text-[14px] font-semibold text-slate-500 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">Cancel</button>
-        <button onClick={requireName} className="px-3 py-1.5 text-[14px] font-semibold text-slate-500 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">Save and Close</button>
+        <button onClick={onClose} className={`px-3 py-1.5 text-[14px] font-semibold border rounded-lg transition-colors ${isDark ? "text-[#9CA3AF] border-[#3F3F46] hover:bg-[#18181B]" : "text-slate-500 border-[#E3ECFC] hover:bg-slate-50"}`}>Cancel</button>
+        <button onClick={requireName} className={`px-3 py-1.5 text-[14px] font-semibold border rounded-lg transition-colors ${isDark ? "text-[#9CA3AF] border-[#3F3F46] hover:bg-[#18181B]" : "text-slate-500 border-[#E3ECFC] hover:bg-slate-50"}`}>Save and Close</button>
         <button onClick={requireName} className="px-4 py-1.5 text-[14px] font-bold text-white bg-[#1D4ED8] rounded-lg hover:bg-[#60A5FA] transition-colors">Save</button>
       </div>
 
       {/* Body */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left sidebar */}
-        <div className="w-[300px] flex-shrink-0 border-r border-[#E3ECFC] bg-[#f9fbff] overflow-y-auto">
+        <div className={`w-[300px] flex-shrink-0 border-r overflow-y-auto ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-[#f9fbff]"}`}>
           {tab === "detailView" ? (
             <>
               <button onClick={() => setUnusedOpen(p=>!p)}
-                className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold uppercase tracking-wider hover:bg-[#EFF6FF] border-b border-[#E3ECFC]"
-                style={{ color: "#0C2472" }}>
+                className={`flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold uppercase tracking-wider border-b ${isDark ? "hover:bg-[#18181B] border-[#27272A]" : "hover:bg-[#EFF6FF] border-[#E3ECFC]"}`}
+                style={{ color: isDark ? "#93C5FD" : "#0C2472" }}>
                 <span>Unused Related List</span>
                 {unusedOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
               </button>
-              {unusedOpen && <div className="px-4 py-3 text-[14px] text-slate-600">No more related lists available.</div>}
+              {unusedOpen && <div className={`px-4 py-3 text-[14px] ${isDark ? "text-[#9CA3AF]" : "text-slate-600"}`}>No more related lists available.</div>}
             </>
           ) : (
             <>
               <button onClick={() => setNfOpen(p=>!p)}
-                className="flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold uppercase tracking-wider hover:bg-[#EFF6FF]"
-                style={{ color: "#0C2472" }}>
+                className={`flex items-center justify-between w-full px-4 py-2.5 text-[12px] font-bold uppercase tracking-wider ${isDark ? "hover:bg-[#18181B]" : "hover:bg-[#EFF6FF]"}`}
+                style={{ color: isDark ? "#93C5FD" : "#0C2472" }}>
                 <span>New Fields</span>
                 {nfOpen ? <CaretUp size={9} weight="bold"/> : <CaretDown size={9} weight="bold"/>}
               </button>
               {nfOpen && (
                 <>
                   {!canDragFields && (
-                    <div className="px-3 pb-2 text-[14px] font-medium text-amber-600 bg-amber-50 border border-amber-200 rounded-lg mx-3 px-2.5 py-1.5">
+                    <div className={`px-3 pb-2 text-[14px] font-medium border rounded-lg mx-3 px-2.5 py-1.5 ${isDark ? "text-amber-400 bg-amber-950/40 border-amber-800" : "text-amber-600 bg-amber-50 border-amber-200"}`}>
                       {tab === "create" ? "Add a section before dragging in fields." : "Switch to a tab with a drop target to add fields."}
                     </div>
                   )}
@@ -2073,11 +2123,15 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
                           title={canDragFields ? undefined : "Add a section first"}
                           className={`flex items-center gap-1.5 px-2 py-1.5 border rounded-lg transition-colors text-[14px] font-medium whitespace-nowrap overflow-hidden ${
                             canDragFields
-                              ? "border-[#E3ECFC] bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF] cursor-grab active:cursor-grabbing"
-                              : "border-[#EFF6FF] bg-slate-50 text-slate-300 cursor-not-allowed"
+                              ? isDark
+                                ? "border-[#3F3F46] bg-[#18181B] hover:border-[#60A5FA] hover:bg-[#1E293B] cursor-grab active:cursor-grabbing"
+                                : "border-[#E3ECFC] bg-white hover:border-[#1D4ED8] hover:bg-[#EFF6FF] cursor-grab active:cursor-grabbing"
+                              : isDark
+                                ? "border-[#27272A] bg-[#111113] text-[#52525B] cursor-not-allowed"
+                                : "border-[#EFF6FF] bg-slate-50 text-slate-300 cursor-not-allowed"
                           }`}
-                          style={canDragFields ? { color: "#0C2472" } : {}}>
-                          <Icon size={11} color={canDragFields ? "#1D4ED8" : "#CBD5E1"} weight="duotone" className="flex-shrink-0" />
+                          style={canDragFields ? { color: isDark ? "#93C5FD" : "#0C2472" } : {}}>
+                          <Icon size={11} color={canDragFields ? (isDark ? "#60A5FA" : "#1D4ED8") : (isDark ? "#3F3F46" : "#CBD5E1")} weight="duotone" className="flex-shrink-0" />
                           <span className="truncate">{ft.label}</span>
                         </div>
                       );
@@ -2087,7 +2141,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
               )}
               <div className="px-3 pb-3">
                 <button onClick={addSection}
-                  className="flex items-center gap-1.5 w-full px-3 py-2 border border-dashed border-[#4A7AE8] rounded-lg text-[14px] font-bold text-[#1D4ED8] hover:bg-[#EFF6FF] transition-colors justify-center">
+                  className={`flex items-center gap-1.5 w-full px-3 py-2 border border-dashed rounded-lg text-[14px] font-bold transition-colors justify-center ${isDark ? "border-[#60A5FA] text-[#60A5FA] hover:bg-[#18181B]" : "border-[#4A7AE8] text-[#1D4ED8] hover:bg-[#EFF6FF]"}`}>
                   <Plus size={11} weight="bold"/> NEW SECTION
                 </button>
               </div>
@@ -2096,37 +2150,39 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
         </div>
 
         {/* Main area */}
-        <div className="flex-1 overflow-y-auto bg-[#F8FAFC]">
-          <div className="flex items-center justify-between px-6 pt-4 border-b border-[#E3ECFC] bg-white mb-0">
+        <div className={`flex-1 overflow-y-auto ${isDark ? "bg-[#000000]" : "bg-[#F8FAFC]"}`}>
+          <div className={`flex items-center justify-between px-6 pt-4 border-b mb-0 ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-white"}`}>
             <div className="flex items-center">
               {(["create","quickCreate","detailView"] as const).map(t => {
                 const labels = { create:"Create", quickCreate:"Quick Create", detailView:"Detail View" };
                 return (
                   <button key={t} onClick={() => setTab(t)}
                     className={`px-5 py-2.5 text-[14px] font-semibold transition-all border-b-2 -mb-px ${
-                      tab===t ? "border-[#1D4ED8] text-[#1D4ED8]" : "border-transparent text-slate-400 hover:text-slate-600"
+                      tab===t
+                        ? isDark ? "border-[#60A5FA] text-[#60A5FA]" : "border-[#1D4ED8] text-[#1D4ED8]"
+                        : isDark ? "border-transparent text-[#71717A] hover:text-[#D4D4D8]" : "border-transparent text-slate-400 hover:text-slate-600"
                     }`}>
                     {labels[t]}
                   </button>
                 );
               })}
             </div>
-            <button onClick={() => setPreviewOpen(true)} className="text-[14px] font-semibold text-[#1D4ED8] hover:underline pb-2.5">Preview</button>
+            <button onClick={() => setPreviewOpen(true)} className={`text-[14px] font-semibold hover:underline pb-2.5 ${isDark ? "text-[#60A5FA]" : "text-[#1D4ED8]"}`}>Preview</button>
           </div>
 
           {tab === "create" ? (
             <div className="px-6 py-5 space-y-4">
               {sections.length === 0 ? (
-                <div className="border-2 border-dashed border-[#CBD5E1] rounded-xl py-16 flex flex-col items-center justify-center gap-2 text-slate-300">
+                <div className={`border-2 border-dashed rounded-xl py-16 flex flex-col items-center justify-center gap-2 ${isDark ? "border-[#3F3F46] text-[#52525B]" : "border-[#CBD5E1] text-slate-300"}`}>
                   <SquaresFour size={28} weight="duotone"/>
-                  <span className="text-[14px] font-semibold text-slate-400">Click &quot;New Section&quot; to start building this layout</span>
+                  <span className={`text-[14px] font-semibold ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>Click &quot;New Section&quot; to start building this layout</span>
                 </div>
               ) : sections.map(section => (
-                <div key={section.id} className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
-                  <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#E3ECFC] bg-[#fafcff]">
-                    <DotsSixVertical size={14} color="#E2E8F0"/>
-                    <span className="text-[14px] font-bold text-slate-700 flex-1">{section.title}</span>
-                    <IconButton size="small" onClick={() => removeSection(section.id)} sx={{ p:0.3, color:"#94A3B8", "&:hover":{color:"#EF4444"}, borderRadius:"6px" }}>
+                <div key={section.id} className={`rounded-xl border overflow-hidden ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
+                  <div className={`flex items-center gap-2 px-4 py-2.5 border-b ${isDark ? "border-[#27272A] bg-[#111113]" : "border-[#E3ECFC] bg-[#fafcff]"}`}>
+                    <DotsSixVertical size={14} color={isDark ? "#3F3F46" : "#E2E8F0"}/>
+                    <span className={`text-[14px] font-bold flex-1 ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{section.title}</span>
+                    <IconButton size="small" onClick={() => removeSection(section.id)} sx={{ p:0.3, color: isDark ? "#71717A" : "#94A3B8", "&:hover":{color:"#EF4444"}, borderRadius:"6px" }}>
                       <Trash size={13} weight="duotone"/>
                     </IconButton>
                   </div>
@@ -2134,16 +2190,16 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
                     onDragOver={e => { e.preventDefault(); setDragOverSection(section.id); }}
                     onDragLeave={() => setDragOverSection(prev => prev === section.id ? null : prev)}
                     onDrop={() => handleDrop(section.id)}
-                    className={`p-3 grid grid-cols-2 gap-1.5 min-h-[64px] rounded-b-xl transition-colors ${dragOverSection === section.id ? "bg-[#EFF6FF]" : ""}`}>
+                    className={`p-3 grid grid-cols-2 gap-1.5 min-h-[64px] rounded-b-xl transition-colors ${dragOverSection === section.id ? (isDark ? "bg-[#18181B]" : "bg-[#EFF6FF]") : ""}`}>
                     {section.fields.length === 0 ? (
-                      <div className="col-span-2 flex items-center justify-center py-6 text-[14px] text-slate-300 border border-dashed border-[#E3ECFC] rounded-lg">
+                      <div className={`col-span-2 flex items-center justify-center py-6 text-[14px] border border-dashed rounded-lg ${isDark ? "text-[#52525B] border-[#3F3F46]" : "text-slate-300 border-[#E3ECFC]"}`}>
                         Drag fields here
                       </div>
                     ) : section.fields.map(f => (
-                      <div key={f.id} className="flex items-center justify-between px-3 py-2 border border-[#E3ECFC] rounded-lg bg-[#fafcff] hover:border-[#4A7AE8] transition-colors group">
-                        <span className="text-[14px] font-medium text-slate-700">{f.label}</span>
+                      <div key={f.id} className={`flex items-center justify-between px-3 py-2 border rounded-lg transition-colors group ${isDark ? "border-[#27272A] bg-[#111113] hover:border-[#60A5FA]" : "border-[#E3ECFC] bg-[#fafcff] hover:border-[#4A7AE8]"}`}>
+                        <span className={`text-[14px] font-medium ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{f.label}</span>
                         <button onClick={() => removeField(section.id, f.id)} className="opacity-0 group-hover:opacity-100 transition-opacity">
-                          <X size={11} color="#94A3B8" weight="bold"/>
+                          <X size={11} color={isDark ? "#71717A" : "#94A3B8"} weight="bold"/>
                         </button>
                       </div>
                     ))}
@@ -2153,26 +2209,26 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
             </div>
           ) : tab === "quickCreate" ? (
             <div className="px-6 py-5 flex flex-col items-center">
-              <div className="w-[420px] bg-white rounded-xl border border-[#E3ECFC] overflow-hidden shadow-sm">
-                <div className="px-4 py-2.5 border-b border-[#E3ECFC] bg-[#fafcff]">
-                  <span className="text-[14px] font-bold text-slate-700">Quick Create</span>
+              <div className={`w-[420px] rounded-xl border overflow-hidden shadow-sm ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
+                <div className={`px-4 py-2.5 border-b ${isDark ? "border-[#27272A] bg-[#111113]" : "border-[#E3ECFC] bg-[#fafcff]"}`}>
+                  <span className={`text-[14px] font-bold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>Quick Create</span>
                 </div>
                 <div
                   onDragOver={e => { e.preventDefault(); setQcDragOver(true); }}
                   onDragLeave={() => setQcDragOver(false)}
                   onDrop={handleQcDrop}
-                  className={`transition-colors ${qcDragOver ? "bg-[#EFF6FF]" : ""}`}>
+                  className={`transition-colors ${qcDragOver ? (isDark ? "bg-[#18181B]" : "bg-[#EFF6FF]") : ""}`}>
                   {qcFields.length === 0 ? (
-                    <div className="flex items-center justify-center py-10 text-[14px] text-slate-300 m-3 border border-dashed border-[#E3ECFC] rounded-lg">
+                    <div className={`flex items-center justify-center py-10 text-[14px] m-3 border border-dashed rounded-lg ${isDark ? "text-[#52525B] border-[#3F3F46]" : "text-slate-300 border-[#E3ECFC]"}`}>
                       Drag fields here
                     </div>
                   ) : (
-                    <div className="divide-y divide-[#EFF6FF]">
+                    <div className={`divide-y ${isDark ? "divide-[#27272A]" : "divide-[#EFF6FF]"}`}>
                       {qcFields.map(f => (
                         <div key={f.id} className="flex items-center px-4 py-2.5 group">
-                          <span className="text-[14px] text-slate-700 flex-1">{f.label}</span>
+                          <span className={`text-[14px] flex-1 ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{f.label}</span>
                           <button onClick={() => removeQcField(f.id)} className="opacity-0 group-hover:opacity-100 transition-opacity">
-                            <X size={11} color="#94A3B8" weight="bold"/>
+                            <X size={11} color={isDark ? "#71717A" : "#94A3B8"} weight="bold"/>
                           </button>
                         </div>
                       ))}
@@ -2180,72 +2236,72 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
                   )}
                 </div>
               </div>
-              <p className="text-[14px] text-slate-400 font-medium mt-3 text-center max-w-[420px]">
+              <p className={`text-[14px] font-medium mt-3 text-center max-w-[420px] ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>
                 Fields shown here appear in the Quick Create popup used to add a new {modDef?.label.toLowerCase().replace(/s$/, "") ?? "record"} from a list view.
               </p>
             </div>
           ) : (
             <div className="px-6 py-5 space-y-4">
               {/* Business Card */}
-              <div className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
-                <div className="flex items-center justify-between px-4 py-3 border-b border-[#E3ECFC]">
-                  <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Business Card</span>
+              <div className={`rounded-xl border overflow-hidden ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
+                <div className={`flex items-center justify-between px-4 py-3 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+                  <span className={`text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Business Card</span>
                   <div className="flex items-center gap-3">
                     <GreenSwitch checked={dvBcEnabled} onChange={() => setDvBcEnabled(p=>!p)}/>
-                    {dvBcEnabled && <button onClick={() => setDvBcCustomizeOpen(true)} className="text-[14px] font-semibold text-[#1D4ED8] hover:underline">Customize</button>}
+                    {dvBcEnabled && <button onClick={() => setDvBcCustomizeOpen(true)} className={`text-[14px] font-semibold hover:underline ${isDark ? "text-[#60A5FA]" : "text-[#1D4ED8]"}`}>Customize</button>}
                   </div>
                 </div>
                 {dvBcEnabled ? (
                   <>
-                    <div className="divide-y divide-[#EFF6FF]">
+                    <div className={`divide-y ${isDark ? "divide-[#27272A]" : "divide-[#EFF6FF]"}`}>
                       {dvBcFields.map(f => (
                         <div key={f.id} className="flex items-center gap-3 px-4 py-2.5">
-                          <DotsSixVertical size={13} color="#E2E8F0"/>
-                          <span className="text-[14px] text-slate-700 flex-1">{f.label}</span>
-                          <span className="text-[12px] text-slate-400">{f.type}</span>
+                          <DotsSixVertical size={13} color={isDark ? "#3F3F46" : "#E2E8F0"}/>
+                          <span className={`text-[14px] flex-1 ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{f.label}</span>
+                          <span className={`text-[12px] ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>{f.type}</span>
                         </div>
                       ))}
                     </div>
-                    <div className="px-4 py-2.5 border-t border-[#EFF6FF]">
-                      <div className="flex items-center gap-1.5 text-[14px] text-slate-600">
+                    <div className={`px-4 py-2.5 border-t ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
+                      <div className={`flex items-center gap-1.5 text-[14px] ${isDark ? "text-[#9CA3AF]" : "text-slate-600"}`}>
                           <Info size={11} weight="duotone"/>
-                          You can add up to <span className="font-bold text-slate-700 mx-0.5">5 fields</span> to your Business Card.
+                          You can add up to <span className={`font-bold mx-0.5 ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>5 fields</span> to your Business Card.
                         </div>
                       </div>
                     </>
                 ) : (
-                  <div className="px-4 py-3 text-[14px] text-slate-600">
+                  <div className={`px-4 py-3 text-[14px] ${isDark ? "text-[#9CA3AF]" : "text-slate-600"}`}>
                     Business Card cannot be customized as it is hidden.<br/>
                     Turn it on to customize the fields to be shown in details page.
                   </div>
                 )}
               </div>
               {/* Details */}
-              <div className="bg-white rounded-xl border border-[#E3ECFC]">
-                <div className="px-4 py-2.5 border-b border-[#E3ECFC]">
-                  <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Details</span>
+              <div className={`rounded-xl border ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
+                <div className={`px-4 py-2.5 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+                  <span className={`text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Details</span>
                 </div>
                 {allFields.length === 0 ? (
-                  <div className="mx-3 my-3 px-4 py-3 text-[14px] text-slate-600 bg-[#fafcff] rounded-lg border border-[#E3ECFC]">
+                  <div className={`mx-3 my-3 px-4 py-3 text-[14px] rounded-lg border ${isDark ? "text-[#9CA3AF] bg-[#111113] border-[#27272A]" : "text-slate-600 bg-[#fafcff] border-[#E3ECFC]"}`}>
                     Fields customized in the Create page will appear here.
                   </div>
                 ) : (
-                  <div className="divide-y divide-[#EFF6FF]">
+                  <div className={`divide-y ${isDark ? "divide-[#27272A]" : "divide-[#EFF6FF]"}`}>
                     {allFields.map(f => (
                       <div key={f.id} className="flex items-center gap-3 px-4 py-2.5">
-                        <DotsSixVertical size={13} color="#E2E8F0"/>
-                        <span className="text-[14px] text-slate-700 flex-1">{f.label}</span>
+                        <DotsSixVertical size={13} color={isDark ? "#3F3F46" : "#E2E8F0"}/>
+                        <span className={`text-[14px] flex-1 ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{f.label}</span>
                       </div>
                     ))}
                   </div>
                 )}
               </div>
               {/* Related List */}
-              <div className="bg-white rounded-xl border border-[#E3ECFC] overflow-hidden">
-                <div className="px-4 py-2.5 border-b border-[#E3ECFC]">
-                  <span className="text-[12px] font-bold text-slate-500 uppercase tracking-wider">Related List</span>
+              <div className={`rounded-xl border overflow-hidden ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
+                <div className={`px-4 py-2.5 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+                  <span className={`text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Related List</span>
                 </div>
-                <div className="px-4 py-3 text-[14px] text-slate-600">No related lists added yet.</div>
+                <div className={`px-4 py-3 text-[14px] ${isDark ? "text-[#9CA3AF]" : "text-slate-600"}`}>No related lists added yet.</div>
               </div>
             </div>
           )}
@@ -2255,31 +2311,31 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
       {/* Preview */}
       {previewOpen && (
         <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/40">
-          <div className="w-[480px] max-h-[80%] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col">
-            <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#E3ECFC] flex-shrink-0">
-              <span className="text-[15.5px] font-extrabold text-slate-900">
+          <div className={`w-[480px] max-h-[80%] rounded-2xl shadow-2xl overflow-hidden flex flex-col ${isDark ? "bg-[#0A0A0A]" : "bg-white"}`}>
+            <div className={`flex items-center justify-between px-5 py-3.5 border-b flex-shrink-0 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+              <span className={`text-[15.5px] font-extrabold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
                 {layoutName.trim() || "Untitled Layout"} &middot; Preview
               </span>
-              <IconButton size="small" onClick={() => setPreviewOpen(false)} sx={{ p:0.4, color:"#94A3B8", "&:hover":{color:"#1D4ED8"}, borderRadius:"6px" }}>
+              <IconButton size="small" onClick={() => setPreviewOpen(false)} sx={{ p:0.4, color: isDark ? "#71717A" : "#94A3B8", "&:hover":{color: isDark ? "#60A5FA" : "#1D4ED8"}, borderRadius:"6px" }}>
                 <X size={14} weight="bold"/>
               </IconButton>
             </div>
-            <div className="flex-1 overflow-y-auto px-5 py-5 space-y-5 bg-[#F8FAFC]">
+            <div className={`flex-1 overflow-y-auto px-5 py-5 space-y-5 ${isDark ? "bg-[#000000]" : "bg-[#F8FAFC]"}`}>
               {sections.length === 0 ? (
-                <div className="text-center text-[14px] text-slate-400 py-10">
+                <div className={`text-center text-[14px] py-10 ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>
                   No sections added yet. Build the Create tab to preview the form here.
                 </div>
               ) : sections.map(section => (
                 <div key={section.id}>
-                  <div className="text-[12px] font-bold text-slate-500 uppercase tracking-wider mb-2">{section.title}</div>
+                  <div className={`text-[12px] font-bold uppercase tracking-wider mb-2 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{section.title}</div>
                   {section.fields.length === 0 ? (
-                    <div className="text-[14px] text-slate-300 italic">No fields in this section.</div>
+                    <div className={`text-[14px] italic ${isDark ? "text-[#52525B]" : "text-slate-300"}`}>No fields in this section.</div>
                   ) : (
                     <div className="grid grid-cols-2 gap-3">
                       {section.fields.map(f => (
                         <div key={f.id}>
-                          <label className="block text-[11.5px] font-semibold text-slate-500 mb-1">{f.label}</label>
-                          <div className="px-3 py-2 rounded-lg border border-[#E3ECFC] bg-white text-[14px] text-slate-300">
+                          <label className={`block text-[11.5px] font-semibold mb-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{f.label}</label>
+                          <div className={`px-3 py-2 rounded-lg border text-[14px] ${isDark ? "border-[#27272A] bg-[#18181B] text-[#52525B]" : "border-[#E3ECFC] bg-white text-slate-300"}`}>
                             {f.label.toLowerCase()}
                           </div>
                         </div>
@@ -2296,20 +2352,20 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
       {/* Business Card Customize Modal - NewLayoutBuilder */}
       {dvBcCustomizeOpen && (
         <div className="absolute inset-0 z-50 bg-black/40 flex items-center justify-center">
-          <div className="bg-white rounded-2xl shadow-xl w-[420px] max-h-[80vh] overflow-hidden flex flex-col">
-            <div className="px-6 py-4 border-b border-[#E3ECFC] flex items-center justify-between">
+          <div className={`rounded-2xl shadow-xl w-[420px] max-h-[80vh] overflow-hidden flex flex-col ${isDark ? "bg-[#0A0A0A]" : "bg-white"}`}>
+            <div className={`px-6 py-4 border-b flex items-center justify-between ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
               <div>
-                <h3 className="text-[17px] font-bold text-slate-900">Customize Business Card</h3>
-                <p className="text-[13px] text-slate-500 mt-0.5">Drag to reorder · Max 5 fields</p>
+                <h3 className={`text-[17px] font-bold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Customize Business Card</h3>
+                <p className={`text-[13px] mt-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Drag to reorder · Max 5 fields</p>
               </div>
-              <button onClick={() => { setDvBcCustomizeOpen(false); setDvBcDragIdx(null); setDvBcDropIdx(null); }} className="text-slate-400 hover:text-slate-600">
+              <button onClick={() => { setDvBcCustomizeOpen(false); setDvBcDragIdx(null); setDvBcDropIdx(null); }} className={isDark ? "text-[#71717A] hover:text-[#D4D4D8]" : "text-slate-400 hover:text-slate-600"}>
                 <X size={18} weight="bold" />
               </button>
             </div>
 
             <div className="flex-1 overflow-y-auto px-6 py-4 space-y-2">
               {dvBcFields.length === 0 ? (
-                <div className="text-center py-10 text-[13px] text-slate-400">
+                <div className={`text-center py-10 text-[13px] ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>
                   Add fields in the Create tab to customize the Business Card.
                 </div>
               ) : dvBcFields.map((field, idx) => (
@@ -2329,22 +2385,26 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
                   }}
                   onDragEnd={() => { setDvBcDragIdx(null); setDvBcDropIdx(null); }}
                   className={`flex items-center gap-3 px-3 py-3 border rounded-xl transition-all cursor-grab active:cursor-grabbing select-none
-                    ${dvBcDragIdx === idx ? "opacity-40 border-dashed border-[#1D4ED8] bg-[#EFF6FF]" : dvBcDropIdx === idx ? "border-[#1D4ED8] bg-[#EFF6FF] shadow-sm" : "border-[#E3ECFC] bg-[#f9fbff] hover:border-[#A5B4FC] hover:bg-[#EFF6FF]"}`}
+                    ${dvBcDragIdx === idx
+                      ? isDark ? "opacity-40 border-dashed border-[#60A5FA] bg-[#18181B]" : "opacity-40 border-dashed border-[#1D4ED8] bg-[#EFF6FF]"
+                      : dvBcDropIdx === idx
+                        ? isDark ? "border-[#60A5FA] bg-[#18181B] shadow-sm" : "border-[#1D4ED8] bg-[#EFF6FF] shadow-sm"
+                        : isDark ? "border-[#27272A] bg-[#111113] hover:border-[#60A5FA] hover:bg-[#18181B]" : "border-[#E3ECFC] bg-[#f9fbff] hover:border-[#A5B4FC] hover:bg-[#EFF6FF]"}`}
                 >
-                  <DotsSixVertical size={16} color={dvBcDropIdx === idx ? "#1D4ED8" : "#94A3B8"} weight="bold" />
+                  <DotsSixVertical size={16} color={dvBcDropIdx === idx ? (isDark ? "#60A5FA" : "#1D4ED8") : (isDark ? "#71717A" : "#94A3B8")} weight="bold" />
                   <div className="flex-1 min-w-0">
-                    <div className="text-[14px] font-medium text-slate-800">{field.label}</div>
-                    {'type' in field && <div className="text-[11px] text-slate-400 capitalize">{(field as any).type}</div>}
+                    <div className={`text-[14px] font-medium ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>{field.label}</div>
+                    {'type' in field && <div className={`text-[11px] capitalize ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>{(field as any).type}</div>}
                   </div>
-                  <span className="text-[11px] font-semibold text-slate-400 bg-slate-100 rounded px-1.5 py-0.5">{idx + 1}</span>
+                  <span className={`text-[11px] font-semibold rounded px-1.5 py-0.5 ${isDark ? "text-[#9CA3AF] bg-[#27272A]" : "text-slate-400 bg-slate-100"}`}>{idx + 1}</span>
                 </div>
               ))}
             </div>
 
-            <div className="px-6 py-4 border-t border-[#E3ECFC] flex items-center justify-between">
-              <span className="text-[12px] text-slate-400">{dvBcFields.length}/5 fields</span>
+            <div className={`px-6 py-4 border-t flex items-center justify-between ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+              <span className={`text-[12px] ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>{dvBcFields.length}/5 fields</span>
               <div className="flex items-center gap-2">
-                <button onClick={() => { setDvBcCustomizeOpen(false); setDvBcDragIdx(null); setDvBcDropIdx(null); }} className="px-4 py-2 text-[14px] font-medium text-slate-600 border border-[#E3ECFC] rounded-lg hover:bg-slate-50 transition-colors">
+                <button onClick={() => { setDvBcCustomizeOpen(false); setDvBcDragIdx(null); setDvBcDropIdx(null); }} className={`px-4 py-2 text-[14px] font-medium border rounded-lg transition-colors ${isDark ? "text-[#9CA3AF] border-[#3F3F46] hover:bg-[#18181B]" : "text-slate-600 border-[#E3ECFC] hover:bg-slate-50"}`}>
                   Cancel
                 </button>
                 <button onClick={() => { setDvBcCustomizeOpen(false); setDvBcDragIdx(null); setDvBcDropIdx(null); }} className="px-4 py-2 text-[14px] font-medium text-white bg-[#1D4ED8] rounded-lg hover:bg-[#2563EB] transition-colors">
@@ -2602,7 +2662,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
                       <tr><td colSpan={4} className="px-4 py-8 text-center text-[15px] text-slate-300">No records found.</td></tr>
                     ) : layouts.map((l, i) => (
                       <tr key={i} className="border-b border-[#EFF6FF] last:border-0 hover:bg-[#fafcff] transition-colors">
-                        <td className="px-4 py-3 text-[15px] font-semibold text-[#1D4ED8] cursor-pointer hover:underline" onClick={() => onOpenLayout(l.name)}>{l.name}</td>
+                        <td className="px-4 py-3 text-[15px] font-semibold cursor-pointer hover:underline" style={{ color: isDark ? "#60A5FA" : "#1D4ED8" }} onClick={() => onOpenLayout(l.name)}>{l.name}</td>
                         <td className="px-4 py-3 text-[13px] text-slate-500">{l.sharedTo}</td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-1.5 text-[13px] text-slate-500">
@@ -2637,8 +2697,8 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
               {fieldSubTab === "listing" && (
                 <>
                   {/* Toolbar */}
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="flex-1 relative">
+                  <div className="flex items-center gap-3 mb-4 flex-wrap">
+                    <div className="flex-1 relative min-w-[160px]">
                       <MagnifyingGlass size={13} weight="duotone" color="#94A3B8" className="absolute left-3 top-1/2 -translate-y-1/2" />
                       <input
                         value={fieldSearch}
@@ -2981,21 +3041,50 @@ const HOMEPAGE_CARD_PALETTE = [
   { fill: "#E2E4EA" }, // Slate
 ];
 
+// Stepper config for Create Dashboard flow
+const STEPPER_STEPS = [
+  { key: "name", label: "Name Dashboard" },
+  { key: "share", label: "Share Options" },
+  { key: "filters", label: "Global Filters" },
+  { key: "lock", label: "Lock / Unlock" },
+  { key: "preview", label: "Save & Preview" },
+];
+
+const REGION_OPTIONS = ["All Regions", "North America", "EMEA", "APAC", "LATAM"];
+const DATE_RANGE_OPTIONS = ["Last 7 Days", "Last 30 Days", "Last Quarter", "Year to Date", "Custom"];
+const OWNER_OPTIONS = ["All Owners", "Me", "My Team", ...ALL_ROLES];
+
 function CreateHomePageDrawer({ open, onClose, onCreate, isDark }: {
   open: boolean; onClose: () => void;
-  onCreate: (name: string, sharedWith: string[]) => void;
+  onCreate: (name: string, sharedWith: string[], shareMode: "private" | "all" | "roles", filters: { region: string; dateRange: string; owner: string }, locked: boolean) => void;
   isDark: boolean;
 }) {
+  const [step, setStep] = useState(0);
   const [name, setName] = useState("");
+  const [shareMode, setShareMode] = useState<"private" | "all" | "roles">("all");
   const [sharedWith, setSharedWith] = useState<string[]>([...ALL_ROLES]);
+  const [region, setRegion] = useState(REGION_OPTIONS[0]);
+  const [dateRange, setDateRange] = useState(DATE_RANGE_OPTIONS[1]);
+  const [owner, setOwner] = useState(OWNER_OPTIONS[0]);
+  const [locked, setLocked] = useState(false);
 
   const toggleRole = (role: string) =>
     setSharedWith(prev => prev.includes(role) ? prev.filter(r => r !== role) : [...prev, role]);
 
-  const handleSubmit = () => {
-    if (name.trim()) { onCreate(name.trim(), sharedWith); setName(""); setSharedWith([...ALL_ROLES]); }
+  const resetState = () => {
+    setStep(0); setName(""); setShareMode("all"); setSharedWith([...ALL_ROLES]);
+    setRegion(REGION_OPTIONS[0]); setDateRange(DATE_RANGE_OPTIONS[1]); setOwner(OWNER_OPTIONS[0]);
+    setLocked(false);
   };
-  const handleClose = () => { onClose(); setName(""); setSharedWith([...ALL_ROLES]); };
+
+  const handleSubmit = () => {
+    if (!name.trim()) return;
+    onCreate(name.trim(), shareMode === "roles" ? sharedWith : [], shareMode, { region, dateRange, owner }, locked);
+    resetState();
+  };
+  const handleClose = () => { onClose(); resetState(); };
+
+  const canAdvance = step !== 0 || !!name.trim();
 
   const FX = {
     "& .MuiOutlinedInput-root": {
@@ -3009,6 +3098,12 @@ function CreateHomePageDrawer({ open, onClose, onCreate, isDark }: {
     "& .MuiInputLabel-root": { fontSize: "0.79rem", ...(isDark ? {} : { color: "#6B7280" }) },
     "& .MuiInputLabel-root.Mui-focused": { color: isDark ? "#A1A1AA" : "inherit" },
   };
+
+  const SHARE_MODES: { key: "private" | "all" | "roles"; label: string; desc: string; icon: React.ElementType }[] = [
+    { key: "private", label: "Private", desc: "Only visible to you", icon: Lock },
+    { key: "all", label: "All Users", desc: "Visible to everyone in the org", icon: Globe },
+    { key: "roles", label: "Specific Roles", desc: "Choose which roles can view this", icon: UsersThree },
+  ];
 
   return (
     <Drawer anchor="right" open={open} onClose={handleClose}
@@ -3028,35 +3123,199 @@ function CreateHomePageDrawer({ open, onClose, onCreate, isDark }: {
         </Tooltip>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
-        <div>
-          <div className="font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500">Dashboard Details</div>
-          <TextField label="Dashboard Name" value={name} onChange={e => setName(e.target.value)}
-            size="small" fullWidth sx={FX} />
-        </div>
-        <div>
-          <div className="font-heading text-[12px] font-bold mb-3 uppercase tracking-wider text-slate-500">Share With</div>
-          <div className="space-y-1">
-            {ALL_ROLES.map(role => (
-              <label key={role} className={`flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer transition-colors ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}>
-                <Checkbox size="small" checked={sharedWith.includes(role)} onChange={() => toggleRole(role)}
-                  sx={{ p: 0.3, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked": { color: "#1D4ED8" } }} />
-                <span className={`text-[14px] font-medium ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{role}</span>
-              </label>
-            ))}
-          </div>
+      {/* Stepper header */}
+      <div className={`px-6 py-4 border-b flex-shrink-0 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+        <div className="flex items-center">
+          {STEPPER_STEPS.map((s, i) => (
+            <div key={s.key} className="flex items-center flex-1 last:flex-none">
+              <div className="flex flex-col items-center gap-1.5 flex-shrink-0">
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-bold transition-colors ${
+                  i < step
+                    ? "bg-[#1D4ED8] text-white"
+                    : i === step
+                      ? isDark ? "bg-[#1D4ED8]/20 text-[#93C5FD] ring-2 ring-[#1D4ED8]" : "bg-[#1D4ED8]/10 text-[#1D4ED8] ring-2 ring-[#1D4ED8]"
+                      : isDark ? "bg-[#27272A] text-[#71717A]" : "bg-[#E3ECFC] text-slate-400"
+                }`}>
+                  {i < step ? <CheckCircle size={15} weight="bold" /> : i + 1}
+                </div>
+                <span className={`text-[10px] font-semibold text-center max-w-[70px] leading-tight ${
+                  i === step ? (isDark ? "text-[#F4F4F5]" : "text-slate-900") : (isDark ? "text-[#71717A]" : "text-slate-400")
+                }`}>{s.label}</span>
+              </div>
+              {i < STEPPER_STEPS.length - 1 && (
+                <div className={`flex-1 h-[2px] mx-1.5 mb-4 rounded-full transition-colors ${
+                  i < step ? "bg-[#1D4ED8]" : isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"
+                }`} />
+              )}
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className={`flex items-center justify-end gap-3 px-6 py-4 border-t flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
-        <Button variant="text" onClick={handleClose}
-          sx={{ color: isDark ? "#A1A1AA" : "#64748B", textTransform: "none", fontWeight: 600, fontSize: "0.82rem", borderRadius: "9px", px: 2.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
-          Cancel
-        </Button>
-        <Button variant="contained" onClick={handleSubmit} disabled={!name.trim()}
-          sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB" }, "&:disabled": { bgcolor: isDark ? "#1C1C1E" : "#E2E8F0", color: isDark ? "#52525B" : "#CBD5E1" } }}>
-          Create
-        </Button>
+      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+        {/* Step 1 — Name Dashboard */}
+        {step === 0 && (
+          <div>
+            <div className="font-heading text-[12px] font-bold mb-4 uppercase tracking-wider text-slate-500">Dashboard Details</div>
+            <TextField label="Dashboard Name" placeholder="e.g. Sales Performance Overview" value={name} onChange={e => setName(e.target.value)}
+              size="small" fullWidth autoFocus sx={FX} />
+            <p className={`text-[12px] mt-2.5 ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>Give your dashboard a clear, descriptive name so it's easy to find later.</p>
+          </div>
+        )}
+
+        {/* Step 2 — Share Options */}
+        {step === 1 && (
+          <div className="space-y-5">
+            <div>
+              <div className="font-heading text-[12px] font-bold mb-3 uppercase tracking-wider text-slate-500">Who can access this dashboard?</div>
+              <div className="space-y-2">
+                {SHARE_MODES.map(mode => (
+                  <button key={mode.key} type="button" onClick={() => setShareMode(mode.key)}
+                    className={`w-full flex items-start gap-3 px-4 py-3 rounded-xl border text-left transition-colors ${
+                      shareMode === mode.key
+                        ? isDark ? "border-[#1D4ED8] bg-[#1D4ED8]/10" : "border-[#1D4ED8] bg-[#1D4ED8]/5"
+                        : isDark ? "border-[#27272A] hover:bg-[#27272A]" : "border-[#E3ECFC] hover:bg-[#EFF6FF]"
+                    }`}>
+                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                      shareMode === mode.key ? "bg-[#1D4ED8]" : isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"
+                    }`}>
+                      <mode.icon size={17} weight="duotone" color={shareMode === mode.key ? "#fff" : isDark ? "#A1A1AA" : "#64748B"} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className={`text-[14px] font-semibold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>{mode.label}</div>
+                      <div className={`text-[12px] mt-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{mode.desc}</div>
+                    </div>
+                    {shareMode === mode.key && <CheckCircle size={18} weight="fill" color="#1D4ED8" className="flex-shrink-0 mt-0.5" />}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {shareMode === "roles" && (
+              <div>
+                <div className="font-heading text-[12px] font-bold mb-3 uppercase tracking-wider text-slate-500">Select Roles</div>
+                <div className="space-y-1">
+                  {ALL_ROLES.map(role => (
+                    <label key={role} className={`flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer transition-colors ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}>
+                      <Checkbox size="small" checked={sharedWith.includes(role)} onChange={() => toggleRole(role)}
+                        sx={{ p: 0.3, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked": { color: "#1D4ED8" } }} />
+                      <span className={`text-[14px] font-medium ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{role}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Step 3 — Global Filters */}
+        {step === 2 && (
+          <div className="space-y-5">
+            <div>
+              <div className="font-heading text-[12px] font-bold mb-1 uppercase tracking-wider text-slate-500">Global Filters</div>
+              <p className={`text-[12px] mb-4 ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>These filters apply across every widget on the dashboard by default. Viewers can still adjust them unless locked.</p>
+            </div>
+            <FormControl size="small" fullWidth sx={FX}>
+              <InputLabel>Region</InputLabel>
+              <Select label="Region" value={region} onChange={e => setRegion(e.target.value)}
+                MenuProps={{ PaperProps: { sx: { bgcolor: isDark ? "#1C1C1E" : "#fff" } } }}>
+                {REGION_OPTIONS.map(r => <MenuItem key={r} value={r}>{r}</MenuItem>)}
+              </Select>
+            </FormControl>
+            <FormControl size="small" fullWidth sx={FX}>
+              <InputLabel>Date Range</InputLabel>
+              <Select label="Date Range" value={dateRange} onChange={e => setDateRange(e.target.value)}
+                MenuProps={{ PaperProps: { sx: { bgcolor: isDark ? "#1C1C1E" : "#fff" } } }}>
+                {DATE_RANGE_OPTIONS.map(d => <MenuItem key={d} value={d}>{d}</MenuItem>)}
+              </Select>
+            </FormControl>
+            <FormControl size="small" fullWidth sx={FX}>
+              <InputLabel>Owner</InputLabel>
+              <Select label="Owner" value={owner} onChange={e => setOwner(e.target.value)}
+                MenuProps={{ PaperProps: { sx: { bgcolor: isDark ? "#1C1C1E" : "#fff" } } }}>
+                {OWNER_OPTIONS.map(o => <MenuItem key={o} value={o}>{o}</MenuItem>)}
+              </Select>
+            </FormControl>
+          </div>
+        )}
+
+        {/* Step 4 — Lock / Unlock */}
+        {step === 3 && (
+          <div>
+            <div className="font-heading text-[12px] font-bold mb-1 uppercase tracking-wider text-slate-500">Lock Dashboard</div>
+            <p className={`text-[12px] mb-4 ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>Locking prevents viewers from changing filters or rearranging widgets — the dashboard shows exactly as designed.</p>
+            <div className={`flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl border ${isDark ? "border-[#27272A] bg-[#111113]" : "border-[#E3ECFC] bg-[#f9fbff]"}`}>
+              <div className="flex items-center gap-3">
+                <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${locked ? "bg-[#1D4ED8]" : isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`}>
+                  <Lock size={17} weight="duotone" color={locked ? "#fff" : isDark ? "#A1A1AA" : "#64748B"} />
+                </div>
+                <div>
+                  <div className={`text-[14px] font-semibold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>{locked ? "Locked" : "Unlocked"}</div>
+                  <div className={`text-[12px] mt-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{locked ? "Viewers cannot edit filters or layout" : "Viewers can adjust filters and layout"}</div>
+                </div>
+              </div>
+              <button type="button" role="switch" aria-checked={locked} onClick={() => setLocked(v => !v)}
+                className={`relative w-11 h-6 rounded-full flex-shrink-0 transition-colors ${locked ? "bg-[#1D4ED8]" : isDark ? "bg-[#3F3F46]" : "bg-[#CBD5E1]"}`}>
+                <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${locked ? "translate-x-[22px]" : "translate-x-0.5"}`} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 5 — Save & Preview */}
+        {step === 4 && (
+          <div className="space-y-4">
+            <div className="font-heading text-[12px] font-bold mb-1 uppercase tracking-wider text-slate-500">Review & Confirm</div>
+            <div className={`rounded-xl border divide-y ${isDark ? "border-[#27272A] divide-[#27272A] bg-[#111113]" : "border-[#E3ECFC] divide-[#E3ECFC] bg-[#f9fbff]"}`}>
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className={`text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Name</span>
+                <span className={`text-[13px] font-semibold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>{name || "—"}</span>
+              </div>
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className={`text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Share</span>
+                <span className={`text-[13px] font-semibold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
+                  {shareMode === "private" ? "Private" : shareMode === "all" ? "All Users" : `${sharedWith.length} Role${sharedWith.length === 1 ? "" : "s"}`}
+                </span>
+              </div>
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className={`text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Filters</span>
+                <span className={`text-[13px] font-semibold text-right ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>{region} · {dateRange} · {owner}</span>
+              </div>
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className={`text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Status</span>
+                <span className={`text-[13px] font-semibold flex items-center gap-1.5 ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
+                  <Lock size={13} weight="duotone" />{locked ? "Locked" : "Unlocked"}
+                </span>
+              </div>
+            </div>
+            <p className={`text-[12px] ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>Saving will open the dashboard editor where you can build out the layout and preview it live.</p>
+          </div>
+        )}
+      </div>
+
+      <div className={`flex items-center justify-between gap-3 px-6 py-4 border-t flex-shrink-0 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+        {step === 0 ? (
+          <Button variant="text" onClick={handleClose}
+            sx={{ color: isDark ? "#A1A1AA" : "#64748B", textTransform: "none", fontWeight: 600, fontSize: "0.82rem", borderRadius: "9px", px: 2.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+            Cancel
+          </Button>
+        ) : (
+          <Button variant="text" startIcon={<ArrowLeft size={15} weight="bold" />} onClick={() => setStep(s => s - 1)}
+            sx={{ color: isDark ? "#A1A1AA" : "#64748B", textTransform: "none", fontWeight: 600, fontSize: "0.82rem", borderRadius: "9px", px: 2.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+            Back
+          </Button>
+        )}
+        {step < STEPPER_STEPS.length - 1 ? (
+          <Button variant="contained" endIcon={<CaretRight size={15} weight="bold" />} onClick={() => setStep(s => s + 1)} disabled={!canAdvance}
+            sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB" }, "&:disabled": { bgcolor: isDark ? "#1C1C1E" : "#E2E8F0", color: isDark ? "#52525B" : "#CBD5E1" } }}>
+            Next
+          </Button>
+        ) : (
+          <Button variant="contained" onClick={handleSubmit} disabled={!name.trim()}
+            sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 700, fontSize: "0.82rem", px: 3, boxShadow: isDark ? "none" : "0 1px 8px #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB" }, "&:disabled": { bgcolor: isDark ? "#1C1C1E" : "#E2E8F0", color: isDark ? "#52525B" : "#CBD5E1" } }}>
+            Save & Preview
+          </Button>
+        )}
       </div>
     </Drawer>
   );
@@ -3126,12 +3385,11 @@ function CustomizeHomepagePanel() {
     }
   };
 
-  const handleCreate = (name: string, sharedWith: string[]) => {
+  const handleCreate = (name: string, sharedWith: string[], shareMode: "private" | "all" | "roles", filters: { region: string; dateRange: string; owner: string }, locked: boolean) => {
     const now = new Date().toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" });
     const newId = `hp${Date.now()}`;
-    setHomepages(prev => [...prev, { id: newId, name, description: "", sharedWith, created: now, lastModified: now, isActive: true }]);
+    setHomepages(prev => [...prev, { id: newId, name, description: "", sharedWith, created: now, lastModified: now, isActive: true, shareMode, filters, locked }]);
     setCreateOpen(false);
-    // New dashboards start blank — the user builds the layout themselves in the editor.
     router.push(`/home/${newId}/edit?new=true`);
   };
 
@@ -3261,6 +3519,109 @@ function CustomizeHomepagePanel() {
 }
 
 // ---------------------------------------------
+//  Import Panel
+// ---------------------------------------------
+function ImportPanel() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+  const [file, setFile] = useState<File | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) setFile(selectedFile);
+  };
+
+  const handleImport = () => {
+    if (!file) {
+      alert("Please select a file to import");
+      return;
+    }
+    console.log("Importing file:", file.name);
+    alert(`File "${file.name}" imported successfully!`);
+    setFile(null);
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+    if (input) input.value = "";
+  };
+
+  return (
+    <div className={`flex-1 flex flex-col overflow-auto ${isDark ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
+      <div className="px-8 py-6 border-b flex-shrink-0" style={{ borderColor: isDark ? "#27272A" : "#E3ECFC" }}>
+        <h1 className={`text-[24px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Import Data</h1>
+        <p className={`text-[13px] mt-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Upload CSV or Excel files to import records</p>
+      </div>
+
+      <div className="flex-1 p-8">
+        <div className={`max-w-md rounded-2xl border-2 border-dashed p-8 text-center transition-colors ${
+          isDark
+            ? "border-[#27272A] bg-[#18181B] hover:bg-[#27272A]"
+            : "border-[#E3ECFC] bg-white hover:bg-[#F9FBFF]"
+        }`}>
+          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
+            <Upload size={32} color={isDark ? "#64748B" : "#1D4ED8"} weight="duotone" />
+          </div>
+
+          <h3 className={`text-[15px] font-bold mb-2 ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Upload file</h3>
+          <p className={`text-[12px] mb-4 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>
+            {file ? file.name : "CSV, Excel, or JSON formats"}
+          </p>
+
+          <label className={`inline-block px-4 py-2 rounded-lg font-medium text-[13px] cursor-pointer transition-colors ${
+            isDark
+              ? "bg-[#1D4ED8] text-white hover:bg-[#1640B8]"
+              : "bg-[#1D4ED8] text-white hover:bg-[#1640B8]"
+          }`}>
+            Choose file
+            <input
+              type="file"
+              hidden
+              onChange={handleFileChange}
+              accept=".csv,.xlsx,.xls,.json"
+            />
+          </label>
+        </div>
+
+        {file && (
+          <div className={`mt-6 p-4 rounded-lg border ${isDark ? "bg-[#18181B] border-[#27272A]" : "bg-[#F9FBFF] border-[#E3ECFC]"}`}>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className={`text-[13px] font-medium ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>{file.name}</p>
+                <p className={`text-[12px] mt-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{(file.size / 1024).toFixed(2)} KB</p>
+              </div>
+              <button
+                onClick={() => {
+                  setFile(null);
+                  const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+                  if (input) input.value = "";
+                }}
+                className={`text-[12px] px-3 py-1 rounded-lg transition-colors ${isDark ? "text-[#9CA3AF] hover:bg-[#27272A]" : "text-slate-500 hover:bg-[#E3ECFC]"}`}
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        )}
+
+        <button
+          onClick={handleImport}
+          disabled={!file}
+          className={`mt-6 w-full px-4 py-2.5 rounded-lg font-medium text-[13px] transition-colors ${
+            file
+              ? isDark
+                ? "bg-[#1D4ED8] text-white hover:bg-[#1640B8]"
+                : "bg-[#1D4ED8] text-white hover:bg-[#1640B8]"
+              : isDark
+                ? "bg-[#27272A] text-[#71717A] cursor-not-allowed"
+                : "bg-[#E3ECFC] text-[#94A3B8] cursor-not-allowed"
+          }`}
+        >
+          Import Records
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------
 //  Placeholder
 // ---------------------------------------------
 function PlaceholderPanel({ label }: { label: string }) {
@@ -3367,6 +3728,7 @@ export default function SettingsPage() {
       case "permission":   return <PermissionPanel />;
       case "modules":      return <ModulesAndFieldsPanel />;
       case "homepage":     return <CustomizeHomepagePanel />;
+      case "import":       return <ImportPanel />;
       default:             return <PlaceholderPanel label={activeLabel} />;
     }
   };

@@ -36,9 +36,10 @@ interface Props {
   onClose: () => void;
   sorts: SortRow[];
   onChange: (sorts: SortRow[]) => void;
+  columns?: { value: string; label: string }[];
 }
 
-export default function SortPopover({ anchor, onClose, sorts, onChange }: Props) {
+export default function SortPopover({ anchor, onClose, sorts, onChange, columns = SORT_COLUMNS }: Props) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
@@ -54,17 +55,17 @@ export default function SortPopover({ anchor, onClose, sorts, onChange }: Props)
   };
 
   const [local, setLocal] = useState<SortRow[]>(
-    sorts.length ? sorts : [{ id: uid(), column: "name", dir: "asc" }]
+    sorts.length ? sorts : [{ id: uid(), column: columns[0].value, dir: "asc" }]
   );
 
   const update = (id: string, patch: Partial<SortRow>) =>
     setLocal(prev => prev.map(r => r.id === id ? { ...r, ...patch } : r));
 
-  const add = () => setLocal(prev => [...prev, { id: uid(), column: "creation", dir: "desc" }]);
+  const add = () => setLocal(prev => [...prev, { id: uid(), column: columns[columns.length - 1].value, dir: "desc" }]);
   const remove = (id: string) => setLocal(prev => prev.filter(r => r.id !== id));
 
   const handleApply = () => { onChange(local); onClose(); };
-  const handleClear = () => { setLocal([{ id: uid(), column: "name", dir: "asc" }]); onChange([]); onClose(); };
+  const handleClear = () => { setLocal([{ id: uid(), column: columns[0].value, dir: "asc" }]); onChange([]); onClose(); };
 
   return (
     <Popover
@@ -102,7 +103,7 @@ export default function SortPopover({ anchor, onClose, sorts, onChange }: Props)
               {/* Column */}
               <FormControl size="small" sx={{ flex: 1 }}>
                 <Select value={row.column} onChange={e => update(row.id, { column: e.target.value })} sx={SELECT_SX}>
-                  {SORT_COLUMNS.map(c => (
+                  {columns.map(c => (
                     <MenuItem key={c.value} value={c.value} sx={{ fontSize: "0.77rem" }}>{c.label}</MenuItem>
                   ))}
                 </Select>
