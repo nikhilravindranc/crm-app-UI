@@ -3023,7 +3023,8 @@ function ModulesAndFieldsPanel() {
 interface HomePage {
   id: string; name: string; description: string;
   sharedWith: string[]; created: string; lastModified: string; isActive: boolean;
-  shareMode?: "private" | "all" | "roles";
+  shareMode?: "private" | "all" | "roles" | "users";
+  sharedUserIds?: number[];
   filters?: { region: string; dateRange: string; owner: string };
   locked?: boolean;
 }
@@ -3058,13 +3059,15 @@ const OWNER_OPTIONS = ["All Owners", "Me", "My Team", ...ALL_ROLES];
 
 function CreateHomePageDrawer({ open, onClose, onCreate, isDark }: {
   open: boolean; onClose: () => void;
-  onCreate: (name: string, sharedWith: string[], shareMode: "private" | "all" | "roles", filters: { region: string; dateRange: string; owner: string }, locked: boolean) => void;
+  onCreate: (name: string, sharedWith: string[], shareMode: "private" | "all" | "roles" | "users", sharedUserIds: number[], filters: { region: string; dateRange: string; owner: string }, locked: boolean) => void;
   isDark: boolean;
 }) {
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
-  const [shareMode, setShareMode] = useState<"private" | "all" | "roles">("all");
+  const [shareMode, setShareMode] = useState<"private" | "all" | "roles" | "users">("all");
   const [sharedWith, setSharedWith] = useState<string[]>([...ALL_ROLES]);
+  const [sharedUserIds, setSharedUserIds] = useState<number[]>([]);
+  const [userSearch, setUserSearch] = useState("");
   const [region, setRegion] = useState(REGION_OPTIONS[0]);
   const [dateRange, setDateRange] = useState(DATE_RANGE_OPTIONS[1]);
   const [owner, setOwner] = useState(OWNER_OPTIONS[0]);
@@ -3072,16 +3075,22 @@ function CreateHomePageDrawer({ open, onClose, onCreate, isDark }: {
 
   const toggleRole = (role: string) =>
     setSharedWith(prev => prev.includes(role) ? prev.filter(r => r !== role) : [...prev, role]);
+  const toggleUser = (id: number) =>
+    setSharedUserIds(prev => prev.includes(id) ? prev.filter(u => u !== id) : [...prev, id]);
+
+  const filteredUsers = USERS.filter(u =>
+    u.name.toLowerCase().includes(userSearch.toLowerCase()) || u.email.toLowerCase().includes(userSearch.toLowerCase())
+  );
 
   const resetState = () => {
-    setStep(0); setName(""); setShareMode("all"); setSharedWith([...ALL_ROLES]);
+    setStep(0); setName(""); setShareMode("all"); setSharedWith([...ALL_ROLES]); setSharedUserIds([]); setUserSearch("");
     setRegion(REGION_OPTIONS[0]); setDateRange(DATE_RANGE_OPTIONS[1]); setOwner(OWNER_OPTIONS[0]);
     setLocked(false);
   };
 
   const handleSubmit = () => {
     if (!name.trim()) return;
-    onCreate(name.trim(), shareMode === "roles" ? sharedWith : [], shareMode, { region, dateRange, owner }, locked);
+    onCreate(name.trim(), shareMode === "roles" ? sharedWith : [], shareMode, shareMode === "users" ? sharedUserIds : [], { region, dateRange, owner }, locked);
     resetState();
   };
   const handleClose = () => { onClose(); resetState(); };
@@ -3101,10 +3110,11 @@ function CreateHomePageDrawer({ open, onClose, onCreate, isDark }: {
     "& .MuiInputLabel-root.Mui-focused": { color: isDark ? "#A1A1AA" : "inherit" },
   };
 
-  const SHARE_MODES: { key: "private" | "all" | "roles"; label: string; desc: string; icon: React.ElementType }[] = [
+  const SHARE_MODES: { key: "private" | "all" | "roles" | "users"; label: string; desc: string; icon: React.ElementType }[] = [
     { key: "private", label: "Private", desc: "Only visible to you", icon: Lock },
     { key: "all", label: "All Users", desc: "Visible to everyone in the org", icon: Globe },
     { key: "roles", label: "Specific Roles", desc: "Choose which roles can view this", icon: UsersThree },
+    { key: "users", label: "Specific Users", desc: "Choose one or more individual users", icon: UserPlus },
   ];
 
   return (
@@ -3207,6 +3217,42 @@ function CreateHomePageDrawer({ open, onClose, onCreate, isDark }: {
                 </div>
               </div>
             )}
+
+            {shareMode === "users" && (
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="font-heading text-[12px] font-bold uppercase tracking-wider text-slate-500">Select Users</div>
+                  {sharedUserIds.length > 0 && (
+                    <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${isDark ? "bg-[#1D4ED8]/20 text-[#93C5FD]" : "bg-[#1D4ED8]/10 text-[#1D4ED8]"}`}>
+                      {sharedUserIds.length} selected
+                    </span>
+                  )}
+                </div>
+                <div className={`flex items-center gap-2 border rounded-lg px-3 py-2 mb-3 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+                  <MagnifyingGlass size={14} color="#94A3B8" weight="duotone" />
+                  <input placeholder="Search by name or email" value={userSearch} onChange={e => setUserSearch(e.target.value)}
+                    className={`flex-1 text-[13px] outline-none bg-transparent ${isDark ? "text-[#D4D4D8] placeholder-[#52525B]" : "text-slate-700 placeholder-slate-400"}`} />
+                </div>
+                <div className="space-y-1 max-h-[280px] overflow-y-auto">
+                  {filteredUsers.map(u => (
+                    <label key={u.id} className={`flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer transition-colors ${isDark ? "hover:bg-[#27272A]" : "hover:bg-[#EFF6FF]"}`}>
+                      <Checkbox size="small" checked={sharedUserIds.includes(u.id)} onChange={() => toggleUser(u.id)}
+                        sx={{ p: 0.3, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked": { color: "#1D4ED8" } }} />
+                      <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10.5px] font-bold flex-shrink-0"
+                        style={{ backgroundColor: u.avatarColor, color: u.textColor }}>{u.initials}</div>
+                      <div className="flex-1 min-w-0">
+                        <div className={`text-[13.5px] font-semibold truncate ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{u.name}</div>
+                        <div className={`text-[11.5px] truncate ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>{u.email}</div>
+                      </div>
+                      <span className={`text-[10.5px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${isDark ? "bg-[#27272A] text-[#9CA3AF]" : "bg-[#E3ECFC] text-slate-500"}`}>{u.role}</span>
+                    </label>
+                  ))}
+                  {filteredUsers.length === 0 && (
+                    <div className={`text-[13px] text-center py-6 ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>No users match "{userSearch}"</div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -3276,7 +3322,10 @@ function CreateHomePageDrawer({ open, onClose, onCreate, isDark }: {
               <div className="flex items-center justify-between px-4 py-3">
                 <span className={`text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Share</span>
                 <span className={`text-[13px] font-semibold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
-                  {shareMode === "private" ? "Private" : shareMode === "all" ? "All Users" : `${sharedWith.length} Role${sharedWith.length === 1 ? "" : "s"}`}
+                  {shareMode === "private" ? "Private"
+                    : shareMode === "all" ? "All Users"
+                    : shareMode === "roles" ? `${sharedWith.length} Role${sharedWith.length === 1 ? "" : "s"}`
+                    : `${sharedUserIds.length} User${sharedUserIds.length === 1 ? "" : "s"}`}
                 </span>
               </div>
               <div className="flex items-center justify-between px-4 py-3">
@@ -3387,10 +3436,10 @@ function CustomizeHomepagePanel() {
     }
   };
 
-  const handleCreate = (name: string, sharedWith: string[], shareMode: "private" | "all" | "roles", filters: { region: string; dateRange: string; owner: string }, locked: boolean) => {
+  const handleCreate = (name: string, sharedWith: string[], shareMode: "private" | "all" | "roles" | "users", sharedUserIds: number[], filters: { region: string; dateRange: string; owner: string }, locked: boolean) => {
     const now = new Date().toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" });
     const newId = `hp${Date.now()}`;
-    setHomepages(prev => [...prev, { id: newId, name, description: "", sharedWith, created: now, lastModified: now, isActive: true, shareMode, filters, locked }]);
+    setHomepages(prev => [...prev, { id: newId, name, description: "", sharedWith, sharedUserIds, created: now, lastModified: now, isActive: true, shareMode, filters, locked }]);
     setCreateOpen(false);
     // New dashboards start blank — the user builds the layout themselves in the editor.
     router.push(`/home/${newId}/edit?new=true`);
@@ -3477,11 +3526,26 @@ function CustomizeHomepagePanel() {
 
                 {/* Shared with chips */}
                 <div className="flex flex-wrap gap-1.5 mb-4">
-                  {hp.sharedWith.slice(0, 3).map(role => (
+                  {hp.shareMode === "private" && (
+                    <span className={`text-[10.5px] font-bold px-2 py-1 rounded-full ${isDark ? "bg-black/40 text-[#A1A1AA]" : "bg-[#f9fbff]/70 text-[#0C2472]"}`}>Private</span>
+                  )}
+                  {hp.shareMode === "all" && (
+                    <span className={`text-[10.5px] font-bold px-2 py-1 rounded-full ${isDark ? "bg-black/40 text-[#A1A1AA]" : "bg-[#f9fbff]/70 text-[#0C2472]"}`}>All Users</span>
+                  )}
+                  {hp.shareMode === "roles" && hp.sharedWith.slice(0, 3).map(role => (
                     <span key={role} className={`text-[10.5px] font-bold px-2 py-1 rounded-full ${isDark ? "bg-black/40 text-[#A1A1AA]" : "bg-[#f9fbff]/70 text-[#0C2472]"}`}>{role}</span>
                   ))}
-                  {hp.sharedWith.length > 3 && (
+                  {hp.shareMode === "roles" && hp.sharedWith.length > 3 && (
                     <span className={`text-[10.5px] font-bold px-2 py-1 rounded-full ${isDark ? "bg-black/40 text-[#A1A1AA]" : "bg-[#f9fbff]/70 text-[#0C2472]"}`}>+{hp.sharedWith.length - 3}</span>
+                  )}
+                  {hp.shareMode === "users" && (hp.sharedUserIds || []).slice(0, 3).map(id => {
+                    const u = USERS.find(usr => usr.id === id);
+                    return u ? (
+                      <span key={id} className={`text-[10.5px] font-bold px-2 py-1 rounded-full ${isDark ? "bg-black/40 text-[#A1A1AA]" : "bg-[#f9fbff]/70 text-[#0C2472]"}`}>{u.name}</span>
+                    ) : null;
+                  })}
+                  {hp.shareMode === "users" && (hp.sharedUserIds || []).length > 3 && (
+                    <span className={`text-[10.5px] font-bold px-2 py-1 rounded-full ${isDark ? "bg-black/40 text-[#A1A1AA]" : "bg-[#f9fbff]/70 text-[#0C2472]"}`}>+{(hp.sharedUserIds || []).length - 3}</span>
                   )}
                 </div>
 
