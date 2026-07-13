@@ -82,7 +82,7 @@ export default function ReportsPage() {
   );
 
   return (
-    <div style={{ marginLeft: "var(--sidebar-w, 260px)" }} className={`flex min-h-screen font-sans transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-[#EFF6FF]"}`}>
+    <div className={`sidebar-content flex min-h-screen font-sans transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-[#EFF6FF]"}`}>
       {/* Left Sidebar - Tags & Pinned */}
       <div className={`w-60 flex-shrink-0 border-r flex flex-col ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-white"}`}>
         {/* Tag Search */}
@@ -153,7 +153,7 @@ export default function ReportsPage() {
       </div>
 
       {/* Right Content */}
-      <div className={`sidebar-content flex-1 flex flex-col overflow-hidden transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
+      <div className={`flex-1 flex flex-col overflow-hidden transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
           {/* Header */}
           <div className={`px-8 py-6 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
             <div className="flex items-center gap-2 mb-4">
