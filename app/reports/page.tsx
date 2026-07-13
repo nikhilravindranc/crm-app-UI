@@ -37,39 +37,29 @@ export default function ReportsPage() {
   const isDark = theme === "dark";
   const [search, setSearch] = useState("");
   const [reports, setReports] = useState<Report[]>(SAMPLE_REPORTS);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [tagSearch, setTagSearch] = useState("");
+  const [expandedCategories, setExpandedCategories] = useState<string[]>(["Sales"]);
 
-  // Get all unique tags with counts
-  const allTags = useMemo(() => {
-    const tagMap = new Map<string, number>();
-    reports.forEach(r => {
-      r.tags.forEach(tag => {
-        tagMap.set(tag, (tagMap.get(tag) || 0) + 1);
-      });
-    });
-    return Array.from(tagMap.entries())
-      .map(([tag, count]) => ({ name: tag, count }))
-      .sort((a, b) => b.count - a.count);
+  // Get all categories with counts
+  const allCategories = useMemo(() => {
+    const categoryMap = new Map<string, number>();
+    reports.forEach(r => categoryMap.set(r.collection, (categoryMap.get(r.collection) || 0) + 1));
+    return Array.from(categoryMap.entries())
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => a.name.localeCompare(b.name));
   }, [reports]);
 
   // Get pinned reports
   const pinnedReports = reports.filter(r => r.isPinned);
 
-  // Filter reports by search and selected tags
+  // Filter reports by search
   const filtered = useMemo(() => {
-    return reports.filter(r => {
-      const matchesSearch = !search || r.name.toLowerCase().includes(search.toLowerCase());
-      const matchesTags = selectedTags.length === 0 || selectedTags.some(tag => r.tags.includes(tag));
-      return matchesSearch && matchesTags;
-    });
-  }, [reports, search, selectedTags]);
-
-  const toggleTag = (tag: string) => {
-    setSelectedTags(prev =>
-      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+    return reports.filter(r =>
+      !search || r.name.toLowerCase().includes(search.toLowerCase())
     );
-  };
+  }, [reports, search]);
+
+  const toggleCategory = (category: string) =>
+    setExpandedCategories(prev => prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]);
 
   const togglePin = (reportId: string) => {
     setReports(prev => prev.map(r =>
@@ -77,80 +67,97 @@ export default function ReportsPage() {
     ));
   };
 
-  const filteredTags = allTags.filter(t =>
-    !tagSearch || t.name.toLowerCase().includes(tagSearch.toLowerCase())
-  );
-
   return (
     <div className={`sidebar-content flex min-h-screen font-sans transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-[#EFF6FF]"}`}>
-      {/* Left Sidebar - Tags & Pinned */}
-      <div className={`w-60 flex-shrink-0 border-r flex flex-col ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-white"}`}>
-        {/* Tag Search */}
-        <div className={`p-4 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
-          <div className={`flex items-center gap-2 border rounded-lg px-3 py-2 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
-            <MagnifyingGlass size={13} color="#94A3B8" weight="duotone" />
-            <input placeholder="Search tags" value={tagSearch} onChange={e => setTagSearch(e.target.value)}
-              className={`flex-1 text-[12px] outline-none bg-transparent ${isDark ? "text-[#D4D4D8] placeholder-[#52525B]" : "text-slate-700 placeholder-slate-400"}`} />
+      {/* Left Sidebar - Pinned & Categories */}
+      <aside className={`w-60 flex-shrink-0 border-r flex flex-col overflow-hidden transition-colors duration-300 ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-[#f9fbff]"}`}>
+        {/* Sidebar Header */}
+        <div className={`px-4 pt-5 pb-4 border-b transition-colors duration-300 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-[#1D4ED8] flex items-center justify-center shadow-sm flex-shrink-0">
+              <ChartBar size={15} color="#fff" weight="duotone" />
+            </div>
+            <div>
+              <div className={`font-heading text-[14px] font-bold leading-tight ${isDark ? "text-[#FFFFFF]" : "text-slate-900"}`}>Reports</div>
+              <div className="text-[12px] text-slate-400 leading-tight">Browse &amp; organize</div>
+            </div>
           </div>
         </div>
 
         {/* Sidebar Content */}
-        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
+        <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-1.5">
           {/* Pinned Reports Section */}
           {pinnedReports.length > 0 && (
             <div>
-              <div className={`text-[11px] font-bold uppercase tracking-widest px-2 mb-2.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>📌 Pinned</div>
-              <div className="space-y-1.5">
+              <div className={`flex items-center gap-1.5 px-2 py-1.5 min-h-[32px] ${isDark ? "text-[#475569]" : "text-slate-400"}`}>
+                <ChartBar size={13} weight="duotone" />
+                <span className="font-heading text-[13px] font-bold uppercase tracking-widest truncate">Pinned</span>
+              </div>
+              <div className="space-y-0.5 mb-1.5">
                 {pinnedReports.map(report => (
-                  <div key={report.id}
-                    className={`flex items-center gap-2 px-2.5 py-2 rounded-lg cursor-pointer transition-colors group ${
-                      isDark ? "hover:bg-[#18181B]" : "hover:bg-[#f9fbff]"
-                    }`}
-                    onClick={() => router.push(`/reports/${report.id}`)}>
-                    <report.icon size={12} color={report.color} weight="duotone" />
-                    <span className={`text-[12px] font-medium flex-1 truncate ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{report.name}</span>
+                  <button key={report.id}
+                    onClick={() => router.push(`/reports/${report.id}`)}
+                    className={`relative flex items-center gap-2 w-full px-3 py-2.5 rounded-xl text-[15px] font-medium transition-all min-h-[36px] outline-none focus:outline-none focus-visible:ring-2 ${
+                      isDark ? "focus-visible:ring-[#3B82F6]" : "focus-visible:ring-[#1D4ED8]"
+                    } ${
+                      isDark ? "text-[#9CA3AF] hover:bg-[#1D4ED8]/15 hover:text-[#93C5FD]" : "text-slate-500 hover:bg-[#EFF6FF]/60 hover:text-slate-700"
+                    }`}>
+                    <report.icon size={13} color={report.color} weight="duotone" />
+                    <span className="flex-1 truncate text-left">{report.name}</span>
                     <Star size={13} color={report.color} weight="fill" className="flex-shrink-0 opacity-80" />
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
           )}
 
-          {/* All Tags Section */}
+          {/* Categories Section */}
           <div>
-            <div className={`text-[11px] font-bold uppercase tracking-widest px-2 mb-2.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>🏷️ Tags</div>
-            <div className="space-y-1">
-              {filteredTags.map(({ name, count }) => (
-                <button key={name}
-                  onClick={() => toggleTag(name)}
-                  className={`w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-left transition-colors ${
-                    selectedTags.includes(name)
-                      ? isDark ? "bg-[#1D4ED8]/20 text-[#93C5FD]" : "bg-[#1D4ED8]/10 text-[#1D4ED8]"
-                      : isDark ? "hover:bg-[#18181B] text-[#D4D4D8]" : "hover:bg-[#f9fbff] text-slate-700"
-                  }`}>
-                  <span className={`text-[12px] font-medium flex-1 truncate ${selectedTags.includes(name) ? "font-semibold" : ""}`}>{name}</span>
-                  <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
-                    selectedTags.includes(name)
-                      ? isDark ? "bg-[#1D4ED8]/40" : "bg-[#1D4ED8]/20"
-                      : isDark ? "bg-[#27272A] text-[#9CA3AF]" : "bg-[#E3ECFC] text-slate-500"
-                  }`}>{count}</span>
-                </button>
-              ))}
+            <div className={`flex items-center gap-1.5 px-2 py-1.5 min-h-[32px] ${isDark ? "text-[#475569]" : "text-slate-400"}`}>
+              <ChartBar size={13} weight="duotone" />
+              <span className="font-heading text-[13px] font-bold uppercase tracking-widest truncate">Categories</span>
+            </div>
+            <div className="space-y-0.5">
+              {allCategories.map(({ name, count }) => {
+                const isOpen = expandedCategories.includes(name);
+                return (
+                  <div key={name}>
+                    <button
+                      onClick={() => toggleCategory(name)}
+                      className={`flex items-center justify-between w-full px-2 py-1.5 rounded-lg transition-colors group min-h-[32px] outline-none ${isDark ? "hover:bg-[#1D4ED8]/15" : "hover:bg-[#EFF6FF]"}`}>
+                      <span className={`font-heading text-[13px] font-bold uppercase tracking-widest transition-colors truncate ${isDark ? "text-[#475569] group-hover:text-[#64748B]" : "text-slate-400 group-hover:text-slate-500"}`}>
+                        {name}
+                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${isDark ? "bg-[#27272A] text-[#9CA3AF]" : "bg-[#E3ECFC] text-slate-500"}`}>{count}</span>
+                        <ChartBar size={10} weight="bold" color={isDark ? "#475569" : "#CBD5E1"} className={`flex-shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                      </div>
+                    </button>
+
+                    {/* Expandable Category Reports */}
+                    {isOpen && (
+                      <div className="space-y-0.5 mb-1.5">
+                        {reports.filter(r => r.collection === name).map(report => (
+                          <button key={report.id}
+                            onClick={() => router.push(`/reports/${report.id}`)}
+                            className={`relative flex items-center gap-2 w-full px-3 py-2.5 rounded-xl text-[15px] font-medium transition-all min-h-[36px] outline-none focus:outline-none focus-visible:ring-2 ${
+                              isDark ? "focus-visible:ring-[#3B82F6]" : "focus-visible:ring-[#1D4ED8]"
+                            } ${
+                              isDark ? "text-[#9CA3AF] hover:bg-[#1D4ED8]/15 hover:text-[#93C5FD]" : "text-slate-500 hover:bg-[#EFF6FF]/60 hover:text-slate-700"
+                            }`}>
+                            <report.icon size={13} color={report.color} weight="duotone" />
+                            <span className="flex-1 truncate text-left">{report.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
-
-          {/* Clear Filters */}
-          {selectedTags.length > 0 && (
-            <button
-              onClick={() => setSelectedTags([])}
-              className={`w-full px-2.5 py-1.5 text-[12px] font-semibold rounded-lg transition-colors ${
-                isDark ? "text-[#93C5FD] hover:bg-[#1D4ED8]/10" : "text-[#1D4ED8] hover:bg-[#1D4ED8]/10"
-              }`}>
-              Clear Filters
-            </button>
-          )}
-        </div>
-      </div>
+        </nav>
+      </aside>
 
       {/* Right Content */}
       <div className={`flex-1 flex flex-col overflow-hidden transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
