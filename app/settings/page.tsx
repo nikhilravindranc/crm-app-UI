@@ -3023,6 +3023,9 @@ function ModulesAndFieldsPanel() {
 interface HomePage {
   id: string; name: string; description: string;
   sharedWith: string[]; created: string; lastModified: string; isActive: boolean;
+  shareMode?: "private" | "all" | "roles";
+  filters?: { region: string; dateRange: string; owner: string };
+  locked?: boolean;
 }
 const INITIAL_HOMEPAGES: HomePage[] = [{
   id: "hp1", name: "Dashboard V1", description: "",

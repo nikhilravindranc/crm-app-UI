@@ -94,8 +94,45 @@ export default function ReportsPage() {
 
   const pinnedReports = reports.filter(r => r.isPinned);
 
-  const filtered = reports.filter(r =>
-    !search || r.name.toLowerCase().includes(search.toLowerCase())
+  // Get all unique tags with counts
+  const allTags = useMemo(() => {
+    const tagMap = new Map<string, number>();
+    reports.forEach(r => {
+      r.tags.forEach(tag => {
+        tagMap.set(tag, (tagMap.get(tag) || 0) + 1);
+      });
+    });
+    return Array.from(tagMap.entries())
+      .map(([tag, count]) => ({ name: tag, count }))
+      .sort((a, b) => b.count - a.count);
+  }, [reports]);
+
+  // Get pinned reports
+  const pinnedReports = reports.filter(r => r.isPinned);
+
+  // Filter reports by search and selected tags
+  const filtered = useMemo(() => {
+    return reports.filter(r => {
+      const matchesSearch = !search || r.name.toLowerCase().includes(search.toLowerCase());
+      const matchesTags = selectedTags.length === 0 || selectedTags.some(tag => r.tags.includes(tag));
+      return matchesSearch && matchesTags;
+    });
+  }, [reports, search, selectedTags]);
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags(prev =>
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+    );
+  };
+
+  const togglePin = (reportId: string) => {
+    setReports(prev => prev.map(r =>
+      r.id === reportId ? { ...r, isPinned: !r.isPinned } : r
+    ));
+  };
+
+  const filteredTags = allTags.filter(t =>
+    !tagSearch || t.name.toLowerCase().includes(tagSearch.toLowerCase())
   );
 
   const toggleCategory = (category: string) =>
@@ -301,7 +338,6 @@ export default function ReportsPage() {
           <div className={`px-6 py-4 border-t flex items-center justify-between ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
             <span className={`text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>1–{filtered.length} of {reports.length}</span>
           </div>
-        </div>
       </div>
     </div>
   );
