@@ -53,8 +53,12 @@ export default function ReportsPage() {
 
   // Filter reports by search
   const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return reports;
     return reports.filter(r =>
-      !search || r.name.toLowerCase().includes(search.toLowerCase())
+      r.name.toLowerCase().includes(q) ||
+      r.description.toLowerCase().includes(q) ||
+      r.tags.some(tag => tag.toLowerCase().includes(q))
     );
   }, [reports, search]);
 
