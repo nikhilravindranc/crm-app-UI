@@ -38,7 +38,7 @@ const EdgeComponent = memo(({ id, sourceX, sourceY, targetX, targetY, data }: Ed
 
   return (
     <>
-      <BaseEdge path={edgePath} stroke={strokeColor} strokeWidth={2} strokeDasharray={strokeDasharray} />
+      <BaseEdge path={edgePath} style={{ stroke: strokeColor, strokeWidth: 2, strokeDasharray }} />
       {data?.label && (
         <EdgeLabelRenderer>
           <div
