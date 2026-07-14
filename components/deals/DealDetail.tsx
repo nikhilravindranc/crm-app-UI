@@ -276,7 +276,7 @@ export default function DealDetail({ dealId }: { dealId: number }) {
           <div className={`rounded-2xl border shadow-sm px-5 py-4 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <h1 className={`text-[20px] font-extrabold tracking-tight truncate ${isDark ? "text-[#FFFFFF]" : "text-slate-900"}`}>{deal.name}</h1>
+                <h1 className={`m-0 text-[20px] font-extrabold tracking-tight truncate ${isDark ? "text-[#FFFFFF]" : "text-slate-900"}`}>{deal.name}</h1>
                 <p className={`text-[12px] mt-0.5 ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>{deal.refId} · {deal.account}</p>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">

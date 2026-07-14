@@ -200,7 +200,7 @@ export default function NewContactDrawer({ open, onClose, mode = "create", initi
           <div className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-sm ${isDark ? "bg-[#27272A]" : "bg-[#1D4ED8]"}`}>
             <AddressBook size={18} color={isDark ? "#A1A1AA" : "#fff"} weight="duotone" />
           </div>
-          <h2 className={`font-heading text-[16px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
+          <h2 className={`m-0 font-heading text-[16px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
             {isEdit ? "Edit Contact" : "New Contact"}
           </h2>
         </div>

@@ -1,11 +1,12 @@
 "use client";
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, use, Fragment } from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/components/ThemeContext";
 import WidgetCard from "@/components/shared/WidgetCard";
 import MetricCard from "@/components/shared/MetricCard";
 import { getModuleFields, SAMPLE_DATA } from "@/lib/moduleRelationships";
-import { ReportGraphConfig, loadReportConfig } from "@/lib/reportGraphSerializer";
+import { ReportGraphConfig, loadReportConfig, saveReportConfig } from "@/lib/reportGraphSerializer";
+import { buildSampleReportConfig } from "@/lib/sampleReportSeeds";
 
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
@@ -18,7 +19,11 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { CaretDown, Info, PencilSimple, Plus, Rows, ChartBar, Funnel, Handshake, Users, TrendUp, X, ChartPie, ChartBarHorizontal, ChartDonut, ChartLine, ChartLineUp, GridFour, ArrowsLeftRight, Gauge, Trophy, ChartScatter } from "@phosphor-icons/react";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Checkbox from "@mui/material/Checkbox";
+import ListItemText from "@mui/material/ListItemText";
+import { CaretDown, CaretRight, Info, PencilSimple, Plus, Rows, ChartBar, Funnel, Handshake, Users, TrendUp, X, ChartPie, ChartBarHorizontal, ChartDonut, ChartLine, ChartLineUp, GridFour, ArrowsLeftRight, Gauge, Trophy, ChartScatter, SquaresFour, CopySimple, DownloadSimple, FileCsv, FileXls, BracketsCurly, ArrowsClockwise } from "@phosphor-icons/react";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer } from "recharts";
 
 // Names for the built-in sample reports (matches app/reports/page.tsx listing)
@@ -27,10 +32,7 @@ const SAMPLE_REPORT_NAMES: Record<string, string> = {
   r2: "Deal with Stage",
   r3: "Deal List",
   r4: "Account Wise Deal Summary",
-  r5: "Sales Pipeline",
-  r6: "Revenue Trends",
-  r7: "Account Performance",
-  r8: "Customer Segmentation",
+  r5: "Account List",
 };
 
 interface ReportData {
@@ -80,6 +82,17 @@ const TABLE_DATA: ReportData[] = [
   { contactName: "John Smith", createdBy: "pm@socialdnalabs.com", dealName: "Smith", amount: 100000, modifiedBy: "pm@socialdnalabs.com", accountName: "test", probability: 40, stage: "Value Proposition" },
   { contactName: "John Smith", createdBy: "pm@socialdnalabs.com", dealName: "test deal john smith", amount: 200000, modifiedBy: "pm@socialdnalabs.com", accountName: "Sears Homelife", probability: 0, stage: "Qualification" },
   { contactName: "Lead SDL 11", createdBy: "pm@socialdnalabs.com", dealName: "Deal SDL 11", amount: 500000, modifiedBy: "pm@socialdnalabs.com", accountName: "SDL LEAD1", probability: 75, stage: "Proposal/Price Quote" },
+];
+
+const STATIC_DATA_COLUMNS = [
+  { name: "contactName", label: "Contact Name", type: "text" },
+  { name: "createdBy", label: "Created By", type: "text" },
+  { name: "dealName", label: "Deal Name", type: "text" },
+  { name: "amount", label: "Amount", type: "currency" },
+  { name: "modifiedBy", label: "Modified By", type: "text" },
+  { name: "accountName", label: "Account Name", type: "text" },
+  { name: "probability", label: "Probability", type: "number" },
+  { name: "stage", label: "Stage", type: "text" },
 ];
 
 const COLORS_LIGHT = ["#0C2472", "#10B981", "#3B82F6", "#F59E0B", "#EC4899", "#8B5CF6", "#14B8A6"];
@@ -280,13 +293,518 @@ function CreatedChartCard({
   );
 }
 
+interface DataColumn { name: string; label: string; type?: string; }
+
+// Toggleable data-viewing options shared by both grid and list rendering of the
+// Report Data section: sum totals, group rows into sections, and wrap vs. truncate text.
+function ShowDetailsMenu({
+  anchorEl, onClose, isDark, grandTotals, setGrandTotals, splitAggregates, setSplitAggregates, wrapText, setWrapText,
+}: {
+  anchorEl: HTMLElement | null;
+  onClose: () => void;
+  isDark: boolean;
+  grandTotals: boolean;
+  setGrandTotals: (v: boolean) => void;
+  splitAggregates: boolean;
+  setSplitAggregates: (v: boolean) => void;
+  wrapText: boolean;
+  setWrapText: (v: boolean) => void;
+}) {
+  return (
+    <Menu anchorEl={anchorEl} open={!!anchorEl} onClose={onClose}
+      PaperProps={{ sx: { borderRadius: "12px", minWidth: 200, bgcolor: isDark ? "#18181B" : "#fff", border: `1px solid ${isDark ? "#27272A" : "#E3ECFC"}` } }}>
+      <MenuItem onClick={() => setGrandTotals(!grandTotals)} sx={{ py: 0.5 }}>
+        <Checkbox size="small" checked={grandTotals} sx={{ p: 0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked": { color: "#1D4ED8" } }} />
+        <ListItemText primaryTypographyProps={{ fontSize: 13.5, color: isDark ? "#D4D4D8" : "#334155" }}>Grand Totals</ListItemText>
+      </MenuItem>
+      <MenuItem onClick={() => setSplitAggregates(!splitAggregates)} sx={{ py: 0.5 }}>
+        <Checkbox size="small" checked={splitAggregates} sx={{ p: 0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked": { color: "#1D4ED8" } }} />
+        <ListItemText primaryTypographyProps={{ fontSize: 13.5, color: isDark ? "#D4D4D8" : "#334155" }}>Split Aggregates</ListItemText>
+      </MenuItem>
+      <MenuItem onClick={() => setWrapText(!wrapText)} sx={{ py: 0.5 }}>
+        <Checkbox size="small" checked={wrapText} sx={{ p: 0.5, color: isDark ? "#3F3F46" : "#E2E8F0", "&.Mui-checked": { color: "#1D4ED8" } }} />
+        <ListItemText primaryTypographyProps={{ fontSize: 13.5, color: isDark ? "#D4D4D8" : "#334155" }}>Wrap Text</ListItemText>
+      </MenuItem>
+    </Menu>
+  );
+}
+
+// Renders the Report Data section as either a table (list) or a card grid, honoring
+// Grand Totals (sum footer), Split Aggregates (group rows by first text column), and
+// Wrap Text (wrap vs. truncate cell content).
+function ReportDataSection({
+  columns, rows, isDark, viewMode, grandTotals, splitAggregates, wrapText, subtitle,
+}: {
+  columns: DataColumn[];
+  rows: Record<string, any>[];
+  isDark: boolean;
+  viewMode: "grid" | "list";
+  grandTotals: boolean;
+  splitAggregates: boolean;
+  wrapText: boolean;
+  subtitle: string;
+}) {
+  const numericCols = columns.filter((c) => c.type === "currency" || c.type === "number");
+  const groupCol = columns.find((c) => c.type !== "currency" && c.type !== "number") ?? columns[0];
+
+  const sumFor = (list: Record<string, any>[], col: DataColumn) =>
+    list.reduce((s, r) => {
+      const raw = r[col.name];
+      const num = typeof raw === "number" ? raw : parseFloat(String(raw ?? "").replace(/[^0-9.-]/g, ""));
+      return s + (isNaN(num) ? 0 : num);
+    }, 0);
+
+  const fmtVal = (col: DataColumn, val: any) => {
+    if (val === undefined || val === null || val === "") return "—";
+    if (col.type === "currency") return typeof val === "number" ? `₹${val.toLocaleString("en-IN")}` : val;
+    if (col.name.toLowerCase().includes("probability")) return `${val}%`;
+    return val;
+  };
+
+  const textClass = wrapText ? "whitespace-normal break-words" : "truncate";
+
+  let groups: { key: string; rows: Record<string, any>[] }[] = [{ key: "__all__", rows }];
+  if (splitAggregates && groupCol) {
+    const map = new Map<string, Record<string, any>[]>();
+    rows.forEach((r) => {
+      const k = String(r[groupCol.name] ?? "—");
+      if (!map.has(k)) map.set(k, []);
+      map.get(k)!.push(r);
+    });
+    groups = Array.from(map.entries()).map(([key, rs]) => ({ key, rows: rs }));
+  }
+
+  if (columns.length === 0) {
+    return (
+      <WidgetCard title="Report Data" subtitle={subtitle} isDark={isDark}>
+        <div className={`text-center py-10 text-[14px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>No fields selected for this report.</div>
+      </WidgetCard>
+    );
+  }
+
+  if (viewMode === "grid") {
+    return (
+      <WidgetCard title="Report Data" subtitle={subtitle} isDark={isDark}>
+        <div className="space-y-6">
+          {groups.map((g) => (
+            <div key={g.key}>
+              {splitAggregates && (
+                <div className={`text-[12px] font-bold uppercase tracking-wide mb-2.5 px-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>
+                  {groupCol?.label}: {g.key} <span className="font-normal">({g.rows.length})</span>
+                </div>
+              )}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {g.rows.map((row, idx) => (
+                  <div key={idx} className={`rounded-xl border p-3.5 ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-[#f9fbff]"}`}>
+                    {columns.map((col) => (
+                      <div key={col.name} className="flex items-baseline justify-between gap-3 py-1">
+                        <span className={`text-[11px] font-semibold uppercase tracking-wide flex-shrink-0 ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>{col.label}</span>
+                        <span className={`text-[13px] font-semibold text-right ${textClass} ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{fmtVal(col, row[col.name])}</span>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+              {grandTotals && splitAggregates && numericCols.length > 0 && (
+                <div className={`mt-2 px-1 text-[12px] font-bold ${isDark ? "text-[#93C5FD]" : "text-[#1D4ED8]"}`}>
+                  Subtotal — {numericCols.map((c) => `${c.label}: ${fmtVal(c, sumFor(g.rows, c))}`).join(" · ")}
+                </div>
+              )}
+            </div>
+          ))}
+          {grandTotals && numericCols.length > 0 && (
+            <div className={`pt-4 border-t text-[13px] font-bold ${isDark ? "border-[#27272A] text-[#F4F4F5]" : "border-[#E3ECFC] text-[#0C2472]"}`}>
+              Grand Total — {numericCols.map((c) => `${c.label}: ${fmtVal(c, sumFor(rows, c))}`).join(" · ")}
+            </div>
+          )}
+        </div>
+      </WidgetCard>
+    );
+  }
+
+  return (
+    <WidgetCard title="Report Data" subtitle={subtitle} isDark={isDark} noPadding>
+      <TableContainer>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              {columns.map((col) => (
+                <TableCell key={col.name} sx={{ backgroundColor: isDark ? "#111111" : "#EFF6FF", color: isDark ? "#9CA3AF" : "#0C2472", borderBottom: `1px solid ${isDark ? "#27272A" : "#E3ECFC"}`, fontWeight: 700, fontSize: "11.5px", textTransform: "uppercase", letterSpacing: "0.05em" }}>{col.label}</TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {groups.map((g) => (
+              <Fragment key={g.key}>
+                {splitAggregates && (
+                  <TableRow>
+                    <TableCell colSpan={columns.length} sx={{ bgcolor: isDark ? "#111113" : "#F1F5F9", borderBottom: `1px solid ${isDark ? "#27272A" : "#E3ECFC"}`, fontWeight: 700, fontSize: "12px", color: isDark ? "#93C5FD" : "#1D4ED8" }}>
+                      {groupCol?.label}: {g.key} ({g.rows.length})
+                    </TableCell>
+                  </TableRow>
+                )}
+                {g.rows.map((row, idx) => (
+                  <TableRow key={idx} hover sx={{ "&:hover td": { bgcolor: isDark ? "rgba(255,255,255,0.03)" : "rgba(29,78,216,0.04)" }, "& td": { borderBottom: `1px solid ${isDark ? "#27272A" : "#E3ECFC"}`, py: "14px", backgroundColor: isDark ? "#18181B" : "#f9fbff" } }}>
+                    {columns.map((col) => (
+                      <TableCell key={col.name} sx={{ maxWidth: wrapText ? "none" : 220 }}>
+                        <span className={`block text-[13px] ${textClass} ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{fmtVal(col, row[col.name])}</span>
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+                {grandTotals && splitAggregates && numericCols.length > 0 && (
+                  <TableRow>
+                    {columns.map((col, i) => (
+                      <TableCell key={col.name} sx={{ borderBottom: `1px solid ${isDark ? "#27272A" : "#E3ECFC"}`, borderTop: `1.5px solid ${isDark ? "#3F3F46" : "#CBD5E1"}`, bgcolor: isDark ? "#111113" : "#F8FAFF" }}>
+                        <span className={`text-[12.5px] font-bold ${isDark ? "text-[#93C5FD]" : "text-[#1D4ED8]"}`}>
+                          {i === 0 ? "Subtotal" : numericCols.includes(col) ? fmtVal(col, sumFor(g.rows, col)) : ""}
+                        </span>
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                )}
+              </Fragment>
+            ))}
+            {grandTotals && (
+              <TableRow>
+                {columns.map((col, i) => (
+                  <TableCell key={col.name} sx={{ borderTop: `2px solid ${isDark ? "#3F3F46" : "#CBD5E1"}`, bgcolor: isDark ? "#111113" : "#EFF6FF" }}>
+                    <span className={`text-[13px] font-extrabold ${isDark ? "text-[#F4F4F5]" : "text-[#0C2472]"}`}>
+                      {i === 0 ? "Grand Total" : numericCols.includes(col) ? fmtVal(col, sumFor(rows, col)) : ""}
+                    </span>
+                  </TableCell>
+                ))}
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </WidgetCard>
+  );
+}
+
+interface UIFilter {
+  id: string;
+  fieldName: string;
+  operator: string;
+  value: string;
+}
+
+// Apply UI filters to a dataset
+function applyUIFilters(rows: Record<string, any>[], filters: UIFilter[]): Record<string, any>[] {
+  if (filters.length === 0) return rows;
+  return rows.filter((row) => {
+    return filters.every((filter) => {
+      if (!filter.fieldName || !filter.operator || filter.value === "") return true;
+      const cellValue = row[filter.fieldName];
+      const val = String(cellValue ?? "").toLowerCase();
+      const filterVal = filter.value.toLowerCase();
+      switch (filter.operator) {
+        case "equals":
+          return val === filterVal;
+        case "contains":
+          return val.includes(filterVal);
+        case "starts with":
+          return val.startsWith(filterVal);
+        case "ends with":
+          return val.endsWith(filterVal);
+        case "is empty":
+          return !cellValue;
+        case "is not empty":
+          return !!cellValue;
+        default:
+          return true;
+      }
+    });
+  });
+}
+
+// Filter panel UI for adding/editing filters
+function FilterPanel({
+  open, onClose, filters, onFiltersChange, availableFields, isDark,
+}: {
+  open: boolean;
+  onClose: () => void;
+  filters: UIFilter[];
+  onFiltersChange: (filters: UIFilter[]) => void;
+  availableFields: { name: string; label: string }[];
+  isDark: boolean;
+}) {
+  const operatorOptions = ["equals", "contains", "starts with", "ends with", "is empty", "is not empty"];
+
+  const addFilter = () => {
+    onFiltersChange([...filters, { id: `filter-${Date.now()}`, fieldName: "", operator: "equals", value: "" }]);
+  };
+
+  const removeFilter = (id: string) => {
+    onFiltersChange(filters.filter((f) => f.id !== id));
+  };
+
+  const updateFilter = (id: string, field: string, value: any) => {
+    onFiltersChange(filters.map((f) => (f.id === id ? { ...f, [field]: value } : f)));
+  };
+
+  if (!open) return null;
+
+  return (
+    <div className={`fixed inset-0 bg-black/40 z-[100] ${open ? "block" : "hidden"}`} onClick={onClose}>
+      <div
+        className={`fixed left-0 top-0 h-full w-80 max-w-[85vw] ${isDark ? "bg-[#0A0A0A]" : "bg-white"} border-r ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"} shadow-2xl overflow-y-auto z-[110]`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className={`p-6 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+          <div className="flex items-center justify-between">
+            <h2 className={`text-[16px] font-bold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Filter By</h2>
+            <button onClick={onClose} className={isDark ? "text-[#9CA3AF] hover:text-[#F4F4F5]" : "text-slate-500 hover:text-slate-900"}>
+              <X size={20} />
+            </button>
+          </div>
+        </div>
+
+        <div className="p-6 space-y-4">
+          {filters.length === 0 && (
+            <p className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>No filters yet. Add one below.</p>
+          )}
+
+          {filters.map((filter) => (
+            <div key={filter.id} className={`p-3 rounded-lg border ${isDark ? "border-[#27272A] bg-[#111113]" : "border-[#E3ECFC] bg-[#f9fbff]"} space-y-2`}>
+              <div className="flex items-center justify-between">
+                <span className={`text-[11px] font-bold uppercase ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>Field</span>
+                <button onClick={() => removeFilter(filter.id)} className={`text-[12px] font-semibold ${isDark ? "text-[#EF4444]" : "text-red-600"} hover:underline`}>
+                  Remove
+                </button>
+              </div>
+              <select
+                value={filter.fieldName}
+                onChange={(e) => updateFilter(filter.id, "fieldName", e.target.value)}
+                className={`w-full px-2 py-1.5 text-[13px] border rounded-lg outline-none cursor-pointer ${isDark ? "bg-[#0A0A0A] border-[#3F3F46] text-[#D4D4D8]" : "bg-white border-[#E3ECFC] text-slate-700"}`}
+              >
+                <option value="">Select a field...</option>
+                {availableFields.map((f) => (
+                  <option key={f.name} value={f.name}>
+                    {f.label}
+                  </option>
+                ))}
+              </select>
+
+              <div>
+                <span className={`text-[11px] font-bold uppercase ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>Operator</span>
+                <select
+                  value={filter.operator}
+                  onChange={(e) => updateFilter(filter.id, "operator", e.target.value)}
+                  className={`w-full px-2 py-1.5 text-[13px] border rounded-lg outline-none cursor-pointer mt-1 ${isDark ? "bg-[#0A0A0A] border-[#3F3F46] text-[#D4D4D8]" : "bg-white border-[#E3ECFC] text-slate-700"}`}
+                >
+                  {operatorOptions.map((op) => (
+                    <option key={op} value={op}>
+                      {op}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {filter.operator !== "is empty" && filter.operator !== "is not empty" && (
+                <div>
+                  <span className={`text-[11px] font-bold uppercase ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>Value</span>
+                  <input
+                    type="text"
+                    value={filter.value}
+                    onChange={(e) => updateFilter(filter.id, "value", e.target.value)}
+                    placeholder="Enter value..."
+                    className={`w-full px-2 py-1.5 text-[13px] border rounded-lg outline-none mt-1 ${isDark ? "bg-[#0A0A0A] border-[#3F3F46] text-[#D4D4D8] placeholder-[#52525B]" : "bg-white border-[#E3ECFC] text-slate-700 placeholder-slate-400"}`}
+                  />
+                </div>
+              )}
+            </div>
+          ))}
+
+          <button
+            onClick={addFilter}
+            className={`w-full py-2 px-3 rounded-lg font-semibold text-[13px] transition-colors ${isDark ? "bg-[#1D4ED8] hover:bg-[#2563EB] text-white" : "bg-[#1D4ED8] hover:bg-[#2563EB] text-white"}`}
+          >
+            + Add Filter
+          </button>
+
+          {filters.length > 0 && (
+            <button
+              onClick={() => onFiltersChange([])}
+              className={`w-full py-2 px-3 rounded-lg font-semibold text-[13px] ${isDark ? "bg-[#27272A] text-[#EF4444] hover:bg-[#3F3F46]" : "bg-[#FEE2E2] text-red-600 hover:bg-[#FECACA]"}`}
+            >
+              Clear All Filters
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function downloadBlob(content: string, filename: string, mimeType: string) {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// Exports the currently visible Report Data rows to CSV, Excel (HTML-table .xls), or JSON.
+function exportReportData(columns: DataColumn[], rows: Record<string, any>[], format: "csv" | "excel" | "json", reportName: string) {
+  const safeName = reportName.trim().replace(/[^a-z0-9]+/gi, "-").replace(/^-+|-+$/g, "").toLowerCase() || "report";
+
+  if (format === "json") {
+    const data = rows.map((row) => {
+      const obj: Record<string, any> = {};
+      columns.forEach((c) => { obj[c.label] = row[c.name] ?? null; });
+      return obj;
+    });
+    downloadBlob(JSON.stringify(data, null, 2), `${safeName}.json`, "application/json");
+    return;
+  }
+
+  const escapeCsv = (val: any) => {
+    const s = String(val ?? "");
+    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+
+  if (format === "csv") {
+    const header = columns.map((c) => escapeCsv(c.label)).join(",");
+    const body = rows.map((row) => columns.map((c) => escapeCsv(row[c.name])).join(",")).join("\n");
+    downloadBlob(`${header}\n${body}`, `${safeName}.csv`, "text/csv;charset=utf-8;");
+    return;
+  }
+
+  // Excel: an HTML table saved with .xls extension, which Excel opens natively without extra libraries.
+  const escapeHtml = (val: any) => String(val ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const headerHtml = columns.map((c) => `<th>${escapeHtml(c.label)}</th>`).join("");
+  const bodyHtml = rows.map((row) => `<tr>${columns.map((c) => `<td>${escapeHtml(row[c.name])}</td>`).join("")}</tr>`).join("");
+  const html = `<html><head><meta charset="UTF-8"></head><body><table border="1">${`<thead><tr>${headerHtml}</tr></thead>`}<tbody>${bodyHtml}</tbody></table></body></html>`;
+  downloadBlob(html, `${safeName}.xls`, "application/vnd.ms-excel");
+}
+
+// Duplicates a report (custom saved config, or a built-in sample forked into a real config)
+// under a fresh id and returns that id so the caller can navigate to it.
+function cloneReport(id: string, reportTitle: string, existingConfig: ReportGraphConfig | null): string {
+  const source = existingConfig ?? buildSampleReportConfig(id);
+  const newId = `report-${Date.now()}`;
+  const now = new Date().toISOString();
+  if (source) {
+    saveReportConfig({ ...source, id: newId, name: `${reportTitle} (Copy)`, createdAt: now, updatedAt: now });
+  }
+  return newId;
+}
+
+// Split Edit button: primary click navigates to Edit, caret opens Edit/Clone/Export menu.
+function EditActionsButton({
+  id, reportTitle, existingConfig, columns, rows, isDark, router,
+}: {
+  id: string;
+  reportTitle: string;
+  existingConfig: ReportGraphConfig | null;
+  columns: DataColumn[];
+  rows: Record<string, any>[];
+  isDark: boolean;
+  router: ReturnType<typeof useRouter>;
+}) {
+  const [open, setOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
+  const [exportOnLeft, setExportOnLeft] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const exportPanelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+        setExportOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onOutside);
+    return () => document.removeEventListener("mousedown", onOutside);
+  }, [open]);
+
+  useLayoutEffect(() => {
+    if (!exportOpen || !exportPanelRef.current) return;
+    const rect = exportPanelRef.current.getBoundingClientRect();
+    setExportOnLeft(rect.right > window.innerWidth - 8);
+  }, [exportOpen]);
+
+  const closeAll = () => { setOpen(false); setExportOpen(false); };
+  const itemClass = `w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13.5px] font-medium text-left transition-colors ${isDark ? "text-[#D4D4D8] hover:bg-[#27272A]" : "text-slate-700 hover:bg-[#EFF6FF]"}`;
+  const panelClass = `absolute rounded-xl border py-1.5 px-1.5 min-w-[190px] ${isDark ? "bg-[#18181B] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`;
+  const panelShadow = { boxShadow: isDark ? "0 8px 24px rgba(0,0,0,0.45)" : "0 8px 24px rgba(15,23,42,0.12)" };
+
+  return (
+    <div ref={containerRef} className="relative">
+      <div className={`flex items-center rounded-[9px] border overflow-hidden ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+        <Button
+          onClick={() => router.push(`/reports/${id}/edit`)}
+          size="small"
+          startIcon={<PencilSimple size={16} weight="duotone" />}
+          sx={{ textTransform: "none", fontWeight: 700, fontSize: "13px", borderRadius: 0, color: isDark ? "#D4D4D8" : "#0C2472", "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+          Edit
+        </Button>
+        <div className={`w-px self-stretch ${isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"}`} />
+        <IconButton size="small" onClick={() => setOpen((v) => !v)}
+          sx={{ borderRadius: 0, color: isDark ? "#D4D4D8" : "#0C2472", "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+          <CaretDown size={14} weight="bold" />
+        </IconButton>
+      </div>
+
+      {open && (
+        <div className={`${panelClass} top-full left-0 mt-1.5 z-20`} style={panelShadow}>
+          <button className={itemClass} onClick={() => { closeAll(); router.push(`/reports/${id}/edit`); }}>
+            <PencilSimple size={16} weight="duotone" />
+            Edit
+          </button>
+          <button className={itemClass} onClick={() => { const newId = cloneReport(id, reportTitle, existingConfig); closeAll(); router.push(`/reports/${newId}`); }}>
+            <CopySimple size={16} weight="duotone" />
+            Clone
+          </button>
+          <button
+            className={`${itemClass} justify-between ${exportOpen ? (isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]") : ""}`}
+            onClick={() => setExportOpen((v) => !v)}>
+            <span className="flex items-center gap-2.5"><DownloadSimple size={16} weight="duotone" />Export</span>
+            <CaretRight size={13} className={isDark ? "text-[#71717A]" : "text-slate-400"} />
+          </button>
+
+          {exportOpen && (
+            <div ref={exportPanelRef} className={`${panelClass} top-0 ${exportOnLeft ? "right-full mr-1.5" : "left-full ml-1.5"} min-w-[180px] z-20`} style={panelShadow}>
+              <button className={itemClass} onClick={() => { exportReportData(columns, rows, "csv", reportTitle); closeAll(); }}>
+                <FileCsv size={16} weight="duotone" />
+                CSV
+              </button>
+              <button className={itemClass} onClick={() => { exportReportData(columns, rows, "excel", reportTitle); closeAll(); }}>
+                <FileXls size={16} weight="duotone" />
+                Excel (.xlsx)
+              </button>
+              <button className={itemClass} onClick={() => { exportReportData(columns, rows, "json", reportTitle); closeAll(); }}>
+                <BracketsCurly size={16} weight="duotone" />
+                JSON
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function ReportDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const COLORS = isDark ? COLORS_DARK : COLORS_LIGHT;
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [showDetailsAnchor, setShowDetailsAnchor] = useState<HTMLElement | null>(null);
+  const [grandTotals, setGrandTotals] = useState(true);
+  const [splitAggregates, setSplitAggregates] = useState(false);
+  const [wrapText, setWrapText] = useState(true);
+  const [filterPanelOpen, setFilterPanelOpen] = useState(false);
+  const [uiFilters, setUiFilters] = useState<Array<{ id: string; fieldName: string; operator: string; value: string }>>([]);
   const [addChartOpen, setAddChartOpen] = useState(false);
   const [chartType, setChartType] = useState("column");
   const [chartName, setChartName] = useState("");
@@ -296,13 +814,26 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
   const [savedConfig, setSavedConfig] = useState<ReportGraphConfig | null>(null);
   const [configChecked, setConfigChecked] = useState(false);
   const [charts, setCharts] = useState<CreatedChart[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
 
-  useEffect(() => {
+  const loadData = () => {
     setSavedConfig(loadReportConfig(id));
     setConfigChecked(true);
     const raw = localStorage.getItem(`report-charts-${id}`);
     setCharts(raw ? JSON.parse(raw) : []);
+  };
+
+  useEffect(() => {
+    loadData();
   }, [id]);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    loadData();
+    setLastRefreshed(new Date());
+    setTimeout(() => setRefreshing(false), 500);
+  };
 
   const handleCreateChart = () => {
     const newChart: CreatedChart = {
@@ -335,12 +866,6 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
   const totalRecords = 14;
   const totalAmount = TABLE_DATA.reduce((s, r) => s + r.amount, 0);
   const avgProbability = Math.round(TABLE_DATA.reduce((s, r) => s + r.probability, 0) / TABLE_DATA.length);
-
-  const cellSx = {
-    borderBottom: `1px solid ${isDark ? "#27272A" : "#E3ECFC"}`,
-    py: "14px",
-    backgroundColor: isDark ? "#18181B" : "#f9fbff",
-  };
 
   // Saved (custom-built) report: render its own data instead of the static Deal 30 mock
   if (configChecked && savedConfig) {
@@ -407,7 +932,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
                   </button>
-                  <h1 className={`text-[20px] font-extrabold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-[#0C2472]"}`}>{reportTitle}</h1>
+                  <h1 className={`m-0 text-[20px] font-extrabold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-[#0C2472]"}`}>{reportTitle}</h1>
                   <Tooltip title="Report info">
                     <IconButton size="small" sx={{ color: isDark ? "#71717A" : "#64748B" }}>
                       <Info size={16} weight="duotone" />
@@ -415,22 +940,21 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                   </Tooltip>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Updated {new Date(savedConfig.updatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                  <span className={`text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Updated {(lastRefreshed ?? new Date(savedConfig.updatedAt)).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
                   <Tooltip title="Refresh">
-                    <IconButton size="small" sx={{ color: isDark ? "#71717A" : "#64748B", "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
+                    <IconButton size="small" onClick={handleRefresh} sx={{ color: isDark ? "#71717A" : "#64748B", "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+                      <ArrowsClockwise size={16} weight="bold" className={refreshing ? "animate-spin" : ""} />
                     </IconButton>
                   </Tooltip>
-                  <Button
-                    onClick={() => router.push(`/reports/${id}/edit`)}
-                    size="small"
-                    variant="outlined"
-                    startIcon={<PencilSimple size={16} weight="duotone" />}
-                    sx={{ textTransform: "none", fontWeight: 700, fontSize: "13px", borderRadius: "9px", color: isDark ? "#D4D4D8" : "#0C2472", borderColor: isDark ? "#27272A" : "#E3ECFC", "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
-                    Edit
-                  </Button>
+                  <EditActionsButton
+                    id={id}
+                    reportTitle={reportTitle}
+                    existingConfig={savedConfig}
+                    columns={columns}
+                    rows={filteredRows}
+                    isDark={isDark}
+                    router={router}
+                  />
                   <Button
                     onClick={() => {
                       setMeasure(customMeasureOptions[0]);
@@ -449,31 +973,18 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Tooltip title="Filter">
-                    <IconButton size="small" sx={{ color: isDark ? "#71717A" : "#64748B" }}>
+                    <IconButton size="small" onClick={() => setFilterPanelOpen(true)} sx={{ color: isDark ? "#71717A" : "#64748B", "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
                       <Funnel size={18} weight="duotone" />
                     </IconButton>
                   </Tooltip>
-                  <span className={`text-[14px] font-bold ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>Total Records : {filteredRows.length}</span>
+                  <span className={`text-[14px] font-bold ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>Total Records : {applyUIFilters(filteredRows, uiFilters).length}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Button size="small" sx={{ textTransform: "none", fontSize: "12px", fontWeight: 600, color: isDark ? "#D4D4D8" : "#64748B" }}>
+                  <Button size="small" onClick={(e) => setShowDetailsAnchor(e.currentTarget)}
+                    sx={{ textTransform: "none", fontSize: "12px", fontWeight: 600, color: isDark ? "#D4D4D8" : "#64748B" }}>
                     Show Details
                     <CaretDown size={12} weight="duotone" className="ml-1" />
                   </Button>
-                  <div className="flex gap-1">
-                    <Tooltip title="Grid view">
-                      <IconButton size="small" onClick={() => setViewMode("grid")}
-                        sx={{ color: viewMode === "grid" ? "#1D4ED8" : (isDark ? "#71717A" : "#64748B"), bgcolor: viewMode === "grid" ? (isDark ? "#27272A" : "#EFF6FF") : "transparent" }}>
-                        <ChartBar size={16} weight="duotone" />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="List view">
-                      <IconButton size="small" onClick={() => setViewMode("list")}
-                        sx={{ color: viewMode === "list" ? "#1D4ED8" : (isDark ? "#71717A" : "#64748B"), bgcolor: viewMode === "list" ? (isDark ? "#27272A" : "#EFF6FF") : "transparent" }}>
-                        <Rows size={16} weight="duotone" />
-                      </IconButton>
-                    </Tooltip>
-                  </div>
                 </div>
               </div>
 
@@ -487,32 +998,21 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
               )}
 
               {/* Data Table */}
-              <WidgetCard title="Report Data" subtitle={`${filteredRows.length} of ${filteredRows.length} record${filteredRows.length !== 1 ? "s" : ""}`} isDark={isDark} noPadding>
-                {columns.length === 0 ? (
-                  <div className={`text-center py-10 text-[14px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>No fields selected for this report.</div>
-                ) : (
-                  <TableContainer>
-                    <Table size="small">
-                      <TableHead>
-                        <TableRow>
-                          {columns.map((col) => (
-                            <TableCell key={col.name} sx={{ backgroundColor: isDark ? "#111111" : "#EFF6FF", color: isDark ? "#9CA3AF" : "#0C2472", borderBottom: `1px solid ${isDark ? "#27272A" : "#E3ECFC"}`, fontWeight: 700, fontSize: "11.5px", textTransform: "uppercase", letterSpacing: "0.05em" }}>{col.label}</TableCell>
-                          ))}
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {filteredRows.map((row: any, idx: number) => (
-                          <TableRow key={idx} hover sx={{ "&:hover td": { bgcolor: isDark ? "rgba(255,255,255,0.03)" : "rgba(29,78,216,0.04)" }, "& td": cellSx }}>
-                            {columns.map((col) => (
-                              <TableCell key={col.name}><span className={`text-[13px] ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{row[col.name] ?? "—"}</span></TableCell>
-                            ))}
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                )}
-              </WidgetCard>
+              {(() => {
+                const uiFilteredRows = applyUIFilters(filteredRows, uiFilters);
+                return (
+                  <ReportDataSection
+                    columns={columns}
+                    rows={uiFilteredRows}
+                    isDark={isDark}
+                    viewMode="list"
+                    grandTotals={grandTotals}
+                    splitAggregates={splitAggregates}
+                    wrapText={wrapText}
+                    subtitle={`${uiFilteredRows.length} of ${filteredRows.length} record${uiFilteredRows.length !== 1 ? "s" : ""}`}
+                  />
+                );
+              })()}
             </main>
           </div>
         </div>
@@ -612,6 +1112,24 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
             </Button>
           </div>
         </Dialog>
+
+        <ShowDetailsMenu
+          anchorEl={showDetailsAnchor}
+          onClose={() => setShowDetailsAnchor(null)}
+          isDark={isDark}
+          grandTotals={grandTotals} setGrandTotals={setGrandTotals}
+          splitAggregates={splitAggregates} setSplitAggregates={setSplitAggregates}
+          wrapText={wrapText} setWrapText={setWrapText}
+        />
+
+        <FilterPanel
+          open={filterPanelOpen}
+          onClose={() => setFilterPanelOpen(false)}
+          filters={uiFilters}
+          onFiltersChange={setUiFilters}
+          availableFields={columns.map((c) => ({ name: c.name, label: c.label }))}
+          isDark={isDark}
+        />
       </div>
     );
   }
@@ -632,7 +1150,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
-                <h1 className={`text-[20px] font-extrabold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-[#0C2472]"}`}>{reportTitle}</h1>
+                <h1 className={`m-0 text-[20px] font-extrabold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-[#0C2472]"}`}>{reportTitle}</h1>
                 <Tooltip title="Report info">
                   <IconButton size="small" sx={{ color: isDark ? "#71717A" : "#64748B" }}>
                     <Info size={16} weight="duotone" />
@@ -640,22 +1158,21 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                 </Tooltip>
               </div>
               <div className="flex items-center gap-2">
-                <span className={`text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Updated 26 days ago</span>
+                <span className={`text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{lastRefreshed ? `Updated ${lastRefreshed.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}` : "Updated 26 days ago"}</span>
                 <Tooltip title="Refresh">
-                  <IconButton size="small" sx={{ color: isDark ? "#71717A" : "#64748B", "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
+                  <IconButton size="small" onClick={handleRefresh} sx={{ color: isDark ? "#71717A" : "#64748B", "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+                    <ArrowsClockwise size={16} weight="bold" className={refreshing ? "animate-spin" : ""} />
                   </IconButton>
                 </Tooltip>
-                <Button
-                  href={`/reports/${id}/edit`}
-                  size="small"
-                  variant="outlined"
-                  startIcon={<PencilSimple size={16} weight="duotone" />}
-                  sx={{ textTransform: "none", fontWeight: 700, fontSize: "13px", borderRadius: "9px", color: isDark ? "#D4D4D8" : "#0C2472", borderColor: isDark ? "#27272A" : "#E3ECFC", "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
-                  Edit
-                </Button>
+                <EditActionsButton
+                  id={id}
+                  reportTitle={reportTitle}
+                  existingConfig={null}
+                  columns={STATIC_DATA_COLUMNS}
+                  rows={TABLE_DATA}
+                  isDark={isDark}
+                  router={router}
+                />
                 <Button
                   onClick={() => {
                     setMeasure(MEASURE_OPTIONS[0]);
@@ -674,31 +1191,18 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Tooltip title="Filter">
-                  <IconButton size="small" sx={{ color: isDark ? "#71717A" : "#64748B" }}>
+                  <IconButton size="small" onClick={() => setFilterPanelOpen(true)} sx={{ color: isDark ? "#71717A" : "#64748B", "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
                     <Funnel size={18} weight="duotone" />
                   </IconButton>
                 </Tooltip>
-                <span className={`text-[14px] font-bold ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>Total Records : {totalRecords}</span>
+                <span className={`text-[14px] font-bold ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>Total Records : {applyUIFilters(TABLE_DATA, uiFilters).length}</span>
               </div>
               <div className="flex items-center gap-3">
-                <Button size="small" sx={{ textTransform: "none", fontSize: "12px", fontWeight: 600, color: isDark ? "#D4D4D8" : "#64748B" }}>
+                <Button size="small" onClick={(e) => setShowDetailsAnchor(e.currentTarget)}
+                  sx={{ textTransform: "none", fontSize: "12px", fontWeight: 600, color: isDark ? "#D4D4D8" : "#64748B" }}>
                   Show Details
                   <CaretDown size={12} weight="duotone" className="ml-1" />
                 </Button>
-                <div className="flex gap-1">
-                  <Tooltip title="Grid view">
-                    <IconButton size="small" onClick={() => setViewMode("grid")}
-                      sx={{ color: viewMode === "grid" ? "#1D4ED8" : (isDark ? "#71717A" : "#64748B"), bgcolor: viewMode === "grid" ? (isDark ? "#27272A" : "#EFF6FF") : "transparent" }}>
-                      <ChartBar size={16} weight="duotone" />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="List view">
-                    <IconButton size="small" onClick={() => setViewMode("list")}
-                      sx={{ color: viewMode === "list" ? "#1D4ED8" : (isDark ? "#71717A" : "#64748B"), bgcolor: viewMode === "list" ? (isDark ? "#27272A" : "#EFF6FF") : "transparent" }}>
-                      <Rows size={16} weight="duotone" />
-                    </IconButton>
-                  </Tooltip>
-                </div>
               </div>
             </div>
 
@@ -773,44 +1277,21 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
             )}
 
             {/* Data Table — matches RecentDeals styling */}
-            <WidgetCard title="Report Data" subtitle={`${TABLE_DATA.length} of ${totalRecords} records`} isDark={isDark} noPadding>
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      {["Contact Name", "Created By", "Deal Name", "Amount", "Modified By", "Account Name", "Probability", "Stage"].map(h => (
-                        <TableCell key={h} sx={{ backgroundColor: isDark ? "#111111" : "#EFF6FF", color: isDark ? "#9CA3AF" : "#0C2472", borderBottom: `1px solid ${isDark ? "#27272A" : "#E3ECFC"}`, fontWeight: 700, fontSize: "11.5px", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {TABLE_DATA.map((row, idx) => {
-                      const chip = STAGE_CHIP[row.stage] || { bg: "#F1F5F9", fg: "#475569" };
-                      return (
-                        <TableRow key={idx} hover sx={{ "&:hover td": { bgcolor: isDark ? "rgba(255,255,255,0.03)" : "rgba(29,78,216,0.04)" }, cursor: "pointer", "& td": cellSx }}>
-                          <TableCell><span className={`text-[14px] font-medium ${isDark ? "text-[#E2E8F0]" : "text-slate-700"}`}>{row.contactName || "—"}</span></TableCell>
-                          <TableCell><span className="text-[12px] text-slate-400 font-medium">{row.createdBy}</span></TableCell>
-                          <TableCell><span className={`text-[14px] font-semibold ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}>{row.dealName}</span></TableCell>
-                          <TableCell><span className={`text-[14px] font-bold ${isDark ? "text-[#FFFFFF]" : "text-slate-800"}`}>₹{row.amount.toLocaleString("en-IN")}</span></TableCell>
-                          <TableCell><span className="text-[12px] text-slate-400 font-medium">{row.modifiedBy}</span></TableCell>
-                          <TableCell><span className={`text-[13px] font-medium ${isDark ? "text-[#D4D4D8]" : "text-slate-600"}`}>{row.accountName}</span></TableCell>
-                          <TableCell><span className={`text-[13px] font-semibold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{row.probability}%</span></TableCell>
-                          <TableCell>
-                            <span className="px-2.5 py-1 rounded-full text-[11px] font-bold" style={{ backgroundColor: isDark ? "rgba(39,39,42,0.8)" : chip.bg, color: isDark ? "#A1A1AA" : chip.fg }}>
-                              {row.stage}
-                            </span>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <div className={`px-6 py-4 flex justify-between items-center border-t ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
-                <span className={`text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Rows per page: 25</span>
-                <span className={`text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>1–{TABLE_DATA.length} of {totalRecords}</span>
-              </div>
-            </WidgetCard>
+            {(() => {
+              const uiFilteredTableData = applyUIFilters(TABLE_DATA, uiFilters);
+              return (
+                <ReportDataSection
+                  columns={STATIC_DATA_COLUMNS}
+                  rows={uiFilteredTableData}
+                  isDark={isDark}
+                  viewMode="list"
+                  grandTotals={grandTotals}
+                  splitAggregates={splitAggregates}
+                  wrapText={wrapText}
+                  subtitle={`${uiFilteredTableData.length} of ${totalRecords} records`}
+                />
+              );
+            })()}
           </main>
         </div>
       </div>
@@ -910,6 +1391,24 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
           </Button>
         </div>
       </Dialog>
+
+      <ShowDetailsMenu
+        anchorEl={showDetailsAnchor}
+        onClose={() => setShowDetailsAnchor(null)}
+        isDark={isDark}
+        grandTotals={grandTotals} setGrandTotals={setGrandTotals}
+        splitAggregates={splitAggregates} setSplitAggregates={setSplitAggregates}
+        wrapText={wrapText} setWrapText={setWrapText}
+      />
+
+      <FilterPanel
+        open={filterPanelOpen}
+        onClose={() => setFilterPanelOpen(false)}
+        filters={uiFilters}
+        onFiltersChange={setUiFilters}
+        availableFields={STATIC_DATA_COLUMNS.map((c) => ({ name: c.name, label: c.label }))}
+        isDark={isDark}
+      />
       </div>
   );
 }

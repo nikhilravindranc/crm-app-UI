@@ -7,6 +7,7 @@ import ReportPreviewModal from "@/components/reports/ReportPreviewModal";
 import { ModuleType } from "@/lib/moduleRelationships";
 import { GraphValidationResult } from "@/lib/reportGraphValidator";
 import { serializeGraph, saveReportConfig, loadReportConfig, ReportGraphConfig } from "@/lib/reportGraphSerializer";
+import { buildSampleReportConfig } from "@/lib/sampleReportSeeds";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import Snackbar from "@mui/material/Snackbar";
@@ -43,9 +44,17 @@ export default function ReportEditPage({ params }: { params: Promise<{ id: strin
 
   // Load the saved report config (if editing an existing custom report) before the builder mounts
   useEffect(() => {
-    if (isNewReport || isStaticSampleId) {
+    if (isNewReport) {
       setExistingConfig(null);
       setReportName("Untitled Report");
+      return;
+    }
+    if (isStaticSampleId) {
+      // Built-in sample reports have no saved config — seed the canvas with the
+      // module/fields the report actually shows instead of opening it blank.
+      const seeded = buildSampleReportConfig(id);
+      setExistingConfig(seeded);
+      setReportName(seeded?.name ?? "Untitled Report");
       return;
     }
     const config = loadReportConfig(id);

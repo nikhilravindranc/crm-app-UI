@@ -168,7 +168,7 @@ export default function ConvertToDealDrawer({
             <ArrowsLeftRight size={18} color={isDark ? "#71717A" : "#1D4ED8"} weight="duotone" />
           </div>
           <div>
-            <h2 className={`font-heading text-[15px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
+            <h2 className={`m-0 font-heading text-[15px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
               Convert Lead
             </h2>
             <p className={`text-[11.5px] font-medium ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>

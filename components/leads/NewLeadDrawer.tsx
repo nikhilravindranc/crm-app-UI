@@ -150,7 +150,7 @@ export default function NewLeadDrawer({
             }
           </div>
           <div>
-            <h2 className={`text-[15px] font-extrabold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
+            <h2 className={`m-0 text-[15px] font-extrabold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
               {isEdit ? "Edit Lead" : "New Lead"}
             </h2>
             <p className={`text-[11px] font-medium ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>

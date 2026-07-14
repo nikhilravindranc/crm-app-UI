@@ -41,7 +41,7 @@ export default function WidgetCard({
         <div className={`flex items-start justify-between ${noPadding ? "px-6 py-3.5 border-b" : "mb-5"}`}
           style={noPadding ? { borderColor: isDark ? "#27272A" : "#E3ECFC" } : undefined}>
           <div>
-            {title && <h3 className={`text-[14px] font-bold ${isDark ? "text-white" : "text-[#0C2472]"}`}>{title}</h3>}
+            {title && <h3 className={`m-0 text-[14px] font-bold ${isDark ? "text-white" : "text-[#0C2472]"}`}>{title}</h3>}
             {subtitle && <p className="text-[12px] text-slate-400 mt-0.5">{subtitle}</p>}
           </div>
           {badge}

@@ -39,7 +39,7 @@ const GraphPreviewPanel = memo(
       >
         {/* Header */}
         <div className={`px-4 py-4 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
-          <h2 className={`text-[13px] font-bold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
+          <h2 className={`m-0 text-[13px] font-bold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
             📊 Preview
           </h2>
           <p className={`text-[11px] mt-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>

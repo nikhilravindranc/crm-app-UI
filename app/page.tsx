@@ -1,11 +1,35 @@
 "use client";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import KPICard from "@/components/dashboard/KPICard";
 import RevenueChart from "@/components/dashboard/RevenueChart";
 import DealStageChart from "@/components/dashboard/DealStageChart";
 import RecentDeals from "@/components/dashboard/RecentDeals";
 import ActivityFeed from "@/components/dashboard/ActivityFeed";
-import { Users, Lightning, Handshake, Wallet, CalendarBlank, ClipboardText, TrendUp } from "@phosphor-icons/react";
+import Button from "@mui/material/Button";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import ListItemText from "@mui/material/ListItemText";
+import Divider from "@mui/material/Divider";
+import { Users, Lightning, Handshake, Wallet, CalendarBlank, ClipboardText, TrendUp, CaretDown, Check, SquaresFour, GearSix } from "@phosphor-icons/react";
 import { useTheme } from "@/components/ThemeContext";
+
+/* ─────────── Dashboards available to switch between (mirrors Settings ▸ Dashboard Customization) ─────────── */
+interface DashboardOption { id: string; name: string; isActive: boolean; }
+const DASHBOARDS_STORAGE_KEY = "dashboards-list";
+const ACTIVE_DASHBOARD_KEY = "active-dashboard-id";
+const DEFAULT_DASHBOARDS: DashboardOption[] = [{ id: "hp1", name: "Dashboard V1", isActive: true }];
+
+function loadDashboardOptions(): DashboardOption[] {
+  if (typeof window === "undefined") return DEFAULT_DASHBOARDS;
+  try {
+    const raw = localStorage.getItem(DASHBOARDS_STORAGE_KEY);
+    const parsed: DashboardOption[] = raw ? JSON.parse(raw) : DEFAULT_DASHBOARDS;
+    return parsed.length ? parsed : DEFAULT_DASHBOARDS;
+  } catch {
+    return DEFAULT_DASHBOARDS;
+  }
+}
 
 /* ─────────── KPI card definitions ─────────── */
 const kpis = [
@@ -66,9 +90,76 @@ const quickStats = [
 export default function DashboardPage() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const router = useRouter();
+
+  const [dashboards, setDashboards] = useState<DashboardOption[]>(DEFAULT_DASHBOARDS);
+  const [selectedId, setSelectedId] = useState<string>(DEFAULT_DASHBOARDS[0].id);
+  const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const options = loadDashboardOptions();
+    const available = options.filter((d) => d.isActive);
+    const list = available.length ? available : options;
+    setDashboards(list);
+
+    const savedId = localStorage.getItem(ACTIVE_DASHBOARD_KEY);
+    const initial = list.find((d) => d.id === savedId) ?? list[0];
+    if (initial) setSelectedId(initial.id);
+  }, []);
+
+  const selectedDashboard = dashboards.find((d) => d.id === selectedId) ?? dashboards[0];
+
+  const handleSelectDashboard = (dashboardId: string) => {
+    setSelectedId(dashboardId);
+    localStorage.setItem(ACTIVE_DASHBOARD_KEY, dashboardId);
+    setMenuAnchor(null);
+  };
+
   return (
     <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
       <main className="flex-1 px-8 py-6 space-y-6 animate-fade-in">
+          {/* ═══════════════════════════════════════
+              HEADER — dashboard switcher
+          ═══════════════════════════════════════ */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${isDark ? "bg-[#1D4ED8]/15" : "bg-[#EFF6FF]"}`}>
+                <SquaresFour size={18} weight="duotone" color="#1D4ED8" />
+              </div>
+              <div>
+                <h1 className={`m-0 text-[20px] font-extrabold leading-tight tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-[#0C2472]"}`}>Dashboard</h1>
+                <p className={`m-0 text-[12px] leading-tight mt-0.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{selectedDashboard?.name ?? "Dashboard V1"}</p>
+              </div>
+            </div>
+
+            <Button
+              onClick={(e) => setMenuAnchor(e.currentTarget)}
+              variant="outlined"
+              endIcon={<CaretDown size={13} weight="bold" />}
+              sx={{ textTransform: "none", fontWeight: 700, fontSize: "13px", borderRadius: "9px", color: isDark ? "#D4D4D8" : "#0C2472", borderColor: isDark ? "#27272A" : "#E3ECFC", bgcolor: isDark ? "#18181B" : "#fff", "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF", borderColor: isDark ? "#27272A" : "#E3ECFC" } }}>
+              {selectedDashboard?.name ?? "Select Dashboard"}
+            </Button>
+
+            <Menu anchorEl={menuAnchor} open={!!menuAnchor} onClose={() => setMenuAnchor(null)}
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              transformOrigin={{ vertical: "top", horizontal: "right" }}
+              PaperProps={{ sx: { mt: 0.75, borderRadius: "12px", minWidth: 220, py: 0.5, bgcolor: isDark ? "#18181B" : "#fff", border: `1px solid ${isDark ? "#27272A" : "#E3ECFC"}`, boxShadow: isDark ? "0 8px 24px rgba(0,0,0,0.45)" : "0 8px 24px rgba(15,23,42,0.12)" } }}>
+              {dashboards.map((d) => (
+                <MenuItem key={d.id} onClick={() => handleSelectDashboard(d.id)} selected={d.id === selectedId}
+                  sx={{ py: 1, px: 1.75, mx: 0.5, borderRadius: "8px", "&.Mui-selected": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
+                  <ListItemText primaryTypographyProps={{ fontSize: 13.5, fontWeight: d.id === selectedId ? 700 : 500, color: d.id === selectedId ? "#1D4ED8" : undefined }}>{d.name}</ListItemText>
+                  {d.id === selectedId && <Check size={15} weight="bold" color="#1D4ED8" />}
+                </MenuItem>
+              ))}
+              <Divider sx={{ my: 0.5, borderColor: isDark ? "#27272A" : "#E3ECFC" }} />
+              <MenuItem onClick={() => { setMenuAnchor(null); router.push("/settings?tab=homepage"); }}
+                sx={{ py: 1, px: 1.75, mx: 0.5, borderRadius: "8px" }}>
+                <GearSix size={16} weight="duotone" className="mr-2.5" />
+                <ListItemText primaryTypographyProps={{ fontSize: 13.5 }}>Manage Dashboards</ListItemText>
+              </MenuItem>
+            </Menu>
+          </div>
+
           {/* ═══════════════════════════════════════
               WELCOME BANNER
           ═══════════════════════════════════════ */}

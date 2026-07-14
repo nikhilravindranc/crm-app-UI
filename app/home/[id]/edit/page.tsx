@@ -21,6 +21,7 @@ import {
   PieChart, Pie, Cell, BarChart, Bar, AreaChart, Area, XAxis, YAxis,
   CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, LabelList, LineChart, Line,
 } from "recharts";
+import { buildSampleReportConfig } from "@/lib/sampleReportSeeds";
 
 interface DashboardComponent {
   id: string;
@@ -103,9 +104,10 @@ const REPORT_COMPONENTS: DashboardComponent[] = [
   { id: "report-r2", type: "report", title: "Deal with Stage", icon: ChartBar, color: "#8B5CF6", description: "Deal Reports · 14 records", category: "report", sourceReportId: "r2", sourceReportName: "Deal with Stage" },
   { id: "report-r3", type: "report", title: "Deal List", icon: Rows, color: "#EC4899", description: "Deal Reports · 14 records", category: "report", sourceReportId: "r3", sourceReportName: "Deal List" },
   { id: "report-r4", type: "report", title: "Account Wise Deal Summary", icon: ChartBar, color: "#14B8A6", description: "Deal Reports · 14 records", category: "report", sourceReportId: "r4", sourceReportName: "Account Wise Deal Summary" },
+  { id: "report-r5", type: "report", title: "Account List", icon: Rows, color: "#0EA5E9", description: "Account Reports · 5 records", category: "report", sourceReportId: "r5", sourceReportName: "Account List" },
 ];
 
-const REPORT_RECORD_COUNTS: Record<string, number> = { r1: 14, r2: 14, r3: 14, r4: 14 };
+const REPORT_RECORD_COUNTS: Record<string, number> = { r1: 14, r2: 14, r3: 14, r4: 14, r5: 5 };
 
 const CHART_TYPES: { key: string; label: string; icon: React.ElementType; family: "column" | "bar" | "donut" | "pie" | "area" | "line" | "kpi" }[] = [
   { key: "column", label: "Column", icon: ChartBar, family: "column" },
@@ -127,6 +129,23 @@ const CHART_TYPES: { key: string; label: string; icon: React.ElementType; family
 
 const MODULE_OPTIONS = ["Accounts", "Contacts", "Leads", "Deals"];
 const MEASURE_OPTIONS = ["Count of Unique - Accounts", "Sum of Amount", "Average Probability", "Count of Records"];
+
+// Mirrors the "collection" grouping shown on the Reports listing page.
+const REPORT_COLLECTIONS = ["All", "Deal Reports", "Account Reports"];
+const SORT_BY_OPTIONS = ["Default", "Highest to Lowest", "Lowest to Highest", "A → Z", "Z → A"];
+const MAX_GROUPING_OPTIONS = ["10", "25", "50", "75", "100"];
+
+// Human-readable label for a report field key, e.g. "closingDate" -> "Closing Date"
+function formatFieldLabel(field: string): string {
+  return field.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/^./, (c) => c.toUpperCase());
+}
+
+// Fields available on a report, sourced from the same seed data used to populate the report builder canvas.
+function fieldsForReport(reportId: string): string[] {
+  const config = buildSampleReportConfig(reportId);
+  if (!config) return [];
+  return config.selectedFields[config.primaryModule] ?? [];
+}
 
 const SAMPLE_CHART_DATA = [
   { name: "Group A", value: 2 },
@@ -486,13 +505,29 @@ export default function HomePageEditorPage() {
   const [acRelatedModule, setAcRelatedModule] = useState("");
   const [acMeasure, setAcMeasure] = useState(MEASURE_OPTIONS[0]);
   const [acGrouping, setAcGrouping] = useState("");
-  const [acReportId, setAcReportId] = useState(REPORT_COMPONENTS[0].sourceReportId);
+  const [acReportId, setAcReportId] = useState("");
+  const [acCollection, setAcCollection] = useState(REPORT_COLLECTIONS[0]);
+  const [acMeasureField, setAcMeasureField] = useState("");
+  const [acGroupingField, setAcGroupingField] = useState("");
+  const [acSortBy, setAcSortBy] = useState(SORT_BY_OPTIONS[0]);
+  const [acMaxGrouping, setAcMaxGrouping] = useState(MAX_GROUPING_OPTIONS[3]);
+  const [acBenchmark, setAcBenchmark] = useState(false);
+  const [acShortenedNumbers, setAcShortenedNumbers] = useState(false);
+  const [acTotalSummary, setAcTotalSummary] = useState(false);
   const [acDisplayFilters, setAcDisplayFilters] = useState(false);
+
+  const reportFields = acReportId ? fieldsForReport(acReportId) : [];
+  const reportsInCollection = REPORT_COMPONENTS.filter(
+    (r) => acCollection === "All" || r.description.startsWith(acCollection)
+  );
 
   const resetAddComponentForm = () => {
     setAcTab("chart"); setAcType("column"); setAcName(""); setAcModule("Accounts");
     setAcRelatedModule(""); setAcMeasure(MEASURE_OPTIONS[0]); setAcGrouping("");
-    setAcReportId(REPORT_COMPONENTS[0].sourceReportId); setAcDisplayFilters(false);
+    setAcReportId(""); setAcCollection(REPORT_COLLECTIONS[0]);
+    setAcMeasureField(""); setAcGroupingField(""); setAcSortBy(SORT_BY_OPTIONS[0]);
+    setAcMaxGrouping(MAX_GROUPING_OPTIONS[3]); setAcBenchmark(false);
+    setAcShortenedNumbers(false); setAcTotalSummary(false); setAcDisplayFilters(false);
   };
 
   const handleAddComponentDone = () => {
@@ -627,7 +662,7 @@ export default function HomePageEditorPage() {
             <button className={`text-[12px] font-medium cursor-default ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>Dashboard V1</button>
           </div>
           <div className="flex items-center justify-between">
-            <h1 className={`text-[20px] font-extrabold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-[#0C2472]"}`}>Dashboard Customization</h1>
+            <h1 className={`m-0 text-[20px] font-extrabold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-[#0C2472]"}`}>Dashboard Customization</h1>
             <div className="flex items-center gap-2">
               <Tooltip title="Restore this dashboard's original widgets and layout">
                 <Button variant="outlined" onClick={() => setResetConfirmOpen(true)} startIcon={<ArrowCounterClockwise size={14} weight="bold" />}
@@ -960,19 +995,83 @@ export default function HomePageEditorPage() {
                   <button className="text-[12.5px] font-semibold text-[#1D4ED8] hover:underline">+ Criteria filter</button>
                 </>
               ) : (
-                <div className="grid grid-cols-[140px_1fr] items-center gap-3">
-                  <label className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Report</label>
-                  <select value={acReportId} onChange={e => setAcReportId(e.target.value)}
-                    className={`px-3 py-2 text-[13px] border rounded-lg outline-none cursor-pointer ${isDark ? "bg-[#0A0A0A] border-[#3F3F46] text-[#D4D4D8]" : "bg-white border-[#E3ECFC] text-slate-700"}`}>
-                    {REPORT_COMPONENTS.map(r => <option key={r.sourceReportId} value={r.sourceReportId}>{r.sourceReportName}</option>)}
-                  </select>
-                </div>
+                <>
+                  <div className="grid grid-cols-[140px_1fr] items-center gap-3">
+                    <label className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Collection</label>
+                    <select value={acCollection} onChange={e => { setAcCollection(e.target.value); setAcReportId(""); setAcMeasureField(""); setAcGroupingField(""); }}
+                      className={`px-3 py-2 text-[13px] border rounded-lg outline-none cursor-pointer ${isDark ? "bg-[#0A0A0A] border-[#3F3F46] text-[#D4D4D8]" : "bg-white border-[#E3ECFC] text-slate-700"}`}>
+                      {REPORT_COLLECTIONS.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                  </div>
+                  <div className="grid grid-cols-[140px_1fr] items-center gap-3">
+                    <label className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Report</label>
+                    <select value={acReportId} onChange={e => { setAcReportId(e.target.value); setAcMeasureField(""); setAcGroupingField(""); }}
+                      className={`px-3 py-2 text-[13px] border rounded-lg outline-none cursor-pointer ${isDark ? "bg-[#0A0A0A] border-[#3F3F46] text-[#D4D4D8]" : "bg-white border-[#E3ECFC] text-slate-700"} ${!acReportId ? (isDark ? "text-[#71717A]" : "text-slate-400") : ""}`}>
+                      <option value="">Select a report</option>
+                      {reportsInCollection.map(r => <option key={r.sourceReportId} value={r.sourceReportId}>{r.sourceReportName}</option>)}
+                    </select>
+                  </div>
+                  <div className="grid grid-cols-[140px_1fr] items-center gap-3">
+                    <label className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Measure (Y-Axis)</label>
+                    <select value={acMeasureField} onChange={e => setAcMeasureField(e.target.value)} disabled={!acReportId}
+                      className={`px-3 py-2 text-[13px] border rounded-lg outline-none ${acReportId ? "cursor-pointer" : "cursor-not-allowed"} ${isDark ? "bg-[#0A0A0A] border-[#3F3F46] text-[#D4D4D8]" : "bg-white border-[#E3ECFC] text-slate-700"} ${!acReportId ? (isDark ? "text-[#71717A]" : "text-slate-400") : ""}`}>
+                      <option value="">{acReportId ? "Select a measure" : "Select a report first"}</option>
+                      {reportFields.map(f => <option key={f} value={f}>{formatFieldLabel(f)}</option>)}
+                    </select>
+                  </div>
+                  <div className="grid grid-cols-[140px_1fr] items-center gap-3">
+                    <label className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Grouping</label>
+                    <select value={acGroupingField} onChange={e => setAcGroupingField(e.target.value)} disabled={!acReportId}
+                      className={`px-3 py-2 text-[13px] border rounded-lg outline-none ${acReportId ? "cursor-pointer" : "cursor-not-allowed"} ${isDark ? "bg-[#0A0A0A] border-[#3F3F46] text-[#D4D4D8]" : "bg-white border-[#E3ECFC] text-slate-700"} ${!acReportId ? (isDark ? "text-[#71717A]" : "text-slate-400") : ""}`}>
+                      <option value="">{acReportId ? "Select a grouping" : "Select a report first"}</option>
+                      {reportFields.map(f => <option key={f} value={f}>{formatFieldLabel(f)}</option>)}
+                    </select>
+                  </div>
+                  <div className="grid grid-cols-[140px_1fr] items-center gap-3">
+                    <label className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Sort By</label>
+                    <select value={acSortBy} onChange={e => setAcSortBy(e.target.value)}
+                      className={`px-3 py-2 text-[13px] border rounded-lg outline-none cursor-pointer ${isDark ? "bg-[#0A0A0A] border-[#3F3F46] text-[#D4D4D8]" : "bg-white border-[#E3ECFC] text-slate-700"}`}>
+                      {SORT_BY_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </div>
+                  <div className="grid grid-cols-[140px_1fr] items-center gap-3">
+                    <label className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Maximum Grouping</label>
+                    <select value={acMaxGrouping} onChange={e => setAcMaxGrouping(e.target.value)}
+                      className={`px-3 py-2 text-[13px] border rounded-lg outline-none cursor-pointer ${isDark ? "bg-[#0A0A0A] border-[#3F3F46] text-[#D4D4D8]" : "bg-white border-[#E3ECFC] text-slate-700"}`}>
+                      {MAX_GROUPING_OPTIONS.map(m => <option key={m} value={m}>{m}</option>)}
+                    </select>
+                  </div>
+
+                  <div className={`pt-3 mt-1 border-t ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+                    <div className={`text-[11px] font-bold uppercase tracking-widest mb-2.5 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>Display Options</div>
+                    <div className="space-y-2.5">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" checked={acBenchmark} onChange={e => setAcBenchmark(e.target.checked)} className="w-4 h-4 accent-[#1D4ED8]" />
+                        <span className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-600"}`}>Benchmark for Y-Axis</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" checked={acShortenedNumbers} onChange={e => setAcShortenedNumbers(e.target.checked)} className="w-4 h-4 accent-[#1D4ED8]" />
+                        <span className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-600"}`}>Display as Shortened Numbers</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" checked={acTotalSummary} onChange={e => setAcTotalSummary(e.target.checked)} className="w-4 h-4 accent-[#1D4ED8]" />
+                        <span className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-600"}`}>Display Total Summary</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" checked={acDisplayFilters} onChange={e => setAcDisplayFilters(e.target.checked)} className="w-4 h-4 accent-[#1D4ED8]" />
+                        <span className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-600"}`}>Display Component Filters</span>
+                      </label>
+                    </div>
+                  </div>
+                </>
               )}
 
-              <label className="flex items-center gap-2 cursor-pointer pt-1">
-                <input type="checkbox" checked={acDisplayFilters} onChange={e => setAcDisplayFilters(e.target.checked)} className="w-4 h-4 accent-[#1D4ED8]" />
-                <span className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-600"}`}>Display Component Filters</span>
-              </label>
+              {acTab === "chart" && (
+                <label className="flex items-center gap-2 cursor-pointer pt-1">
+                  <input type="checkbox" checked={acDisplayFilters} onChange={e => setAcDisplayFilters(e.target.checked)} className="w-4 h-4 accent-[#1D4ED8]" />
+                  <span className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-600"}`}>Display Component Filters</span>
+                </label>
+              )}
             </div>
 
             {/* Preview */}

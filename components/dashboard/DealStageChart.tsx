@@ -54,7 +54,7 @@ export default function DealStageChart({ isDark = false }: { isDark?: boolean })
         boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08)",
       }}>
       <div className="mb-5">
-        <h3 className={`text-[14px] font-bold ${isDark ? "text-white" : "text-[#0C2472]"}`}>Pipeline by Stage</h3>
+        <h3 className={`m-0 text-[14px] font-bold ${isDark ? "text-white" : "text-[#0C2472]"}`}>Pipeline by Stage</h3>
         <p className="text-[12px] text-slate-400 mt-0.5">Active deals distribution</p>
       </div>
 

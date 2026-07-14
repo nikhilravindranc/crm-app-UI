@@ -68,7 +68,7 @@ const GraphPropertiesPanel = memo(
             <Icon size={14} color={color} weight="duotone" />
           </div>
           <div>
-            <h2 className={`text-[13px] font-bold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>{module}</h2>
+            <h2 className={`m-0 text-[13px] font-bold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>{module}</h2>
             <p className={`text-[11px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{selectedFields.length} of {fields.length} fields selected</p>
           </div>
         </div>
