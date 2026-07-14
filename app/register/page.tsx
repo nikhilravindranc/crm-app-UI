@@ -138,7 +138,7 @@ export default function RegisterPage() {
 
           {/* Heading */}
           <div className="mb-4">
-            <h1 className="text-[20px] font-extrabold text-slate-900 tracking-tight">Get started your journey</h1>
+            <h1 className="m-0 text-[20px] font-extrabold text-slate-900 tracking-tight">Get started your journey</h1>
             <p className="text-slate-400 text-[12px] mt-0.5 font-medium">Create your EVOQ CRM account</p>
           </div>
 

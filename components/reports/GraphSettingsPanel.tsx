@@ -34,7 +34,7 @@ const GraphSettingsPanel = memo(
       >
         {/* Header */}
         <div className={`px-4 py-4 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
-          <h2 className={`text-[14px] font-bold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
+          <h2 className={`m-0 text-[14px] font-bold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
             Report Builder
           </h2>
         </div>

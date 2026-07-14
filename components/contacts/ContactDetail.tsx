@@ -480,7 +480,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                 {initials}
               </Avatar>
               <div className="flex-1 min-w-0">
-                <h1 className={`text-[20px] font-extrabold tracking-tight leading-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>{fullName}</h1>
+                <h1 className={`m-0 text-[20px] font-extrabold tracking-tight leading-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>{fullName}</h1>
                 {contact.title && (
                   <p className={`text-[13px] mt-0.5 ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>{contact.title}</p>
                 )}

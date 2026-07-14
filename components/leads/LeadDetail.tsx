@@ -239,7 +239,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2.5 mb-0.5 flex-wrap">
-                  <h1 className="text-[20px] font-extrabold text-slate-900 tracking-tight">{fullName}</h1>
+                  <h1 className="m-0 text-[20px] font-extrabold text-slate-900 tracking-tight">{fullName}</h1>
                   <span className="inline-flex items-center gap-1 text-[11.5px] font-bold px-2.5 py-0.5 rounded-full flex-shrink-0" style={{ backgroundColor:cfg.bg, color:cfg.text }}>
                     <span className="w-[5px] h-[5px] rounded-full" style={{ backgroundColor:cfg.dot }} />
                     {currentStatus}

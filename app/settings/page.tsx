@@ -7,6 +7,9 @@ import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import Drawer from "@mui/material/Drawer";
 import TextField from "@mui/material/TextField";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -22,7 +25,7 @@ import {
   Lightning, AddressBook, SquaresFour, UserPlus, ArrowLeft, Info,
   DotsSixVertical, DotsThreeVertical, TextT, TextAlignLeft, ListBullets, CalendarBlank,
   Hash, CurrencyDollar, CheckSquare, LinkSimple, ChartBar, X,
-  ClockCounterClockwise,
+  ClockCounterClockwise, ArrowsLeftRight, Rows, CopySimple,
 } from "@phosphor-icons/react";
 import { useTheme } from "@/components/ThemeContext";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -452,7 +455,7 @@ function NewUserDrawer({ open, onClose, onSubmit }: {
           <div className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-sm ${isDark ? "bg-[#27272A]" : "bg-[#1D4ED8]"}`}>
             <UsersThree size={18} color={isDark ? "#A1A1AA" : "#fff"} weight="duotone" />
           </div>
-          <h2 className={`font-heading text-[16px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>New User</h2>
+          <h2 className={`m-0 font-heading text-[16px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>New User</h2>
         </div>
         <Tooltip title="Close">
           <IconButton size="small" onClick={handleClose}
@@ -919,7 +922,7 @@ function NewRoleDrawer({ open, onClose }: { open: boolean; onClose: () => void }
           <div className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-sm ${isDark ? "bg-[#27272A]" : "bg-[#8B5CF6]"}`}>
             <ShieldCheck size={18} color={isDark ? "#A1A1AA" : "#fff"} weight="duotone" />
           </div>
-          <h2 className={`font-heading text-[16px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>New Role</h2>
+          <h2 className={`m-0 font-heading text-[16px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>New Role</h2>
         </div>
         <Tooltip title="Close">
           <IconButton size="small" onClick={handleClose}
@@ -2538,13 +2541,14 @@ function GreenSwitch({ checked, onChange }: { checked: boolean; onChange?: () =>
   );
 }
 
-function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
+function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout, initialTab = "layouts", modLabels = {} }: {
   modKey: string; onBack: () => void; onSelect: (k: string) => void;
-  onOpenLayout: (name: string) => void;
+  onOpenLayout: (name: string) => void; initialTab?: "layouts"|"fields"; modLabels?: Record<string,string>;
 }) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  const [tab, setTab]           = useState<"layouts"|"fields">("layouts");
+  const router = useRouter();
+  const [tab, setTab]           = useState<"layouts"|"fields">(initialTab);
   const [fieldSubTab, setFieldSubTab] = useState<"listing"|"permissions">("listing");
   const [search, setSearch]     = useState("");
   const [fieldSearch, setFieldSearch] = useState("");
@@ -2555,16 +2559,42 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
   const [showCreateLayoutModal, setShowCreateLayoutModal] = useState(false);
   const [showCreateEditModal, setShowCreateEditModal] = useState(false);
   const [createEditLayout, setCreateEditLayout] = useState("");
-  const mod     = MODULE_DEFS.find(m => m.key === modKey);
-  const layouts = MODULE_LAYOUTS[modKey] ?? [];
+  const [layoutRows, setLayoutRows] = useState(MODULE_LAYOUTS[modKey] ?? []);
+  const [layoutMenu, setLayoutMenu] = useState<{ el: HTMLElement; name: string } | null>(null);
+  const [renameLayout, setRenameLayout] = useState<string | null>(null);
+  const [renameLayoutValue, setRenameLayoutValue] = useState("");
+  const [layoutConversionMappingOpen, setLayoutConversionMappingOpen] = useState(false);
+  const labeledMods = MODULE_DEFS.map(m => ({ ...m, label: modLabels[m.key] ?? m.label }));
+  const mod     = labeledMods.find(m => m.key === modKey);
+  const layouts = layoutRows;
   const allModFields = MODULE_FIELDS[modKey] ?? [];
   const title   = modKey === "new" ? "add" : (mod?.label ?? modKey);
+
+  useEffect(() => { setLayoutRows(MODULE_LAYOUTS[modKey] ?? []); }, [modKey]);
+
+  const closeLayoutMenu = () => setLayoutMenu(null);
+  const handleCloneLayoutRow = (name: string) => {
+    const source = layoutRows.find(l => l.name === name);
+    if (!source) return;
+    const now = new Date().toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" });
+    let cloneName = `${source.name} (Copy)`;
+    let n = 2;
+    while (layoutRows.some(l => l.name === cloneName)) { cloneName = `${source.name} (Copy ${n})`; n++; }
+    setLayoutRows(prev => [...prev, { ...source, name: cloneName, lastMod: now, active: false }]);
+  };
+  const handleRenameLayoutSubmit = () => {
+    if (renameLayout && renameLayoutValue.trim()) {
+      const now = new Date().toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" });
+      setLayoutRows(prev => prev.map(l => l.name === renameLayout ? { ...l, name: renameLayoutValue.trim(), lastMod: now } : l));
+    }
+    setRenameLayout(null);
+  };
 
   const getPerm = (name: string) => permissions[`${permRole}:${name}`] ?? "rw";
   const setPerm = (name: string, val: "rw"|"ro"|"hide") =>
     setPermissions(p => ({ ...p, [`${permRole}:${name}`]: val }));
 
-  const filteredMods = MODULE_DEFS.filter(m => !search || m.label.toLowerCase().includes(search.toLowerCase()));
+  const filteredMods = labeledMods.filter(m => !search || m.label.toLowerCase().includes(search.toLowerCase()));
   const filteredFields = allModFields.filter(f =>
     (!fieldSearch || f.name.toLowerCase().includes(fieldSearch.toLowerCase())) &&
     (fieldLayout === "all" || f.layout === fieldLayout)
@@ -2671,13 +2701,81 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout }: {
                           </div>
                         </td>
                         <td className="px-4 py-3 text-right">
-                          <GreenSwitch checked={l.active} />
+                          <div className="flex items-center justify-end gap-2">
+                            <Tooltip title="More actions">
+                              <IconButton size="small" onClick={e => setLayoutMenu({ el: e.currentTarget, name: l.name })}
+                                sx={{ p:0.3, color: isDark ? "#9CA3AF" : "#94A3B8", "&:hover":{color:"#1D4ED8",bgcolor: isDark ? "#27272A" : "#EFF6FF"}, borderRadius:"6px" }}>
+                                <DotsThreeVertical size={15} weight="bold" />
+                              </IconButton>
+                            </Tooltip>
+                            <GreenSwitch checked={l.active} />
+                          </div>
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
+
+              {/* Layout row actions menu */}
+              <Menu anchorEl={layoutMenu?.el} open={!!layoutMenu} onClose={closeLayoutMenu}
+                transformOrigin={{ horizontal: "right", vertical: "top" }}
+                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                PaperProps={{ elevation: 4, sx: {
+                  mt: 0.5, borderRadius: "12px", minWidth: 200,
+                  border: isDark ? "1px solid #27272A" : "1px solid #E3ECFC",
+                  bgcolor: isDark ? "#1C1C1E" : "#fff",
+                  boxShadow: isDark ? "0 8px 32px rgba(0,0,0,0.5)" : "0 8px 32px rgba(12,36,114,0.10)",
+                  "& .MuiMenuItem-root": {
+                    fontSize: "14px", py: 1.2, px: 2.5, gap: 1.25,
+                    color: isDark ? "#D4D4D8" : "#334155",
+                    "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF", color: isDark ? "#F4F4F5" : "#1D4ED8" },
+                  },
+                } }}>
+                <MenuItem onClick={() => { const name = layoutMenu!.name; closeLayoutMenu(); setRenameLayout(name); setRenameLayoutValue(name); }}>
+                  <PencilSimple size={15} weight="duotone" /> Rename
+                </MenuItem>
+                <MenuItem onClick={() => { const name = layoutMenu!.name; closeLayoutMenu(); onOpenLayout(name); }}>
+                  <Rows size={15} weight="duotone" /> Edit Layout
+                </MenuItem>
+                <MenuItem onClick={() => { const name = layoutMenu!.name; closeLayoutMenu(); handleCloneLayoutRow(name); }}>
+                  <CopySimple size={15} weight="duotone" /> Clone Layout
+                </MenuItem>
+                <MenuItem onClick={() => { closeLayoutMenu(); router.push("/settings?tab=permission"); }}>
+                  <ShieldCheck size={15} weight="duotone" /> Layout Permission
+                </MenuItem>
+                {modKey === "leads" && (
+                  <MenuItem onClick={() => { closeLayoutMenu(); setLayoutConversionMappingOpen(true); }}>
+                    <ArrowsLeftRight size={15} weight="duotone" /> Lead Conversion Mapping
+                  </MenuItem>
+                )}
+              </Menu>
+
+              {/* Rename layout dialog */}
+              <Dialog open={!!renameLayout} onClose={() => setRenameLayout(null)} maxWidth="xs" fullWidth
+                PaperProps={{ sx: { borderRadius: "16px", bgcolor: isDark ? "#1C1C1E" : "#fff" } }}>
+                <div className={`flex items-center justify-between px-5 py-4 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+                  <span className={`text-[15px] font-bold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Rename Layout</span>
+                  <IconButton size="small" onClick={() => setRenameLayout(null)}><X size={16} color={isDark ? "#71717A" : "#64748B"} weight="duotone" /></IconButton>
+                </div>
+                <DialogContent sx={{ p: 3 }}>
+                  <TextField autoFocus fullWidth size="small" label="Layout Name" value={renameLayoutValue}
+                    onChange={e => setRenameLayoutValue(e.target.value)}
+                    onKeyDown={e => { if (e.key === "Enter") handleRenameLayoutSubmit(); }} />
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pb: 2.5 }}>
+                  <Button onClick={() => setRenameLayout(null)} variant="outlined"
+                    sx={{ color: isDark ? "#D4D4D8" : "#4A5675", borderColor: isDark ? "#3F3F46" : "#E3ECFC", textTransform: "none", fontWeight: 600, borderRadius: "9px" }}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleRenameLayoutSubmit} variant="contained"
+                    sx={{ bgcolor: "#1D4ED8", color: "white", textTransform: "none", fontWeight: 600, borderRadius: "9px", "&:hover": { bgcolor: "#2563EB" } }}>
+                    Save
+                  </Button>
+                </DialogActions>
+              </Dialog>
+
+              <LeadConversionMappingModal open={layoutConversionMappingOpen} onClose={() => setLayoutConversionMappingOpen(false)} isDark={isDark} />
             </>
           )}
           {tab === "fields" && (
@@ -2912,18 +3010,95 @@ function CreateLayoutModal({ existingLayouts, onClose, onContinue }: {
   );
 }
 
+const LEAD_CONVERSION_TARGETS: { module: string; fields: { lead: string; target: string }[] }[] = [
+  { module: "Contact", fields: [
+    { lead: "First Name", target: "First Name" }, { lead: "Last Name", target: "Last Name" },
+    { lead: "Email", target: "Email" }, { lead: "Phone", target: "Phone" }, { lead: "Title", target: "Title" },
+  ]},
+  { module: "Account", fields: [
+    { lead: "Company", target: "Account Name" }, { lead: "Website", target: "Website" },
+    { lead: "Industry", target: "Industry" }, { lead: "Annual Revenue", target: "Annual Revenue" },
+  ]},
+  { module: "Deal", fields: [
+    { lead: "Company", target: "Deal Name" }, { lead: "Lead Source", target: "Lead Source" },
+  ]},
+];
+
+function LeadConversionMappingModal({ open, onClose, isDark }: { open: boolean; onClose: () => void; isDark: boolean }) {
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth
+      PaperProps={{ sx: { borderRadius: "16px", bgcolor: isDark ? "#1C1C1E" : "#fff" } }}>
+      <div className={`flex items-center justify-between px-6 py-4 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+        <span className={`text-[16px] font-bold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Lead Conversion Mapping</span>
+        <IconButton size="small" onClick={onClose}><X size={16} color={isDark ? "#71717A" : "#64748B"} weight="duotone" /></IconButton>
+      </div>
+      <DialogContent sx={{ p: 3 }}>
+        <p className={`text-[13px] mb-4 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>
+          Choose which Lead fields carry over when a lead is converted into a Contact, Account, and Deal.
+        </p>
+        <div className="space-y-5">
+          {LEAD_CONVERSION_TARGETS.map(group => (
+            <div key={group.module}>
+              <div className={`text-[12px] font-bold uppercase tracking-widest mb-2 ${isDark ? "text-[#60A5FA]" : "text-[#1D4ED8]"}`}>{group.module}</div>
+              <div className={`rounded-xl border overflow-hidden ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+                {group.fields.map((f, i) => (
+                  <div key={f.lead} className={`flex items-center gap-3 px-3 py-2 text-[13px] ${i !== 0 ? `border-t ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}` : ""}`}>
+                    <span className={`flex-1 ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{f.lead}</span>
+                    <ArrowsLeftRight size={13} color="#94A3B8" weight="bold" />
+                    <span className={`flex-1 text-right ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{f.target}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </DialogContent>
+      <DialogActions sx={{ px: 3, pb: 2.5 }}>
+        <Button onClick={onClose} variant="contained"
+          sx={{ bgcolor: "#1D4ED8", color: "white", textTransform: "none", fontWeight: 600, borderRadius: "9px", "&:hover": { bgcolor: "#2563EB" } }}>
+          Done
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
 function ModulesAndFieldsPanel() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const router = useRouter();
   const [view, setView]             = useState<"list"|"detail">("list");
   const [selectedMod, setSelectedMod] = useState("leads");
+  const [detailInitialTab, setDetailInitialTab] = useState<"layouts"|"fields">("layouts");
   const [openLayout, setOpenLayout] = useState<string|null>(null);
   const [modStatuses, setModStatuses] = useState<Record<string,boolean>>(
     Object.fromEntries(MODULE_DEFS.map(m => [m.key, true]))
   );
+  const [modLabels, setModLabels] = useState<Record<string,string>>(
+    Object.fromEntries(MODULE_DEFS.map(m => [m.key, m.label]))
+  );
   const [search, setSearch] = useState("");
+  const [rowMenu, setRowMenu] = useState<{ el: HTMLElement; key: string } | null>(null);
+  const [renameMod, setRenameMod] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState("");
+  const [conversionMappingOpen, setConversionMappingOpen] = useState(false);
 
-  const filtered = MODULE_DEFS.filter(m => !search || m.label.toLowerCase().includes(search.toLowerCase()));
+  const filtered = MODULE_DEFS
+    .map(m => ({ ...m, label: modLabels[m.key] ?? m.label }))
+    .filter(m => !search || m.label.toLowerCase().includes(search.toLowerCase()));
+
+  const closeRowMenu = () => setRowMenu(null);
+  const openDetail = (modKey: string, tab: "layouts"|"fields") => {
+    setSelectedMod(modKey);
+    setDetailInitialTab(tab);
+    setView("detail");
+  };
+  const handleRenameSubmit = () => {
+    if (renameMod && renameValue.trim()) {
+      setModLabels(prev => ({ ...prev, [renameMod]: renameValue.trim() }));
+    }
+    setRenameMod(null);
+  };
 
   if (openLayout === "__NEW__") {
     return <NewLayoutBuilder module={selectedMod} onClose={() => setOpenLayout(null)} />;
@@ -2936,6 +3111,8 @@ function ModulesAndFieldsPanel() {
     return (
       <ModuleDetail
         modKey={selectedMod}
+        initialTab={detailInitialTab}
+        modLabels={modLabels}
         onBack={() => setView("list")}
         onSelect={k => setSelectedMod(k)}
         onOpenLayout={name => setOpenLayout(name)}
@@ -3000,6 +3177,12 @@ function ModulesAndFieldsPanel() {
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center justify-center gap-2">
+                    <Tooltip title="More actions">
+                      <IconButton size="small" onClick={e => setRowMenu({ el: e.currentTarget, key: mod.key })}
+                        sx={{ p:0.3, color: isDark ? "#9CA3AF" : "#94A3B8", "&:hover":{color:"#1D4ED8",bgcolor: isDark ? "#27272A" : "#EFF6FF"}, borderRadius:"6px" }}>
+                        <DotsThreeVertical size={15} weight="bold" />
+                      </IconButton>
+                    </Tooltip>
                     <GreenSwitch checked={isOn} onChange={() => setModStatuses(p => ({ ...p, [mod.key]: !p[mod.key] }))} />
                     <Tooltip title="Module info">
                       <IconButton size="small" sx={{ p:0.3, color: isDark ? "#9CA3AF" : "#94A3B8", "&:hover":{color:"#1D4ED8",bgcolor: isDark ? "#27272A" : "#EFF6FF"}, borderRadius:"6px" }}>
@@ -3013,6 +3196,66 @@ function ModulesAndFieldsPanel() {
           })}
         </tbody>
       </table>
+
+      {/* Row actions menu */}
+      <Menu anchorEl={rowMenu?.el} open={!!rowMenu} onClose={closeRowMenu}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        PaperProps={{ elevation: 4, sx: {
+          mt: 0.5, borderRadius: "12px", minWidth: 210,
+          border: isDark ? "1px solid #27272A" : "1px solid #E3ECFC",
+          bgcolor: isDark ? "#1C1C1E" : "#fff",
+          boxShadow: isDark ? "0 8px 32px rgba(0,0,0,0.5)" : "0 8px 32px rgba(12,36,114,0.10)",
+          "& .MuiMenuItem-root": {
+            fontSize: "14px", py: 1.2, px: 2.5, gap: 1.25,
+            color: isDark ? "#D4D4D8" : "#334155",
+            "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF", color: isDark ? "#F4F4F5" : "#1D4ED8" },
+          },
+        } }}>
+        <MenuItem onClick={() => { const k = rowMenu!.key; closeRowMenu(); openDetail(k, "layouts"); }}>
+          <Rows size={15} weight="duotone" /> Layout
+        </MenuItem>
+        <MenuItem onClick={() => { const k = rowMenu!.key; closeRowMenu(); setRenameMod(k); setRenameValue(modLabels[k] ?? ""); }}>
+          <PencilSimple size={15} weight="duotone" /> Rename
+        </MenuItem>
+        <MenuItem onClick={() => { const k = rowMenu!.key; closeRowMenu(); openDetail(k, "fields"); }}>
+          <ListBullets size={15} weight="duotone" /> Fields
+        </MenuItem>
+        {rowMenu?.key === "leads" && (
+          <MenuItem onClick={() => { closeRowMenu(); setConversionMappingOpen(true); }}>
+            <ArrowsLeftRight size={15} weight="duotone" /> Lead Conversion Mapping
+          </MenuItem>
+        )}
+        <MenuItem onClick={() => { closeRowMenu(); router.push("/settings?tab=permission"); }}>
+          <ShieldCheck size={15} weight="duotone" /> Module Permission
+        </MenuItem>
+      </Menu>
+
+      {/* Rename dialog */}
+      <Dialog open={!!renameMod} onClose={() => setRenameMod(null)} maxWidth="xs" fullWidth
+        PaperProps={{ sx: { borderRadius: "16px", bgcolor: isDark ? "#1C1C1E" : "#fff" } }}>
+        <div className={`flex items-center justify-between px-5 py-4 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+          <span className={`text-[15px] font-bold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Rename Module</span>
+          <IconButton size="small" onClick={() => setRenameMod(null)}><X size={16} color={isDark ? "#71717A" : "#64748B"} weight="duotone" /></IconButton>
+        </div>
+        <DialogContent sx={{ p: 3 }}>
+          <TextField autoFocus fullWidth size="small" label="Displayed In Tabs As" value={renameValue}
+            onChange={e => setRenameValue(e.target.value)}
+            onKeyDown={e => { if (e.key === "Enter") handleRenameSubmit(); }} />
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2.5 }}>
+          <Button onClick={() => setRenameMod(null)} variant="outlined"
+            sx={{ color: isDark ? "#D4D4D8" : "#4A5675", borderColor: isDark ? "#3F3F46" : "#E3ECFC", textTransform: "none", fontWeight: 600, borderRadius: "9px" }}>
+            Cancel
+          </Button>
+          <Button onClick={handleRenameSubmit} variant="contained"
+            sx={{ bgcolor: "#1D4ED8", color: "white", textTransform: "none", fontWeight: 600, borderRadius: "9px", "&:hover": { bgcolor: "#2563EB" } }}>
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <LeadConversionMappingModal open={conversionMappingOpen} onClose={() => setConversionMappingOpen(false)} isDark={isDark} />
     </div>
   );
 }
@@ -3564,7 +3807,7 @@ function CustomizeHomepagePanel() {
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isDark ? "bg-[#18181B]" : "bg-[#EFF6FF]"}`}>
               <Plus size={18} weight="bold" />
             </div>
-            <span className="text-[13px] font-bold">Create Home Page</span>
+            <span className="text-[13px] font-bold">Create Dashboard</span>
           </button>
         </div>
       </div>
@@ -3613,7 +3856,7 @@ function ImportPanel() {
   return (
     <div className={`flex-1 flex flex-col overflow-auto ${isDark ? "bg-[#0A0A0A]" : "bg-[#EFF6FF]"}`}>
       <div className="px-8 py-6 border-b flex-shrink-0" style={{ borderColor: isDark ? "#27272A" : "#E3ECFC" }}>
-        <h1 className={`text-[24px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Import Data</h1>
+        <h1 className={`m-0 text-[24px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Import Data</h1>
         <p className={`text-[13px] mt-1 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Upload CSV or Excel files to import records</p>
       </div>
 
@@ -3785,6 +4028,14 @@ export default function SettingsPage() {
 
   const [activeItem, setActiveItem] = useState(searchParams.get("tab") || "personal");
   const activeLabel = SECTIONS.flatMap(s => s.items).find(i => i.key === activeItem)?.label ?? "";
+
+  // Keep the active section in sync when navigated to via a link/router.push with a
+  // different ?tab= (e.g. "Module Permission" in a row menu), not just on first mount.
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab && tab !== activeItem) setActiveItem(tab);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const content = () => {
     switch (activeItem) {

@@ -53,7 +53,7 @@ export default function RevenueChart({ isDark = false }: { isDark?: boolean }) {
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h3 className={`text-[14px] font-bold ${isDark ? "text-white" : "text-[#0C2472]"}`}>Revenue Trend</h3>
+          <h3 className={`m-0 text-[14px] font-bold ${isDark ? "text-white" : "text-[#0C2472]"}`}>Revenue Trend</h3>
           <p className="text-[12px] text-slate-400 mt-0.5">Booked revenue · last 6 months</p>
         </div>
         <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full ${isDark ? "bg-emerald-900/40 text-emerald-400" : "bg-emerald-50 text-emerald-600"}`}>
