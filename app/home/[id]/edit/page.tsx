@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams, useParams } from "next/navigation";
 import Sidebar from "@/components/layout/Sidebar";
-import TopBar from "@/components/layout/TopBar";
 import { useTheme } from "@/components/ThemeContext";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
@@ -617,8 +616,6 @@ export default function HomePageEditorPage() {
     <div className={`flex min-h-screen font-sans transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-[#EFF6FF]"}`}>
       <Sidebar />
       <div className={`sidebar-content flex-1 flex flex-col overflow-hidden transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
-        <TopBar />
-
         {/* Header */}
         <div className={`px-8 py-4 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
           <div className="flex items-center gap-2 mb-3">
