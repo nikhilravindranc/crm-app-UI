@@ -51,7 +51,7 @@ export default function LeadGridView({ leads }: Props) {
   }
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
       {leads.map((lead, i) => {
         const avCol  = avatarColor(lead.name);
         const avInit = initials(lead.name);
@@ -66,7 +66,7 @@ export default function LeadGridView({ leads }: Props) {
           <div
             key={lead.id}
             onClick={() => router.push(`/leads/${lead.id}`)}
-            className={`rounded-2xl border hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group overflow-hidden ${
+            className={`rounded-xl sm:rounded-2xl border hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group overflow-hidden ${
               isDark
                 ? "border-[#27272A] hover:border-[#3F3F46]"
                 : colored ? "border-white/50" : "border-[#E3ECFC]"
@@ -76,7 +76,7 @@ export default function LeadGridView({ leads }: Props) {
               boxShadow: isDark ? "0 6px 24px rgba(0,0,0,0.3)" : "0 6px 24px rgba(15,23,42,0.06)",
             }}
           >
-            <div className="p-4">
+            <div className="p-3 sm:p-4">
               {/* Avatar + Name + Menu */}
               <div className="flex items-start gap-3 mb-3">
                 <Avatar

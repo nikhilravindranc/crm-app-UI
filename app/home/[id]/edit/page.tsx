@@ -495,6 +495,7 @@ export default function HomePageEditorPage() {
   const [editTitle, setEditTitle] = useState("");
   const [customizeOpen, setCustomizeOpen] = useState(false);
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
+  const [mobilePickerOpen, setMobilePickerOpen] = useState(false);
 
   // Add Component modal
   const [addComponentOpen, setAddComponentOpen] = useState(false);
@@ -600,6 +601,7 @@ export default function HomePageEditorPage() {
       sourceReportName: component.sourceReportName,
     };
     setCanvasItems(prev => [...prev, newItem]);
+    setMobilePickerOpen(false);
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -652,18 +654,18 @@ export default function HomePageEditorPage() {
       <Sidebar />
       <div className={`sidebar-content flex-1 flex flex-col overflow-hidden transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
         {/* Header */}
-        <div className={`px-8 py-4 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
-          <div className="flex items-center gap-2 mb-3">
-            <House size={16} weight="duotone" />
-            <button onClick={() => router.push("/")} className={`text-[12px] font-medium ${isDark ? "text-[#9CA3AF] hover:text-[#D4D4D8]" : "text-slate-500 hover:text-slate-700"} hover:underline`}>Home</button>
-            <CaretRight size={12} weight="duotone" />
-            <button onClick={() => router.push("/settings?tab=homepage")} className={`text-[12px] font-medium ${isDark ? "text-[#9CA3AF] hover:text-[#D4D4D8]" : "text-slate-500 hover:text-slate-700"} hover:underline`}>Dashboard Customization</button>
-            <CaretRight size={12} weight="duotone" />
-            <button className={`text-[12px] font-medium cursor-default ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>Dashboard V1</button>
+        <div className={`px-4 sm:px-6 lg:px-8 py-3 sm:py-4 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+          <div className="flex flex-wrap items-center gap-1 sm:gap-2 mb-2 sm:mb-3 text-[10px] sm:text-[12px]">
+            <House size={14} weight="duotone" />
+            <button onClick={() => router.push("/")} className={`font-medium ${isDark ? "text-[#9CA3AF] hover:text-[#D4D4D8]" : "text-slate-500 hover:text-slate-700"} hover:underline`}>Home</button>
+            <CaretRight size={10} weight="duotone" />
+            <button onClick={() => router.push("/settings?tab=homepage")} className={`font-medium truncate ${isDark ? "text-[#9CA3AF] hover:text-[#D4D4D8]" : "text-slate-500 hover:text-slate-700"} hover:underline`}>Dashboard Customization</button>
+            <CaretRight size={10} weight="duotone" className="hidden sm:inline" />
+            <button className={`font-medium cursor-default hidden sm:inline ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>Dashboard V1</button>
           </div>
-          <div className="flex items-center justify-between">
-            <h1 className={`m-0 text-[20px] font-extrabold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-[#0C2472]"}`}>Dashboard Customization</h1>
-            <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <h1 className={`m-0 text-base sm:text-lg md:text-[20px] font-extrabold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-[#0C2472]"}`}>Dashboard Customization</h1>
+            <div className="flex flex-wrap items-center gap-2">
               <Tooltip title="Restore this dashboard's original widgets and layout">
                 <Button variant="outlined" onClick={() => setResetConfirmOpen(true)} startIcon={<ArrowCounterClockwise size={14} weight="bold" />}
                   sx={{ color: isDark ? "#D4D4D8" : "#4A5675", borderColor: isDark ? "#3F3F46" : "#E3ECFC", textTransform: "none", fontWeight: 700, fontSize: "13px", borderRadius: "9px", px: 2.5, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF", borderColor: isDark ? "#3F3F46" : "#E3ECFC" } }}>
@@ -688,8 +690,8 @@ export default function HomePageEditorPage() {
 
         {/* Main editor */}
         <div className="flex-1 flex overflow-hidden">
-          {/* Left sidebar */}
-          <div className={`w-72 flex-shrink-0 border-r flex flex-col ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-white"}`}>
+          {/* Left sidebar - hidden on mobile, shown on md+ */}
+          <div className={`hidden md:flex md:w-72 flex-shrink-0 border-r flex flex-col ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-white"}`}>
             <div className={`px-4 py-4 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
               <div className={`flex items-center gap-2 border rounded-xl px-3 py-2 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
                 <MagnifyingGlass size={13} color="#94A3B8" weight="duotone" />
@@ -750,30 +752,39 @@ export default function HomePageEditorPage() {
           </div>
 
           {/* Canvas */}
-          <div className="flex-1 overflow-auto" onDragOver={handleDragOver} onDrop={handleDrop}>
-            <div className={`p-4 md:p-8 min-h-full ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
+          <div className="flex-1 overflow-auto relative" onDragOver={handleDragOver} onDrop={handleDrop}>
+            {/* Mobile-only floating trigger for the component picker (sidebar is hidden below md:) */}
+            <button
+              onClick={() => setMobilePickerOpen(true)}
+              className="md:hidden fixed bottom-5 right-5 z-20 w-14 h-14 rounded-full bg-[#1D4ED8] text-white shadow-lg flex items-center justify-center hover:bg-[#2563EB] transition-colors"
+              aria-label="Add widget"
+            >
+              <Plus size={22} weight="bold" />
+            </button>
+            <div className={`p-3 sm:p-4 md:p-8 min-h-full ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
               {canvasItems.length === 0 ? (
-                <div className={`flex flex-col items-center justify-center text-center border-2 border-dashed rounded-2xl min-h-[420px] ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-4 ${isDark ? "bg-[#18181B] text-[#3B82F6]" : "bg-[#EFF6FF] text-[#1D4ED8]"}`}>
-                    <SquaresFour size={26} weight="duotone" />
+                <div className={`flex flex-col items-center justify-center text-center border-2 border-dashed rounded-xl sm:rounded-2xl min-h-[300px] sm:min-h-[420px] ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+                  <div className={`w-10 sm:w-14 h-10 sm:h-14 rounded-lg sm:rounded-2xl flex items-center justify-center mb-3 sm:mb-4 ${isDark ? "bg-[#18181B] text-[#3B82F6]" : "bg-[#EFF6FF] text-[#1D4ED8]"}`}>
+                    <SquaresFour size={20} weight="duotone" />
                   </div>
-                  <p className={`text-[16px] font-bold mb-1.5 ${isDark ? "text-[#F4F4F5]" : "text-[#0C2472]"}`}>Build your dashboard</p>
-                  <p className={`text-[13px] max-w-sm ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>
-                    Drag widgets from the left sidebar onto this canvas, or click a widget to add it.
+                  <p className={`text-sm sm:text-base font-bold mb-1.5 ${isDark ? "text-[#F4F4F5]" : "text-[#0C2472]"}`}>Build your dashboard</p>
+                  <p className={`text-[12px] sm:text-[13px] max-w-sm px-2 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>
+                    <span className="hidden md:inline">Drag widgets from the left sidebar onto this canvas, or click a widget to add it.</span>
+                    <span className="md:hidden">Tap the + button to add a widget.</span>
                   </p>
                 </div>
               ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
                 {canvasItems.map((item, idx) => (
                   <div key={item.id}
-                    className="rounded-2xl border overflow-hidden group backdrop-blur-xl transition-all duration-200 hover:shadow-lg"
+                    className="rounded-xl sm:rounded-2xl border overflow-hidden group backdrop-blur-xl transition-all duration-200 hover:shadow-lg"
                     style={{
                       backgroundColor: isDark ? "#0A0A0A" : "rgba(255, 255, 255, 0.6)",
                       borderColor: isDark ? "#27272A" : "rgba(255,255,255,0.3)",
                       boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08)",
                     }}>
                     {/* Header */}
-                    <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+                    <div className={`flex flex-col sm:flex-row sm:items-center gap-2 px-3 sm:px-5 py-2.5 sm:py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
                       <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: item.color + "1F" }}>
                         <item.icon size={14} color={item.color} weight="duotone" />
                       </div>
@@ -843,6 +854,75 @@ export default function HomePageEditorPage() {
           </div>
         </div>
       </div>
+
+      {/* Mobile component picker — same widget library as the desktop sidebar, in a modal */}
+      <Dialog open={mobilePickerOpen} onClose={() => setMobilePickerOpen(false)} maxWidth="xs" fullWidth
+        PaperProps={{ sx: { borderRadius: "16px", bgcolor: isDark ? "#1C1C1E" : "#fff", boxShadow: isDark ? "0 8px 32px rgba(0,0,0,0.5)" : "0 8px 32px rgba(12,36,114,0.10)", maxHeight: "80vh" } }}>
+        <div className={`flex items-center justify-between px-4 py-3.5 border-b flex-shrink-0 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+          <span className={`text-[15px] font-bold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Add Widget</span>
+          <IconButton size="small" onClick={() => setMobilePickerOpen(false)}>
+            <X size={16} color={isDark ? "#71717A" : "#64748B"} weight="duotone" />
+          </IconButton>
+        </div>
+        <div className={`px-4 py-3 border-b flex-shrink-0 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+          <div className={`flex items-center gap-2 border rounded-xl px-3 py-2 ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+            <MagnifyingGlass size={13} color="#94A3B8" weight="duotone" />
+            <input placeholder="Search components" value={search} onChange={e => setSearch(e.target.value)}
+              className={`flex-1 text-[13px] outline-none bg-transparent ${isDark ? "text-[#D4D4D8] placeholder-[#52525B]" : "text-slate-700 placeholder-slate-400"}`} />
+          </div>
+        </div>
+        <DialogContent sx={{ p: 2, maxHeight: "55vh" }}>
+          <div className="space-y-4">
+            <div>
+              <div className="flex items-center justify-between px-1 mb-2">
+                <div className={`text-[11px] font-bold uppercase tracking-widest ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>Dashboard Components</div>
+                <Tooltip title="Add custom component">
+                  <IconButton size="small" onClick={() => { setMobilePickerOpen(false); setAddComponentOpen(true); }}
+                    sx={{ p: 0.3, borderRadius: "999px", bgcolor: "#1D4ED8", color: "white", "&:hover": { bgcolor: "#2563EB" } }}>
+                    <Plus size={13} weight="bold" />
+                  </IconButton>
+                </Tooltip>
+              </div>
+              {dashboardComps.length > 0 && (
+                <div className="space-y-1">
+                  {dashboardComps.map(comp => (
+                    <div key={comp.id} onClick={() => addComponent(comp)}
+                      className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl cursor-pointer transition-colors border ${isDark ? "border-[#27272A] hover:bg-[#1C1C1E] hover:border-[#3F3F46]" : "border-[#E3ECFC] hover:bg-[#f9fbff]"}`}>
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: comp.color + "1F" }}>
+                        <comp.icon size={13} color={comp.color} weight="duotone" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className={`text-[13px] font-semibold truncate ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{comp.title}</div>
+                        <div className={`text-[11px] truncate ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{comp.description}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {filteredReports.length > 0 && (
+              <div>
+                <div className={`text-[11px] font-bold uppercase tracking-widest px-1 mb-2 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>Report Components</div>
+                <div className="space-y-1">
+                  {filteredReports.map(comp => (
+                    <div key={comp.id} onClick={() => addComponent(comp)}
+                      className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl cursor-pointer transition-colors border ${isDark ? "border-[#27272A] hover:bg-[#1C1C1E] hover:border-[#3F3F46]" : "border-[#E3ECFC] hover:bg-[#f9fbff]"}`}>
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: comp.color + "1F" }}>
+                        <comp.icon size={13} color={comp.color} weight="duotone" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className={`text-[13px] font-semibold truncate ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{comp.title}</div>
+                        <div className={`text-[11px] truncate ${isDark ? "text-[#52525B]" : "text-slate-400"}`}>{comp.description}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Customize dialog */}
       <Dialog open={customizeOpen} onClose={() => setCustomizeOpen(false)} maxWidth="sm" fullWidth

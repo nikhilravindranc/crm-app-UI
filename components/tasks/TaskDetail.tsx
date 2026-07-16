@@ -281,7 +281,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
       <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
         {/* <TopBar title="Tasks" /> */}
 
-        <main className="flex-1 px-6 py-5 space-y-4 animate-fade-in">
+        <main className="flex-1 px-4 sm:px-6 py-4 sm:py-5 space-y-4 animate-fade-in">
 
           {/* ── Breadcrumb ── */}
           <div className={`flex items-center gap-1.5 text-[13.5px] ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>
@@ -294,7 +294,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
 
           {/* ── Header card ── */}
           <div className={`rounded-2xl border shadow-sm px-5 py-4 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-3">
                 <div className={`w-9 h-9 rounded-xl flex items-center justify-center shadow-sm flex-shrink-0 ${isDark ? "bg-[#27272A]" : "bg-[#1D4ED8]"}`}>
                   <ClipboardText size={18} color={isDark ? "#71717A" : "#fff"} weight="duotone" />
@@ -304,7 +304,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
                   <p className={`text-[12px] mt-0.5 ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>{task.type} · #{task.refId}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 {statusCfg && (
                   <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-semibold"
                     style={{ backgroundColor: statusCfg.bg, color: statusCfg.text }}>
@@ -348,8 +348,8 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
           </div>
 
           {activeTab === "overview" && (
-            <div className="grid grid-cols-3 gap-4 items-start">
-              <div className="col-span-2 space-y-5 min-w-0">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+              <div className="lg:col-span-2 space-y-5 min-w-0">
 
                 {/* ── Quick Info card ── */}
                 <div className={`rounded-2xl border shadow-sm divide-y ${isDark ? "bg-[#1C1C1E] border-[#27272A] divide-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC] divide-[#EFF6FF]"}`}>
@@ -468,7 +468,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
 
               </div>{/* end col-span-2 */}
 
-              <div className="sticky top-4 self-start">
+              <div className="lg:sticky lg:top-4 lg:self-start">
                 <RelatedListPanel
                   onItemClick={label =>
                     document.getElementById(`section-${label.toLowerCase()}`)?.scrollIntoView({ behavior: "smooth", block: "start" })
@@ -480,8 +480,8 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
           )}
 
           {activeTab === "timeline" && (
-            <div className="grid grid-cols-3 gap-4 items-start">
-              <div className="col-span-2">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+              <div className="lg:col-span-2">
                 <SectionCard icon={ClipboardText} title="Activity Timeline">
                   {task.timeline.length === 0 ? (
                     <div className={`text-[14px] text-center py-6 ${isDark ? "text-[#3F3F46]" : "text-slate-300"}`}>No activity yet</div>
@@ -512,7 +512,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
                 </SectionCard>
               </div>
 
-              <div className="sticky top-4 self-start">
+              <div className="lg:sticky lg:top-4 lg:self-start">
                 <RelatedListPanel onItemClick={() => setActiveTab("overview")} />
               </div>
 

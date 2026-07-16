@@ -66,7 +66,7 @@ function GraphCanvas({
   onPaneClick: () => void;
 }) {
   return (
-    <div className="flex-1 min-h-0 flex flex-col overflow-hidden relative">
+    <div className="h-[55vh] md:h-auto flex-shrink-0 md:flex-1 min-h-0 flex flex-col overflow-hidden relative">
       {/* Empty State */}
       {nodes.length === 0 && (
         <div className="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none">
@@ -335,7 +335,7 @@ function GraphBuilderContent({
   }, []);
 
   return (
-    <div className={`flex h-full min-h-0 ${isDark ? "bg-[#000000]" : "bg-[#EFF6FF]"}`}>
+    <div className={`flex flex-col md:flex-row h-full min-h-0 overflow-y-auto md:overflow-hidden ${isDark ? "bg-[#000000]" : "bg-[#EFF6FF]"}`}>
       {/* Settings Panel */}
       <GraphSettingsPanel
         primaryModule={primaryModule}

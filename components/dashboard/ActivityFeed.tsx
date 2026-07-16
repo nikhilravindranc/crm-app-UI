@@ -27,18 +27,18 @@ const feed: FeedItem[] = [
 
 export default function ActivityFeed({ isDark = false }: { isDark?: boolean }) {
   return (
-    <div className="rounded-2xl p-6 border h-full flex flex-col backdrop-blur-xl transition-colors duration-300"
+    <div className="rounded-xl sm:rounded-2xl p-4 sm:p-6 border h-full flex flex-col backdrop-blur-xl transition-colors duration-300"
       style={{
         backgroundColor: isDark ? "#18181B" : "rgba(255, 255, 255, 0.6)",
         borderColor: isDark ? "#27272A" : "rgba(255,255,255,0.3)",
         boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08)",
       }}>
-      <div className="mb-5">
-        <h3 className={`m-0 text-[14px] font-bold ${isDark ? "text-[#FFFFFF]" : "text-[#0C2472]"}`}>Recent Activity</h3>
-        <p className="text-[12px] text-slate-400 mt-0.5">Live team updates</p>
+      <div className="mb-4 sm:mb-5">
+        <h3 className={`m-0 text-sm sm:text-[14px] font-bold ${isDark ? "text-[#FFFFFF]" : "text-[#0C2472]"}`}>Recent Activity</h3>
+        <p className="text-[11px] sm:text-[12px] text-slate-400 mt-0.5">Live team updates</p>
       </div>
 
-      <div className="flex-1 space-y-4">
+      <div className="flex-1 space-y-3 sm:space-y-4">
         {feed.map((item, idx) => {
           const { Icon } = item;
           return (
@@ -53,19 +53,19 @@ export default function ActivityFeed({ isDark = false }: { isDark?: boolean }) {
               </div>
 
               <div className="flex-1 min-w-0 pb-1">
-                <p className={`text-[14px] font-medium leading-snug transition-colors ${isDark ? "text-[#E2E8F0] group-hover:text-[#FFFFFF]" : "text-slate-700 group-hover:text-slate-900"}`}>
+                <p className={`text-xs sm:text-[14px] font-medium leading-snug transition-colors ${isDark ? "text-[#E2E8F0] group-hover:text-[#FFFFFF]" : "text-slate-700 group-hover:text-slate-900"}`}>
                   {item.title}
                 </p>
-                <div className="flex items-center gap-1.5 mt-1">
+                <div className="flex items-center gap-1 sm:gap-1.5 mt-1 flex-wrap">
                   <Avatar
                     src={OWNER_AVATARS[item.ownerKey]}
-                    sx={{ width:14, height:14, bgcolor:item.avatarBg, fontSize:"0.48rem", fontWeight:700 }}
+                    sx={{ width:12, height:12, bgcolor:item.avatarBg, fontSize:"0.42rem", fontWeight:700 }}
                   >
                     {item.initials}
                   </Avatar>
-                  <span className="text-[12px] text-slate-400 font-medium">{item.user}</span>
-                  <span className={`text-[12px] ${isDark ? "text-slate-600" : "text-slate-300"}`}>·</span>
-                  <span className="text-[12px] text-slate-400">{item.time}</span>
+                  <span className="text-[10px] sm:text-[12px] text-slate-400 font-medium">{item.user}</span>
+                  <span className={`text-[10px] sm:text-[12px] ${isDark ? "text-slate-600" : "text-slate-300"}`}>·</span>
+                  <span className="text-[10px] sm:text-[12px] text-slate-400">{item.time}</span>
                 </div>
               </div>
             </div>
@@ -73,7 +73,7 @@ export default function ActivityFeed({ isDark = false }: { isDark?: boolean }) {
         })}
       </div>
 
-      <button className={`mt-4 w-full text-center text-[11.5px] font-bold py-2 rounded-xl transition-all duration-150 ${isDark ? "text-[#60A5FA] hover:text-[#FAFAFA] hover:bg-[#27272A]" : "text-[#1D4ED8] hover:text-[#0C2472] hover:bg-[rgba(96,165,250,0.1)]"}`}>
+      <button className={`mt-3 sm:mt-4 w-full text-center text-[10px] sm:text-[11.5px] font-bold py-2 rounded-lg sm:rounded-xl transition-all duration-150 ${isDark ? "text-[#60A5FA] hover:text-[#FAFAFA] hover:bg-[#27272A]" : "text-[#1D4ED8] hover:text-[#0C2472] hover:bg-[rgba(96,165,250,0.1)]"}`}>
         View all activity →
       </button>
     </div>

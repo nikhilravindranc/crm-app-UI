@@ -462,7 +462,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
       <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
         {/* <TopBar title="Contacts" /> */}
 
-        <main className="flex-1 px-6 py-5 space-y-4 animate-fade-in">
+        <main className="flex-1 px-4 sm:px-6 py-4 sm:py-5 space-y-4 animate-fade-in">
 
           {/* ── Breadcrumb ── */}
           <div className={`flex items-center gap-1.5 text-[13.5px] ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>
@@ -475,7 +475,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
 
           {/* ── Header card ── */}
           <div className={`rounded-2xl border shadow-sm px-5 py-4 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
-            <div className="flex items-start gap-4">
+            <div className="flex items-start gap-4 flex-wrap">
               <Avatar sx={{ width: 56, height: 56, bgcolor: avColor, fontSize: "1.2rem", fontWeight: 800, boxShadow: "0 4px 14px 0 rgba(12,36,114,0.2)", flexShrink: 0 }}>
                 {initials}
               </Avatar>
@@ -508,7 +508,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                 </div>
               </div>
               {/* Action buttons */}
-              <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
                 <Button variant="outlined" size="small"
                   sx={{ borderColor: isDark ? "#27272A" : "#E3ECFC", color: isDark ? "#B4B5B6" : "#1D4ED8", borderRadius: "9px", textTransform: "none", fontWeight: 600, fontSize: "0.84rem", bgcolor: isDark ? "#0F0F0F" : "transparent", "&:hover": { borderColor: "#1D4ED8", color: "#1D4ED8", bgcolor: isDark ? "#0A0A0A" : "#EFF6FF" } }}>
                   Send Email
@@ -550,8 +550,8 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
 
           {/* ══════════════ OVERVIEW TAB ══════════════ */}
           {activeTab === "overview" && (
-            <div className="grid grid-cols-3 gap-4 items-start">
-              <div className="col-span-2 space-y-5 min-w-0">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+              <div className="lg:col-span-2 space-y-5 min-w-0">
 
                 {/* ── Quick info card ── */}
                 <div className={`rounded-2xl border shadow-sm divide-y ${isDark ? "bg-[#1C1C1E] border-[#27272A] divide-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC] divide-[#EFF6FF]"}`}>
@@ -751,7 +751,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
 
               </div>{/* end col-span-2 */}
 
-              <div className="sticky top-4 self-start">
+              <div className="lg:sticky lg:top-4 lg:self-start">
                 <RelatedListPanel onClickItem={label =>
                   document.getElementById(`section-${label.toLowerCase().replace(/\s+/g, "-")}`)?.scrollIntoView({ behavior: "smooth", block: "start" })
                 } />
@@ -761,8 +761,8 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
 
           {/* ══════════════ TIMELINE TAB ══════════════ */}
           {activeTab === "timeline" && (
-            <div className="grid grid-cols-3 gap-4 items-start">
-              <div className="col-span-2">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+              <div className="lg:col-span-2">
                 <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
                   <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
                     <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
@@ -833,7 +833,7 @@ export default function ContactDetail({ contactId }: { contactId: number }) {
                 </div>
               </div>{/* end col-span-2 */}
 
-              <div className="sticky top-4 self-start">
+              <div className="lg:sticky lg:top-4 lg:self-start">
                 <RelatedListPanel onClickItem={() => setActiveTab("overview")} />
               </div>
             </div>

@@ -95,13 +95,14 @@ export default function Sidebar() {
         <aside
           style={{
             position: "fixed", top: 0, left: 0,
-            width: "280px", height: "100vh",
+            width: "min(280px, 85vw)", height: "100vh",
             zIndex: 100,
             backgroundColor: isDark ? "#000000" : "#EFF6FF",
             boxShadow: isDark ? "4px 0 24px rgba(0,0,0,0.5)" : "4px 0 24px rgba(0,0,0,0.12)",
             display: "flex", flexDirection: "column",
             transform: drawerOpen ? "translateX(0)" : "translateX(-100%)",
             transition: "transform 0.28s cubic-bezier(0.4, 0, 0.2, 1)",
+            overflowY: "auto",
           }}
         >
           {/* Header: close + brand */}

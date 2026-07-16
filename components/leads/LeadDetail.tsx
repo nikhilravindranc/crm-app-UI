@@ -213,7 +213,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
       <div className={`sidebar-content flex-1 flex flex-col min-h-screen overflow-auto transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
         {/* <TopBar /> */}
 
-        <main className="flex-1 px-6 py-5 space-y-4 animate-fade-in">
+        <main className="flex-1 px-4 sm:px-6 py-4 sm:py-5 space-y-4 animate-fade-in">
 
           {/* ══ Breadcrumb ══ */}
           <div className={`flex items-center gap-1.5 text-[13.5px] ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>
@@ -258,7 +258,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
               </div>
 
               {/* Action buttons */}
-              <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
                 {(lead.phone || lead.mobile) && (
                   <Button variant="outlined" size="small" startIcon={<Phone size={14} weight="duotone" />}
                     sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#B4B5B6":"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.84rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#1D4ED8", color:"#1D4ED8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
@@ -338,10 +338,10 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
 
           {/* ══════════════════════════ OVERVIEW ══════════════════════════ */}
           {activeTab === "overview" && (
-            <div className="grid grid-cols-3 gap-4 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
 
               {/* Left 2/3 */}
-              <div className="col-span-2 space-y-4 min-w-0">
+              <div className="lg:col-span-2 space-y-4 min-w-0">
 
                 {/* ── Stage Pipeline (clickable) ── */}
                 <div className={`rounded-2xl border shadow-sm p-5 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
@@ -356,24 +356,24 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 overflow-x-auto pb-1">
                     {PIPELINE.map((stage, i) => {
                       const isDone    = i < pipelineIdx;
                       const isActive  = i === pipelineIdx;
                       const isPending = i > pipelineIdx;
                       return (
-                        <div key={stage} className="flex items-center flex-1 gap-1">
+                        <div key={stage} className="flex items-center flex-shrink-0 lg:flex-1 gap-1">
                           <Tooltip title={isDone ? "Completed" : isActive ? "Current stage" : "Click to set stage"}>
                             <button
                               onClick={() => setCurrentStatus(stage)}
-                              className={`flex items-center justify-center gap-1.5 flex-1 min-w-0 py-2 px-2 rounded-xl text-[12.5px] font-bold transition-all
+                              className={`flex items-center justify-center gap-1.5 flex-shrink-0 lg:flex-1 min-w-[104px] lg:min-w-0 py-2 px-2 rounded-xl text-[12.5px] font-bold transition-all
                                 ${isActive  ? "bg-[#1D4ED8] text-white shadow-md shadow-[#1D4ED8]/25 scale-[1.02]" : ""}
                                 ${isDone    ? isDark ? "bg-[#27272A] text-[#D4D4D8] hover:bg-[#4B4B52]" : "bg-[#E3ECFC] text-[#1D4ED8] hover:bg-[#BFD3F5]" : ""}
                                 ${isPending ? isDark ? "bg-transparent text-[#ABABAD] border border-[#27272A] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "bg-transparent text-slate-400 border border-transparent hover:bg-[#E3ECFC] hover:text-[#1D4ED8]" : ""}
                               `}
                             >
                               {isDone && <Check size={12} weight="duotone" />}
-                              <span className="truncate">{stage}</span>
+                              <span className="whitespace-nowrap lg:truncate">{stage}</span>
                             </button>
                           </Tooltip>
                           {i < PIPELINE.length - 1 && (
@@ -413,7 +413,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
                 </div>
 
                 {/* Quick Stats */}
-                <div className="grid grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {[
                     { label:"Lead Source", value:lead.leadSource||"—",    icon:TrendUp,   fill: isDark?"#1A2D4A":"#D6E4F9", deep: isDark?"#60A5FA":"#2F6FED" },
                     { label:"Rating",      value:lead.rating||"—",        icon:Star,      fill: isDark?"#1A2D3A":"#D0E5E0", deep: isDark?"#34D399":"#2E9E7B" },
@@ -549,7 +549,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
               </div>
 
               {/* Right 1/3 */}
-              <div className="space-y-4 sticky top-[76px] lg:top-[100px] self-start">
+              <div className="space-y-4 lg:sticky lg:top-[100px] lg:self-start">
 
                 {/* Related List */}
                 <div className={`rounded-2xl border shadow-sm overflow-hidden w-full ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
@@ -605,8 +605,8 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
 
           {/* ══════════════════════════ ACTIVITY ══════════════════════════ */}
           {activeTab === "activity" && (
-            <div className="grid grid-cols-3 gap-4">
-              <div className="col-span-2 bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <div className="lg:col-span-2 bg-[#f9fbff] rounded-2xl border border-[#E3ECFC] shadow-sm">
                 <div className="flex items-center justify-between px-5 py-4 border-b border-[#EFF6FF]">
                   <p className="font-heading text-[12px] font-bold text-slate-500 uppercase tracking-wider">Timeline</p>
                   <span className={`text-[12px] font-semibold bg-slate-100 px-2 py-0.5 rounded-full ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>{activityFeed.length} events</span>
@@ -637,7 +637,7 @@ export default function LeadDetail({ leadId }: { leadId: number }) {
               </div>
 
               {/* Side: related list still visible */}
-              <div className="space-y-4 sticky top-[76px] lg:top-[100px] self-start">
+              <div className="space-y-4 lg:sticky lg:top-[100px] lg:self-start">
                 <div className={`rounded-2xl border shadow-sm overflow-hidden w-full ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
                   <div className={`px-4 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
                     <p className={`font-heading text-[12px] font-bold uppercase tracking-wider ${isDark ? "text-[#ABABAD]" : "text-slate-500"}`}>Related List</p>

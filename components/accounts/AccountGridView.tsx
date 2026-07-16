@@ -48,7 +48,7 @@ export default function AccountGridView({ accounts }: Props) {
   }
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
       {accounts.map((acc, i) => {
         const avCol = avatarColor(acc.name);
         const owCol = avatarColor(acc.ownerName);
@@ -61,7 +61,7 @@ export default function AccountGridView({ accounts }: Props) {
         return (
           <div key={acc.id}
             onClick={() => router.push(`/accounts/${acc.id}`)}
-            className={`rounded-2xl border hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group overflow-hidden ${
+            className={`rounded-xl sm:rounded-2xl border hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group overflow-hidden ${
               isDark
                 ? "border-[#27272A] hover:border-[#3F3F46]"
                 : colored ? "border-white/50" : "border-[#E3ECFC]"
@@ -71,7 +71,7 @@ export default function AccountGridView({ accounts }: Props) {
               boxShadow: isDark ? "0 6px 24px rgba(0,0,0,0.3)" : "0 6px 24px rgba(15,23,42,0.06)",
             }}>
 
-            <div className="p-4">
+            <div className="p-3 sm:p-4">
               {/* Icon + Name + Menu */}
               <div className="flex items-start gap-3 mb-3">
                 <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 text-white font-extrabold text-[13px] shadow-sm"

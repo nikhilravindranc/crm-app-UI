@@ -66,6 +66,12 @@ export default function ReportsPage() {
   const [search, setSearch] = useState("");
   const [reports, setReports] = useState<Report[]>(SAMPLE_REPORTS);
   const [expandedCategories, setExpandedCategories] = useState<string[]>(["Deal Reports"]);
+  // Collections nav collapses into a dropdown on mobile (md:flex always shows it on desktop)
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const goToReport = (reportId: string) => {
+    router.push(`/reports/${reportId}`);
+    setMobileNavOpen(false);
+  };
 
   // Get all categories with counts
   const allCategories = useMemo(() => {
@@ -253,10 +259,13 @@ export default function ReportsPage() {
 
   return (
     <>
-    <div className={`sidebar-content flex min-h-screen font-sans transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-[#EFF6FF]"}`}>
-      {/* Left Sidebar — mirrors SettingsSidebar exactly */}
-      <div className={`w-full md:w-[240px] flex-shrink-0 border-b md:border-b-0 md:border-r flex flex-col overflow-y-auto max-h-[260px] md:max-h-none transition-colors duration-300 ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
-        <div className={`px-4 pt-5 pb-4 border-b transition-colors duration-300 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+    <div className={`sidebar-content flex flex-col md:flex-row min-h-screen font-sans transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-[#EFF6FF]"}`}>
+      {/* Left Sidebar — mirrors SettingsSidebar exactly; collapses into a dropdown on mobile */}
+      <div className={`w-full md:w-[240px] flex-shrink-0 border-b md:border-b-0 md:border-r flex flex-col transition-colors duration-300 ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+        <button
+          onClick={() => setMobileNavOpen(o => !o)}
+          className={`w-full flex items-center justify-between px-4 py-4 md:pt-5 md:pb-4 border-b text-left transition-colors duration-300 md:cursor-default ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}
+        >
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-[#1D4ED8] flex items-center justify-center shadow-sm flex-shrink-0">
               <ChartBar size={15} color="#fff" weight="duotone" />
@@ -266,9 +275,14 @@ export default function ReportsPage() {
               <div className="text-[12px] text-slate-400 leading-tight">Browse &amp; organize</div>
             </div>
           </div>
-        </div>
+          <span className="md:hidden flex-shrink-0">
+            {mobileNavOpen
+              ? <CaretUp size={14} color={isDark ? "#9CA3AF" : "#64748B"} weight="bold" />
+              : <CaretDown size={14} color={isDark ? "#9CA3AF" : "#64748B"} weight="bold" />}
+          </span>
+        </button>
 
-        <nav className="flex-1 py-3 px-2 space-y-1">
+        <nav className={`${mobileNavOpen ? "flex" : "hidden"} md:flex flex-col flex-1 py-3 px-2 space-y-1 overflow-y-auto max-h-[50vh] md:max-h-none`}>
           {/* Pinned Reports Section */}
           {pinnedReports.length > 0 && (
             <div>
@@ -278,7 +292,7 @@ export default function ReportsPage() {
               <div className="space-y-0.5 mb-1.5">
                 {pinnedReports.map(report => (
                   <button key={report.id}
-                    onClick={(e) => { router.push(`/reports/${report.id}`); e.currentTarget.blur(); }}
+                    onClick={(e) => { goToReport(report.id); e.currentTarget.blur(); }}
                     style={{ WebkitTapHighlightColor: "transparent" }}
                     className={`relative flex items-center gap-2 w-full px-3 py-2.5 rounded-xl text-[15px] font-medium transition-all min-h-[36px] outline-none focus:outline-none focus:bg-none focus-visible:ring-2 ${
                       isDark ? "focus-visible:ring-[#3B82F6]" : "focus-visible:ring-[#1D4ED8]"
@@ -314,7 +328,7 @@ export default function ReportsPage() {
                   <div className="space-y-0.5 mb-1.5">
                     {reports.filter(r => r.collection === name).map(report => (
                       <button key={report.id}
-                        onClick={(e) => { router.push(`/reports/${report.id}`); e.currentTarget.blur(); }}
+                        onClick={(e) => { goToReport(report.id); e.currentTarget.blur(); }}
                         style={{ WebkitTapHighlightColor: "transparent" }}
                         className={`relative flex items-center gap-2 w-full px-3 py-2.5 rounded-xl text-[15px] font-medium transition-all min-h-[36px] outline-none focus:outline-none focus:bg-none focus-visible:ring-2 ${
                           isDark ? "focus-visible:ring-[#3B82F6]" : "focus-visible:ring-[#1D4ED8]"
@@ -335,53 +349,55 @@ export default function ReportsPage() {
 
       {/* Right Content — mirrors the Leads listing page */}
       <div className={`flex-1 flex flex-col overflow-hidden transition-colors duration-300 ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
-        <main className="flex-1 px-8 py-6 space-y-5 overflow-y-auto animate-fade-in">
+        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-3 sm:space-y-5 overflow-y-auto animate-fade-in">
 
           {/* Page header */}
-          <div className="flex items-start justify-between">
+          <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
             <div>
               <div className={`flex items-center gap-1.5 text-[13.5px]/[18px] mb-1 ${isDark ? "text-[#E4E4E7]" : "text-slate-400"}`}>
                 <House size={16} weight="duotone" />
                 <CaretRight size={12} weight="duotone" />
                 <Link href="/reports" className={`transition-colors font-medium ${isDark ? "hover:text-[#D4D4D8]" : "hover:text-[#1D4ED8]"}`}>Reports</Link>
               </div>
-              <div className="flex items-center gap-2.5">
-                <h1 className="font-heading text-[22px]/[28px] font-semibold text-slate-900 tracking-tight m-0">Reports</h1>
-                <span className={`text-[13px]/[16px] font-medium border px-2.5 py-1 rounded-full shadow-sm flex items-center ${isDark ? "bg-[#0A0A0A] border-[#27272A] text-[#E4E4E7]" : "bg-[#f9fbff] border-[#E3ECFC] text-slate-400"}`}>
+              <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+                <h1 className="font-heading text-lg sm:text-[22px]/[28px] font-semibold text-slate-900 tracking-tight m-0">Reports</h1>
+                <span className={`text-[12px] sm:text-[13px]/[16px] font-medium border px-2 sm:px-2.5 py-1 rounded-full shadow-sm flex items-center whitespace-nowrap ${isDark ? "bg-[#0A0A0A] border-[#27272A] text-[#E4E4E7]" : "bg-[#f9fbff] border-[#E3ECFC] text-slate-400"}`}>
                   {reports.length} total
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 mt-1">
-              {/* View toggle */}
-              <div className={`flex items-center rounded-xl p-0.5 gap-0.5 shadow-sm border ${isDark ? "bg-[#000000] border-[#27272A]" : "bg-white border-slate-100"}`}>
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+              {/* View toggle - hidden on mobile */}
+              <div className={`hidden sm:flex items-center rounded-xl p-0.5 gap-0.5 shadow-sm border ${isDark ? "bg-[#000000] border-[#27272A]" : "bg-white border-slate-100"}`}>
                 {[
                   { k: "list", Icon: ListIcon, label: "List" },
                   { k: "grid", Icon: GridFour, label: "Grid" },
                 ].map(({ k, Icon, label }) => (
                   <button key={k} onClick={() => setView(k as typeof view)}
-                    className={`flex items-center gap-1.5 px-2.5 py-[7px] rounded-lg text-[14px]/[18px] font-medium transition-all ${
+                    className={`flex items-center gap-1 px-2 py-[6px] rounded-lg text-[13px]/[16px] font-medium transition-all ${
                       view === k
                         ? isDark ? "bg-[#18181B] text-[#D4D4D8]" : "bg-[#f9fbff] text-[#1D4ED8]"
                         : isDark ? "text-[#E4E4E7] hover:bg-[#27272A] hover:text-[#D4D4D8]" : "bg-[#f9fbff] text-slate-400 hover:bg-[#E3ECFC]"
                     }`}>
-                    <Icon size={14} weight="duotone" />{label}
+                    <Icon size={14} weight="duotone" />
+                    <span className="hidden sm:inline">{label}</span>
                   </button>
                 ))}
               </div>
 
               <Button variant="contained" startIcon={<Plus size={16} weight="bold" />}
                 onClick={() => router.push("/reports/new/edit")}
-                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: "15px", px: 2, py: 0.85, boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB", boxShadow: isDark ? "none" : "0 2px 14px 0 #60A5FA55" }, "&:active": { bgcolor: isDark ? "#52525B" : "#0C2472" } }}>
-                Create Report
+                sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius: "9px", textTransform: "none", fontWeight: 500, fontSize: { xs: "13px", sm: "15px" }, px: { xs: 1.5, sm: 2 }, py: 0.75, flex: { xs: 1, sm: "unset" }, boxShadow: isDark ? "none" : "0 1px 8px 0 #1D4ED833", "&:hover": { bgcolor: isDark ? "#3F3F46" : "#2563EB", boxShadow: isDark ? "none" : "0 2px 14px 0 #60A5FA55" }, "&:active": { bgcolor: isDark ? "#52525B" : "#0C2472" } }}>
+                <span className="hidden sm:inline">Create Report</span>
+                <span className="sm:hidden">New</span>
               </Button>
             </div>
           </div>
 
           {/* Toolbar: Search | Sort | Record count */}
-          <div className="flex items-center gap-2.5">
-            <div className={`flex items-center gap-2 border rounded-xl px-3 py-2 w-72 focus-within:border-[#60A5FA] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#60A5FA] transition-all ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+            <div className={`flex items-center gap-2 border rounded-xl px-3 py-2 flex-1 sm:w-72 focus-within:border-[#60A5FA] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#60A5FA] transition-all ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
               <MagnifyingGlass size={15} color="#94A3B8" weight="duotone" />
               <InputBase placeholder="Search All Reports" value={search} onChange={e => setSearch(e.target.value)}
                 sx={{ flex: 1, fontSize: "0.86rem", color: isDark ? "#D4D4D8" : "#334155", "& input::placeholder": { color: "#94A3B8", opacity: 1 } }}
@@ -434,7 +450,7 @@ export default function ReportsPage() {
 
           {/* Grid View */}
           {view === "grid" && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {sorted.map(report => (
                 <div key={report.id}
                   className={`rounded-2xl border p-4 cursor-pointer transition-colors ${isDark ? "border-[#27272A] bg-[#0A0A0A] hover:bg-[#111113]" : "border-[#E3ECFC] bg-white hover:bg-[#fafcff]"}`}

@@ -925,22 +925,22 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
           <div className={`flex-1 overflow-auto ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
             <main className="px-4 md:px-8 py-4 md:py-6 space-y-4 md:space-y-6 animate-fade-in">
               {/* Header */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <button onClick={() => router.push("/reports")} className={isDark ? "text-[#9CA3AF] hover:text-white" : "text-slate-500 hover:text-slate-700"}>
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-3 min-w-0">
+                  <button onClick={() => router.push("/reports")} className={`flex-shrink-0 ${isDark ? "text-[#9CA3AF] hover:text-white" : "text-slate-500 hover:text-slate-700"}`}>
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
                   </button>
-                  <h1 className={`m-0 text-[20px] font-extrabold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-[#0C2472]"}`}>{reportTitle}</h1>
+                  <h1 className={`m-0 text-base sm:text-[20px] font-extrabold tracking-tight truncate ${isDark ? "text-[#F4F4F5]" : "text-[#0C2472]"}`}>{reportTitle}</h1>
                   <Tooltip title="Report info">
                     <IconButton size="small" sx={{ color: isDark ? "#71717A" : "#64748B" }}>
                       <Info size={16} weight="duotone" />
                     </IconButton>
                   </Tooltip>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className={`text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Updated {(lastRefreshed ?? new Date(savedConfig.updatedAt)).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className={`hidden sm:inline text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Updated {(lastRefreshed ?? new Date(savedConfig.updatedAt)).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
                   <Tooltip title="Refresh">
                     <IconButton size="small" onClick={handleRefresh} sx={{ color: isDark ? "#71717A" : "#64748B", "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
                       <ArrowsClockwise size={16} weight="bold" className={refreshing ? "animate-spin" : ""} />
@@ -970,7 +970,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
               </div>
 
               {/* Controls Bar */}
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
                 <div className="flex items-center gap-3">
                   <Tooltip title="Filter">
                     <IconButton size="small" onClick={() => setFilterPanelOpen(true)} sx={{ color: isDark ? "#71717A" : "#64748B", "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
@@ -1031,9 +1031,9 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
           </div>
 
           {/* Chart Type Selection */}
-          <div className={`px-6 pt-4 ${isDark ? "bg-[#111113]" : "bg-[#F8FAFF]"}`}>
+          <div className={`px-4 sm:px-6 pt-4 ${isDark ? "bg-[#111113]" : "bg-[#F8FAFF]"}`}>
             <div className={`text-[11px] font-bold uppercase tracking-widest mb-3 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>Select Type</div>
-            <div className="grid grid-cols-6 gap-2.5 pb-4">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5 pb-4">
               {CHART_TYPES.map(ct => (
                 <button key={ct.key} onClick={() => setChartType(ct.key)}
                   className={`flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl border-2 transition-colors ${
@@ -1054,13 +1054,13 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
               <div className="px-6 py-5 space-y-4">
                 <div className={`text-[13px] font-bold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Configuration</div>
 
-                <div className="grid grid-cols-[140px_1fr] items-center gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-1.5 sm:gap-3">
                   <label className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Chart Name</label>
                   <input value={chartName} onChange={e => setChartName(e.target.value)} placeholder="Untitled chart"
                     className={`px-3 py-2 text-[13px] border rounded-lg outline-none ${isDark ? "bg-[#0A0A0A] border-[#3F3F46] text-[#D4D4D8] placeholder-[#52525B]" : "bg-white border-[#E3ECFC] text-slate-700 placeholder-slate-400"}`} />
                 </div>
 
-                <div className="grid grid-cols-[140px_1fr] items-center gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-1.5 sm:gap-3">
                   <label className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Measure (Y-Axis)</label>
                   <select value={measure} onChange={e => setMeasure(e.target.value)}
                     className={`px-3 py-2 text-[13px] border rounded-lg outline-none cursor-pointer ${isDark ? "bg-[#0A0A0A] border-[#3F3F46] text-[#D4D4D8]" : "bg-white border-[#E3ECFC] text-slate-700"}`}>
@@ -1068,7 +1068,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                   </select>
                 </div>
 
-                <div className="grid grid-cols-[140px_1fr] items-center gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-1.5 sm:gap-3">
                   <label className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Group By (X-Axis)</label>
                   <select value={groupBy} onChange={e => setGroupBy(e.target.value)}
                     className={`px-3 py-2 text-[13px] border rounded-lg outline-none cursor-pointer ${isDark ? "bg-[#0A0A0A] border-[#3F3F46] text-[#D4D4D8]" : "bg-white border-[#E3ECFC] text-slate-700"}`}>
@@ -1076,7 +1076,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                   </select>
                 </div>
 
-                <div className="grid grid-cols-[140px_1fr] items-center gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-1.5 sm:gap-3">
                   <label className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Sort By</label>
                   <select value={sortBy} onChange={e => setSortBy(e.target.value)}
                     className={`px-3 py-2 text-[13px] border rounded-lg outline-none cursor-pointer ${isDark ? "bg-[#0A0A0A] border-[#3F3F46] text-[#D4D4D8]" : "bg-white border-[#E3ECFC] text-slate-700"}`}>
@@ -1088,7 +1088,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
               </div>
 
               {/* Preview */}
-              <div className={`px-5 py-5 border-l ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-[#F8FAFF]"}`}>
+              <div className={`px-4 sm:px-5 py-5 border-t md:border-t-0 md:border-l ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-[#F8FAFF]"}`}>
                 <div className={`text-[12px] font-bold mb-3 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Preview</div>
                 <div className={`w-full rounded-lg border overflow-hidden ${isDark ? "border-[#27272A] bg-[#111113]" : "border-[#E3ECFC] bg-white"}`}>
                   <ChartTypePreview chartType={chartType} isDark={isDark} />
@@ -1101,7 +1101,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
           </DialogContent>
 
           {/* Actions */}
-          <div className={`flex items-center justify-end gap-2 px-6 py-3 border-t ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+          <div className={`flex items-center justify-end gap-2 px-4 sm:px-6 py-3 border-t ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
             <Button onClick={() => { setAddChartOpen(false); setChartName(""); setChartType("column"); }}
               sx={{ color: isDark ? "#A1A1AA" : "#64748B", textTransform: "none", fontWeight: 600, fontSize: "13px" }}>
               Cancel
@@ -1143,22 +1143,22 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
         <div className={`flex-1 overflow-auto ${isDark ? "bg-[#000000]" : "bg-transparent"}`}>
           <main className="px-4 md:px-8 py-4 md:py-6 space-y-4 md:space-y-6 animate-fade-in">
             {/* Header */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <button onClick={() => router.push("/reports")} className={isDark ? "text-[#9CA3AF] hover:text-white" : "text-slate-500 hover:text-slate-700"}>
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div className="flex items-center gap-3 min-w-0">
+                <button onClick={() => router.push("/reports")} className={`flex-shrink-0 ${isDark ? "text-[#9CA3AF] hover:text-white" : "text-slate-500 hover:text-slate-700"}`}>
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
                 </button>
-                <h1 className={`m-0 text-[20px] font-extrabold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-[#0C2472]"}`}>{reportTitle}</h1>
+                <h1 className={`m-0 text-base sm:text-[20px] font-extrabold tracking-tight truncate ${isDark ? "text-[#F4F4F5]" : "text-[#0C2472]"}`}>{reportTitle}</h1>
                 <Tooltip title="Report info">
                   <IconButton size="small" sx={{ color: isDark ? "#71717A" : "#64748B" }}>
                     <Info size={16} weight="duotone" />
                   </IconButton>
                 </Tooltip>
               </div>
-              <div className="flex items-center gap-2">
-                <span className={`text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{lastRefreshed ? `Updated ${lastRefreshed.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}` : "Updated 26 days ago"}</span>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className={`hidden sm:inline text-[12px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>{lastRefreshed ? `Updated ${lastRefreshed.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}` : "Updated 26 days ago"}</span>
                 <Tooltip title="Refresh">
                   <IconButton size="small" onClick={handleRefresh} sx={{ color: isDark ? "#71717A" : "#64748B", "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
                     <ArrowsClockwise size={16} weight="bold" className={refreshing ? "animate-spin" : ""} />
@@ -1188,7 +1188,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
             </div>
 
             {/* Controls Bar */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-3">
                 <Tooltip title="Filter">
                   <IconButton size="small" onClick={() => setFilterPanelOpen(true)} sx={{ color: isDark ? "#71717A" : "#64748B", "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
@@ -1301,7 +1301,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
         PaperProps={{ sx: { borderRadius: "16px", bgcolor: isDark ? "#1C1C1E" : "#fff", boxShadow: isDark ? "0 8px 32px rgba(0,0,0,0.5)" : "0 8px 32px rgba(12,36,114,0.10)" } }}>
 
         {/* Header */}
-        <div className={`flex items-center justify-between px-6 py-4 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+        <div className={`flex items-center justify-between px-4 sm:px-6 py-4 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
           <span className={`font-heading text-[16px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Add Chart</span>
           <IconButton size="small" onClick={() => setAddChartOpen(false)}
             sx={{ borderRadius: "9px", border: `1.5px solid ${isDark ? "#3F3F46" : "#E3ECFC"}`, "&:hover": { bgcolor: isDark ? "#27272A" : "#EFF6FF" } }}>
@@ -1310,9 +1310,9 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
         </div>
 
         {/* Chart Type Selection */}
-        <div className={`px-6 pt-4 ${isDark ? "bg-[#111113]" : "bg-[#F8FAFF]"}`}>
+        <div className={`px-4 sm:px-6 pt-4 ${isDark ? "bg-[#111113]" : "bg-[#F8FAFF]"}`}>
           <div className={`text-[11px] font-bold uppercase tracking-widest mb-3 ${isDark ? "text-[#9CA3AF]" : "text-slate-400"}`}>Select Type</div>
-          <div className="grid grid-cols-6 gap-2.5 pb-4">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5 pb-4">
             {CHART_TYPES.map(ct => (
               <button key={ct.key} onClick={() => setChartType(ct.key)}
                 className={`flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-xl border-2 transition-colors ${
@@ -1330,16 +1330,16 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
         <DialogContent sx={{ p: 0 }}>
           <div className="grid grid-cols-1 md:grid-cols-[1fr_320px] gap-0">
             {/* Configuration */}
-            <div className="px-6 py-5 space-y-4">
+            <div className="px-4 sm:px-6 py-5 space-y-4">
               <div className={`text-[13px] font-bold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Configuration</div>
 
-              <div className="grid grid-cols-[140px_1fr] items-center gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-1.5 sm:gap-3">
                 <label className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Chart Name</label>
                 <input value={chartName} onChange={e => setChartName(e.target.value)} placeholder="Untitled chart"
                   className={`px-3 py-2 text-[13px] border rounded-lg outline-none ${isDark ? "bg-[#0A0A0A] border-[#3F3F46] text-[#D4D4D8] placeholder-[#52525B]" : "bg-white border-[#E3ECFC] text-slate-700 placeholder-slate-400"}`} />
               </div>
 
-              <div className="grid grid-cols-[140px_1fr] items-center gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-1.5 sm:gap-3">
                 <label className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Measure (Y-Axis)</label>
                 <select value={measure} onChange={e => setMeasure(e.target.value)}
                   className={`px-3 py-2 text-[13px] border rounded-lg outline-none cursor-pointer ${isDark ? "bg-[#0A0A0A] border-[#3F3F46] text-[#D4D4D8]" : "bg-white border-[#E3ECFC] text-slate-700"}`}>
@@ -1347,7 +1347,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                 </select>
               </div>
 
-              <div className="grid grid-cols-[140px_1fr] items-center gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-1.5 sm:gap-3">
                 <label className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Group By (X-Axis)</label>
                 <select value={groupBy} onChange={e => setGroupBy(e.target.value)}
                   className={`px-3 py-2 text-[13px] border rounded-lg outline-none cursor-pointer ${isDark ? "bg-[#0A0A0A] border-[#3F3F46] text-[#D4D4D8]" : "bg-white border-[#E3ECFC] text-slate-700"}`}>
@@ -1355,7 +1355,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
                 </select>
               </div>
 
-              <div className="grid grid-cols-[140px_1fr] items-center gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr] items-center gap-1.5 sm:gap-3">
                 <label className={`text-[13px] ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Sort By</label>
                 <select value={sortBy} onChange={e => setSortBy(e.target.value)}
                   className={`px-3 py-2 text-[13px] border rounded-lg outline-none cursor-pointer ${isDark ? "bg-[#0A0A0A] border-[#3F3F46] text-[#D4D4D8]" : "bg-white border-[#E3ECFC] text-slate-700"}`}>
@@ -1367,7 +1367,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
             </div>
 
             {/* Preview */}
-            <div className={`px-5 py-5 border-l ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-[#F8FAFF]"}`}>
+            <div className={`px-4 sm:px-5 py-5 border-t md:border-t-0 md:border-l ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-[#F8FAFF]"}`}>
               <div className={`text-[12px] font-bold mb-3 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Preview</div>
               <div className={`w-full rounded-lg border overflow-hidden ${isDark ? "border-[#27272A] bg-[#111113]" : "border-[#E3ECFC] bg-white"}`}>
                 <ChartTypePreview chartType={chartType} isDark={isDark} />
@@ -1380,7 +1380,7 @@ export default function ReportDetailPage({ params }: { params: Promise<{ id: str
         </DialogContent>
 
         {/* Actions */}
-        <div className={`flex items-center justify-end gap-2 px-6 py-3 border-t ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+        <div className={`flex items-center justify-end gap-2 px-4 sm:px-6 py-3 border-t ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
           <Button onClick={() => { setAddChartOpen(false); setChartName(""); setChartType("column"); }}
             sx={{ color: isDark ? "#A1A1AA" : "#64748B", textTransform: "none", fontWeight: 600, fontSize: "13px" }}>
             Cancel

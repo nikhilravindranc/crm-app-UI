@@ -38,22 +38,22 @@ export default function RecentDeals({ isDark = false }: { isDark?: boolean }) {
   };
 
   return (
-    <div className="rounded-2xl border overflow-hidden backdrop-blur-xl transition-colors duration-300"
+    <div className="rounded-xl sm:rounded-2xl border overflow-hidden backdrop-blur-xl transition-colors duration-300"
       style={{
         backgroundColor: isDark ? "#18181B" : "rgba(255, 255, 255, 0.6)",
         borderColor: isDark ? "#27272A" : "rgba(255,255,255,0.3)",
         boxShadow: "0 8px 32px rgba(0, 0, 0, 0.08)",
       }}>
-      <div className={`flex items-center justify-between px-6 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}
+      <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 px-4 sm:px-6 py-3 sm:py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}
         style={{ backgroundColor: isDark ? "#18181B" : undefined }}>
         <div className="flex items-center gap-2 whitespace-nowrap">
-          <h3 className={`text-[14px] font-bold leading-none m-0 ${isDark ? "text-[#FFFFFF]" : "text-[#0C2472]"}`}>Recent Deals</h3>
-          <span className="text-[12px] text-slate-400 leading-none">· 5 latest active deals</span>
+          <h3 className={`text-sm sm:text-[14px] font-bold leading-none m-0 ${isDark ? "text-[#FFFFFF]" : "text-[#0C2472]"}`}>Recent Deals</h3>
+          <span className="text-[11px] sm:text-[12px] text-slate-400 leading-none">· 5 latest active deals</span>
         </div>
         <Button
           size="small"
           endIcon={<ArrowSquareOut size={12} weight="duotone" />}
-          sx={{ textTransform:"none", fontSize:"0.72rem", color: isDark ? "#9CA3AF" : "#1D4ED8", fontWeight:700, borderRadius:"8px", "&:hover":{ bgcolor: isDark ? "rgba(255,255,255,0.05)" : "rgba(96, 165, 250, 0.1)" } }}
+          sx={{ textTransform:"none", fontSize:"0.7rem", color: isDark ? "#9CA3AF" : "#1D4ED8", fontWeight:700, borderRadius:"8px", "&:hover":{ bgcolor: isDark ? "rgba(255,255,255,0.05)" : "rgba(96, 165, 250, 0.1)" } }}
         >
           View All
         </Button>
