@@ -32,7 +32,7 @@ const GraphPropertiesPanel = memo(
     if (!module) {
       return (
         <div
-          className={`w-72 border-l flex flex-col items-center justify-center px-6 text-center ${
+          className={`w-full md:w-72 flex-shrink-0 border-t md:border-t-0 md:border-l flex flex-col items-center justify-center py-6 px-6 text-center ${
             isDark ? "border-[#27272A] bg-[#0A0A0A] text-[#71717A]" : "border-[#E3ECFC] bg-white text-slate-400"
           }`}
         >
@@ -58,7 +58,7 @@ const GraphPropertiesPanel = memo(
 
     return (
       <div
-        className={`w-72 border-l flex flex-col overflow-hidden transition-colors ${
+        className={`w-full md:w-72 flex-shrink-0 border-t md:border-t-0 md:border-l flex flex-col max-h-[45vh] md:max-h-none overflow-hidden transition-colors ${
           isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-white"
         }`}
       >

@@ -45,23 +45,23 @@ export default function TopBar({ title }: { title?: string }) {
   });
 
   return (
-    <header className={`sticky top-0 z-40 border-b px-4 lg:px-8 py-3 lg:py-6 h-auto flex items-center gap-3 lg:gap-8 transition-colors duration-300 ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#E3ECFC] border-[#E3ECFC]"}`}>
+    <header className={`sticky top-0 z-40 border-b px-3 sm:px-4 lg:px-8 py-2.5 sm:py-3 lg:py-6 h-auto flex items-center gap-2 sm:gap-3 lg:gap-8 transition-colors duration-300 ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-[#E3ECFC] border-[#E3ECFC]"}`}>
 
       {/* Mobile hamburger - hidden on desktop */}
       <button
         onClick={openMobile}
-        className={`lg:hidden flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg transition-all ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#262626]" : "text-slate-500 hover:bg-[#EFF6FF]"}`}
+        className={`lg:hidden flex-shrink-0 w-7 sm:w-8 h-7 sm:h-8 flex items-center justify-center rounded-lg transition-all ${isDark ? "text-[#A1A1AA] hover:text-[#FAFAFA] hover:bg-[#262626]" : "text-slate-500 hover:bg-[#EFF6FF]"}`}
         aria-label="Open navigation"
       >
-        <List size={20} weight="bold" />
+        <List size={18} weight="bold" />
       </button>
 
       {/* Left - page title / date */}
       <div className="flex-1 min-w-0">
         {title ? (
           <div className="flex items-baseline gap-2 whitespace-nowrap">
-            <h1 className={`text-h1 tracking-tight m-0 ${isDark ? "text-white" : "text-[#0C2472]"}`}>{title}</h1>
-            <span className="hidden sm:inline text-caption text-slate-400">&middot; {today}</span>
+            <h1 className={`text-base sm:text-h1 tracking-tight m-0 ${isDark ? "text-white" : "text-[#0C2472]"}`}>{title}</h1>
+            <span className="hidden sm:inline text-[10px] sm:text-caption text-slate-400">&middot; {today}</span>
           </div>
         ) : (
           <p className="m-0 hidden sm:block text-caption text-slate-400 whitespace-nowrap">{today}</p>
@@ -69,21 +69,21 @@ export default function TopBar({ title }: { title?: string }) {
       </div>
 
       {/* Search - hidden on mobile, visible md+ */}
-      <div className={`hidden md:flex items-center gap-2 border rounded-xl px-3 py-1.5 w-60 group transition-all ${isDark ? "bg-[#0A0A0A] border-[#27272A] focus-within:border-[#D4D4D8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_rgba(212,212,216,0.2)]" : "bg-[#f9fbff] border-[#E3ECFC] focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#4A7AE8]"}`}>
-        <MagnifyingGlass size={15} color={isDark ? "#9CA3AF" : "#737373"} weight="duotone" />
+      <div className={`hidden md:flex items-center gap-2 border rounded-xl px-2.5 sm:px-3 py-1.5 w-56 lg:w-60 group transition-all ${isDark ? "bg-[#0A0A0A] border-[#27272A] focus-within:border-[#D4D4D8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_rgba(212,212,216,0.2)]" : "bg-[#f9fbff] border-[#E3ECFC] focus-within:border-[#1D4ED8] focus-within:border-2 focus-within:shadow-[0_0_0_2px_#4A7AE8]"}`}>
+        <MagnifyingGlass size={14} color={isDark ? "#9CA3AF" : "#737373"} weight="duotone" />
         <InputBase
           placeholder="Search leads, deals..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           sx={{
             flex: 1,
-            fontSize: "0.85rem",
+            fontSize: "0.8rem",
             color: isDark ? "#D4D4D8" : "#334155",
             "& input::placeholder": { color: "#94A3B8", opacity: 1 },
           }}
         />
         <Tooltip title="Cmd+K">
-          <Command size={13} color="#E2E8F0" weight="duotone" />
+          <Command size={12} color="#E2E8F0" weight="duotone" />
         </Tooltip>
       </div>
 
@@ -93,39 +93,42 @@ export default function TopBar({ title }: { title?: string }) {
           onClick={toggle}
           size="small"
           sx={{
-            borderRadius: "9px",
+            borderRadius: "8px",
             border: `1.5px solid ${isDark ? "#27272A" : "#E3ECFC"}`,
             bgcolor: isDark ? "#0A0A0A" : "#f9fbff",
             "&:hover": { bgcolor: isDark ? "#18181B" : "#EFF6FF" },
             transition: "all 0.2s ease",
+            width: { xs: 32, sm: 36 },
+            height: { xs: 32, sm: 36 },
+            padding: 0.5,
           }}
         >
           {isDark
-            ? <Sun size={17} color="#FBBF24" weight="duotone" />
-            : <Moon size={17} color="#64748B" weight="duotone" />
+            ? <Sun size={16} color="#FBBF24" weight="duotone" />
+            : <Moon size={16} color="#64748B" weight="duotone" />
           }
         </IconButton>
       </Tooltip>
 
-      {/* Notifications */}
+      {/* Notifications - hidden on mobile */}
       <Tooltip title="3 unread notifications">
-        <IconButton size="small" sx={{ borderRadius: "8px", "&:hover": { bgcolor: isDark ? "#262626" : "#EFF6FF" } }}>
+        <IconButton size="small" sx={{ borderRadius: "8px", "&:hover": { bgcolor: isDark ? "#262626" : "#EFF6FF" }, display: { xs: "none", sm: "inline-flex" } }}>
           <Badge
             badgeContent={3}
             color="error"
             sx={{ "& .MuiBadge-badge": { fontSize: "0.58rem", height: 15, minWidth: 15, padding: "0 3px" } }}
           >
-            <Bell size={20} color={isDark ? "#9CA3AF" : "#64748B"} weight="duotone" />
+            <Bell size={18} color={isDark ? "#9CA3AF" : "#64748B"} weight="duotone" />
           </Badge>
         </IconButton>
       </Tooltip>
 
       {/* Avatar + dropdown */}
-      <div ref={profileRef} className="relative">
+      <div ref={profileRef} className="relative flex-shrink-0">
         <Avatar
           src={OWNER_AVATARS["PM SDL"]}
           onClick={() => setProfileOpen(p => !p)}
-          sx={{ width: 32, height: 32, bgcolor: isDark ? "#27272A" : "#E3ECFC", fontSize: "0.6rem", fontWeight: 800, cursor: "pointer" }}
+          sx={{ width: { xs: 28, sm: 32 }, height: { xs: 28, sm: 32 }, bgcolor: isDark ? "#27272A" : "#E3ECFC", fontSize: "0.55rem", fontWeight: 800, cursor: "pointer" }}
           className={`ring-2 transition-all ${profileOpen ? (isDark ? "ring-[#D4D4D8]" : "ring-[#4A7AE8]") : "ring-transparent"} ${isDark ? "hover:ring-[#D4D4D8]" : "hover:ring-[#4A7AE8]"}`}
         >
           PM

@@ -50,7 +50,7 @@ export default function ContactGridView({ contacts }: Props) {
   }
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
       {contacts.map((contact, i) => {
         const fullName = `${contact.firstName} ${contact.lastName}`.trim();
         const avCol    = avatarColor(fullName);
@@ -66,7 +66,7 @@ export default function ContactGridView({ contacts }: Props) {
           <div
             key={contact.id}
             onClick={() => router.push(`/contacts/${contact.id}`)}
-            className={`rounded-2xl border hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group overflow-hidden ${
+            className={`rounded-xl sm:rounded-2xl border hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group overflow-hidden ${
               isDark
                 ? "border-[#27272A] hover:border-[#3F3F46]"
                 : colored ? "border-white/50" : "border-[#E3ECFC]"
@@ -76,7 +76,7 @@ export default function ContactGridView({ contacts }: Props) {
               boxShadow: isDark ? "0 6px 24px rgba(0,0,0,0.3)" : "0 6px 24px rgba(15,23,42,0.06)",
             }}
           >
-            <div className="p-4">
+            <div className="p-3 sm:p-4">
               {/* Avatar + Name + Menu */}
               <div className="flex items-start gap-3 mb-3">
                 <Avatar sx={{ width: 44, height: 44, bgcolor: avCol, fontSize: "0.85rem", fontWeight: 800, flexShrink: 0, boxShadow: "0 2px 8px rgba(12,36,114,0.15)" }}>

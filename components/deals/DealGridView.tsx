@@ -48,7 +48,7 @@ export default function DealGridView({ deals }: Props) {
   }
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
       {deals.map(deal => {
         const raw    = STAGE_CFG[deal.stage] ?? STAGE_CFG["Qualification"];
         const fill   = isDark ? raw.darkFill : raw.fill;
@@ -60,7 +60,7 @@ export default function DealGridView({ deals }: Props) {
           <div
             key={deal.id}
             onClick={() => router.push(`/deals/${deal.id}`)}
-            className={`rounded-2xl border hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group overflow-hidden ${
+            className={`rounded-xl sm:rounded-2xl border hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group overflow-hidden ${
               isDark ? "border-[#27272A] hover:border-[#3F3F46]" : "border-white/50"
             }`}
             style={{
@@ -68,7 +68,7 @@ export default function DealGridView({ deals }: Props) {
               boxShadow: isDark ? "0 6px 24px rgba(0,0,0,0.3)" : "0 6px 24px rgba(15,23,42,0.06)",
             }}
           >
-            <div className="p-4">
+            <div className="p-3 sm:p-4">
               {/* Deal name + menu */}
               <div className="flex items-start justify-between gap-2 mb-1">
                 <h3 className={`m-0 font-heading text-[14px] font-bold truncate transition-colors leading-tight flex-1 ${isDark ? "text-[#D4D4D8]" : "text-[#0C2472]"}`}>

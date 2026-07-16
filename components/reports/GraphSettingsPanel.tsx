@@ -28,7 +28,7 @@ const GraphSettingsPanel = memo(
 
     return (
       <div
-        className={`w-64 border-r flex flex-col overflow-hidden transition-colors ${
+        className={`w-full md:w-64 flex-shrink-0 border-b md:border-b-0 md:border-r flex flex-col max-h-[40vh] md:max-h-none overflow-hidden transition-colors ${
           isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-white"
         }`}
       >

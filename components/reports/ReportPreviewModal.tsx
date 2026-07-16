@@ -84,7 +84,7 @@ const ReportPreviewModal = memo(
           },
         }}
       >
-        <div className={`flex items-center justify-between px-6 py-4 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+        <div className={`flex items-center justify-between px-4 sm:px-6 py-4 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
           <DialogTitle sx={{ p: 0, fontWeight: 700, fontSize: "16px" }}>📊 Report Preview</DialogTitle>
           <IconButton
             size="small"
@@ -99,7 +99,7 @@ const ReportPreviewModal = memo(
           </IconButton>
         </div>
 
-        <DialogContent sx={{ p: 4 }}>
+        <DialogContent sx={{ p: { xs: 2, sm: 4 } }}>
           {!primaryModule ? (
             <div className={`text-center py-8 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>
               <p className="text-[14px]">Select a primary module to preview data</p>
@@ -112,7 +112,7 @@ const ReportPreviewModal = memo(
             <div className="space-y-4">
               {/* Info Bar */}
               <div
-                className={`px-4 py-3 rounded-lg border flex items-center justify-between ${
+                className={`px-4 py-3 rounded-lg border flex items-center justify-between gap-2 flex-wrap ${
                   isDark ? "border-[#27272A] bg-[#18181B]" : "border-[#E3ECFC] bg-[#F9FBFF]"
                 }`}
               >
@@ -135,8 +135,8 @@ const ReportPreviewModal = memo(
               </div>
 
               {/* Table */}
-              <div className={`border rounded-lg overflow-hidden ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
-                <table className="w-full">
+              <div className={`border rounded-lg overflow-x-auto ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+                <table className="w-full min-w-[600px]">
                   <thead>
                     <tr className={isDark ? "bg-[#18181B]" : "bg-[#F9FBFF]"}>
                       {previewData.columns.map((col) => (

@@ -1349,6 +1349,7 @@ function PermissionPanel() {
   const [tab, setTab]         = useState<"matrix"|"summary">("matrix");
   const [perms, setPerms]     = useState<PermState>(buildDefaultPerms);
   const [saved, setSaved]     = useState(false);
+  const [mobileRole, setMobileRole] = useState(PERM_ROLES[0].key);
 
   const toggle = (mod: string, role: string, perm: PermKey) => {
     setPerms(prev => ({
@@ -1361,17 +1362,17 @@ function PermissionPanel() {
   return (
     <div className={`flex-1 flex flex-col overflow-hidden ${isDark ? "bg-[#0A0A0A]" : "bg-white"}`}>
       {/* Header */}
-      <div className={`flex items-center justify-between px-6 py-4 border-b ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
-        <div className={`text-[18px] font-extrabold tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-900"}`}>Permissions</div>
+      <div className={`flex items-center justify-between gap-3 px-4 sm:px-6 py-4 border-b ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+        <div className={`text-[16px] sm:text-[18px] font-extrabold tracking-tight ${isDark ? "text-[#D4D4D8]" : "text-slate-900"}`}>Permissions</div>
         <Button variant="contained" size="small"
           onClick={() => setSaved(true)}
-          sx={{ bgcolor: saved ? "#10B981" : (isDark ? "#27272A" : "#1D4ED8"), color: saved ? "#fff" : (isDark ? "#D4D4D8" : "white"), borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.8, boxShadow: isDark ? "none" : "0 1px 6px #1D4ED833", "&:hover":{ bgcolor: saved ? "#059669" : (isDark ? "#3F3F46" : "#2563EB") } }}>
+          sx={{ bgcolor: saved ? "#10B981" : (isDark ? "#27272A" : "#1D4ED8"), color: saved ? "#fff" : (isDark ? "#D4D4D8" : "white"), borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.8, boxShadow: isDark ? "none" : "0 1px 6px #1D4ED833", flexShrink: 0, "&:hover":{ bgcolor: saved ? "#059669" : (isDark ? "#3F3F46" : "#2563EB") } }}>
           {saved ? "Saved!" : "Save Changes"}
         </Button>
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 px-6 pt-4 pb-0">
+      <div className="flex items-center gap-1 px-4 sm:px-6 pt-4 pb-0">
         {(["matrix","summary"] as const).map(t => (
           <button key={t} onClick={() => setTab(t)}
             className={`px-4 py-1.5 rounded-t-xl text-[14px] font-semibold transition-all border border-b-0 ${
@@ -1384,9 +1385,54 @@ function PermissionPanel() {
         ))}
       </div>
 
-      {/* Matrix */}
+      {/* Matrix — mobile: pick one role, see it as a scrollable list. Desktop: full grid. */}
       {tab === "matrix" && (
-        <div className={`flex-1 overflow-auto mx-6 mb-4 rounded-b-2xl rounded-tr-2xl border shadow-sm ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
+        <div className="md:hidden flex-1 overflow-hidden flex flex-col mx-4 mb-4">
+          {/* Role picker */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-2 pt-3 flex-shrink-0">
+            {PERM_ROLES.map(role => {
+              const active = mobileRole === role.key;
+              return (
+                <button key={role.key} onClick={() => setMobileRole(role.key)}
+                  className={`flex-shrink-0 px-3 py-1.5 rounded-full text-[12px] font-bold whitespace-nowrap transition-colors border-2`}
+                  style={active
+                    ? { backgroundColor: role.color, borderColor: role.color, color: "#fff" }
+                    : { backgroundColor: "transparent", borderColor: isDark ? "#27272A" : "#E3ECFC", color: isDark ? "#9CA3AF" : "#64748B" }}>
+                  {role.label}
+                </button>
+              );
+            })}
+          </div>
+          {/* Module list for the selected role */}
+          <div className={`flex-1 overflow-y-auto rounded-2xl border divide-y ${isDark ? "bg-[#1C1C1E] border-[#27272A] divide-[#27272A]" : "bg-white border-[#E3ECFC] divide-[#EFF6FF]"}`}>
+            {PERM_MODULES.map(mod => (
+              <div key={mod} className="px-4 py-3">
+                <div className={`text-[13.5px] font-bold mb-2.5 ${isDark ? "text-[#D4D4D8]" : "text-slate-800"}`}>{mod}</div>
+                <div className="grid grid-cols-2 gap-x-3 gap-y-2">
+                  {(Object.keys(PERM_META) as PermKey[]).map(perm => {
+                    const meta = PERM_META[perm];
+                    const Icon = meta.icon;
+                    const checked = perms[mod][mobileRole][perm];
+                    return (
+                      <button key={perm} onClick={() => toggle(mod, mobileRole, perm)}
+                        className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg border transition-colors ${
+                          checked
+                            ? isDark ? "border-[#27272A] bg-[#111113]" : "border-[#E3ECFC] bg-[#f9fbff]"
+                            : isDark ? "border-[#1C1C1E] bg-transparent opacity-50" : "border-transparent bg-transparent opacity-50"
+                        }`}>
+                        <Icon size={12} color={checked ? meta.color : "#94A3B8"} weight={perm === "fullAccess" || perm === "delete" ? "fill" : "duotone"} className="flex-shrink-0" />
+                        <span className={`text-[11.5px] font-medium truncate ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{meta.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {tab === "matrix" && (
+        <div className={`hidden md:block flex-1 overflow-auto mx-6 mb-4 rounded-b-2xl rounded-tr-2xl border shadow-sm ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
           <table className="w-full border-collapse text-left" style={{ minWidth: 900 }}>
             <thead>
               <tr className={`border-b ${isDark ? "bg-[#111113] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
@@ -1421,9 +1467,9 @@ function PermissionPanel() {
       )}
 
       {tab === "summary" && (
-        <div className="flex-1 overflow-auto px-6 py-5 space-y-5">
+        <div className="flex-1 overflow-auto px-4 sm:px-6 py-5 space-y-5">
           {/* Role cards grid */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {PERM_ROLES.map(role => {
               const rolePerms = perms;
               return (
@@ -1475,7 +1521,7 @@ function PermissionPanel() {
           {/* Legend */}
           <div className="bg-white rounded-2xl border border-[#E3ECFC] px-5 py-4">
             <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3">Permission Legend</div>
-            <div className="grid grid-cols-4 gap-x-8 gap-y-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 sm:gap-x-8 gap-y-2">
               {(Object.entries(PERM_META) as [PermKey, typeof PERM_META[PermKey]][]).map(([key, meta]) => {
                 const Icon = meta.icon;
                 return (
@@ -1496,9 +1542,9 @@ function PermissionPanel() {
 
       {/* Legend */}
       {tab === "matrix" && (
-        <div className={`mx-6 mb-5 rounded-2xl border px-5 py-3 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
+        <div className={`mx-4 sm:mx-6 mb-5 rounded-2xl border px-4 sm:px-5 py-3 flex-shrink-0 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
           <div className={`text-[11px] font-bold uppercase tracking-wider mb-2 ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>Permission Legend</div>
-          <div className="grid grid-cols-4 gap-x-6 gap-y-1.5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 sm:gap-x-6 gap-y-1.5">
             {(Object.entries(PERM_META) as [PermKey, typeof PERM_META[PermKey]][]).map(([key, meta]) => {
               const Icon = meta.icon;
               return (
@@ -1639,27 +1685,27 @@ function LayoutEditor({ module, layoutName, onClose }: {
   return (
     <div className={`absolute inset-0 z-30 flex flex-col overflow-hidden ${isDark ? "bg-[#000000]" : "bg-white"}`}>
       {/* Top bar */}
-      <div className={`flex items-center gap-2 px-4 py-2.5 border-b flex-shrink-0 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
-        <button onClick={onClose} className={`flex items-center gap-1.5 text-[15px] font-semibold transition-colors ${isDark ? "text-[#D4D4D8] hover:text-[#F4F4F5]" : "text-slate-600"}`}>
+      <div className={`flex items-center gap-2 px-3 sm:px-4 py-2.5 border-b flex-shrink-0 flex-wrap ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+        <button onClick={onClose} className={`flex items-center gap-1.5 text-[13px] sm:text-[15px] font-semibold transition-colors ${isDark ? "text-[#D4D4D8] hover:text-[#F4F4F5]" : "text-slate-600"}`}>
           <ArrowLeft size={14} weight="bold" />
           {modDef?.label ?? module}
         </button>
-        <button className={`flex items-center gap-1.5 px-2.5 py-1 border rounded-lg text-[15px] font-semibold transition-colors ${isDark ? "border-[#3F3F46] text-[#D4D4D8] hover:border-[#60A5FA] bg-[#18181B]" : "border-[#E3ECFC] text-slate-700 hover:border-[#1D4ED8] bg-white"}`}>
+        <button className={`flex items-center gap-1.5 px-2.5 py-1 border rounded-lg text-[13px] sm:text-[15px] font-semibold transition-colors ${isDark ? "border-[#3F3F46] text-[#D4D4D8] hover:border-[#60A5FA] bg-[#18181B]" : "border-[#E3ECFC] text-slate-700 hover:border-[#1D4ED8] bg-white"}`}>
           {layoutName} <CaretDown size={11} weight="bold" />
         </button>
-        <IconButton size="small" sx={{ p:0.5, color: isDark ? "#71717A" : "#94A3B8", "&:hover":{color: isDark ? "#60A5FA" : "#1D4ED8"}, borderRadius:"6px" }}>
+        <IconButton size="small" sx={{ p:0.5, color: isDark ? "#71717A" : "#94A3B8", "&:hover":{color: isDark ? "#60A5FA" : "#1D4ED8"}, borderRadius:"6px", display: { xs: "none", sm: "inline-flex" } }}>
           <Gear size={14} weight="duotone" />
         </IconButton>
-        <div className="flex-1" />
-        <button onClick={onClose} className={`px-3 py-1.5 text-[15px] font-semibold border rounded-lg transition-colors ${isDark ? "text-[#9CA3AF] border-[#3F3F46] hover:bg-[#18181B]" : "text-slate-500 border-[#E3ECFC] hover:bg-slate-50"}`}>Cancel</button>
-        <button className={`px-3 py-1.5 text-[15px] font-semibold border rounded-lg transition-colors ${isDark ? "text-[#9CA3AF] border-[#3F3F46] hover:bg-[#18181B]" : "text-slate-500 border-[#E3ECFC] hover:bg-slate-50"}`}>Save and Close</button>
-        <button className="px-4 py-1.5 text-[15px] font-bold text-white bg-[#1D4ED8] rounded-lg hover:bg-[#60A5FA] transition-colors">Save</button>
+        <div className="flex-1 hidden sm:block" />
+        <button onClick={onClose} className={`px-3 py-1.5 text-[13px] sm:text-[15px] font-semibold border rounded-lg transition-colors ${isDark ? "text-[#9CA3AF] border-[#3F3F46] hover:bg-[#18181B]" : "text-slate-500 border-[#E3ECFC] hover:bg-slate-50"}`}>Cancel</button>
+        <button className={`hidden sm:inline-block px-3 py-1.5 text-[13px] sm:text-[15px] font-semibold border rounded-lg transition-colors ${isDark ? "text-[#9CA3AF] border-[#3F3F46] hover:bg-[#18181B]" : "text-slate-500 border-[#E3ECFC] hover:bg-slate-50"}`}>Save and Close</button>
+        <button className="px-4 py-1.5 text-[13px] sm:text-[15px] font-bold text-white bg-[#1D4ED8] rounded-lg hover:bg-[#60A5FA] transition-colors">Save</button>
       </div>
 
       {/* Body */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden">
         {/* Left sidebar */}
-        <div className={`w-[300px] flex-shrink-0 border-r overflow-y-auto ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-[#f9fbff]"}`}>
+        <div className={`w-full md:w-[300px] flex-shrink-0 border-b md:border-b-0 md:border-r max-h-[35vh] md:max-h-none overflow-y-auto ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-[#f9fbff]"}`}>
           {tab === "create" && (<>
             <button onClick={() => setNfOpen(p=>!p)}
               className={`flex items-center justify-between w-full px-4 py-2.5 text-[13px] font-bold uppercase tracking-wider ${isDark ? "hover:bg-[#18181B]" : "hover:bg-[#EFF6FF]"}`}
@@ -1734,7 +1780,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
         {/* Main area */}
         <div className={`flex-1 overflow-y-auto ${isDark ? "bg-[#000000]" : "bg-[#F8FAFC]"}`}>
           {/* Tab bar */}
-          <div className={`flex items-center justify-between px-6 pt-4 border-b mb-0 ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-white"}`}>
+          <div className={`flex items-center justify-between px-4 sm:px-6 pt-4 border-b mb-0 overflow-x-auto ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-white"}`}>
             <div className="flex items-center">
               {(["create","quickCreate","detailView"] as const).map(t => {
                 const labels = { create:"Create", quickCreate:"Quick Create", detailView:"Detail View" };
@@ -1755,7 +1801,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
 
           {/* CREATE */}
           {tab === "create" && (
-            <div className="px-6 py-5 space-y-4">
+            <div className="px-4 sm:px-6 py-5 space-y-4">
               {LEADS_CREATE_SECTIONS.map(section => (
                 <div key={section.title} className={`rounded-xl border overflow-hidden ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
                   <div className={`flex items-center gap-2 px-4 py-2.5 border-b ${isDark ? "border-[#27272A] bg-[#111113]" : "border-[#E3ECFC] bg-[#fafcff]"}`}>
@@ -1801,8 +1847,8 @@ function LayoutEditor({ module, layoutName, onClose }: {
 
           {/* QUICK CREATE */}
           {tab === "quickCreate" && (
-            <div className="px-6 py-5 flex justify-center">
-              <div className={`w-[500px] rounded-xl border overflow-hidden shadow-sm ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
+            <div className="px-4 sm:px-6 py-5 flex justify-center">
+              <div className={`w-full max-w-[500px] rounded-xl border overflow-hidden shadow-sm ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
                 {QC_ACTIVE.map((f,i) => (
                   <div key={i} className={`flex items-center px-4 py-2.5 border-b last:border-0 group ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
                     <span className={`text-[15px] w-36 flex-shrink-0 ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>{f.label}</span>
@@ -1820,7 +1866,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
 
           {/* DETAIL VIEW */}
           {tab === "detailView" && (
-            <div className="px-6 py-5 space-y-4">
+            <div className="px-4 sm:px-6 py-5 space-y-4">
               {/* Business Card */}
               <div className={`rounded-xl border overflow-hidden ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
                 <div className={`flex items-center justify-between px-4 py-3 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
@@ -1898,7 +1944,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
       {/* Business Card Customize Modal */}
       {bcCustomizeOpen && (
         <div className="absolute inset-0 z-50 bg-black/40 flex items-center justify-center">
-          <div className={`rounded-2xl shadow-xl w-[420px] max-h-[80vh] overflow-hidden flex flex-col ${isDark ? "bg-[#0A0A0A]" : "bg-white"}`}>
+          <div className={`rounded-2xl shadow-xl w-[92vw] max-w-[420px] max-h-[80vh] overflow-hidden flex flex-col ${isDark ? "bg-[#0A0A0A]" : "bg-white"}`}>
             <div className={`px-6 py-4 border-b flex items-center justify-between ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
               <div>
                 <h3 className={`text-[17px] font-bold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Customize Business Card</h3>
@@ -1961,7 +2007,7 @@ function LayoutEditor({ module, layoutName, onClose }: {
       {/* Preview */}
       {previewOpen && (
         <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/40">
-          <div className={`w-[480px] max-h-[80%] rounded-2xl shadow-2xl overflow-hidden flex flex-col ${isDark ? "bg-[#0A0A0A]" : "bg-white"}`}>
+          <div className={`w-[92vw] max-w-[480px] max-h-[80%] rounded-2xl shadow-2xl overflow-hidden flex flex-col ${isDark ? "bg-[#0A0A0A]" : "bg-white"}`}>
             <div className={`flex items-center justify-between px-5 py-3.5 border-b flex-shrink-0 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
               <span className={`text-[15.5px] font-extrabold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
                 {layoutName.trim() || "Untitled Layout"} &middot; Preview
@@ -2057,19 +2103,19 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
   return (
     <div className={`absolute inset-0 z-30 flex flex-col overflow-hidden ${isDark ? "bg-[#000000]" : "bg-white"}`}>
       {/* Top bar */}
-      <div className={`flex items-center gap-2 px-4 py-2.5 border-b flex-shrink-0 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
-        <button onClick={onClose} className={`flex items-center gap-1.5 text-[14px] font-semibold transition-colors ${isDark ? "text-[#D4D4D8] hover:text-[#F4F4F5]" : "text-slate-600"}`}>
+      <div className={`flex items-center gap-2 px-3 sm:px-4 py-2.5 border-b flex-shrink-0 flex-wrap ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+        <button onClick={onClose} className={`flex items-center gap-1.5 text-[13px] sm:text-[14px] font-semibold transition-colors ${isDark ? "text-[#D4D4D8] hover:text-[#F4F4F5]" : "text-slate-600"}`}>
           <ArrowLeft size={14} weight="bold" />
           {modDef?.label ?? module}
         </button>
-        <span className={`text-[14px] font-semibold ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>add</span>
+        <span className={`hidden sm:inline text-[14px] font-semibold ${isDark ? "text-[#71717A]" : "text-slate-400"}`}>add</span>
         <div className="relative">
           <input
             value={layoutName}
             onChange={e => setLayoutName(e.target.value)}
             onBlur={requireName}
             placeholder="Layout Name"
-            className={`px-3 py-1.5 rounded-lg text-[14px] font-semibold w-40 outline-none transition-colors border ${
+            className={`px-3 py-1.5 rounded-lg text-[13px] sm:text-[14px] font-semibold w-32 sm:w-40 outline-none transition-colors border ${
               nameTouched && !layoutName.trim() ? "border-red-400" : isDark ? "border-[#3F3F46] focus:border-[#60A5FA]" : "border-[#E3ECFC] focus:border-[#1D4ED8]"
             } ${isDark ? "bg-[#18181B] text-[#F4F4F5] placeholder:text-[#71717A]" : "bg-white text-slate-700 placeholder:text-slate-400"}`}
           />
@@ -2077,19 +2123,19 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
             <div className="absolute left-0 top-full mt-0.5 text-[12px] text-red-500 font-medium whitespace-nowrap">Layout Name is required</div>
           )}
         </div>
-        <IconButton size="small" sx={{ p:0.5, color: isDark ? "#71717A" : "#94A3B8", "&:hover":{color: isDark ? "#60A5FA" : "#1D4ED8"}, borderRadius:"6px" }}>
+        <IconButton size="small" sx={{ p:0.5, color: isDark ? "#71717A" : "#94A3B8", "&:hover":{color: isDark ? "#60A5FA" : "#1D4ED8"}, borderRadius:"6px", display: { xs: "none", sm: "inline-flex" } }}>
           <Gear size={14} weight="duotone" />
         </IconButton>
-        <div className="flex-1" />
-        <button onClick={onClose} className={`px-3 py-1.5 text-[14px] font-semibold border rounded-lg transition-colors ${isDark ? "text-[#9CA3AF] border-[#3F3F46] hover:bg-[#18181B]" : "text-slate-500 border-[#E3ECFC] hover:bg-slate-50"}`}>Cancel</button>
-        <button onClick={requireName} className={`px-3 py-1.5 text-[14px] font-semibold border rounded-lg transition-colors ${isDark ? "text-[#9CA3AF] border-[#3F3F46] hover:bg-[#18181B]" : "text-slate-500 border-[#E3ECFC] hover:bg-slate-50"}`}>Save and Close</button>
-        <button onClick={requireName} className="px-4 py-1.5 text-[14px] font-bold text-white bg-[#1D4ED8] rounded-lg hover:bg-[#60A5FA] transition-colors">Save</button>
+        <div className="flex-1 hidden sm:block" />
+        <button onClick={onClose} className={`px-3 py-1.5 text-[13px] sm:text-[14px] font-semibold border rounded-lg transition-colors ${isDark ? "text-[#9CA3AF] border-[#3F3F46] hover:bg-[#18181B]" : "text-slate-500 border-[#E3ECFC] hover:bg-slate-50"}`}>Cancel</button>
+        <button onClick={requireName} className={`hidden sm:inline-block px-3 py-1.5 text-[14px] font-semibold border rounded-lg transition-colors ${isDark ? "text-[#9CA3AF] border-[#3F3F46] hover:bg-[#18181B]" : "text-slate-500 border-[#E3ECFC] hover:bg-slate-50"}`}>Save and Close</button>
+        <button onClick={requireName} className="px-4 py-1.5 text-[13px] sm:text-[14px] font-bold text-white bg-[#1D4ED8] rounded-lg hover:bg-[#60A5FA] transition-colors">Save</button>
       </div>
 
       {/* Body */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden">
         {/* Left sidebar */}
-        <div className={`w-[300px] flex-shrink-0 border-r overflow-y-auto ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-[#f9fbff]"}`}>
+        <div className={`w-full md:w-[300px] flex-shrink-0 border-b md:border-b-0 md:border-r max-h-[35vh] md:max-h-none overflow-y-auto ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-[#f9fbff]"}`}>
           {tab === "detailView" ? (
             <>
               <button onClick={() => setUnusedOpen(p=>!p)}
@@ -2154,7 +2200,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
 
         {/* Main area */}
         <div className={`flex-1 overflow-y-auto ${isDark ? "bg-[#000000]" : "bg-[#F8FAFC]"}`}>
-          <div className={`flex items-center justify-between px-6 pt-4 border-b mb-0 ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-white"}`}>
+          <div className={`flex items-center justify-between px-4 sm:px-6 pt-4 border-b mb-0 overflow-x-auto ${isDark ? "border-[#27272A] bg-[#0A0A0A]" : "border-[#E3ECFC] bg-white"}`}>
             <div className="flex items-center">
               {(["create","quickCreate","detailView"] as const).map(t => {
                 const labels = { create:"Create", quickCreate:"Quick Create", detailView:"Detail View" };
@@ -2174,7 +2220,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
           </div>
 
           {tab === "create" ? (
-            <div className="px-6 py-5 space-y-4">
+            <div className="px-4 sm:px-6 py-5 space-y-4">
               {sections.length === 0 ? (
                 <div className={`border-2 border-dashed rounded-xl py-16 flex flex-col items-center justify-center gap-2 ${isDark ? "border-[#3F3F46] text-[#52525B]" : "border-[#CBD5E1] text-slate-300"}`}>
                   <SquaresFour size={28} weight="duotone"/>
@@ -2211,8 +2257,8 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
               ))}
             </div>
           ) : tab === "quickCreate" ? (
-            <div className="px-6 py-5 flex flex-col items-center">
-              <div className={`w-[420px] rounded-xl border overflow-hidden shadow-sm ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
+            <div className="px-4 sm:px-6 py-5 flex flex-col items-center">
+              <div className={`w-full max-w-[420px] rounded-xl border overflow-hidden shadow-sm ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
                 <div className={`px-4 py-2.5 border-b ${isDark ? "border-[#27272A] bg-[#111113]" : "border-[#E3ECFC] bg-[#fafcff]"}`}>
                   <span className={`text-[14px] font-bold ${isDark ? "text-[#D4D4D8]" : "text-slate-700"}`}>Quick Create</span>
                 </div>
@@ -2244,7 +2290,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
               </p>
             </div>
           ) : (
-            <div className="px-6 py-5 space-y-4">
+            <div className="px-4 sm:px-6 py-5 space-y-4">
               {/* Business Card */}
               <div className={`rounded-xl border overflow-hidden ${isDark ? "bg-[#0A0A0A] border-[#27272A]" : "bg-white border-[#E3ECFC]"}`}>
                 <div className={`flex items-center justify-between px-4 py-3 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
@@ -2314,7 +2360,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
       {/* Preview */}
       {previewOpen && (
         <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/40">
-          <div className={`w-[480px] max-h-[80%] rounded-2xl shadow-2xl overflow-hidden flex flex-col ${isDark ? "bg-[#0A0A0A]" : "bg-white"}`}>
+          <div className={`w-[92vw] max-w-[480px] max-h-[80%] rounded-2xl shadow-2xl overflow-hidden flex flex-col ${isDark ? "bg-[#0A0A0A]" : "bg-white"}`}>
             <div className={`flex items-center justify-between px-5 py-3.5 border-b flex-shrink-0 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
               <span className={`text-[15.5px] font-extrabold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
                 {layoutName.trim() || "Untitled Layout"} &middot; Preview
@@ -2355,7 +2401,7 @@ function NewLayoutBuilder({ module, onClose }: { module:string; onClose:()=>void
       {/* Business Card Customize Modal - NewLayoutBuilder */}
       {dvBcCustomizeOpen && (
         <div className="absolute inset-0 z-50 bg-black/40 flex items-center justify-center">
-          <div className={`rounded-2xl shadow-xl w-[420px] max-h-[80vh] overflow-hidden flex flex-col ${isDark ? "bg-[#0A0A0A]" : "bg-white"}`}>
+          <div className={`rounded-2xl shadow-xl w-[92vw] max-w-[420px] max-h-[80vh] overflow-hidden flex flex-col ${isDark ? "bg-[#0A0A0A]" : "bg-white"}`}>
             <div className={`px-6 py-4 border-b flex items-center justify-between ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
               <div>
                 <h3 className={`text-[17px] font-bold ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Customize Business Card</h3>
@@ -2564,6 +2610,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout, initialTab = "la
   const [renameLayout, setRenameLayout] = useState<string | null>(null);
   const [renameLayoutValue, setRenameLayoutValue] = useState("");
   const [layoutConversionMappingOpen, setLayoutConversionMappingOpen] = useState(false);
+  const [subNavOpen, setSubNavOpen] = useState(false);
   const labeledMods = MODULE_DEFS.map(m => ({ ...m, label: modLabels[m.key] ?? m.label }));
   const mod     = labeledMods.find(m => m.key === modKey);
   const layouts = layoutRows;
@@ -2601,24 +2648,30 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout, initialTab = "la
   );
 
   return (
-    <div className="flex-1 flex overflow-hidden bg-white">
-      {/* Sub-sidebar */}
-      <div className="w-[220px] flex-shrink-0 border-r border-[#E3ECFC] bg-[#f9fbff] flex flex-col">
-        <div className="flex items-center justify-between px-3 py-3 border-b border-[#E3ECFC]">
-          <button onClick={onBack} className="flex items-center gap-1 text-[13px] font-semibold text-slate-600 transition-colors">
+    <div className="flex-1 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden bg-white">
+      {/* Sub-sidebar — collapses into a dropdown on mobile */}
+      <div className="w-full md:w-[220px] flex-shrink-0 border-b md:border-b-0 md:border-r border-[#E3ECFC] bg-[#f9fbff] flex flex-col">
+        <div className="w-full flex items-center justify-between px-3 py-3 border-b border-[#E3ECFC]">
+          <button onClick={onBack} className="flex items-center gap-1 text-[13px] font-semibold text-slate-600 transition-colors hover:text-[#1D4ED8]">
             <ArrowLeft size={13} weight="bold" />
             Modules
           </button>
-          <IconButton size="small" sx={{ p:0.4, color:"#94A3B8", "&:hover":{color:"#1D4ED8",bgcolor:"#EFF6FF"}, borderRadius:"6px" }}>
-            <MagnifyingGlass size={13} weight="duotone" />
-          </IconButton>
+          <div className="flex items-center gap-1">
+            <IconButton size="small" sx={{ p:0.4, color:"#94A3B8", "&:hover":{color:"#1D4ED8",bgcolor:"#EFF6FF"}, borderRadius:"6px", display: { xs: "none", md: "inline-flex" } }}>
+              <MagnifyingGlass size={13} weight="duotone" />
+            </IconButton>
+            <IconButton size="small" onClick={() => setSubNavOpen(o => !o)}
+              sx={{ p:0.4, color:"#94A3B8", "&:hover":{color:"#1D4ED8",bgcolor:"#EFF6FF"}, borderRadius:"6px", display: { xs: "inline-flex", md: "none" } }}>
+              {subNavOpen ? <CaretUp size={13} weight="bold" /> : <CaretDown size={13} weight="bold" />}
+            </IconButton>
+          </div>
         </div>
-        <div className="flex-1 overflow-y-auto py-1">
+        <div className={`${subNavOpen ? "flex" : "hidden"} md:flex flex-col flex-1 overflow-y-auto py-1 max-h-[40vh] md:max-h-none`}>
           {filteredMods.map(m => {
             const Icon = m.icon;
             const isActive = modKey === m.key;
             return (
-              <button key={m.key} onClick={() => onSelect(m.key)}
+              <button key={m.key} onClick={() => { onSelect(m.key); setSubNavOpen(false); }}
                 className={`flex items-center gap-2.5 w-full px-3 py-2.5 text-[15px] font-medium transition-colors min-h-[40px] ${
                   isActive ? "bg-[#1D4ED8] text-white" : "text-slate-600 hover:bg-[#EFF6FF]"
                 }`}>
@@ -2633,7 +2686,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout, initialTab = "la
       {/* Main content */}
       <div className="flex-1 overflow-y-auto flex flex-col">
         {/* Breadcrumb */}
-        <div className="px-6 pt-5 pb-1 flex items-center gap-1.5 text-[12px] text-slate-400">
+        <div className="px-4 sm:px-6 pt-5 pb-1 flex items-center gap-1.5 text-[12px] text-slate-400 flex-wrap">
           <House size={11} weight="duotone" />
           {["Setup","Customization","Modules"].map(crumb => (
             <span key={crumb} className="flex items-center gap-1.5">
@@ -2648,12 +2701,12 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout, initialTab = "la
         </div>
 
         {/* Title */}
-        <div className="px-6 pt-2 pb-3">
+        <div className="px-4 sm:px-6 pt-2 pb-3">
           <div className="text-[22px] font-extrabold text-slate-900 capitalize">{title}</div>
         </div>
 
         {/* Tabs */}
-        <div className="px-6 border-b border-[#E3ECFC] flex items-center gap-1">
+        <div className="px-4 sm:px-6 border-b border-[#E3ECFC] flex items-center gap-1 overflow-x-auto">
           {(["layouts","fields"] as const).map(t => (
             <button key={t} onClick={() => setTab(t)}
               className={`px-4 py-2.5 text-[15px] font-semibold capitalize transition-all border-b-2 -mb-px ${
@@ -2665,7 +2718,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout, initialTab = "la
         </div>
 
         {/* Tab content */}
-        <div className="flex-1 px-6 py-5">
+        <div className="flex-1 px-4 sm:px-6 py-5">
           {tab === "layouts" && (
             <>
               <div className="text-[14px] text-[#1D4ED8] mb-4 leading-relaxed">
@@ -2677,8 +2730,8 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout, initialTab = "la
                   Create New Layout
                 </Button>
               </div>
-              <div className="border border-[#E3ECFC] rounded-xl overflow-hidden">
-                <table className="w-full border-collapse text-left">
+              <div className="border border-[#E3ECFC] rounded-xl overflow-x-auto">
+                <table className="w-full min-w-[560px] border-collapse text-left">
                   <thead>
                     <tr className="bg-[#f9fbff] border-b border-[#E3ECFC]">
                       <th className="px-4 py-3 text-[12.5px] font-bold text-slate-500 uppercase tracking-wider">Name</th>
@@ -2796,7 +2849,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout, initialTab = "la
                 <>
                   {/* Toolbar */}
                   <div className="flex items-center gap-3 mb-4 flex-wrap">
-                    <div className="flex-1 relative min-w-[160px]">
+                    <div className="flex-1 relative min-w-[160px] w-full sm:w-auto">
                       <MagnifyingGlass size={13} weight="duotone" color="#94A3B8" className="absolute left-3 top-1/2 -translate-y-1/2" />
                       <input
                         value={fieldSearch}
@@ -2824,8 +2877,8 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout, initialTab = "la
                   </div>
 
                   {/* Table */}
-                  <div className="border border-[#E3ECFC] rounded-xl overflow-hidden">
-                    <table className="w-full border-collapse text-left">
+                  <div className="border border-[#E3ECFC] rounded-xl overflow-x-auto">
+                    <table className="w-full min-w-[560px] border-collapse text-left">
                       <thead>
                         <tr className="bg-[#f9fbff] border-b border-[#E3ECFC]">
                           <th className="px-4 py-3 text-[12.5px] font-bold text-slate-500 uppercase tracking-wider">Fields</th>
@@ -2854,12 +2907,12 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout, initialTab = "la
               {fieldSubTab === "permissions" && (
                 <div>
                   {/* Toolbar */}
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="relative">
+                  <div className="flex items-center gap-3 mb-4 flex-wrap">
+                    <div className="relative w-full sm:w-auto">
                       <select
                         value={permRole}
                         onChange={e => setPermRole(e.target.value)}
-                        className="appearance-none pl-3 pr-8 py-2 text-[13px] border border-[#E3ECFC] rounded-lg bg-white text-slate-700 focus:outline-none focus:border-[#1D4ED8] cursor-pointer min-w-[160px]"
+                        className="appearance-none pl-3 pr-8 py-2 text-[13px] border border-[#E3ECFC] rounded-lg bg-white text-slate-700 focus:outline-none focus:border-[#1D4ED8] cursor-pointer w-full sm:min-w-[160px]"
                       >
                         {["Super Admin","Administrator","Operations Manager","Support Executive","VP of Operations"].map(r => (
                           <option key={r} value={r}>{r}</option>
@@ -2867,7 +2920,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout, initialTab = "la
                       </select>
                       <CaretDown size={10} weight="bold" color="#94A3B8" className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                     </div>
-                    <div className="flex-1 relative">
+                    <div className="flex-1 relative min-w-[160px]">
                       <MagnifyingGlass size={13} weight="duotone" color="#94A3B8" className="absolute left-3 top-1/2 -translate-y-1/2" />
                       <input
                         value={permSearch}
@@ -2885,8 +2938,8 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout, initialTab = "la
                   </div>
 
                   {/* Table */}
-                  <div className="border border-[#E3ECFC] rounded-xl overflow-hidden">
-                    <table className="w-full border-collapse text-left">
+                  <div className="border border-[#E3ECFC] rounded-xl overflow-x-auto">
+                    <table className="w-full min-w-[480px] border-collapse text-left">
                       <thead>
                         <tr className="bg-[#f9fbff] border-b border-[#E3ECFC]">
                           <th className="px-4 py-3 text-[11.5px] font-bold text-slate-500 uppercase tracking-wider w-[40%]">Fields</th>
@@ -2941,7 +2994,7 @@ function ModuleDetail({ modKey, onBack, onSelect, onOpenLayout, initialTab = "la
       {/* Create and Edit Fields Modal */}
       {showCreateEditModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
-          <div className="w-[500px] bg-white rounded-2xl shadow-2xl p-6">
+          <div className="w-[92vw] max-w-[500px] bg-white rounded-2xl shadow-2xl p-4 sm:p-6">
             <div className="text-[17px] font-extrabold text-slate-900 mb-5">
               Create and Edit Fields in Layout Editor
             </div>
@@ -2988,7 +3041,7 @@ function CreateLayoutModal({ existingLayouts, onClose, onContinue }: {
   const [cloneFrom, setCloneFrom] = useState("");
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40">
-      <div className="w-[460px] bg-white rounded-2xl shadow-2xl p-6">
+      <div className="w-[92vw] max-w-[460px] bg-white rounded-2xl shadow-2xl p-4 sm:p-6">
         <div className="text-[17px] font-extrabold text-slate-900 mb-5">Create New Layout</div>
         <FormControl fullWidth size="small" sx={{ mb: 5 }}>
           <InputLabel sx={{ fontSize: "0.8rem", color: "#1D4ED8" }}>Clone Layout from</InputLabel>
@@ -3123,8 +3176,8 @@ function ModulesAndFieldsPanel() {
   return (
     <div className={`flex-1 overflow-y-auto ${isDark ? "bg-[#0A0A0A]" : "bg-white"}`}>
       {/* Toolbar */}
-      <div className={`flex items-center gap-3 px-6 py-4 border-b ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
-        <div className={`flex items-center gap-1.5 border rounded-xl px-3 py-1.5 w-56 focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all ${isDark ? "bg-[#18181B] border-[#3F3F46]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
+      <div className={`flex items-center gap-3 px-4 sm:px-6 py-4 border-b flex-wrap ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+        <div className={`flex items-center gap-1.5 border rounded-xl px-3 py-1.5 w-full sm:w-56 focus-within:border-[#1D4ED8] focus-within:shadow-[0_0_0_2px_#4A7AE8] transition-all ${isDark ? "bg-[#18181B] border-[#3F3F46]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
           <MagnifyingGlass size={13} color="#94A3B8" weight="duotone" />
           <InputBase placeholder="Search" value={search} onChange={e => setSearch(e.target.value)}
             sx={{ flex:1, fontSize:"0.75rem", color: isDark ? "#D4D4D8" : "#334155", "& input::placeholder":{color:"#94A3B8",opacity:1} }} />
@@ -3133,7 +3186,7 @@ function ModulesAndFieldsPanel() {
           <Gear size={13} weight="duotone" />
           Custom Module
         </button>
-        <div className="flex-1" />
+        <div className="flex-1 hidden sm:block" />
         <Button variant="contained" size="small"
           onClick={() => { setSelectedMod("new"); setView("detail"); }}
           sx={{ bgcolor: isDark ? "#27272A" : "#1D4ED8", color: isDark ? "#F4F4F5" : "white", borderRadius:"9px", textTransform:"none", fontWeight:700, fontSize:"0.75rem", px:2, py:0.8, boxShadow: isDark ? "none" : "0 1px 6px #1D4ED833", whiteSpace:"nowrap", "&:hover":{ bgcolor: isDark ? "#3F3F46" : "#2563EB" } }}>
@@ -3142,7 +3195,8 @@ function ModulesAndFieldsPanel() {
       </div>
 
       {/* Table */}
-      <table className="w-full border-collapse text-left">
+      <div className="overflow-x-auto">
+      <table className="w-full min-w-[720px] border-collapse text-left">
         <thead>
           <tr className={isDark ? "bg-[#111113] border-b border-[#27272A]" : "bg-[#f9fbff] border-b border-[#E3ECFC]"}>
             <th className={`px-6 py-3 text-[12.5px] font-bold uppercase tracking-wider ${isDark ? "text-[#71717A]" : "text-slate-500"}`}>Displayed In Tabs As</th>
@@ -3196,6 +3250,7 @@ function ModulesAndFieldsPanel() {
           })}
         </tbody>
       </table>
+      </div>
 
       {/* Row actions menu */}
       <Menu anchorEl={rowMenu?.el} open={!!rowMenu} onClose={closeRowMenu}
@@ -3393,17 +3448,20 @@ function CreateHomePageDrawer({ open, onClose, onCreate, isDark }: {
                 }`}>
                   {i < step ? <CheckCircle size={15} weight="bold" /> : i + 1}
                 </div>
-                <span className={`text-[10px] font-semibold text-center max-w-[70px] leading-tight ${
+                <span className={`hidden sm:block text-[10px] font-semibold text-center max-w-[70px] leading-tight ${
                   i === step ? (isDark ? "text-[#F4F4F5]" : "text-slate-900") : (isDark ? "text-[#71717A]" : "text-slate-400")
                 }`}>{s.label}</span>
               </div>
               {i < STEPPER_STEPS.length - 1 && (
-                <div className={`flex-1 h-[2px] mx-1.5 mb-4 rounded-full transition-colors ${
+                <div className={`flex-1 h-[2px] mx-1 sm:mx-1.5 sm:mb-4 rounded-full transition-colors ${
                   i < step ? "bg-[#1D4ED8]" : isDark ? "bg-[#27272A]" : "bg-[#E3ECFC]"
                 }`} />
               )}
             </div>
           ))}
+        </div>
+        <div className={`sm:hidden text-center text-[12px] font-bold mt-2 ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>
+          Step {step + 1} of {STEPPER_STEPS.length}: {STEPPER_STEPS[step].label}
         </div>
       </div>
 
@@ -3704,9 +3762,9 @@ function CustomizeHomepagePanel() {
   return (
     <div className={`flex-1 flex flex-col overflow-hidden ${isDark ? "bg-[#0A0A0A]" : "bg-white"}`}>
       {/* Header */}
-      <div className={`px-8 py-5 border-b flex items-start justify-between gap-6 ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
-        <div>
-          <div className={`text-[20px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Dashboard Customization</div>
+      <div className={`px-4 sm:px-8 py-5 border-b flex items-start justify-between gap-4 sm:gap-6 flex-wrap ${isDark ? "border-[#27272A]" : "border-[#E3ECFC]"}`}>
+        <div className="min-w-0">
+          <div className={`text-[18px] sm:text-[20px] font-bold tracking-tight ${isDark ? "text-[#F4F4F5]" : "text-slate-900"}`}>Dashboard Customization</div>
           <div className={`text-[13px] mt-1 max-w-lg leading-relaxed ${isDark ? "text-[#9CA3AF]" : "text-slate-500"}`}>
             You can create custom dashboards, making it easier for employees to complete their daily task efficiently.
           </div>
@@ -3718,8 +3776,8 @@ function CustomizeHomepagePanel() {
       </div>
 
       {/* Widget preview cards — matches Dashboard KPICard visual language */}
-      <div className="flex-1 overflow-auto p-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="flex-1 overflow-auto p-4 sm:p-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           {homepages.map((hp, i) => {
             const palette = HOMEPAGE_CARD_PALETTE[i % HOMEPAGE_CARD_PALETTE.length];
             return (
@@ -4052,8 +4110,8 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className={`sidebar-content flex-1 flex overflow-hidden font-sans ${isDark ? "bg-[#000000]" : "bg-[#EFF6FF]"}`}>
-      <div className="relative flex-1 flex overflow-hidden">
+    <div className={`sidebar-content flex-1 flex min-h-screen overflow-hidden font-sans ${isDark ? "bg-[#000000]" : "bg-[#EFF6FF]"}`}>
+      <div className="relative flex-1 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden">
         <SettingsSidebar activeItem={activeItem} setActiveItem={setActiveItem} isDark={isDark} />
         {content()}
       </div>

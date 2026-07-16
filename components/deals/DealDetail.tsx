@@ -261,7 +261,7 @@ export default function DealDetail({ dealId }: { dealId: number }) {
       <div className="sidebar-content flex-1 flex flex-col min-h-screen overflow-auto">
         {/* <TopBar title="Deals" /> */}
 
-        <main className="flex-1 px-6 py-5 space-y-4 animate-fade-in">
+        <main className="flex-1 px-4 sm:px-6 py-4 sm:py-5 space-y-4 animate-fade-in">
 
           {/* ── Breadcrumb ── */}
           <div className={`flex items-center gap-1.5 text-[13.5px] ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>
@@ -274,12 +274,12 @@ export default function DealDetail({ dealId }: { dealId: number }) {
 
           {/* ── Header card ── */}
           <div className={`rounded-2xl border shadow-sm px-5 py-4 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start justify-between gap-4 flex-wrap">
               <div className="min-w-0">
                 <h1 className={`m-0 text-[20px] font-extrabold tracking-tight truncate ${isDark ? "text-[#FFFFFF]" : "text-slate-900"}`}>{deal.name}</h1>
                 <p className={`text-[12px] mt-0.5 ${isDark ? "text-[#ABABAD]" : "text-slate-400"}`}>{deal.refId} · {deal.account}</p>
               </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
                 <Button variant="outlined" size="small"
                   sx={{ borderColor: isDark?"#27272A":"#E3ECFC", color: isDark?"#B4B5B6":"#1D4ED8", borderRadius:"9px", textTransform:"none", fontWeight:600, fontSize:"0.84rem", bgcolor: isDark?"#0F0F0F":"transparent", "&:hover":{ borderColor:"#1D4ED8", color:"#1D4ED8", bgcolor: isDark?"#0A0A0A":"#EFF6FF" } }}>
                   Convert
@@ -304,7 +304,7 @@ export default function DealDetail({ dealId }: { dealId: number }) {
             </div>
 
             {/* Quick stat cards */}
-            <div className="grid grid-cols-4 gap-3 mt-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
               {quickStats.map(({ label, value, icon: Icon, fill, deep }) => (
                 <div key={label} className="rounded-xl border border-white/50 p-3.5"
                   style={{ backgroundColor: fill, boxShadow: "0 6px 24px rgba(15,23,42,0.06)" }}>
@@ -335,8 +335,8 @@ export default function DealDetail({ dealId }: { dealId: number }) {
           </div>
 
           {activeTab === "overview" && (
-            <div className="grid grid-cols-3 gap-4 items-start">
-              <div className="col-span-2 space-y-5 min-w-0">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+              <div className="lg:col-span-2 space-y-5 min-w-0">
                 {/* ── Stage Pipeline ── */}
                 <div className={`rounded-2xl border shadow-sm p-4 ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
                   <div className="flex items-center justify-between mb-3">
@@ -585,7 +585,7 @@ export default function DealDetail({ dealId }: { dealId: number }) {
 
               </div>{/* end col-span-2 */}
 
-              <div className="sticky top-4 self-start">
+              <div className="lg:sticky lg:top-4 lg:self-start">
                 <RelatedListPanel onClickItem={label =>
                   document.getElementById(`section-${label.toLowerCase().replace(/\s/g, "-")}`)?.scrollIntoView({ behavior: "smooth", block: "start" })
                 } />
@@ -594,8 +594,8 @@ export default function DealDetail({ dealId }: { dealId: number }) {
           )}
 
           {activeTab === "timeline" && (
-            <div className="grid grid-cols-3 gap-4 items-start">
-              <div className="col-span-2">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+              <div className="lg:col-span-2">
                 <div className={`rounded-2xl border shadow-sm overflow-hidden ${isDark ? "bg-[#1C1C1E] border-[#27272A]" : "bg-[#f9fbff] border-[#E3ECFC]"}`}>
                   <div className={`flex items-center gap-2.5 px-5 py-3.5 border-b ${isDark ? "border-[#27272A]" : "border-[#EFF6FF]"}`}>
                     <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${isDark ? "bg-[#27272A]" : "bg-[#EFF6FF]"}`}>
@@ -674,7 +674,7 @@ export default function DealDetail({ dealId }: { dealId: number }) {
                 </div>
               </div>{/* end col-span-2 */}
 
-              <div className="sticky top-4 self-start">
+              <div className="lg:sticky lg:top-4 lg:self-start">
                 <RelatedListPanel onClickItem={() => setActiveTab("overview")} />
               </div>
             </div>
